@@ -11,6 +11,24 @@ USAGE
 In Java
 -------
 
+### compiling
+
+jsonld-java uses maven to compile
+
+    mvn compile
+
+### packaging
+
+Either run `mvn jar:jar` and grab the generated jar file from `target/jsonld-java-1.0.0-SNAPSHOT.jar` or run `mvn install -Dmaven.test.skip=true` to install the jar into your local maven repository.
+
+### running tests
+
+    mvn test
+
+Note that these currently fail due to the lack of an implementation of frame.
+
+### code example
+
     // Open a valid json(-ld) input file
     InputStream inputStream = new FileInputStream("input.json");
     // Read the file into an Object (The type of this object will be a List, Map, String, Boolean
@@ -51,6 +69,7 @@ NOTES
 TODO
 ====
 
+*   Fix up Jena Implementation
 *   Implement compact and frame.
 *   As the code is almost a direct translation from the javascript and python implementation, there is probably a lot of optimization work to do.
 *   Look into more standard ways of instantiating a default implementation of an interface (i.e. I'm not completely happy with the package structure currently, and i'm not so happy with having to instantiate d.d.k.j.jsonld.impl.JSONLDProcessor, it just looks messy).
