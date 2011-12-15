@@ -1,0 +1,10 @@
+#!/bin/bash
+# This script runs the RDF2JSONLD code, which converts an input file or URI in rdfxml/n3 to JSON-LD.
+# The following commands are required to be run before this can be used (left out of the script itself
+# because they can take a while to run):
+#     chmod +x rdf2jsonld
+# 	  mvn -quiet compile
+#	  mvn -quiet dependency:build-classpath -Dmdep.outputFile=target/cp.txt
+# run ./rdf2jsonld for the usage
+
+java -cp target/classes:`cat target/cp.txt` de.dfki.km.json.jsonld.RDF2JSONLD $@

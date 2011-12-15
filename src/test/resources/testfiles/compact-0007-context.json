@@ -1,0 +1,9 @@
+{
+   "@coerce": {
+      "ex:bool": "xsd:boolean",
+      "ex:double": "xsd:double",
+      "ex:int": "xsd:integer" 
+   },
+   "ex": "http://example.org/vocab#",
+   "xsd": "http://www.w3.org/2001/XMLSchema#"
+}

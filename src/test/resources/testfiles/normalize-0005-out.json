@@ -1,0 +1,21 @@
+[
+   {
+      "@subject": {
+         "@iri": "_:c14n0"
+      },
+      "@type": {
+         "@iri": "http://example.org/vocab#Bar"
+      }
+   },
+   {
+      "@subject": {
+         "@iri": "http://example.org/test#example"
+      },
+      "http://example.org/vocab#embed": {
+         "@iri": "_:c14n0"
+      },
+      "@type": {
+         "@iri": "http://example.org/vocab#Foo"
+      }
+   }
+]

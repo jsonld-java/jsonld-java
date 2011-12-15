@@ -1,0 +1,7 @@
+{
+   "name": "http://xmlns.com/foaf/0.1/name",
+   "homepage": "http://xmlns.com/foaf/0.1/homepage",
+   "@coerce": {
+      "homepage": "@iri"
+   }
+}
