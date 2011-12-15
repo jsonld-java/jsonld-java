@@ -40,7 +40,20 @@ Note that these currently fail due to the lack of an implementation of frame.
     Object normalized = processor.normalize(jsonObject);
     // Print out the result (or don't, it's your call!)
     System.out.println(JSONUtils.toString(normalized));
-    
+
+### Adding JSON-LD triples to Jena
+
+    // Create a JenaTripleCallbackObject
+    JenaTripleCallback callback = new JenaTripleCallback();
+    // Optionally add your jena model to the callback (a default model will be created if you don't
+    // run this).
+    callback.setJenaModel(jenaModel);
+    // call the triples function of the processor
+    processor.triples(jsonObject, callback);
+    // If you didn't use your own jena model, get the resulting one with:
+    Model m = callback.getJenaModel();
+
+Note that the JenaTripleCallback class is currently broken.
 
 RDF2JSONLD
 ----------
