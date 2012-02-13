@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	
-	<parent>
+<!--	<parent>
 		<artifactId>config-java6</artifactId>
 		<groupId>dfki.km.maven</groupId>
 		<version>0.3.2</version>
-	</parent>
+	</parent> -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>dfki.km.json</groupId>
 	<artifactId>jsonld-java</artifactId>
@@ -40,7 +40,7 @@
 		</dependency>
 	</dependencies>
 	
-	<repositories>
+<!--	<repositories>
 		<repository>
 			<id>artifactory2-libs-releases</id>
             <url>https://www.dfki.uni-kl.de/artifactory2/libs-releases</url>
@@ -51,7 +51,7 @@
                 <enabled>false</enabled>
             </snapshots>
 		</repository>
-	</repositories>
+	</repositories> -->
 	
 </project>
 
