@@ -1,15 +1,23 @@
 package de.dfki.km.json.jsonld;
 
 public interface JSONLDTripleCallback {
-	// TODO: interface in the api is different from what it is in example code
-	
-	/*
-	 * subject should always be an iri string
-	 * predicate should always be an iri string
-	 * object could be a string or a map<string,object>
+	/**
 	 * 
-	 * return null to force triple generation to stop
-	 * 
+	 * @param s The Subject URI
+	 * @param p The Predicate URI
+	 * @param o The Object URI
+	 * @return The generated triple, or null to force triple generaton to stop
 	 */
-	Object triple(Object s, Object p, Object o);
+	Object triple(String s, String p, String o);
+	
+	/**
+	 * 
+	 * @param s The Subject URI
+	 * @param p The Predicate URI
+	 * @param value The literal value
+	 * @param datatype The literal datatype
+	 * @param language The literal language (NOTE: may be null if not specified!)
+	 * @return The generated triple, or null to force triple generaton to stop
+	 */
+	Object triple(String s, String p, String value, String datatype, String language);
 }

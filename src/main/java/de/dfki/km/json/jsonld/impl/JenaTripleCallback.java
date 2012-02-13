@@ -23,57 +23,52 @@ public class JenaTripleCallback implements JSONLDTripleCallback {
 		return jenaModel;
 	}
 
-	public Object triple(Object s, Object p, Object o) {
+	public Object triple(String s, String p, String o) {
 		if (s == null || p == null || o == null) {
 			// TODO: i don't know what to do here!!!!
 			return null;
 		}
 		
-		if (!(s instanceof String && p instanceof String)) {
-			// TODO: I assumed the subject and predicate should always be a string IRI is this correct?
-			return null;
+		Resource sR = jenaModel.getResource( s);
+		if (sR == null) {
+			sR = jenaModel.createResource(s);
+		}
+		Property pR = jenaModel.getProperty(p);
+		if (pR == null) {
+			pR = jenaModel.createProperty(p);
 		}
 		
-		Resource sR = jenaModel.getResource((String) s);
-		if (sR == null) {
-			sR = jenaModel.createResource((String)s);
+		RDFNode oR = jenaModel.getResource(o);
+		if (oR == null) {
+			oR = jenaModel.createResource(o);
 		}
-		Property pR = jenaModel.getProperty((String) p);
+		
+		Statement statement = jenaModel.createStatement(sR, pR, oR);
+		jenaModel.add(statement);
+		return statement;
+	}
+
+	@Override
+	public Object triple(String s, String p, String value, String datatype,
+			String language) {
+		// TODO Auto-generated method stub
+		
+		Resource sR = jenaModel.getResource( s);
+		if (sR == null) {
+			sR = jenaModel.createResource(s);
+		}
+		Property pR = jenaModel.getProperty(p);
 		if (pR == null) {
-			pR = jenaModel.createProperty((String)p);
+			pR = jenaModel.createProperty(p);
 		}
 		
 		RDFNode oR;
-		if (o instanceof String) {
-			// basic literal
-			oR = jenaModel.createLiteral((String)o);
-		} else if (o instanceof Map) { // should be the only other option
-			if (((Map) o).containsKey("@literal")) {
-				if (((Map) o).containsKey("@datatype")) {
-					oR = jenaModel.createTypedLiteral(
-							((Map) o).get("@literal"),
-							(String)((Map) o).get("@datatype"));
-				} else if (((Map) o).containsKey("@language")){
-					oR = jenaModel.createLiteral(
-							(String) ((Map) o).get("@literal"),
-							(String) ((Map) o).get("@language")
-							);
-				} else {
-					oR = jenaModel.createLiteral((String) ((Map) o).get("@literal"));
-				}
-			} else if (((Map) o).containsKey("@iri")) {
-				oR = jenaModel.getResource((String)((Map) o).get("@iri"));
-				if (oR == null) {
-					oR = jenaModel.createResource((String)((Map) o).get("@iri"));
-				}
-			} else {
-				// TODO: have i missed anything?
-				return null;
-			}
+		if (language != null) {
+			oR = jenaModel.createLiteral(value, language);
 		} else {
-			// TODO: I thought i'd covered all the bases!
-			return null;
+			oR = jenaModel.createTypedLiteral(value, datatype);
 		}
+		
 		Statement statement = jenaModel.createStatement(sR, pR, oR);
 		jenaModel.add(statement);
 		return statement;

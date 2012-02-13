@@ -33,11 +33,10 @@ public class JSONLDSerializer implements
 			
 			// map to assign to @context in the end
 			Map<String,Object> context = new HashMap<String, Object>();
-			Map<String,Object> coerce = new HashMap<String, Object>();
 			
 			String subjectURI = subject.getURI();
 			// add @subject to the json object
-			jsonObject.put("@subject", subjectURI);
+			jsonObject.put("@id", subjectURI);
 			
 			StmtIterator statements = model.listStatements(subject, (Property)null, (RDFNode)null);
 			while (statements.hasNext()) {
@@ -89,12 +88,9 @@ public class JSONLDSerializer implements
 								context.put("xsd", JSONLDConsts.XSD_NS);
 							}
 						}
-						List<Object> vars = (List<Object>) coerce.get(datatypeURI);
-						if (vars == null) {
-							vars = new ArrayList<Object>();
-						}
-						vars.add(localName);
-						coerce.put(datatypeURI, vars);
+						Map<String,Object> coerce = new HashMap<String, Object>();
+						coerce.put("@type", datatypeURI);
+						context.put(localName, coerce);
 					
 					} else {
 						values.add(object.toString());
@@ -113,7 +109,6 @@ public class JSONLDSerializer implements
 				}
 			}
 			
-			context.put("@coerce", coerce);
 			jsonObject.put("@context", context);
 			rval.add(jsonObject);
 		}

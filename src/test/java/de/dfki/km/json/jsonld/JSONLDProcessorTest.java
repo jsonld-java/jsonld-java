@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,7 +27,7 @@ import org.junit.runners.Parameterized.Parameters;
 import de.dfki.km.json.JSONUtils;
 import de.dfki.km.json.jsonld.JSONLDTripleCallback;
 import de.dfki.km.json.jsonld.JSONLDUtils;
-import de.dfki.km.json.jsonld.impl.JSONLDProcessor;
+import de.dfki.km.json.jsonld.impl.JSONLDProcessorImpl;
 
 @RunWith(Parameterized.class)
 public class JSONLDProcessorTest {
@@ -40,27 +41,48 @@ public class JSONLDProcessorTest {
 			if (o instanceof String) {
 				// literal
 				rval = "<" + s + "> <" + p + "> \"" + o + "\" .";
-			} else if (o instanceof Map && ((Map<String,Object>) o).containsKey("@iri")) {
+			} else if (o instanceof Map && ((Map<String,Object>) o).containsKey("@id")) {
 				// object is an iri
-				rval = "<" + s + "> <" + p + "> <" + ((Map<String,Object>) o).get("@iri") + "> .";
+				rval = "<" + s + "> <" + p + "> <" + ((Map<String,Object>) o).get("@id") + "> .";
 			} else {
 				// object is a literal
-				rval = "<" + s + "> <" + p + "> \"" + ((Map<String,Object>) o).get("@literal") + "\"";
-				rval += "^^<" + ((Map<String,Object>) o).get("@datatype");
+				rval = "<" + s + "> <" + p + "> \"" + ((Map<String,Object>) o).get("@value") + "\"";
+				rval += "^^<" + ((Map<String,Object>) o).get("@type");
 				rval += "> .";
 			}
 			return rval;
+		}
+
+		@Override
+		public Object triple(String s, String p, String o) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object triple(String s, String p, String value, String datatype,
+				String language) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 	
 	@Parameters
 	public static Collection<Object[]> data() throws URISyntaxException, IOException {
+		
+		// TODO: look into getting the test data from github, which will help more
+		// with keeping up to date with the spec.
+		// perhaps use http://develop.github.com/p/object.html
+		// to pull info from https://github.com/json-ld/json-ld.org/tree/master/test-suite/tests
+		
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		File f = new File(cl.getResource(TEST_DIR).toURI());
-		List<File> tests = Arrays.asList(
+		List<File> manifestfiles = Arrays.asList(
 			f.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
-					if (name.endsWith(".test")) {
+					if (name.contains("manifest") &&
+						name.endsWith(".jsonld")) {
+						System.out.println("Using manifest: " + dir + " " + name);
 						return true;
 					}
 					return false;
@@ -68,15 +90,29 @@ public class JSONLDProcessorTest {
 		
 		Collection<Object[]> rdata = new ArrayList<Object[]>();
 		int count = 0;
-		for (File in: tests) {
-			FileInputStream testfile = new FileInputStream(in);
+		for (File in: manifestfiles) {
+			System.out.println("Reading: " + in.getCanonicalPath());
+			FileInputStream manifestfile = new FileInputStream(in);
 		
-			Map<String,Object> testgroup = 
-					(Map<String, Object>) JSONUtils.fromInputStream(testfile);
+			Map<String,Object> manifest = 
+					(Map<String, Object>) JSONUtils.fromInputStream(manifestfile);
 			
-			for (Map<String,Object> test: (List<Map<String,Object>>)testgroup.get("tests")) {
-				rdata.add(new Object[] { testgroup.get("group"), test });
-				
+			
+			for (Map<String,Object> test: (List<Map<String,Object>>)manifest.get("sequence")) {
+				List<String> testType = (List<String>) test.get("@type");
+				if (testType.contains("jld:NormalizeTest") ||
+					testType.contains("jld:ExpandTest") ||
+					//testType.contains("jld:CompactTest") ||
+					//testType.contains("jld:FrameTest") ||
+					testType.contains("jld:TriplesTest")
+					) {
+					System.out.println("Adding test: " + test.get("name"));
+					rdata.add(new Object[] { manifest.get("name"), test });
+				} else {
+					// TODO: many disabled while implementation is incomplete
+					System.out.println("Skipping test: " + test.get("name"));
+				}
+
 				// Uncomment this to print a list of all the tests (may make debugging easier
 				//System.out.println("Added Test[" + count++ + "]: " + testgroup.get("group") + " " + test.get("name") + "..."
 				//		+ " (" + test.get("input") + "," + test.get("expect") + ")" 
@@ -123,7 +159,7 @@ public class JSONLDProcessorTest {
 		Object expect;
 		String expectType = (String) test.get("expect");
 		expectType = expectType.substring(expectType.lastIndexOf(".")+1);
-		if (expectType.equals("json")) {
+		if (expectType.equals("jsonld")) {
 			expect = JSONUtils.fromInputStream(expectStream);
 		} else if (expectType.equals("nt")) {
 			List<String> expectLines = new ArrayList<String>();
@@ -145,37 +181,45 @@ public class JSONLDProcessorTest {
 		
 		Object result = null;
 		
-		String testType = (String) test.get("type");
-		if ("normalize".equals(testType)) {
-			result = new JSONLDProcessor().normalize(inputJson);
-		} else if ("expand".equals(testType)) {
-			result = new JSONLDProcessor().expand(inputJson);
-		} else if ("compact".equals(testType)) {
+		List<String> testType = (List<String>) test.get("@type");
+		if (testType.contains("jld:NormalizeTest")) {
+			result = new JSONLDProcessorImpl().normalize(inputJson);
+		} else if (testType.contains("jld:ExpandTest")) {
+			result = new JSONLDProcessorImpl().expand(inputJson);
+		} else if (testType.contains("jld:CompactTest")) {
 			InputStream contextStream = 
 					cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
 			Object contextJson = JSONUtils.fromInputStream(contextStream);
-			result = new JSONLDProcessor().compact(inputJson, contextJson);
-		} else if ("frame".equals(testType)) {
+			result = new JSONLDProcessorImpl().compact(
+						((Map<String,Object>) contextJson).get("@context"), 
+						inputJson);
+		} else if (testType.contains("jld:FrameTest")) {
 			InputStream frameStream = 
 					cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
 			Object frameJson = JSONUtils.fromInputStream(frameStream);
-			result = new JSONLDProcessor().frame(inputJson, frameJson);
-		} else if ("triples".equals(testType)) {
+			result = new JSONLDProcessorImpl().frame(inputJson, frameJson);
+		} else if (testType.contains("jld:TriplesTest")) {
 			// TODO: many of the tests here fail simply because of an ordering issue
 			
 			TestTripleCallback ttc = new TestTripleCallback();
 			List<String> results = 
-					(List<String>) new JSONLDProcessor().triples(inputJson, ttc);
+					(List<String>) new JSONLDProcessorImpl().triples(inputJson, ttc);
 			Collections.sort(results);
 			result = join(results, "\n");
 		} else {
 			assertFalse("Unknown test type", true);
 		}
 	
+		boolean testpassed = false;
+		try {
+			testpassed = JSONLDUtils.compare(expect, result) == 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		assertTrue("\nFailed test: " + this.group + " " + this.test.get("name") + 
 				" (" + test.get("input") + "," + test.get("expect") + ")\n" +
 				"expected: " + expect + "\nresult: " + result, 
-				JSONLDUtils.compare(expect, result) == 0);
+				testpassed);
 	}
 	
 }

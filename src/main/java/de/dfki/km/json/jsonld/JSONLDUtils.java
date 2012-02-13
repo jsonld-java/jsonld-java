@@ -39,11 +39,9 @@ public class JSONLDUtils {
 	
 	public static Map<String,String> getKeywords(Object ctx) {
 		Map<String,String> rval = new HashMap<String,String>();
-		rval.put("@datatype", "@datatype");
-		rval.put("@iri", "@iri");
+		rval.put("@id", "@id");
 		rval.put("@language", "@language");
-		rval.put("@literal", "@literal");
-		rval.put("@subject", "@subject");
+		rval.put("@value", "@value");
 		rval.put("@type", "@type");
 		
 		if (ctx != null && ctx instanceof Map) {
@@ -60,6 +58,21 @@ public class JSONLDUtils {
 		return rval;
 	}
 
+	public static String getTermIri(Object ctx, String term) {
+		String rval = null;
+		
+		if (((Map<String,Object>) ctx).containsKey(term)) {
+			Object t = ((Map<String,Object>) ctx).get(term);
+			if (t instanceof String) {
+				rval = (String)t;
+			} else if (t instanceof Map && ((Map<String,Object>) t).containsKey("@id")) {
+				rval = (String) ((Map<String,Object>) t).get("@id");
+			}
+		}
+		
+		return rval;
+	}
+	
 	public static Map<String,Object> mergeContexts(Object ctxOne, Object ctxTwo) throws Exception {
 
 		Map<String,Object> ctx1;
@@ -95,6 +108,11 @@ public class JSONLDUtils {
 			
 			// merge contexts
 			for (String key: ctx2.keySet()) {
+				merged.put(key, ctx2.get(key));
+			}
+			
+			/* OLD COERCION CODE BELOW
+			for (String key: ctx2.keySet()) {
 				if (!key.equals("@coerce")) {
 					merged.put(key, clone(ctx2.get(key)));
 				}
@@ -110,7 +128,7 @@ public class JSONLDUtils {
 						mcoerce.put(key, ((Map<String,Object>) ctx2.get("@coerce")).get(key));
 					}
 				}
-			}
+			} */
 		}
 		return merged;
 	}
@@ -122,7 +140,7 @@ public class JSONLDUtils {
 				
 		for (String key: ctx.keySet()) {
 			if (!key.startsWith("@")) {
-				if (iri.equals(ctx.get(key))) {
+				if (iri.equals(getTermIri(ctx, key))) {
 					// compact to a term
 					rval = key;
 					/*if (usedCtx != null) {
@@ -141,13 +159,16 @@ public class JSONLDUtils {
 			// rval still not found, check the context for a CURIE prefix
 			for (String key: ctx.keySet()) {
 				if (!key.startsWith("@")) {
-					String ctxIRI = (String) ctx.get(key);
-					if (iri.startsWith(ctxIRI) && iri.length() > ctxIRI.length()) {
-						rval = key + ":" + iri.substring(ctxIRI.length());
-						/*if (usedCtx != null) {
-							usedCtx.put(key, ctxIRI);
-						}*/
-						break;
+					String ctxIRI = getTermIri(ctx, key);
+					
+					if (ctxIRI != null) {
+						if (iri.startsWith(ctxIRI) && iri.length() > ctxIRI.length()) {
+							rval = key + ":" + iri.substring(ctxIRI.length());
+							/*if (usedCtx != null) {
+								usedCtx.put(key, ctxIRI);
+							}*/
+							break;
+						}
 					}
 				}
 			}
@@ -168,13 +189,16 @@ public class JSONLDUtils {
 		String p = expandTerm(ctx, property);//, null);
 		
 		// built-in type coercion JSON-LD-isms
-		if ("@subject".equals(p) || "@type".equals(p)) {
-			rval = "@iri";
-		} else if (ctx.containsKey("@coerce")) {
+		if ("@id".equals(p) || "@type".equals(p)) {
+			rval = "@id";
+		} else {
 			p = compactIRI(ctx, p);//, null);
-			String type = ((Map<String, String>) ctx.get("@coerce")).get(p);
-			if (type != null) { // type could be null!
+			
+			if (ctx.containsKey(p) && ctx.get(p) instanceof Map && ((Map<String,String>) ctx.get(p)).containsKey("@type")) {
+				String type = ((Map<String, String>) ctx.get(p)).get("@type");
+				//if (type != null) { // type could be null!
 				rval = expandTerm(ctx, type);
+				//}
 			}
 			
 			/* THE FOLLOWING IS THE OLDER VERSION OF COERCE WHICH
@@ -203,45 +227,57 @@ public class JSONLDUtils {
 	
 	public static String expandTerm(Object ctx, String term) {
 		Map<String,String> keywords = getKeywords(ctx);
-		String rval = "";
+		String rval = term;
 		
-		// 1. If the property has a colon, then it is a CURIE or an absolute IRI:
+		// 1. If the property has a colon, it has a prefix or an absolute IRI:
 		int idx = term.indexOf(":");
 		if (idx != -1) {
 			String prefix = term.substring(0, idx);
 			
 			// 1.1 See if the prefix is in the context:
 			if (((Map<String, String>) ctx).containsKey(prefix)) {
-				rval = ((Map<String, String>) ctx).get(prefix) + term.substring(idx + 1);
+				String iri = getTermIri(ctx, prefix);
+				rval = iri + term.substring(idx + 1);
 				/*if (usedCtx != null) {
 					usedCtx.put(prefix, ctx.get(prefix));
 				}*/
-			} else { // 1.2. Prefix is not in context, property is already an absolute IRI:
-				rval = term;
 			}
 		} else if (((Map<String, String>) ctx).containsKey(term)) {
 			// 2. If the property is in the context, then it's a term.
-			rval = ((Map<String, String>) ctx).get(term); // TODO: assuming string
+			rval = getTermIri(ctx, term); // TODO: assuming string
 			/*if (usedCtx != null) {
 				usedCtx.put(term, rval);
 			}*/
-		} else if (term.equals(keywords.get("@subject"))) {
-			// 3. The property is the special-case subject.
-			rval = "@subject";
-		} else if (term.equals(keywords.get("@type"))) {
-			// 4. The property is the special-case rdf type.
-			rval = "@type";
 		} else {
-			// 5. The property is a relative IRI, prepend the default vocab.
-			rval = term;
-			if (((Map<String, String>) ctx).containsKey("@vocab")) {
-				rval = ((Map<String, String>) ctx).get("@vocab") + rval;
-				/*if (usedCtx != null) {
-					usedCtx.put("@vocab", ctx.get("@vocab"));
-				}*/
+			// 3. The property is a keyword.
+			for (String k: keywords.keySet()) {
+				String v = keywords.get(k);
+				if (v.equals(term)) {
+					rval = k;
+					break;
+				}
 			}
+			
 		}
 		
+		return rval;
+	}
+	
+	public static boolean isReference(Object value) {
+		return (value != null &&
+				value instanceof Map &&
+				((Map<String, Object>) value).containsKey("@id") &&
+				((Map<String,Object>) value).size() == 1);
+	}
+	
+	public static boolean isSubject(Object value) {
+		boolean rval = false;
+		if (value != null &&
+			value instanceof Map &&
+			!((Map<String,Object>) value).containsKey("@value")) {
+			rval = ((Map<String,Object>) value).size() > 1 || 
+					!((Map<String,Object>) value).containsKey("@id");
+		}
 		return rval;
 	}
 	
@@ -253,14 +289,14 @@ public class JSONLDUtils {
 				collectSubjects(o, subjects, bnodes);
 			}
 		} else if (input instanceof Map) {
-			if (((Map<String,Object>) input).containsKey("@subject")) {
-				Object subj = ((Map<String,Object>) input).get("@subject");
-				if (subj instanceof List) {
+			if (((Map<String,Object>) input).containsKey("@id")) {
+				Object id = ((Map<String,Object>) input).get("@id");
+				if (id instanceof List) {
 					// graph literal
-					collectSubjects(subj, subjects, bnodes);
-				} else {
+					collectSubjects(id, subjects, bnodes);
+				} else if (isSubject(input)) {
 					// named subject
-					subjects.put((String)((Map<String,Object>) subj).get("@iri"), input);
+					subjects.put((String)id, input);
 				}
 				
 			} else if (isBlankNode(input)) {
@@ -274,16 +310,15 @@ public class JSONLDUtils {
 	}
 
 	public static boolean isBlankNode(Object v) {
-		return v instanceof Map &&
-			   !(((Map<String,Object>) v).containsKey("@iri") || ((Map<String,Object>) v).containsKey("@literal")) &&
-			   (!((Map<String,Object>) v).containsKey("@subject") || isNamedBlankNode(v));
+		return isSubject(v) &&
+				(!((Map<String,Object>) v).containsKey("@id") ||
+						isNamedBlankNode(v));
 	}
 
 	public static boolean isNamedBlankNode(Object v) {
 		return v instanceof Map &&
-				((Map<String,Object>) v).containsKey("@subject") &&
-			   ((Map<String,Object>) ((Map<String, Object>) v).get("@subject")).containsKey("@iri") &&
-			   isBlankNodeIri(((Map<String,Object>) ((Map<String,Object>) v).get("@subject")).get("@iri"));
+				((Map<String,Object>) v).containsKey("@id") &&
+			   isBlankNodeIri(((Map<String,Object>) v).get("@id"));
 	}
 
 	public static boolean isBlankNodeIri(Object input) {
@@ -302,7 +337,10 @@ public class JSONLDUtils {
 			}
 		} else if (value instanceof Map) {
 			Map<String,Object> mapVal = (Map<String, Object>) value;
-			if (mapVal.containsKey("@subject") && mapVal.get("@subject") instanceof List) {
+			if (mapVal.containsKey("@value") || "@type".equals(parentProperty)) {
+				// already-expanded value
+				flattened = clone(value);
+			} else if (mapVal.get("@id") instanceof List) {
 				// graph literal/disjoint graph
 				if (parent != null) {
 					// cannot flatten embedded graph literals
@@ -310,31 +348,29 @@ public class JSONLDUtils {
 				}
 				
 				// top-level graph literal
-				for (Object key: (List<Object>)mapVal.get("@subject")) {
+				for (Object key: (List<Object>)mapVal.get("@id")) {
 					flatten(parent, parentProperty, key, subjects);
 				}
-			} else if (mapVal.containsKey("@literal") || mapVal.containsKey("@iri")) {
-				// already-expanded value
-				flattened = clone(value);
 			} else {
 				// subject
 				
 				// create of fetch existing subject
 				Object subject;
-				if (subjects.containsKey(((Map<String,Object>) mapVal.get("@subject")).get("@iri"))) {
-					subject = subjects.get(((Map<String,Object>) mapVal.get("@subject")).get("@iri"));
+				if (subjects.containsKey(mapVal.get("@id"))) {
+					subject = subjects.get(mapVal.get("@id"));
 				} else {
 					subject = new HashMap<String, Object>();
-					if (mapVal.containsKey("@subject")) {
-						subjects.put((String)((Map<String,Object>) mapVal.get("@subject")).get("@iri"), subject);
-					}
+					((Map<String,Object>) subject).put("@id", mapVal.get("@id"));
+					subjects.put((String) mapVal.get("@id"), subject);
 				}
-				flattened = subject;
+				flattened = new HashMap<String, Object>();
+				((Map<String,Object>) flattened).put("@id", 
+						((Map<String,Object>) subject).get("@id"));
 				
 				for (String key: mapVal.keySet()) {
 					Object v = mapVal.get(key);
 					
-					if (v != null) {
+					if (v != null && !"@id".equals(key)) {
 						if (((Map<String,Object>) subject).containsKey(key)) {
 							if (!(((Map<String,Object>) subject).get(key) instanceof List)) {
 								Object tmp = ((Map<String,Object>) subject).get(key);
@@ -347,7 +383,7 @@ public class JSONLDUtils {
 							((Map<String,Object>) subject).put(key, lst);
 						}					
 						
-						flatten(((Map<String,Object>) subject).get(key), null, v, subjects);
+						flatten(((Map<String,Object>) subject).get(key), key, v, subjects);
 						if (((List<Object>) ((Map<String,Object>) subject).get(key)).size() == 1) {
 							// convert subject[key] to a single object if there is only one object in the list
 							((Map<String,Object>) subject).put(key, ((List<Object>) ((Map<String,Object>) subject).get(key)).get(0));
@@ -361,19 +397,11 @@ public class JSONLDUtils {
 		}
 		
 		if (flattened != null && parent != null) {
-			// remove top-level '@subject' for subjects
-			// 'http://mypredicate': {'@subject': {'@iri': 'http://mysubject'}}
-		    // becomes
-		    // 'http://mypredicate': {'@iri': 'http://mysubject'}
-			if (flattened instanceof Map && ((Map<String,Object>) flattened).containsKey("@subject")) {
-				flattened = ((Map<String,Object>) flattened).get("@subject");
-			}
-			
 			if (parent instanceof List) {
 				boolean duplicate = false;
-				if (flattened instanceof Map && ((Map<String,Object>) flattened).containsKey("@iri")) {
+				if (flattened instanceof Map && ((Map<String,Object>) flattened).containsKey("@id")) {
 					for (Object e: (List<Object>)parent) {
-						if (e instanceof Map && ((Map<String,Object>) e).containsKey("@iri") && ((Map<String,Object>) e).get("@iri").equals(((Map<String,Object>) flattened).get("@iri"))) {
+						if (e instanceof Map && ((Map<String,Object>) e).containsKey("@id") && ((Map<String,Object>) e).get("@id").equals(((Map<String,Object>) flattened).get("@id"))) {
 							duplicate = true;
 							break;
 						}
@@ -435,59 +463,65 @@ public class JSONLDUtils {
 		int rval = 0;
 		
 		for (String p: a.keySet()) {
-			int lenA = (a.get(p) instanceof List ? ((List<Object>) a.get(p)).size() : 1);
-			int lenB = (b.get(p) instanceof List ? ((List<Object>) b.get(p)).size() : 1);
-			rval = compare(lenA, lenB);
 			
-			if (rval == 0) {
-				List<Object> objsA;
-				List<Object> objsB;
-				
-				if (a.get(p) instanceof List) {
-					objsA = (List<Object>) a.get(p);
-					objsB = (List<Object>) b.get(p);
-				} else {
-					objsA = new ArrayList<Object>();
-					objsA.add(a.get(p));
-					objsB = new ArrayList<Object>();
-					objsB.add(b.get(p));
-				}
-				
-				for (int i = 0; i < objsA.size(); i++) {
-					Object e = objsA.get(i);
-					if (!(e instanceof String || !(((Map<String,Object>) e).containsKey("@iri") && isBlankNodeIri(((Map<String,Object>) e).get("@iri"))))) {
-						objsA.remove(i);
-						--i;
-					}
-				}
-				for (int i = 0; i < objsB.size(); i++) {
-					Object e = objsB.get(i);
-					if (!(e instanceof String || !(((Map<String,Object>) e).containsKey("@iri") && isBlankNodeIri(((Map<String,Object>) e).get("@iri"))))) {
-						objsB.remove(i);
-						--i;
-					}
-				}
-				
-				rval = compare(objsA.size(), objsB.size());
-				
+			if (!p.equals("@id")) {
+				int lenA = (a.get(p) instanceof List ? ((List<Object>) a.get(p)).size() : 1);
+				int lenB = (b.get(p) instanceof List ? ((List<Object>) b.get(p)).size() : 1);
+				rval = compare(lenA, lenB);
+			
 				if (rval == 0) {
-					Collections.sort(objsA, new Comparator<Object>() {
-						public int compare(Object o1, Object o2) {
-							return compareObjects(o1, o2);
+					List<Object> objsA;
+					List<Object> objsB;
+					
+					if (a.get(p) instanceof List) {
+						objsA = (List<Object>) a.get(p);
+						objsB = (List<Object>) b.get(p);
+					} else {
+						objsA = new ArrayList<Object>();
+						objsA.add(a.get(p));
+						objsB = new ArrayList<Object>();
+						objsB.add(b.get(p));
+					}
+					
+					for (int i = 0; i < objsA.size(); i++) {
+						Object e = objsA.get(i);
+						if (!(e instanceof String || !(((Map<String,Object>) e).containsKey("@iri") && isBlankNodeIri(((Map<String,Object>) e).get("@iri"))))) {
+							objsA.remove(i);
+							--i;
 						}
-					});
-					Collections.sort(objsB, new Comparator<Object>() {
-						public int compare(Object o1, Object o2) {
-							return compareObjects(o1, o2);
+					}
+					for (int i = 0; i < objsB.size(); i++) {
+						Object e = objsB.get(i);
+						if (!(e instanceof String || !(((Map<String,Object>) e).containsKey("@iri") && isBlankNodeIri(((Map<String,Object>) e).get("@iri"))))) {
+							objsB.remove(i);
+							--i;
 						}
-					});
-					for (int i = 0; i < objsA.size() && rval == 0; ++i) {
-						rval = compareObjects(objsA.get(i), objsB.get(i));
+					}
+					
+					rval = compare(objsA.size(), objsB.size());
+					
+					if (rval == 0) {
+						Collections.sort(objsA, new Comparator<Object>() {
+							public int compare(Object o1, Object o2) {
+								return compareObjects(o1, o2);
+							}
+						});
+						Collections.sort(objsB, new Comparator<Object>() {
+							public int compare(Object o1, Object o2) {
+								return compareObjects(o1, o2);
+							}
+						});
+						for (int i = 0; i < objsA.size() && rval == 0; ++i) {
+							rval = compareObjects(objsA.get(i), objsB.get(i));
+							if (rval != 0) {
+								break;
+							}
+						}
 					}
 				}
-			}
-			if (rval != 0) {
-				break;
+				if (rval != 0) {
+					break;
+				}
 			}
 		}
 		
@@ -505,15 +539,15 @@ public class JSONLDUtils {
 		} else if (o2 instanceof String) {
 			rval = 1;
 		} else if (o1 instanceof Map){
-			rval = compareObjectKeys(o1,o2,"@literal");
+			rval = compareObjectKeys(o1,o2,"@value");
 			if (rval == 0) {
-				if (((Map) o1).containsKey("@literal")) {
-					rval = compareObjectKeys(o1,o2,"@datatype");
+				if (((Map) o1).containsKey("@value")) {
+					rval = compareObjectKeys(o1,o2,"@type");
 					if (rval == 0) {
 						rval = compareObjectKeys(o1,o2,"@language");
 					}
 				} else {
-					rval = compare(((Map<String,Object>) o1).get("@iri"), ((Map<String,Object>) o2).get("@iri"));
+					rval = compare(((Map<String,Object>) o1).get("@id"), ((Map<String,Object>) o2).get("@id"));
 				}
 			}
 			
@@ -560,40 +594,42 @@ public class JSONLDUtils {
 		
 		Boolean first = true;
 		for (String p: b.keySet()) {
-			if (first) {
-				first = false;
-			} else {
-				rval += "|";
-			}
-			
-			rval += "<" + p + ">";
-			
-			List<Object> objs = null;
-			if (b.get(p) instanceof List) {
-				objs = (List<Object>) b.get(p);
-			} else {
-				objs = new ArrayList<Object>();
-				objs.add(b.get(p));
-			}
-			
-			for (Object o: objs) {
-				if (o instanceof Map) {
-					if (((Map) o).containsKey("@iri")) { // iri
-						if (isBlankNodeIri(((Map<String,Object>) o).get("@iri"))) {
-							rval += "_:";
-						} else {
-							rval += "<" + ((Map<String,Object>) o).get("@iri") + ">";
-						}
-					} else { // literal
-						rval += "\"" + ((Map<String,Object>) o).get("@literal") + "\"";
-						if (((Map<String,Object>) o).containsKey("@datatype")) {
-							rval += "^^<" + ((Map<String,Object>) o).get("@datatype") + ">";
-						} else if (((Map<String,Object>) o).containsKey("@language")) {
-							rval += "@" + ((Map<String,Object>) o).get("@language");
-						}
-					}
+			if (!"@id".equals(p)) {
+				if (first) {
+					first = false;
 				} else {
-					rval += "\"" + o + "\"";
+					rval += "|";
+				}
+				
+				rval += "<" + p + ">";
+				
+				List<Object> objs = null;
+				if (b.get(p) instanceof List) {
+					objs = (List<Object>) b.get(p);
+				} else {
+					objs = new ArrayList<Object>();
+					objs.add(b.get(p));
+				}
+				
+				for (Object o: objs) {
+					if (o instanceof Map) {
+						if (((Map) o).containsKey("@id")) { // iri
+							if (isBlankNodeIri(((Map<String,Object>) o).get("@id"))) {
+								rval += "_:";
+							} else {
+								rval += "<" + ((Map<String,Object>) o).get("@id") + ">";
+							}
+						} else { // literal
+							rval += "\"" + ((Map<String,Object>) o).get("@value") + "\"";
+							if (((Map<String,Object>) o).containsKey("@type")) {
+								rval += "^^<" + ((Map<String,Object>) o).get("@type") + ">";
+							} else if (((Map<String,Object>) o).containsKey("@language")) {
+								rval += "@" + ((Map<String,Object>) o).get("@language");
+							}
+						}
+					} else {
+						rval += "\"" + o + "\"";
+					}
 				}
 			}
 		}

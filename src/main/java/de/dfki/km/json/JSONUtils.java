@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonLocation;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -92,6 +93,9 @@ public class JSONUtils {
 					e.printStackTrace();
 				}
 			}
+		} else {
+			throw new JsonParseException("document doesn't start with a valid json element", 
+					new JsonLocation("\"" + jsonString.substring(0, 100) + "...\"", 0, 1, 0));
 		}
 		return rval;
 	}
@@ -111,8 +115,12 @@ public class JSONUtils {
 	}
 
 	public static Object fromInputStream(InputStream content) throws IOException {
-		return fromReader(new BufferedReader(new InputStreamReader(content)));
+		return fromInputStream( content, "UTF-8" );   //no readers from inputstreams w.o. encoding!!
 	}
+	
+    public static Object fromInputStream(InputStream content,String enc) throws IOException {
+        return fromReader(new BufferedReader(new InputStreamReader(content, enc)));
+    }
 	
 	public static String toString(Object obj) throws JsonGenerationException, JsonMappingException {
 		StringWriter sw = new StringWriter();
