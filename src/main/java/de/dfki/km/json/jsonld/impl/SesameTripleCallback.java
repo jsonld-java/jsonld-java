@@ -1,11 +1,12 @@
 package de.dfki.km.json.jsonld.impl;
 
 
-import org.openrdf.model.Resource;
+import org.openrdf.model.Graph;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.model.impl.GraphImpl;
 import org.openrdf.model.impl.ValueFactoryImpl;
 
 import de.dfki.km.json.jsonld.JSONLDTripleCallback;
@@ -14,6 +15,8 @@ public class SesameTripleCallback implements JSONLDTripleCallback {
 
     private ValueFactory vf = ValueFactoryImpl.getInstance();
 
+    private Graph storageGraph = new GraphImpl();
+    
     @Override
 	public Object triple(String s, String p, String o) {
 		if (s == null || p == null || o == null) {
@@ -22,7 +25,9 @@ public class SesameTripleCallback implements JSONLDTripleCallback {
 		}
 		
 		// This method is always called with three URIs as subject predicate and object
-		return vf.createStatement(vf.createURI(s), vf.createURI(p), vf.createURI(o));
+		Statement result = vf.createStatement(vf.createURI(s), vf.createURI(p), vf.createURI(o));
+		storageGraph.add(result);
+		return result;
 	}
 
 	@Override
@@ -47,7 +52,25 @@ public class SesameTripleCallback implements JSONLDTripleCallback {
             object = vf.createLiteral(value);
 		}
 		
-        return vf.createStatement(subject, predicate, object);
+        Statement result = vf.createStatement(subject, predicate, object);
+        storageGraph.add(result);
+        return result;
 	}
+
+    /**
+     * @return the storageGraph
+     */
+    public Graph getStorageGraph()
+    {
+        return storageGraph;
+    }
+
+    /**
+     * @param storageGraph the storageGraph to set
+     */
+    public void setStorageGraph(Graph storageGraph)
+    {
+        this.storageGraph = storageGraph;
+    }
 
 }
