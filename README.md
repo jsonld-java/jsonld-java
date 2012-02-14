@@ -72,13 +72,12 @@ This is a simple function which takes an input file in rdfxml or n3 and outputs 
 
 ### initial setup
 
-    chmod +x rdf2jsonld
-    mvn -quiet compile
-    mvn -quiet dependency:build-classpath -Dmdep.outputFile=target/cp.txt
+	mvn -quiet clean package
+    chmod +x ./target/appassembler/bin/rdf2jsonld
 
 ### usage
 
-    ./rdf2jsonld <options> <input>
+    ./target/appassembler/bin/rdf2jsonld <options> <input>
         input: a filename or URL to the rdf input (in rdfxml or n3)
         options:
                 -expand : expand the jsonld output
