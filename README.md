@@ -43,15 +43,27 @@ Note that these currently fail due to the lack of an implementation of frame.
 
 ### Adding JSON-LD triples to Jena
 
-    // Create a JenaTripleCallbackObject
+    // Create a JenaTripleCallback object
     JenaTripleCallback callback = new JenaTripleCallback();
-    // Optionally add your jena model to the callback (a default model will be created if you don't
+    // Optionally add your Jena Model to the callback (a default Model will be created if you don't
     // run this).
     callback.setJenaModel(jenaModel);
     // call the triples function of the processor
     processor.triples(jsonObject, callback);
-    // If you didn't use your own jena model, get the resulting one with:
+    // If you didn't use your own Jena Model, get the resulting one with:
     Model m = callback.getJenaModel();
+
+### Adding JSON-LD triples to Sesame
+
+    // Create a SesameTripleCallback object
+    SesameTripleCallback callback = new SesameTripleCallback();
+    // Optionally add your Sesame Graph to the callback (a default Graph will be created if you don't
+    // run this).
+    callback.setStorageGraph(storageGraph);
+    // call the triples function of the processor
+    processor.triples(jsonObject, callback);
+    // If you didn't use your own Sesame graph, get the resulting one with:
+    Graph output = callback.getStorageGraph();
 
 RDF2JSONLD
 ----------
