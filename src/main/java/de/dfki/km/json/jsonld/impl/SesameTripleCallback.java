@@ -7,15 +7,22 @@ import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.GraphImpl;
-import org.openrdf.model.impl.ValueFactoryImpl;
 
 import de.dfki.km.json.jsonld.JSONLDTripleCallback;
 
 public class SesameTripleCallback implements JSONLDTripleCallback {
 
-    private ValueFactory vf = ValueFactoryImpl.getInstance();
+    private ValueFactory vf;
 
-    private Graph storageGraph = new GraphImpl();
+    private Graph storageGraph;
+    
+    public SesameTripleCallback() {
+        this(new GraphImpl());
+    }
+    
+    public SesameTripleCallback(Graph nextGraph) {
+        setStorageGraph(nextGraph);
+    }
     
     @Override
 	public Object triple(String s, String p, String o) {
@@ -71,6 +78,11 @@ public class SesameTripleCallback implements JSONLDTripleCallback {
     public void setStorageGraph(Graph storageGraph)
     {
         this.storageGraph = storageGraph;
+        
+        if(storageGraph != null)
+        {
+            vf = storageGraph.getValueFactory();
+        }
     }
 
 }
