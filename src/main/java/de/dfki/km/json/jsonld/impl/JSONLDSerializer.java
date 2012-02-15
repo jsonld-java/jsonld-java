@@ -25,7 +25,8 @@ public class JSONLDSerializer implements
 	private static final Logger LOG = LoggerFactory.getLogger( JSONLDSerializer.class ); 
 	
 	public Object fromJenaModel(Model model, Resource[] subjects) {
-
+		// TODO: this function is really broken (out of date), FIXME !!!
+		
 		List<Object> rval = new ArrayList<Object>();
 		
 		for (Resource subject: subjects) {

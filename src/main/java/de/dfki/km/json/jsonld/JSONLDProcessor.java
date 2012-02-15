@@ -6,6 +6,6 @@ public interface JSONLDProcessor {
 	public Object frame (Object input, Object frame);
 	public Object frame (Object input, Object frame, Object options);
 	public Object normalize (Object input);
-	public Object triples (Object input, JSONLDTripleCallback tripleCallback);
+	public void triples (Object input, JSONLDTripleCallback tripleCallback);
 	
 }

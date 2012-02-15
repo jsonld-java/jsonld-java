@@ -252,7 +252,7 @@ public class JSONLDProcessorImpl implements
 	 * 
 	 * @return a list of objects returned by tripleCallback
 	 */
-	public Object triples(Object input,
+	public void triples(Object input,
 			JSONLDTripleCallback tripleCallback) {
 		Object normalized = normalize(input);
 		
@@ -279,45 +279,42 @@ public class JSONLDProcessorImpl implements
 					obj = tmp;
 				}
 				for (Object o: (List<Object>)obj) {
-					Object triple = null;
 					if (o instanceof String) {
-						triple = tripleCallback.triple(s, p, (String)o, JSONLDConsts.XSD_STRING, null);
+						// type is a special case where the uri isn't expanded out into an object
+					    if (p.toString().equals( JSONLDConsts.RDF_SYNTAX_NS + "type" )) {
+					        tripleCallback.triple( s, p, o.toString() );
+					    } else {
+					        tripleCallback.triple(s, p, (String)o, JSONLDConsts.XSD_STRING, null);
+					    }
 					} else if (o instanceof Map) {
 						if (((Map) o).containsKey("@value")) {
 							if (((Map) o).containsKey("@type")) {
 								String datatypeURI = (String)((Map) o).get("@type");
 								String value = (String) ((Map) o).get("@value");
-								triple = tripleCallback.triple(s, p, value, datatypeURI, null);
+								tripleCallback.triple(s, p, value, datatypeURI, null);
 							} else if (((Map) o).containsKey("@language")){
-								triple = tripleCallback.triple(s, p,
+								tripleCallback.triple(s, p,
 										(String) ((Map) o).get("@value"),
 										JSONLDConsts.XSD_STRING,
 										(String) ((Map) o).get("@language")
 										);
 							} else {
-								triple = tripleCallback.triple(s, p, 
+								tripleCallback.triple(s, p, 
 										(String) ((Map) o).get("@value"),
 										JSONLDConsts.XSD_STRING,
 										null
 										);
 							}
 						} else if (((Map) o).containsKey("@id")) {
-							triple = tripleCallback.triple(s, p, (String)((Map) o).get("@id"));
+							tripleCallback.triple(s, p, (String)((Map) o).get("@id"));
 						} else {
 							// TODO: have i missed anything?
-							return null;
+							return;
 						}
-					}
-					boolean quit = (triple == null);
-					if (quit) {
-						return rval;
-					} else {
-						rval.add(triple);
 					}
 				}
 			}
 		}
-		return rval;
 	}
 	
 	public void nameBlankNodes(Object input) {

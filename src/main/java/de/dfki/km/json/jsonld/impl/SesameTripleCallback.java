@@ -25,25 +25,24 @@ public class SesameTripleCallback implements JSONLDTripleCallback {
     }
     
     @Override
-	public Object triple(String s, String p, String o) {
+	public void triple(String s, String p, String o) {
 		if (s == null || p == null || o == null) {
 			// TODO: i don't know what to do here!!!!
-			return null;
+			return;
 		}
 		
 		// This method is always called with three URIs as subject predicate and object
 		Statement result = vf.createStatement(vf.createURI(s), vf.createURI(p), vf.createURI(o));
 		storageGraph.add(result);
-		return result;
 	}
 
 	@Override
-	public Object triple(String s, String p, String value, String datatype,
+	public void triple(String s, String p, String value, String datatype,
 			String language) {
 		
         if (s == null || p == null || value == null) {
             // TODO: i don't know what to do here!!!!
-            return null;
+            return;
         }
         
 	    URI subject = vf.createURI(s);
@@ -61,7 +60,6 @@ public class SesameTripleCallback implements JSONLDTripleCallback {
 		
         Statement result = vf.createStatement(subject, predicate, object);
         storageGraph.add(result);
-        return result;
 	}
 
     /**

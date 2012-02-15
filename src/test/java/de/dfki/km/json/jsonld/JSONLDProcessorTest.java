@@ -36,34 +36,29 @@ public class JSONLDProcessorTest {
 
 	private class TestTripleCallback implements JSONLDTripleCallback {
 	
-		public Object triple(Object s, Object p, Object o) {
-			String rval;
-			if (o instanceof String) {
-				// literal
-				rval = "<" + s + "> <" + p + "> \"" + o + "\" .";
-			} else if (o instanceof Map && ((Map<String,Object>) o).containsKey("@id")) {
-				// object is an iri
-				rval = "<" + s + "> <" + p + "> <" + ((Map<String,Object>) o).get("@id") + "> .";
-			} else {
-				// object is a literal
-				rval = "<" + s + "> <" + p + "> \"" + ((Map<String,Object>) o).get("@value") + "\"";
-				rval += "^^<" + ((Map<String,Object>) o).get("@type");
-				rval += "> .";
-			}
-			return rval;
+		List<String> results = new ArrayList<String>();
+		
+		@Override
+		public void triple(String s, String p, String o) {
+			results.add("<" + s + "> <" + p + "> <" + o + "> .");
 		}
 
 		@Override
-		public Object triple(String s, String p, String o) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public Object triple(String s, String p, String value, String datatype,
+		public void triple(String s, String p, String value, String datatype,
 				String language) {
-			// TODO Auto-generated method stub
-			return null;
+			if (language != null) {
+				results.add("<" + s + "> <" + p + "> \"" + value + "\"@" + language + " .");
+			} else {
+				if (datatype.equals(JSONLDConsts.XSD_STRING)) {
+					results.add("<" + s + "> <" + p + "> \"" + value + "\" .");
+				} else {
+					results.add("<" + s + "> <" + p + "> \"" + value + "\"^^<" + datatype + "> .");
+				}
+			}
+		}
+
+		public List<String> getResults() {
+			return results;
 		}
 	}
 	
@@ -202,8 +197,8 @@ public class JSONLDProcessorTest {
 			// TODO: many of the tests here fail simply because of an ordering issue
 			
 			TestTripleCallback ttc = new TestTripleCallback();
-			List<String> results = 
-					(List<String>) new JSONLDProcessorImpl().triples(inputJson, ttc);
+			new JSONLDProcessorImpl().triples(inputJson, ttc);
+			List<String> results = ttc.getResults(); 
 			Collections.sort(results);
 			result = join(results, "\n");
 		} else {

@@ -23,10 +23,10 @@ public class JenaTripleCallback implements JSONLDTripleCallback {
 		return jenaModel;
 	}
 
-	public Object triple(String s, String p, String o) {
+	public void triple(String s, String p, String o) {
 		if (s == null || p == null || o == null) {
 			// TODO: i don't know what to do here!!!!
-			return null;
+			return;
 		}
 		
 		Resource sR = jenaModel.getResource( s);
@@ -45,11 +45,10 @@ public class JenaTripleCallback implements JSONLDTripleCallback {
 		
 		Statement statement = jenaModel.createStatement(sR, pR, oR);
 		jenaModel.add(statement);
-		return statement;
 	}
 
 	@Override
-	public Object triple(String s, String p, String value, String datatype,
+	public void triple(String s, String p, String value, String datatype,
 			String language) {
 		// TODO Auto-generated method stub
 		
@@ -71,7 +70,6 @@ public class JenaTripleCallback implements JSONLDTripleCallback {
 		
 		Statement statement = jenaModel.createStatement(sR, pR, oR);
 		jenaModel.add(statement);
-		return statement;
 	}
 
 }

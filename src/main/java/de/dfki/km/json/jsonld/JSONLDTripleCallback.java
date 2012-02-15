@@ -9,7 +9,7 @@ public interface JSONLDTripleCallback {
 	 * @param o The Object URI
 	 * @return The generated triple, or null to force triple generation to stop
 	 */
-	Object triple(String s, String p, String o);
+	void triple(String s, String p, String o);
 	
 	/**
 	 * Constructs a triple with a Literal object, which may or may not contain 
@@ -22,5 +22,5 @@ public interface JSONLDTripleCallback {
 	 * @param language The literal language (NOTE: may be null if not specified!)
 	 * @return The generated triple, or null to force triple generation to stop
 	 */
-	Object triple(String s, String p, String value, String datatype, String language);
+	void triple(String s, String p, String value, String datatype, String language);
 }
