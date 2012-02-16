@@ -97,7 +97,7 @@ public class JSONLDProcessorTest {
 				List<String> testType = (List<String>) test.get("@type");
 				if (testType.contains("jld:NormalizeTest") ||
 					testType.contains("jld:ExpandTest") ||
-					//testType.contains("jld:CompactTest") ||
+					testType.contains("jld:CompactTest") ||
 					//testType.contains("jld:FrameTest") ||
 					testType.contains("jld:TriplesTest")
 					) {
@@ -140,6 +140,7 @@ public class JSONLDProcessorTest {
 	
 	@Test
 	public void runTest() throws URISyntaxException, IOException {
+		System.out.println("running test: " + test.get("input"));
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 				
 		InputStream inputStream = 

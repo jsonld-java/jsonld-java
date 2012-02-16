@@ -13,7 +13,7 @@ import com.hp.hpl.jena.util.FileManager;
 
 import de.dfki.km.json.JSONUtils;
 import de.dfki.km.json.jsonld.impl.JSONLDProcessorImpl;
-import de.dfki.km.json.jsonld.impl.JSONLDSerializer;
+import de.dfki.km.json.jsonld.impl.JenaJSONLDSerializer;
 
 public class RDF2JSONLD {
 
@@ -52,10 +52,11 @@ public class RDF2JSONLD {
 				subjects.add(subjitr.next());
 			}
 			
-			JSONLDSerializer serializer = new JSONLDSerializer();
+			JenaJSONLDSerializer serializer = new JenaJSONLDSerializer();
 			Resource[] r = new Resource[subjects.size()];
 			subjects.toArray(r);
-			Object output = serializer.fromJenaModel(model, r);
+			serializer.importModel(model);
+			Object output = serializer.asObject();
 			
 			JSONLDProcessorImpl processor = new JSONLDProcessorImpl();
 			

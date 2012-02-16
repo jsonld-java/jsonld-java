@@ -65,6 +65,29 @@ Note that these currently fail due to the lack of an implementation of frame.
     // If you didn't use your own Sesame graph, get the resulting one with:
     Graph output = callback.getStorageGraph();
 
+### Serializing a Jena Model to JSON-LD
+
+    // Create an instance of the Jena serializer
+    JenaJSONLDSerializer serializer = new JenaJSONLDSerializer();
+    // import the Jena Model
+    serializer.importModel(model);
+    // grab the resulting JSON-LD map
+    Map<String,Object> jsonld = serializer.asObject();
+
+### Serializing to JSON-LD from other sources
+
+    // Create an instance of the serializer
+    JSONLDSerializer serializer = new JSONLDSerializer();
+    // Optionally Add and extra prefix->uri mappinds you want (e.g. the following line)
+    serializer.setPrefix("http://xmlns.com/foaf/0.1/", "foaf");
+    // for each triple you have where the object is a literal
+    // (if datatypeURI is null, a plain literal will be assumed and language may be null or an empty string)
+    serializer.triple(subjectURI, perdicateURI, value, datatypeURI, language);
+    // for each triple you have where the object is an URI
+    serializer.triple(subjectURI, predicateURI, objectURI);
+    // grab the resulting JSON-LD map
+    Map<String,Object> jsonld = serializer.asObject();
+
 RDF2JSONLD
 ----------
 
@@ -86,12 +109,11 @@ This is a simple function which takes an input file in rdfxml or n3 and outputs 
 NOTES
 =====
 
-*   JSONLDTripleCallback copies the simple (s,p,o) inputs used by jsonld.js and PyLD rather than the (s,p,type,o,datatype,language) inputs in the specification
 
 TODO
 ====
 
 *   Make sure Jena Implementation is correct (i.e. write some real tests)
-*   Implement compact and frame.
+*   Tests for the serializations
+*   Implement frame.
 *   As the code is almost a direct translation from the javascript and python implementation, there is probably a lot of optimization work to do.
-*   Look into more standard ways of instantiating a default implementation of an interface (i.e. I'm not completely happy with the package structure currently, and i'm not so happy with having to instantiate d.d.k.j.jsonld.impl.JSONLDProcessor, it just looks messy).
