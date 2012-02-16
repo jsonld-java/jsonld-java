@@ -10,8 +10,16 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.management.RuntimeErrorException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.hp.hpl.jena.assembler.Assembler;
+import com.hp.hpl.jena.assembler.Mode;
+import com.hp.hpl.jena.assembler.exceptions.NoImplementationException;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 import de.dfki.km.json.jsonld.JSONLDConsts;
 import de.dfki.km.json.jsonld.JSONLDTripleCallback;
@@ -190,19 +198,211 @@ public class JSONLDProcessorImpl implements
 		return rval;
 	}
 
-	public Object compact(Object input, Object context) {
-		// TODO Auto-generated method stub
-		return null;
+	// TODO: note that in the spec, input is the first input, but in the ref impl, context is.
+	// using context here first because it matches everything else
+	public Object compact(Object context, Object input) {
+		Object expanded = expand(context, null, input);
+		// TODO: there is no reason that ctx shouldn't be a map
+		return compact((Map<String, Object>) context, null, expanded);
+	}
+	
+	/*
+	 * TODO: this throws runtime exception. need to look at doing something more 
+	 * sane.
+	 */
+	public Object compact(Map<String, Object> ctx, Object property, Object value) {
+		
+		/* TODO: I tried to implement this function based off the spec, but got confused
+		   at the value compaction algorithm (I couldn't figure out which of the existing
+		   functions that I had converted directly from the PyLD library matched value
+		   compaction, and the PyLD impl of compact doesn't seem to follow the spec. 
+		   It could simply be that if I had built everything based on the spec's algorithms
+		   this would be fine. but for now it's easier to just copy the function from the
+		   python implementation again.
+		
+		else if (value instanceof List) {
+			rval = new ArrayList<Object>();
+			for (Object o: (List<Object>)value) {
+				((List) rval).add(compact(ctx, property, o));
+			}
+		} else if (value instanceof Map) {
+			for (String key: ((Map<String,Object>)value).keySet()) {
+				Object val = ((Map) value).get(key);
+				if ("@id".equals(key) || "@type".equals(key)) {
+					if (key instanceof String) {
+						val = JSONLDUtils.compactIRI(ctx, (String)val);
+					} else {
+						val = compact(ctx, property, val);
+					}
+				} else {
+					if (!keywords.containsKey(key)) {
+						property = key;
+						val = JSONLDUtils.compactIRI(ctx, (String)val);
+					} else if (value instanceof Map) {
+						if (((Map) value).containsKey("@id") || ((Map) value).containsKey("@value")) {
+							// TODO: value compaction algorithm?
+						}
+					}
+				}
+			}
+		}
+		return rval;
+		*/
+		
+		
+		Object rval = null;
+		Map<String, String> keywords = JSONLDUtils.getKeywords(ctx);
+		
+		
+		if (value == null) {
+			rval = null;
+			// TODO: used ctx stuff may actually be handy here
+			JSONLDUtils.getCoercionType(ctx, (String) property);
+		} else if (value instanceof List) {
+			// recursively add compacted values to array
+			rval = new ArrayList<Object>();
+			for (Object o: (List<Object>)value) {
+				((List) rval).add(compact(ctx, property, o));
+			}
+		} else if (value instanceof Map && ((Map) value).containsKey("@id") && ((Map) value).get("@id") instanceof List) {
+			// graph literal/disjoint graph
+			rval = new HashMap<String, Object>();
+			((Map<String, Object>) rval).put(
+					keywords.get("@id"), 
+					compact(ctx, property, ((Map) value).get("@id")));
+		} else if (JSONLDUtils.isSubject(value)) { // recurse if value is a subject
+			// recursively handle sub-properties that aren't a sub-context
+			rval = new HashMap<String, Object>();
+			for (String key: ((Map<String,Object>) value).keySet()) {
+				if (!"@context".equals(((Map<String, Object>) value).get(key))) {
+					// set object to compacted property, only overwrite existing
+                    // properties if the property actually compacted
+					String p = JSONLDUtils.compactIRI(ctx, key);
+					if (!(key.equals(p)) || !((Map<String,Object>) rval).containsKey(p)) {
+						((Map<String, Object>) rval).put(p, compact(ctx, key, ((Map<String, Object>) value).get(key)));
+					}
+				}
+			}
+		} else {
+			// get coerce type
+			String coerce = JSONLDUtils.getCoercionType(ctx, (String)property);
+			
+			// get type from value, to ensure coercion is valid
+			String type = null;
+			if (value instanceof Map) {
+				// type coercion can only occur if language is not specified
+				if (!((Map) value).containsKey("@language")) {
+					// type must match coerce type if specified
+					if (((Map) value).containsKey("@type")) {
+						type = (String) ((Map<String, Object>) value).get("@type");
+					} else if (((Map) value).containsKey("@id")) { // type is ID (IRI)
+						type = "@id";
+					} else { // can be coerced to any type
+						type = coerce;
+					}
+				}
+			} else if (value instanceof String) {
+				// type can be coerced to anything
+				type = coerce;
+			}
+			
+			// types that can be auto-coerced from a JSON-builtin
+			if (coerce == null && 
+					(JSONLDConsts.XSD_BOOLEAN.equals(type) ||
+					 JSONLDConsts.XSD_INTEGER.equals(type) ||
+					 JSONLDConsts.XSD_DOUBLE.equals(type))) {
+				coerce = type;
+			}
+			
+			// do reverse type-coercion
+			if (coerce != null) {
+				// type is only None if a language was specified, which is an
+                // error if type coercion is specified
+				if (type == null) {
+					throw new RuntimeException("Cannot coerce type when a language is " +
+	                        "specified. The language information would be lost.");
+				} else if (!type.equals(coerce)) {
+					// if the value type does not match the coerce type, it is an error
+					throw new RuntimeException("Cannot coerce type because the type does not match.");
+				} else {
+					// do reverse type-coercion
+					if (value instanceof Map) {
+						if (((Map) value).containsKey("@id")) {
+							rval = ((Map) value).get("@id");
+						} else if (((Map) value).containsKey("@value")) {
+							rval = ((Map) value).get("@value");
+						}
+					} else {
+						rval = value;
+					}
+					
+					// do basic JSON types conversion
+					if (JSONLDConsts.XSD_BOOLEAN.equals(coerce)) {
+						// TODO: this is a bit mad (and probably not exhaustive)
+						if (rval instanceof String) {
+							rval = "true".equals(rval); 
+						} else if (rval instanceof Integer) {
+							rval = ((Integer)rval) != 0;
+						} else if (rval instanceof Double) {
+							rval = ((Double)rval) != 0.0;
+						} else if (rval instanceof Long) {
+							rval = ((Long)rval) != 0L;
+						} else if (rval instanceof Float) {
+							rval = ((Float)rval) != 0.0f;
+						} else if (rval instanceof Short) {
+							rval = ((Short)rval) != 0;
+						} else if (!(rval instanceof Boolean)) {
+							rval = false;
+						}
+					} else if (JSONLDConsts.XSD_DOUBLE.equals(coerce)) {
+						if (rval instanceof String) {
+							rval = Double.parseDouble((String)rval);
+						} else if (rval instanceof Number) {
+							rval = ((Number)rval).doubleValue();
+						}
+					} else if (JSONLDConsts.XSD_INTEGER.equals(coerce)) {
+						if (rval instanceof String) {
+							rval = Integer.parseInt((String)rval);
+						} else if (rval instanceof Number) {
+							rval = ((Number)rval).intValue();
+						}						
+					}
+				}
+			} else if (value instanceof Map) {
+				// no type-coercion, just change keywords/copy value
+				rval = new HashMap<String, Object>();
+				for (String key: ((Map<String,Object>) value).keySet()) {
+					((Map<String, Object>) rval).put(keywords.get(key), ((Map) value).get(key));
+				}
+			} else {
+				try {
+					rval = JSONLDUtils.clone(value);
+				} catch (CloneNotSupportedException e) {
+					// this should never happen
+					rval = null;
+				}
+			}
+			
+			if ("@id".equals(type)) {
+				// compact IRI
+				if (rval instanceof Map) {
+					((Map) rval).put(keywords.get("@id"),
+							JSONLDUtils.compactIRI(ctx, 
+									(String) ((Map<String, Object>) rval).get(keywords.get("@id"))));
+				} else {
+					rval = JSONLDUtils.compactIRI(ctx, (String) rval);
+				}
+			}
+		}
+		return rval;
 	}
 
 	public Object frame(Object input, Object frame) {
-		// TODO Auto-generated method stub
 		return frame(input, frame, null);
 	}
 
 	public Object frame(Object input, Object frame,	Object options) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("Not Implemented");
 	}
 
 	public Object normalize(Object input) {

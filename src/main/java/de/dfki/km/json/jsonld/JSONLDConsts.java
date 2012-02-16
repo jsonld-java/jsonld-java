@@ -12,5 +12,7 @@ public class JSONLDConsts {
 	public static final String XSD_INTEGER = XSD_NS + "integer";
 	public static final String XSD_ANYURI = XSD_NS + "anyURI";
 	public static final String XSD_STRING = XSD_NS + "string";
+	
+	public static final String RDF_TYPE = RDF_SYNTAX_NS + "type";
 
 }
