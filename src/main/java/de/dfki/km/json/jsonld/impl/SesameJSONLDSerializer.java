@@ -20,24 +20,28 @@ public class SesameJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSeriali
         Iterator<Statement> statements = model.match(null, null, null, contexts);
         while(statements.hasNext())
         {
-            Statement statement = statements.next();
-            Resource subject = statement.getSubject();
-            URI predicate = statement.getPredicate();
-            Value object = statement.getObject();
+            handleStatement(statements.next());
+        }
+    }
+    
+    public void handleStatement(Statement nextStatement)
+    {
+        Resource subject = nextStatement.getSubject();
+        URI predicate = nextStatement.getPredicate();
+        Value object = nextStatement.getObject();
+        
+        if(object instanceof Literal)
+        {
+            Literal literal = (Literal)object;
+            String value = literal.getLabel();
+            URI datatypeURI = literal.getDatatype();
+            String language = literal.getLanguage();
             
-            if(object instanceof Literal)
-            {
-                Literal literal = (Literal)object;
-                String value = literal.getLabel();
-                URI datatypeURI = literal.getDatatype();
-                String language = literal.getLanguage();
-                
-                triple(subject.stringValue(), predicate.stringValue(), value, datatypeURI.stringValue(), language);
-            }
-            else
-            {
-                triple(subject.stringValue(), predicate.stringValue(), object.stringValue());
-            }
+            triple(subject.stringValue(), predicate.stringValue(), value, datatypeURI.stringValue(), language);
+        }
+        else
+        {
+            triple(subject.stringValue(), predicate.stringValue(), object.stringValue());
         }
     }
     
