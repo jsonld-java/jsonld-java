@@ -98,8 +98,9 @@ public class JSONLDProcessorTest {
 				if (testType.contains("jld:NormalizeTest") ||
 					testType.contains("jld:ExpandTest") ||
 					testType.contains("jld:CompactTest") ||
-					//testType.contains("jld:FrameTest") ||
+					// testType.contains("jld:FrameTest") ||
 					testType.contains("jld:TriplesTest")
+					//|| testType.contains("jld:RDFTest")
 					) {
 					System.out.println("Adding test: " + test.get("name"));
 					rdata.add(new Object[] { manifest.get("name"), test });
@@ -147,32 +148,46 @@ public class JSONLDProcessorTest {
 				cl.getResourceAsStream(TEST_DIR + "/" + test.get("input"));
 		assertNotNull("unable to find input file: " + test.get("input"), inputStream);
 		
-		InputStream expectStream = 
-				cl.getResourceAsStream(TEST_DIR + "/" + test.get("expect"));
-		assertNotNull("unable to find expect file: " + test.get("expect"), expectStream);
-		
 		Object inputJson = JSONUtils.fromInputStream(inputStream);
-		Object expect;
-		String expectType = (String) test.get("expect");
-		expectType = expectType.substring(expectType.lastIndexOf(".")+1);
-		if (expectType.equals("jsonld")) {
-			expect = JSONUtils.fromInputStream(expectStream);
-		} else if (expectType.equals("nt")) {
-			List<String> expectLines = new ArrayList<String>();
-			BufferedReader buf = new BufferedReader(new InputStreamReader(expectStream));
-			String line;
-			while ((line = buf.readLine()) != null) {
-				line = line.trim();
-				if (line.length() == 0 || line.charAt(0) == '#') {
-					continue;
+		Object expect = null;
+		String sparql = null;
+		String expectFile = (String) test.get("expect");
+		String sparqlFile = (String) test.get("sparql");
+		if (expectFile != null) {
+			InputStream expectStream = 
+					cl.getResourceAsStream(TEST_DIR + "/" + test.get("expect"));
+			assertNotNull("unable to find expect file: " + test.get("expect"), expectStream);
+			
+			String expectType = expectFile.substring(expectFile.lastIndexOf(".")+1);
+			if (expectType.equals("jsonld")) {
+				expect = JSONUtils.fromInputStream(expectStream);
+			} else if (expectType.equals("nt")) {
+				List<String> expectLines = new ArrayList<String>();
+				BufferedReader buf = new BufferedReader(new InputStreamReader(expectStream));
+				String line;
+				while ((line = buf.readLine()) != null) {
+					line = line.trim();
+					if (line.length() == 0 || line.charAt(0) == '#') {
+						continue;
+					}
+					expectLines.add(line);
 				}
-				expectLines.add(line);
+				Collections.sort(expectLines);
+				expect = join(expectLines, "\n");
+			} else {
+				expect = "";
+				assertFalse("Unknown expect type: " + expectType, true);
 			}
-			Collections.sort(expectLines);
-			expect = join(expectLines, "\n");
+		} else if (sparqlFile != null) {
+			InputStream sparqlStream = 
+					cl.getResourceAsStream(TEST_DIR + "/" + sparqlFile);
+			assertNotNull("unable to find expect file: " + sparqlFile, sparqlStream);
+			BufferedReader buf = new BufferedReader(new InputStreamReader(sparqlStream));
+			String buffer = null;
+			while ((buffer = buf.readLine()) != null)
+			sparql += buffer + "\n"; 
 		} else {
-			expect = "";
-			assertFalse("Unknown expect type: " + expectType, true);
+			assertFalse("Nothing to expect from this test, thus nothing to test if it works", true);
 		}
 		
 		Object result = null;
@@ -202,6 +217,9 @@ public class JSONLDProcessorTest {
 			List<String> results = ttc.getResults(); 
 			Collections.sort(results);
 			result = join(results, "\n");
+		} else if (testType.contains("jld:RDFTest")) {
+			// TODO: implement this
+			// sparql query is stored in String sparql
 		} else {
 			assertFalse("Unknown test type", true);
 		}

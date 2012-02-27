@@ -12,6 +12,8 @@ import java.util.TreeMap;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import de.dfki.km.json.JSONUtils;
+
 public class JSONLDUtils {
 	
 	public static class NameGenerator {
@@ -280,34 +282,6 @@ public class JSONLDUtils {
 		}
 		return rval;
 	}
-	
-	public static void collectSubjects(Object input, Map<String,Object> subjects, List<Map<String, Object>> bnodes) {
-		if (input == null) {
-			return;
-		} else if (input instanceof List) {
-			for (Object o: (List<Object>)input) {
-				collectSubjects(o, subjects, bnodes);
-			}
-		} else if (input instanceof Map) {
-			if (((Map<String,Object>) input).containsKey("@id")) {
-				Object id = ((Map<String,Object>) input).get("@id");
-				if (id instanceof List) {
-					// graph literal
-					collectSubjects(id, subjects, bnodes);
-				} else if (isSubject(input)) {
-					// named subject
-					subjects.put((String)id, input);
-				}
-				
-			} else if (isBlankNode(input)) {
-				bnodes.add((Map<String, Object>) input);
-			}
-			
-			for (String key: ((Map<String,Object>) input).keySet()) {
-				collectSubjects(((Map<String,Object>) input).get(key), subjects, bnodes);
-			}
-		}
-	}
 
 	public static boolean isBlankNode(Object v) {
 		return isSubject(v) &&
@@ -325,97 +299,6 @@ public class JSONLDUtils {
 		return input instanceof String && ((String) input).startsWith("_:");
 	}
 	
-	public static void flatten(Object parent, String parentProperty, Object value, Map<String,Object> subjects) throws Exception {
-		
-		Object flattened = null;
-		
-		if (value == null) {
-			// drop null values
-		} else if (value instanceof List) {
-			for (Object v: (List<Object>)value) {
-				flatten(parent, parentProperty, v, subjects);
-			}
-		} else if (value instanceof Map) {
-			Map<String,Object> mapVal = (Map<String, Object>) value;
-			if (mapVal.containsKey("@value") || "@type".equals(parentProperty)) {
-				// already-expanded value
-				flattened = clone(value);
-			} else if (mapVal.get("@id") instanceof List) {
-				// graph literal/disjoint graph
-				if (parent != null) {
-					// cannot flatten embedded graph literals
-					throw new Exception("Embedded graph literals cannot be flattened");
-				}
-				
-				// top-level graph literal
-				for (Object key: (List<Object>)mapVal.get("@id")) {
-					flatten(parent, parentProperty, key, subjects);
-				}
-			} else {
-				// subject
-				
-				// create of fetch existing subject
-				Object subject;
-				if (subjects.containsKey(mapVal.get("@id"))) {
-					subject = subjects.get(mapVal.get("@id"));
-				} else {
-					subject = new HashMap<String, Object>();
-					((Map<String,Object>) subject).put("@id", mapVal.get("@id"));
-					subjects.put((String) mapVal.get("@id"), subject);
-				}
-				flattened = new HashMap<String, Object>();
-				((Map<String,Object>) flattened).put("@id", 
-						((Map<String,Object>) subject).get("@id"));
-				
-				for (String key: mapVal.keySet()) {
-					Object v = mapVal.get(key);
-					
-					if (v != null && !"@id".equals(key)) {
-						if (((Map<String,Object>) subject).containsKey(key)) {
-							if (!(((Map<String,Object>) subject).get(key) instanceof List)) {
-								Object tmp = ((Map<String,Object>) subject).get(key);
-								List<Object> lst = new ArrayList<Object>();
-								lst.add(tmp);
-								((Map<String,Object>) subject).put(key, lst);
-							}
-						} else {
-							List<Object> lst = new ArrayList<Object>();
-							((Map<String,Object>) subject).put(key, lst);
-						}					
-						
-						flatten(((Map<String,Object>) subject).get(key), key, v, subjects);
-						if (((List<Object>) ((Map<String,Object>) subject).get(key)).size() == 1) {
-							// convert subject[key] to a single object if there is only one object in the list
-							((Map<String,Object>) subject).put(key, ((List<Object>) ((Map<String,Object>) subject).get(key)).get(0));
-						}
-					}
-				}
-			}
-		} else {
-			// string value
-			flattened = value;
-		}
-		
-		if (flattened != null && parent != null) {
-			if (parent instanceof List) {
-				boolean duplicate = false;
-				if (flattened instanceof Map && ((Map<String,Object>) flattened).containsKey("@id")) {
-					for (Object e: (List<Object>)parent) {
-						if (e instanceof Map && ((Map<String,Object>) e).containsKey("@id") && ((Map<String,Object>) e).get("@id").equals(((Map<String,Object>) flattened).get("@id"))) {
-							duplicate = true;
-							break;
-						}
-					}
-				}
-				if (!duplicate) {
-					((List<Object>) parent).add(flattened);
-				}
-			} else {
-				((Map<String,Object>) parent).put(parentProperty, flattened);
-			}
-		}
-	}
-
 	public static Object clone(Object value) throws CloneNotSupportedException {
 		Object rval = null;
 		if (value instanceof Cloneable) {

@@ -37,6 +37,15 @@ public class JSONLDSerializer {
 		_context.put("xsd", JSONLDConsts.XSD_NS);
 	}
 	
+	// some helper functions for extended classes
+	protected Map<String,Object> getSubject(String subjURI) {
+		return _subjects.get(subjURI);
+	}
+	
+	protected void setSubject(String subjURI, Map<String,Object> subj) {
+		_subjects.put(subjURI, subj);
+	}
+	
 	/**
 	 * internal function to avoid repetition of code
 	 * 
