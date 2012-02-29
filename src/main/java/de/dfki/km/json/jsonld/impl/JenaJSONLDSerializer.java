@@ -28,7 +28,7 @@ public class JenaJSONLDSerializer extends
 	public String getID(Resource r) {
 		String rval = null;
 		if (r.isAnon()) {
-			rval = r.getLocalName();
+			rval = r.getId().toString();
 			if (!bns.containsKey(rval)) {
 				bns.put(rval, ng.next());
 			}
