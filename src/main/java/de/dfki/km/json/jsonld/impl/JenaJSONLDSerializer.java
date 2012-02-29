@@ -15,12 +15,32 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
+import de.dfki.km.json.jsonld.JSONLDUtils;
+
 public class JenaJSONLDSerializer extends
 		de.dfki.km.json.jsonld.JSONLDSerializer {
 
 	private static final Logger LOG = LoggerFactory.getLogger( JenaJSONLDSerializer.class ); 
+
+	JSONLDUtils.NameGenerator ng = new JSONLDUtils.NameGenerator("bn");
+	Map<String,String> bns = new HashMap<String, String>();
+	
+	public String getID(Resource r) {
+		String rval = null;
+		if (r.isAnon()) {
+			rval = r.getLocalName();
+			if (!bns.containsKey(rval)) {
+				bns.put(rval, ng.next());
+			}
+			rval = bns.get(rval);
+		} else {
+			rval = r.getURI();
+		}
+		return rval;
+	}
 	
 	public void importModel(Model model) {
+
 		
 		// add the prefixes to the context
 		Map<String, String> nsPrefixMap = model.getNsPrefixMap();
@@ -33,6 +53,7 @@ public class JenaJSONLDSerializer extends
 		while (subjects.hasNext()) {
 									
 			Resource subject = subjects.next();
+			String subj = getID(subject);
 			
 			StmtIterator statements = model.listStatements(subject, (Property)null, (RDFNode)null);
 			while (statements.hasNext()) {
@@ -46,10 +67,12 @@ public class JenaJSONLDSerializer extends
 					String datatypeURI = literal.getDatatypeURI();
 					String language = literal.getLanguage();
 					
-					triple(subject.getURI(), predicate.getURI(), value, datatypeURI, language);
+					triple(subj, predicate.getURI(), value, datatypeURI, language);
 				} else {
 					Resource resource = object.asResource();
-					triple(subject.getURI(), predicate.getURI(), resource.getURI());
+					String res = getID(resource);
+					
+					triple(subj, predicate.getURI(), res);
 				}
 			}
 

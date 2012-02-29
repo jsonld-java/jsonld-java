@@ -43,8 +43,6 @@ public class JSONLDProcessorImpl implements
 		
 	private Map<String,Object> edges;
 	private Map<String,Object> subjects;
-	private Map<String, Object> renamed;
-	private Map<String, Object> mappings;
 	private Map<String, Object> serializations;
 	private NameGenerator ngc14n; 
 	
@@ -654,10 +652,7 @@ public class JSONLDProcessorImpl implements
 	
 	public void canonicalizeBlankNodes(List<Map<String,Object>> input) {
 		
-		this.renamed = new HashMap<String, Object>();
-		this.mappings = new HashMap<String, Object>();
 		this.serializations = new HashMap<String, Object>();
-		
 		this.edges = new HashMap<String, Object>();
 		edges.put("refs", new HashMap<String,Object>());
 		edges.put("props", new HashMap<String,Object>());

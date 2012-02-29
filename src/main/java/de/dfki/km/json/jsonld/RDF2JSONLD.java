@@ -17,6 +17,8 @@ import de.dfki.km.json.jsonld.impl.JenaJSONLDSerializer;
 
 public class RDF2JSONLD {
 
+	
+	
 	/**
 	 * @param args
 	 */
@@ -45,16 +47,7 @@ public class RDF2JSONLD {
 			}
 			
 			Model model = FileManager.get().loadModel(input);
-			List<Resource> subjects = new ArrayList<Resource>();
-			
-			ResIterator subjitr = model.listSubjects();
-			while (subjitr.hasNext()) {
-				subjects.add(subjitr.next());
-			}
-			
 			JenaJSONLDSerializer serializer = new JenaJSONLDSerializer();
-			Resource[] r = new Resource[subjects.size()];
-			subjects.toArray(r);
 			serializer.importModel(model);
 			Object output = serializer.asObject();
 			

@@ -164,7 +164,8 @@ public class JSONLDSerializer {
 		// then add them to a subjects list
 		List<Object> subjects = new ArrayList<Object>();
 		for (Map<String,Object> subj: _subjects.values()) {
-			subjects.add(p.compact(_context, subj));
+			subj = (Map<String, Object>) p.compact(_context, subj);
+			subjects.add(subj);
 		}
 		
 		if (subjects.size() > 1) {
