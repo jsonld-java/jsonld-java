@@ -16,12 +16,11 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-
 /**
  * A bunch of functions to make loading JSON easy
  * 
  * @author tristan
- *
+ * 
  */
 public class JSONUtils {
     public static Object fromString(String jsonString) throws JsonParseException, JsonMappingException {
@@ -33,9 +32,9 @@ public class JSONUtils {
             } catch (IOException e) {
                 // TODO: what?
                 if (e instanceof JsonParseException) {
-                    throw (JsonParseException)e;
+                    throw (JsonParseException) e;
                 } else if (e instanceof JsonMappingException) {
-                    throw (JsonMappingException)e;
+                    throw (JsonMappingException) e;
                 } else {
                     // TODO: Auto-generated catch block
                     e.printStackTrace();
@@ -46,9 +45,9 @@ public class JSONUtils {
                 rval = objectMapper.readValue(jsonString, Map.class);
             } catch (IOException e) {
                 if (e instanceof JsonParseException) {
-                    throw (JsonParseException)e;
+                    throw (JsonParseException) e;
                 } else if (e instanceof JsonMappingException) {
-                    throw (JsonMappingException)e;
+                    throw (JsonMappingException) e;
                 } else {
                     // TODO: Auto-generated catch block
                     e.printStackTrace();
@@ -59,22 +58,22 @@ public class JSONUtils {
                 rval = objectMapper.readValue(jsonString, String.class);
             } catch (IOException e) {
                 if (e instanceof JsonParseException) {
-                    throw (JsonParseException)e;
+                    throw (JsonParseException) e;
                 } else if (e instanceof JsonMappingException) {
-                    throw (JsonMappingException)e;
+                    throw (JsonMappingException) e;
                 } else {
                     // TODO: Auto-generated catch block
                     e.printStackTrace();
                 }
             }
-        } else if (jsonString.trim().equals("true") || (jsonString.trim().equals("false"))){
+        } else if (jsonString.trim().equals("true") || (jsonString.trim().equals("false"))) {
             try {
                 rval = objectMapper.readValue(jsonString, Boolean.class);
             } catch (IOException e) {
                 if (e instanceof JsonParseException) {
-                    throw (JsonParseException)e;
+                    throw (JsonParseException) e;
                 } else if (e instanceof JsonMappingException) {
-                    throw (JsonMappingException)e;
+                    throw (JsonMappingException) e;
                 } else {
                     // TODO: Auto-generated catch block
                     e.printStackTrace();
@@ -85,26 +84,26 @@ public class JSONUtils {
                 rval = objectMapper.readValue(jsonString, Number.class);
             } catch (IOException e) {
                 if (e instanceof JsonParseException) {
-                    throw (JsonParseException)e;
+                    throw (JsonParseException) e;
                 } else if (e instanceof JsonMappingException) {
-                    throw (JsonMappingException)e;
+                    throw (JsonMappingException) e;
                 } else {
                     // TODO: Auto-generated catch block
                     e.printStackTrace();
                 }
             }
         } else {
-            throw new JsonParseException("document doesn't start with a valid json element", 
-                                         new JsonLocation("\"" + jsonString.substring(0, 100) + "...\"", 0, 1, 0));
+            throw new JsonParseException("document doesn't start with a valid json element", new JsonLocation("\"" + jsonString.substring(0, 100) + "...\"", 0,
+                    1, 0));
         }
         return rval;
     }
-        
+
     public static Object fromReader(Reader r) throws IOException {
         StringBuffer sb = new StringBuffer();
         int b;
         while ((b = r.read()) != -1) {
-            sb.append((char)b);
+            sb.append((char) b);
         }
         return fromString(sb.toString());
     }
@@ -115,14 +114,18 @@ public class JSONUtils {
     }
 
     public static Object fromInputStream(InputStream content) throws IOException {
-        return fromInputStream( content, "UTF-8" );   //no readers from inputstreams w.o. encoding!!
+        return fromInputStream(content, "UTF-8"); // no readers from
+                                                  // inputstreams w.o.
+                                                  // encoding!!
     }
-        
-    public static Object fromInputStream(InputStream content,String enc) throws IOException {
+
+    public static Object fromInputStream(InputStream content, String enc) throws IOException {
         return fromReader(new BufferedReader(new InputStreamReader(content, enc)));
     }
-        
-    public static String toString(Object obj) { // throws JsonGenerationException, JsonMappingException {
+
+    public static String toString(Object obj) { // throws
+                                                // JsonGenerationException,
+                                                // JsonMappingException {
         StringWriter sw = new StringWriter();
         try {
             write(sw, obj);

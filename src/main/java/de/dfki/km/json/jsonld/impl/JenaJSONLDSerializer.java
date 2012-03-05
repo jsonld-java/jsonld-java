@@ -3,9 +3,6 @@ package de.dfki.km.json.jsonld.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -17,73 +14,73 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import de.dfki.km.json.jsonld.JSONLDUtils;
 
-public class JenaJSONLDSerializer extends
-		de.dfki.km.json.jsonld.JSONLDSerializer {
+public class JenaJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSerializer {
 
-	private static final Logger LOG = LoggerFactory.getLogger( JenaJSONLDSerializer.class ); 
+    // private static final Logger LOG = LoggerFactory.getLogger(
+    // JenaJSONLDSerializer.class );
 
-	JSONLDUtils.NameGenerator ng = new JSONLDUtils.NameGenerator("bn");
-	Map<String,String> bns = new HashMap<String, String>();
-	
-	public String getID(Resource r) {
-		String rval = null;
-		if (r.isAnon()) {
-			rval = r.getId().toString();
-			if (!bns.containsKey(rval)) {
-				bns.put(rval, ng.next());
-			}
-			rval = bns.get(rval);
-		} else {
-			rval = r.getURI();
-		}
-		return rval;
-	}
-	
-	public void importModel(Model model) {
+    JSONLDUtils.NameGenerator ng = new JSONLDUtils.NameGenerator("bn");
+    Map<String, String> bns = new HashMap<String, String>();
 
-		
-		// add the prefixes to the context
-		Map<String, String> nsPrefixMap = model.getNsPrefixMap();
-		for (String prefix: nsPrefixMap.keySet()) {
-			setPrefix(prefix, nsPrefixMap.get(prefix));
-		}
-		
-		// iterate over the list of subjects and add the edges to the json-ld document
-		ResIterator subjects = model.listSubjects();
-		while (subjects.hasNext()) {
-									
-			Resource subject = subjects.next();
-			String subj = getID(subject);
-			
-			StmtIterator statements = model.listStatements(subject, (Property)null, (RDFNode)null);
-			while (statements.hasNext()) {
-				Statement statement = statements.next();
-				Property predicate = statement.getPredicate();
-				RDFNode object = statement.getObject();
-	
-				if (object.isLiteral()) {
-					Literal literal = object.asLiteral();
-					String value = literal.getLexicalForm();
-					String datatypeURI = literal.getDatatypeURI();
-					String language = literal.getLanguage();
-					
-					triple(subj, predicate.getURI(), value, datatypeURI, language);
-				} else {
-					Resource resource = object.asResource();
-					String res = getID(resource);
-					
-					triple(subj, predicate.getURI(), res);
-				}
-			}
+    public String getID(Resource r) {
+        String rval = null;
+        if (r.isAnon()) {
+            rval = r.getId().toString();
+            if (!bns.containsKey(rval)) {
+                bns.put(rval, ng.next());
+            }
+            rval = bns.get(rval);
+        } else {
+            rval = r.getURI();
+        }
+        return rval;
+    }
 
-		}
-	}
+    public void importModel(Model model) {
 
-	public void importResource(Resource r) {
-		Model model = r.getModel();
-		if (model == null) {
-			return;
-		}
-		importModel(model);
-	}
+        // add the prefixes to the context
+        Map<String, String> nsPrefixMap = model.getNsPrefixMap();
+        for (String prefix : nsPrefixMap.keySet()) {
+            setPrefix(prefix, nsPrefixMap.get(prefix));
+        }
+
+        // iterate over the list of subjects and add the edges to the json-ld
+        // document
+        ResIterator subjects = model.listSubjects();
+        while (subjects.hasNext()) {
+
+            Resource subject = subjects.next();
+            String subj = getID(subject);
+
+            StmtIterator statements = model.listStatements(subject, (Property) null, (RDFNode) null);
+            while (statements.hasNext()) {
+                Statement statement = statements.next();
+                Property predicate = statement.getPredicate();
+                RDFNode object = statement.getObject();
+
+                if (object.isLiteral()) {
+                    Literal literal = object.asLiteral();
+                    String value = literal.getLexicalForm();
+                    String datatypeURI = literal.getDatatypeURI();
+                    String language = literal.getLanguage();
+
+                    triple(subj, predicate.getURI(), value, datatypeURI, language);
+                } else {
+                    Resource resource = object.asResource();
+                    String res = getID(resource);
+
+                    triple(subj, predicate.getURI(), res);
+                }
+            }
+
+        }
+    }
+
+    public void importResource(Resource r) {
+        Model model = r.getModel();
+        if (model == null) {
+            return;
+        }
+        importModel(model);
+    }
 }
