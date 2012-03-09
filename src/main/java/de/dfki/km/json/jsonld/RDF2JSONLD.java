@@ -62,17 +62,17 @@ public class RDF2JSONLD {
 			}
 			
 			if (output != null) {
-				try {
+//				try {
 					System.out.println(JSONUtils.toString(output));
-				} catch (JsonGenerationException e) {
-					System.out.println("Error: unable to create JSON output from input");
-					e.printStackTrace();
-					usage();
-				} catch (JsonMappingException e) {
-					System.out.println("Error: unable to create JSON output from input");
-					e.printStackTrace();
-					usage();
-				}
+//				} catch (JsonGenerationException e) {
+//					System.out.println("Error: unable to create JSON output from input");
+//					e.printStackTrace();
+//					usage();
+//				} catch (JsonMappingException e) {
+//					System.out.println("Error: unable to create JSON output from input");
+//					e.printStackTrace();
+//					usage();
+//				}
 			}
 		}
 	}

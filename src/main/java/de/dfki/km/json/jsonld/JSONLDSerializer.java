@@ -189,13 +189,13 @@ public class JSONLDSerializer {
 	public String asString() {
 		// TODO: catching the exceptions here and returning JSON with the error messages may not
 		// be the best idea
-		try {
+//		try {
 			return JSONUtils.toString(asObject());
-		} catch (JsonGenerationException e) {
-			return "{\"error\":\"" + e.getLocalizedMessage() + "\"}";
-		} catch (JsonMappingException e) {
-			return "{\"error\":\"" + e.getLocalizedMessage() + "\"}";
-		}
+//		} catch (JsonGenerationException e) {
+//			return "{\"error\":\"" + e.getLocalizedMessage() + "\"}";
+//		} catch (JsonMappingException e) {
+//			return "{\"error\":\"" + e.getLocalizedMessage() + "\"}";
+//		}
 	}
 	
 }
