@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonLocation;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -110,6 +111,7 @@ public class JSONUtils {
 
     public static void write(Writer w, Object jsonObject) throws JsonGenerationException, JsonMappingException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.getJsonFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
         objectMapper.writeValue(w, jsonObject);
     }
 
