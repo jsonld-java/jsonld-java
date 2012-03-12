@@ -31,8 +31,16 @@ public class SesameJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSeriali
             String value = literal.getLabel();
             URI datatypeURI = literal.getDatatype();
             String language = literal.getLanguage();
-
-            triple(subject.stringValue(), predicate.stringValue(), value, datatypeURI.stringValue(), language);
+            
+            String datatype;
+            
+            if (datatypeURI == null) {
+                datatype = null;
+            } else {
+                datatype = datatypeURI.stringValue();
+            }
+            
+            triple(subject.stringValue(), predicate.stringValue(), value, datatype, language);
         } else {
             triple(subject.stringValue(), predicate.stringValue(), object.stringValue());
         }
