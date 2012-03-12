@@ -19,13 +19,15 @@ public class JSONLDSerializer {
     private Map<String, Map<String, Object>> _subjects;
     private Map<String, Object> _context;
 
+    JSONLDUtils.NameGenerator _ng;
+    Map<String, String> _bns;
+
     public JSONLDSerializer() {
         reset();
     }
 
     /**
-     * Resets the Serializer. Call this if you want to reuse the serializer for
-     * a different document
+     * Resets the Serializer. Call this if you want to reuse the serializer for a different document
      */
     public void reset() {
         _subjects = new HashMap<String, Map<String, Object>>();
@@ -33,6 +35,9 @@ public class JSONLDSerializer {
         _context.put("rdf", JSONLDConsts.RDF_SYNTAX_NS);
         _context.put("rdfs", JSONLDConsts.RDF_SCHEMA_NS);
         _context.put("xsd", JSONLDConsts.XSD_NS);
+
+        _ng = new JSONLDUtils.NameGenerator("bn");
+        _bns = new HashMap<String, String>();
     }
 
     // some helper functions for extended classes
@@ -42,6 +47,13 @@ public class JSONLDSerializer {
 
     protected void setSubject(String subjURI, Map<String, Object> subj) {
         _subjects.put(subjURI, subj);
+    }
+
+    protected String getNameForBlankNode(String node) {
+        if (!_bns.containsKey(node)) {
+            _bns.put(node, _ng.next());
+        }
+        return _bns.get(node);
     }
 
     /**
@@ -139,8 +151,7 @@ public class JSONLDSerializer {
     }
 
     /**
-     * Call this to add a new object,predicate,object relation to the JSON-LD
-     * document
+     * Call this to add a new object,predicate,object relation to the JSON-LD document
      * 
      * @param s
      *            the subject URI
@@ -165,8 +176,7 @@ public class JSONLDSerializer {
     }
 
     /**
-     * Builds the JSON-LD document based on the currently stored triples,
-     * compacting the URIs based on the stored context.
+     * Builds the JSON-LD document based on the currently stored triples, compacting the URIs based on the stored context.
      * 
      * @return A Map representing the JSON-LD document.
      */

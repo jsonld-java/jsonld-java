@@ -1,6 +1,5 @@
 package de.dfki.km.json.jsonld.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.hp.hpl.jena.rdf.model.Literal;
@@ -12,24 +11,15 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-import de.dfki.km.json.jsonld.JSONLDUtils;
-
 public class JenaJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSerializer {
 
     // private static final Logger LOG = LoggerFactory.getLogger(
     // JenaJSONLDSerializer.class );
 
-    JSONLDUtils.NameGenerator ng = new JSONLDUtils.NameGenerator("bn");
-    Map<String, String> bns = new HashMap<String, String>();
-
     public String getID(Resource r) {
         String rval = null;
         if (r.isAnon()) {
-            rval = r.getId().toString();
-            if (!bns.containsKey(rval)) {
-                bns.put(rval, ng.next());
-            }
-            rval = bns.get(rval);
+            rval = getNameForBlankNode(r.getId().toString());
         } else {
             rval = r.getURI();
         }
