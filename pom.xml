@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-model</artifactId>
-			<version>2.6.3</version>
+			<version>2.6.4</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
