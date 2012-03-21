@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.km.json.JSONUtils;
 import de.dfki.km.json.jsonld.JSONLDConsts;
 import de.dfki.km.json.jsonld.JSONLDTripleCallback;
 import de.dfki.km.json.jsonld.JSONLDUtils;
@@ -28,9 +29,8 @@ public class JSONLDProcessorImpl implements de.dfki.km.json.jsonld.JSONLDProcess
     private Set<String> ignoredKeywords = new HashSet<String>();
 
     /**
-     * Tells the processor to skip over the key specified by keyword any time it
-     * encounters it. Objects under this key will not be manipulated by any of
-     * the processor functions and no triples will be created using it.
+     * Tells the processor to skip over the key specified by keyword any time it encounters it. Objects under this key will not be manipulated by any of the
+     * processor functions and no triples will be created using it.
      * 
      * @param keyword
      *            The name of the key this processor should ignore.
@@ -189,8 +189,7 @@ public class JSONLDProcessorImpl implements de.dfki.km.json.jsonld.JSONLDProcess
     }
 
     /*
-     * TODO: this throws runtime exception. need to look at doing something more
-     * sane.
+     * TODO: this throws runtime exception. need to look at doing something more sane.
      */
     public Object compact(Map<String, Object> ctx, Object property, Object value, Map<String, Object> usedCtx) {
 
@@ -334,8 +333,64 @@ public class JSONLDProcessorImpl implements de.dfki.km.json.jsonld.JSONLDProcess
         return frame(input, frame, null);
     }
 
-    public Object frame(Object input, Object frame, Object options) {
-        throw new RuntimeException("Not Implemented");
+    public Object frame(Object input, Object frame, Map options) {
+        Object rval = null;
+
+        input = normalize(input);
+
+        Object ctx = null;
+
+        if (frame instanceof Map && ((Map) frame).containsKey("@context")) {
+            ctx = JSONLDUtils.clone(((Map) frame).get("@context"));
+            frame = expand(frame);
+        } else if (frame instanceof List) {
+            if (((List) frame).size() > 0) {
+                Object f0 = ((List) frame).get(0);
+                if (f0 instanceof Map && ((Map) f0).containsKey("@context")) {
+                    ctx = JSONLDUtils.clone(((Map) f0).get("@context"));
+                }
+
+                List tmp = new ArrayList();
+                for (Object f : (List) frame) {
+                    tmp.add(expand(f));
+                }
+                frame = tmp;
+            }
+        }
+
+        Map defaultOptions = new HashMap();
+        Map tmpopts = new HashMap();
+        tmpopts.put("embedOn", true);
+        tmpopts.put("explicitOn", false);
+        tmpopts.put("omitDefaultOn", false);
+        defaultOptions.put("defaults", tmpopts);
+
+        // TODO: merge in options from input
+        options = defaultOptions;
+
+        Map subjects = new HashMap();
+        for (Object i : (List) input) {
+            subjects.put(((Map) i).get("@id"), i);
+        }
+
+        rval = JSONLDUtils.frame(subjects, (List) input, frame, new HashMap(), false, null, null, options);
+
+        System.out.println(JSONUtils.toString(rval));
+        System.out.println(JSONUtils.toString(ctx));
+
+        if (ctx != null && rval != null) {
+            if (rval instanceof List) {
+                List tmp = (List) rval;
+                rval = new ArrayList();
+                for (Object i : tmp) {
+                    ((List) rval).add(compact(ctx, i));
+                }
+            } else {
+                rval = compact(ctx, rval);
+            }
+        }
+
+        return rval;
     }
 
     public Object normalize(Object input) {
@@ -1095,9 +1150,8 @@ public class JSONLDProcessorImpl implements de.dfki.km.json.jsonld.JSONLDProcess
         public Map<String, String> mapping;
 
         /**
-         * Maps the next name to the given bnode IRI if the bnode IRI isn't
-         * already in the mapping. If the given bnode IRI is canonical, then it
-         * will be given a shortened form of the same name.
+         * Maps the next name to the given bnode IRI if the bnode IRI isn't already in the mapping. If the given bnode IRI is canonical, then it will be given a
+         * shortened form of the same name.
          * 
          * @param iri
          *            the blank node IRI to map the next name to.

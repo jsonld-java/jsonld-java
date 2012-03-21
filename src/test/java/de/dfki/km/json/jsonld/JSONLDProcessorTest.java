@@ -1,6 +1,8 @@
 package de.dfki.km.json.jsonld;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,8 +26,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import de.dfki.km.json.JSONUtils;
-import de.dfki.km.json.jsonld.JSONLDTripleCallback;
-import de.dfki.km.json.jsonld.JSONLDUtils;
 import de.dfki.km.json.jsonld.impl.JSONLDProcessorImpl;
 
 @RunWith(Parameterized.class)
@@ -35,17 +34,16 @@ public class JSONLDProcessorTest {
     private static final String TEST_DIR = "testfiles";
 
     private class TestTripleCallback implements JSONLDTripleCallback {
-        
+
         List<String> results = new ArrayList<String>();
-                
+
         @Override
-            public void triple(String s, String p, String o) {
+        public void triple(String s, String p, String o) {
             results.add("<" + s + "> <" + p + "> <" + o + "> .");
         }
 
         @Override
-            public void triple(String s, String p, String value, String datatype,
-                               String language) {
+        public void triple(String s, String p, String value, String datatype, String language) {
             if (language != null) {
                 results.add("<" + s + "> <" + p + "> \"" + value + "\"@" + language + " .");
             } else {
@@ -61,48 +59,42 @@ public class JSONLDProcessorTest {
             return results;
         }
     }
-        
+
     @Parameters
-        public static Collection<Object[]> data() throws URISyntaxException, IOException {
-                
+    public static Collection<Object[]> data() throws URISyntaxException, IOException {
+
         // TODO: look into getting the test data from github, which will help more
         // with keeping up to date with the spec.
         // perhaps use http://develop.github.com/p/object.html
         // to pull info from https://github.com/json-ld/json-ld.org/tree/master/test-suite/tests
-                
+
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         File f = new File(cl.getResource(TEST_DIR).toURI());
-        List<File> manifestfiles = Arrays.asList(
-                                                 f.listFiles(new FilenameFilter() {
-                                                         public boolean accept(File dir, String name) {
-                                                             if (name.contains("manifest") &&
-                                                                 name.endsWith(".jsonld")) {
-                                                                 System.out.println("Using manifest: " + dir + " " + name);
-                                                                 return true;
-                                                             }
-                                                             return false;
-                                                         }}));
-                
+        List<File> manifestfiles = Arrays.asList(f.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                if (name.contains("manifest") && name.endsWith(".jsonld")) {
+                    System.out.println("Using manifest: " + dir + " " + name);
+                    return true;
+                }
+                return false;
+            }
+        }));
+
         Collection<Object[]> rdata = new ArrayList<Object[]>();
         int count = 0;
-        for (File in: manifestfiles) {
+        for (File in : manifestfiles) {
             System.out.println("Reading: " + in.getCanonicalPath());
             FileInputStream manifestfile = new FileInputStream(in);
-                
-            Map<String,Object> manifest = 
-                (Map<String, Object>) JSONUtils.fromInputStream(manifestfile);
-                        
-                        
-            for (Map<String,Object> test: (List<Map<String,Object>>)manifest.get("sequence")) {
+
+            Map<String, Object> manifest = (Map<String, Object>) JSONUtils.fromInputStream(manifestfile);
+
+            for (Map<String, Object> test : (List<Map<String, Object>>) manifest.get("sequence")) {
                 List<String> testType = (List<String>) test.get("@type");
-                if (//test.get("input").equals("normalize-0044-in.jsonld") && (
-                    testType.contains("jld:NormalizeTest") ||
-                    testType.contains("jld:ExpandTest") ||
-                    testType.contains("jld:CompactTest") ||
-                    // testType.contains("jld:FrameTest") ||
-                    testType.contains("jld:TriplesTest")
-                    //|| testType.contains("jld:RDFTest")
-                    ) {
+                if (// test.get("input").equals("normalize-0044-in.jsonld") && (
+                testType.contains("jld:NormalizeTest") || testType.contains("jld:ExpandTest") || testType.contains("jld:CompactTest")
+                        || testType.contains("jld:FrameTest") || testType.contains("jld:TriplesTest")
+                // || testType.contains("jld:RDFTest")
+                ) {
                     System.out.println("Adding test: " + test.get("name"));
                     rdata.add(new Object[] { manifest.get("name"), test });
                 } else {
@@ -111,55 +103,53 @@ public class JSONLDProcessorTest {
                 }
 
                 // Uncomment this to print a list of all the tests (may make debugging easier
-                //System.out.println("Added Test[" + count++ + "]: " + testgroup.get("group") + " " + test.get("name") + "..."
-                //          + " (" + test.get("input") + "," + test.get("expect") + ")" 
-                //          );
+                // System.out.println("Added Test[" + count++ + "]: " + testgroup.get("group") + " " + test.get("name") + "..."
+                // + " (" + test.get("input") + "," + test.get("expect") + ")"
+                // );
             }
         }
         return rdata;
     }
 
     private String group;
-    private Map<String,Object> test;
-        
-    public JSONLDProcessorTest(final String group, final Map<String,Object> test) {
+    private Map<String, Object> test;
+
+    public JSONLDProcessorTest(final String group, final Map<String, Object> test) {
         this.group = group;
         this.test = test;
     }
-        
+
     private static String join(Collection<String> list, String delim) {
         StringBuilder builder = new StringBuilder();
         Iterator<String> iter = list.iterator();
         while (iter.hasNext()) {
             builder.append(iter.next());
             if (!iter.hasNext()) {
-                break;                  
+                break;
             }
             builder.append(delim);
         }
         return builder.toString();
     }
-        
+
     @Test
-        public void runTest() throws URISyntaxException, IOException {
+    public void runTest() throws URISyntaxException, IOException {
         System.out.println("running test: " + test.get("input"));
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                                
-        InputStream inputStream = 
-            cl.getResourceAsStream(TEST_DIR + "/" + test.get("input"));
+
+        InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("input"));
         assertNotNull("unable to find input file: " + test.get("input"), inputStream);
-                
+
         Object inputJson = JSONUtils.fromInputStream(inputStream);
         Object expect = null;
         String sparql = null;
         String expectFile = (String) test.get("expect");
         String sparqlFile = (String) test.get("sparql");
         if (expectFile != null) {
-            InputStream expectStream = 
-                cl.getResourceAsStream(TEST_DIR + "/" + test.get("expect"));
+            InputStream expectStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("expect"));
             assertNotNull("unable to find expect file: " + test.get("expect"), expectStream);
-                        
-            String expectType = expectFile.substring(expectFile.lastIndexOf(".")+1);
+
+            String expectType = expectFile.substring(expectFile.lastIndexOf(".") + 1);
             if (expectType.equals("jsonld")) {
                 expect = JSONUtils.fromInputStream(expectStream);
             } else if (expectType.equals("nt")) {
@@ -180,42 +170,37 @@ public class JSONLDProcessorTest {
                 assertFalse("Unknown expect type: " + expectType, true);
             }
         } else if (sparqlFile != null) {
-            InputStream sparqlStream = 
-                cl.getResourceAsStream(TEST_DIR + "/" + sparqlFile);
+            InputStream sparqlStream = cl.getResourceAsStream(TEST_DIR + "/" + sparqlFile);
             assertNotNull("unable to find expect file: " + sparqlFile, sparqlStream);
             BufferedReader buf = new BufferedReader(new InputStreamReader(sparqlStream));
             String buffer = null;
             while ((buffer = buf.readLine()) != null)
-                sparql += buffer + "\n"; 
+                sparql += buffer + "\n";
         } else {
             assertFalse("Nothing to expect from this test, thus nothing to test if it works", true);
         }
-                
+
         Object result = null;
-                
+
         List<String> testType = (List<String>) test.get("@type");
         if (testType.contains("jld:NormalizeTest")) {
             result = new JSONLDProcessorImpl().normalize(inputJson);
         } else if (testType.contains("jld:ExpandTest")) {
             result = new JSONLDProcessorImpl().expand(inputJson);
         } else if (testType.contains("jld:CompactTest")) {
-            InputStream contextStream = 
-                cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
+            InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
             Object contextJson = JSONUtils.fromInputStream(contextStream);
-            result = new JSONLDProcessorImpl().compact(
-                                                       ((Map<String,Object>) contextJson).get("@context"), 
-                                                       inputJson);
+            result = new JSONLDProcessorImpl().compact(((Map<String, Object>) contextJson).get("@context"), inputJson);
         } else if (testType.contains("jld:FrameTest")) {
-            InputStream frameStream = 
-                cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
+            InputStream frameStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("frame"));
             Object frameJson = JSONUtils.fromInputStream(frameStream);
             result = new JSONLDProcessorImpl().frame(inputJson, frameJson);
         } else if (testType.contains("jld:TriplesTest")) {
             // TODO: many of the tests here fail simply because of an ordering issue
-                        
+
             TestTripleCallback ttc = new TestTripleCallback();
             new JSONLDProcessorImpl().triples(inputJson, ttc);
-            List<String> results = ttc.getResults(); 
+            List<String> results = ttc.getResults();
             Collections.sort(results);
             result = join(results, "\n");
         } else if (testType.contains("jld:RDFTest")) {
@@ -224,7 +209,7 @@ public class JSONLDProcessorTest {
         } else {
             assertFalse("Unknown test type", true);
         }
-        
+
         boolean testpassed = false;
         try {
             testpassed = compareResults(expect, result);
@@ -235,10 +220,8 @@ public class JSONLDProcessorTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        assertTrue("\nFailed test: " + this.group + " " + this.test.get("name") + 
-                   " (" + test.get("input") + "," + test.get("expect") + ")\n" +
-                   "expected: " + JSONUtils.toString(expect) + "\nresult: " + JSONUtils.toString(result), 
-                   testpassed);
+        assertTrue("\nFailed test: " + this.group + " " + this.test.get("name") + " (" + test.get("input") + "," + test.get("expect") + ")\n" + "expected: "
+                + JSONUtils.toString(expect) + "\nresult: " + JSONUtils.toString(result), testpassed);
     }
 
     private boolean compareResults(Object v1, Object v2) {
@@ -255,17 +238,17 @@ public class JSONLDProcessorTest {
             }
         } else if (v1 instanceof Number && v2 instanceof Number) {
             // TODO: this is VERY sketchy
-            double n1 = ((Number)v1).doubleValue();
-            double n2 = ((Number)v2).doubleValue();
-                        
+            double n1 = ((Number) v1).doubleValue();
+            double n2 = ((Number) v2).doubleValue();
+
             rval = n1 == n2;
         } else if (v1 instanceof String && v2 instanceof String) {
-            rval = ((String)v1).equals((String)v2);
+            rval = ((String) v1).equals((String) v2);
         } else if (v1 instanceof Map && v2 instanceof Map) {
             if (((Map) v1).size() != ((Map) v2).size()) {
                 rval = false;
             } else {
-                for (Object k1: ((Map) v1).keySet()) {
+                for (Object k1 : ((Map) v1).keySet()) {
                     rval = ((Map) v2).containsKey(k1) ? compareResults(((Map) v1).get(k1), ((Map) v2).get(k1)) : false;
                     if (rval != true) {
                         break;
@@ -274,10 +257,12 @@ public class JSONLDProcessorTest {
             }
         } else if (v1 instanceof Boolean && v2 instanceof Boolean) {
             rval = v1 == v2;
-        } else {
+        } else if (v1 != null && v2 != null) {
             rval = v1.equals(v2);
+        } else {
+            rval = v1 == v2;
         }
-                
+
         return rval;
     }
 }

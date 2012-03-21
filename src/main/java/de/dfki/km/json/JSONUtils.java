@@ -93,9 +93,11 @@ public class JSONUtils {
                     e.printStackTrace();
                 }
             }
+        } else if (jsonString.trim().equals("null")) {
+            rval = null;
         } else {
-            throw new JsonParseException("document doesn't start with a valid json element", new JsonLocation("\"" + jsonString.substring(0, 100) + "...\"", 0,
-                    1, 0));
+            throw new JsonParseException("document doesn't start with a valid json element", new JsonLocation("\""
+                    + jsonString.substring(0, Math.min(jsonString.length(), 100)) + "...\"", 0, 1, 0));
         }
         return rval;
     }
