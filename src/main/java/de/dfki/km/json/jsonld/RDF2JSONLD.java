@@ -4,7 +4,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.util.FileManager;
 
 import de.dfki.km.json.JSONUtils;
-import de.dfki.km.json.jsonld.impl.JSONLDProcessorImpl;
 import de.dfki.km.json.jsonld.impl.JenaJSONLDSerializer;
 
 public class RDF2JSONLD {
@@ -41,7 +40,7 @@ public class RDF2JSONLD {
             serializer.importModel(model);
             Object output = serializer.asObject();
 
-            JSONLDProcessorImpl processor = new JSONLDProcessorImpl();
+            JSONLDProcessor processor = new JSONLDProcessor();
 
             if (normalize) {
                 output = processor.normalize(output);

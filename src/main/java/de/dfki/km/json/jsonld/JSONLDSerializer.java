@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.dfki.km.json.JSONUtils;
-import de.dfki.km.json.jsonld.impl.JSONLDProcessorImpl;
 
 /**
  * TODO:
@@ -181,7 +180,7 @@ public class JSONLDSerializer {
      * @return A Map representing the JSON-LD document.
      */
     public Map<String, Object> asObject() {
-        JSONLDProcessorImpl p = new JSONLDProcessorImpl();
+        JSONLDProcessor p = new JSONLDProcessor();
         Map<String, Object> rval = new HashMap<String, Object>();
 
         // go through the list of subjects that were built, compact them based

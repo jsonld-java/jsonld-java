@@ -26,7 +26,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import de.dfki.km.json.JSONUtils;
-import de.dfki.km.json.jsonld.impl.JSONLDProcessorImpl;
 
 @RunWith(Parameterized.class)
 public class JSONLDProcessorTest {
@@ -184,22 +183,22 @@ public class JSONLDProcessorTest {
 
         List<String> testType = (List<String>) test.get("@type");
         if (testType.contains("jld:NormalizeTest")) {
-            result = new JSONLDProcessorImpl().normalize(inputJson);
+            result = new JSONLDProcessor().normalize(inputJson);
         } else if (testType.contains("jld:ExpandTest")) {
-            result = new JSONLDProcessorImpl().expand(inputJson);
+            result = new JSONLDProcessor().expand(inputJson);
         } else if (testType.contains("jld:CompactTest")) {
             InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
             Object contextJson = JSONUtils.fromInputStream(contextStream);
-            result = new JSONLDProcessorImpl().compact(((Map<String, Object>) contextJson).get("@context"), inputJson);
+            result = new JSONLDProcessor().compact(((Map<String, Object>) contextJson).get("@context"), inputJson);
         } else if (testType.contains("jld:FrameTest")) {
             InputStream frameStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("frame"));
             Object frameJson = JSONUtils.fromInputStream(frameStream);
-            result = new JSONLDProcessorImpl().frame(inputJson, frameJson);
+            result = new JSONLDProcessor().frame(inputJson, frameJson);
         } else if (testType.contains("jld:TriplesTest")) {
             // TODO: many of the tests here fail simply because of an ordering issue
 
             TestTripleCallback ttc = new TestTripleCallback();
-            new JSONLDProcessorImpl().triples(inputJson, ttc);
+            new JSONLDProcessor().triples(inputJson, ttc);
             List<String> results = ttc.getResults();
             Collections.sort(results);
             result = join(results, "\n");
