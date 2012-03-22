@@ -21,6 +21,34 @@ jsonld-java uses maven to compile
 
 Either run `mvn jar:jar` and grab the generated jar file from `target/jsonld-java-1.0.0-SNAPSHOT.jar` or run `mvn install -Dmaven.test.skip=true` to install the jar into your local maven repository.
 
+### in your project (maven specific)
+
+    <dependency>
+        <groupId>dfki.km.json</groupId>
+        <artifactId>jsonld-java</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+
+Note that the dependencies for the various rdf libraries are marked as optional, and will not be included unless specifically stated in your project's pom (this means that you will get a `ClassNotFoundException` for anything in the `de.dfki.km.jsonld.impl` package unless you specifically specify their dependencies in your pom).
+
+E.g. if you wish to use the `JenaJSONLDSerializer` or the `JenaTripleCallback` add the following to your project's pom.
+
+    <dependency>
+        <groupId>com.hp.hpl.jena</groupId>
+		<artifactId>jena</artifactId>
+        <version>2.6.4</version>
+    </dependency>
+
+or if you want to use the Sesame libraries:
+
+    <dependency>
+        <groupId>org.openrdf.sesame</groupId>
+		<artifactId>sesame-model</artifactId>
+		<version>2.6.4</version>
+    </dependency>
+
+This also allows you to specify the version or this library you wish to use (however, if you don't use the same version it's not garanteed that the api will be the same which may cause some problems).
+
 ### running tests
 
     mvn test
@@ -31,8 +59,8 @@ Note that these currently fail due to the lack of an implementation of frame.
 
     // Open a valid json(-ld) input file
     InputStream inputStream = new FileInputStream("input.json");
-    // Read the file into an Object (The type of this object will be a List, Map, String, Boolean
-    // or Number depending on the root object in the file).
+    // Read the file into an Object (The type of this object will be a List, Map, String, Boolean,
+    // Number or null depending on the root object in the file).
     Object jsonObject = JSONUtils.fromInputStream(inputStream);
     // Create a JSONLDProcessor
     JSONLDProcessor processor = new JSONLDProcessor();
