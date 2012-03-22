@@ -372,9 +372,6 @@ public class JSONLDProcessor {
 
         rval = JSONLDUtils.frame(subjects, (List) input, frame, new HashMap(), false, null, null, options);
 
-        System.out.println(JSONUtils.toString(rval));
-        System.out.println(JSONUtils.toString(ctx));
-
         if (ctx != null && rval != null) {
             if (rval instanceof List) {
                 List tmp = (List) rval;
@@ -390,7 +387,7 @@ public class JSONLDProcessor {
         return rval;
     }
 
-    public Object normalize(Object input) {
+    public List<? extends Map<String, Object>> normalize(Object input) {
         // because the expanded output of items from the onlinebox are the same
         // as the normalized version
         // (just inside a list) i'm going to skip implementing the normalize
@@ -500,6 +497,74 @@ public class JSONLDProcessor {
                 }
             }
         }
+    }
+
+    public Object simplify(Map input) {
+        return simplify(input, new HashMap());
+    }
+
+    /**
+     * automatically builds a frame which attempts to simplify the keys and values as much as possible
+     * 
+     * NOTE: this is experimental and only built for specific conditions
+     * 
+     * @param input
+     * @param baseFrame
+     * @return
+     */
+    public Object simplify(Map input, Map baseFrame) {
+
+        List<? extends Map<String, Object>> normalized = normalize(input);
+        Map<String, Object> framectx = new HashMap<String, Object>();
+
+        for (Map<String, Object> o : normalized) {
+            for (String key : o.keySet()) {
+                if (key.matches("^https?://.+$")) {
+                    // try get a simple key from the uri by grabbing everything past the '#' if there is one.
+                    int idx = key.lastIndexOf('#');
+                    if (idx < 0) {
+                        idx = key.lastIndexOf('/');
+                    }
+                    String skey = key.substring(idx + 1);
+                    Object keyval = key;
+                    Object val = o.get(key);
+                    if (val instanceof Map) {
+                        if (((Map) val).containsKey("@id")) {
+                            Map tmp = new HashMap();
+                            tmp.put("@type", "@id");
+                            tmp.put("@id", key);
+                            keyval = tmp;
+                        }
+                    }
+                    while (true) {
+                        // check if the key is already in the frame ctx
+                        if (framectx.containsKey(skey)) {
+                            // if so, check if the values are the same
+                            if (framectx.get(skey).equals(keyval)) {
+                                // if they are, skip adding this
+                                break;
+                            }
+                            // if not, add a _ to the simple key and try again
+                            skey += "_";
+                        } else {
+                            framectx.put(skey, keyval);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        Map<String, Object> frame = (Map<String, Object>) JSONLDUtils.clone(baseFrame);
+        if (frame.containsKey("@context")) {
+            framectx = JSONLDUtils.mergeContexts(frame.get("@context"), framectx);
+        }
+
+        frame.put("@context", framectx);
+
+        System.out.println(JSONUtils.toString(frame));
+
+        return frame(normalized, frame);
     }
 
     public void nameBlankNodes(Object input) {

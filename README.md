@@ -116,6 +116,17 @@ Note that these currently fail due to the lack of an implementation of frame.
     // grab the resulting JSON-LD map
     Map<String,Object> jsonld = serializer.asObject();
 
+Non-Specification Extras
+------------------------
+
+### Ignore Keywords
+
+The function `ignoreKeyword(String)` in the `JSONLDProcessor` allows you to specify any keys that should not be treated as JSON-LD, and thus not processed. Any keys specified to be ignored will still be present in resulting objects, but will be exactly the same as their original. The only exception is triples, which simply skips over the keys as it doesn't make sense to generate triples for objects that aren't RDF.
+
+### Simplify
+
+The function `simplify(Object,[Object])` is essentually the same as frame, except it goes over all the keys in the input and attempts to make "SimpleName":"URI" mappings for each key and generating a context for the frame based on these mappings. The resulting output should look like a very basic JSON document except for the @context,@id and @type keys (However, this isn't quite what i want yet). If the 2nd value is ommited (i.e. `simplify(Object)`) an empty frame will be used.
+
 RDF2JSONLD
 ----------
 
