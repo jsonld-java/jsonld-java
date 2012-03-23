@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.km.json.JSONUtils;
 import de.dfki.km.json.jsonld.JSONLDUtils.NameGenerator;
 
 public class JSONLDProcessor {
@@ -562,7 +561,19 @@ public class JSONLDProcessor {
 
         frame.put("@context", framectx);
 
-        System.out.println(JSONUtils.toString(frame));
+        // if there is no @type in the base frame, attempt to coerce it from the input
+        if (!frame.containsKey("@type") && input.containsKey("@type")) {
+            Object type = new ArrayList();
+            if (input.get("@type") instanceof List) {
+                for (String t : (List<String>) input.get("@type")) {
+                    ((List) type).add(JSONLDUtils.expandTerm((Map<String, Object>) input.get("@context"), t));
+                }
+            } else {
+                // TODO: can we have other types of @type other than list or string?
+                type = JSONLDUtils.expandTerm((Map) input.get("@context"), (String) input.get("@type"));
+            }
+            frame.put("@type", type);
+        }
 
         return frame(normalized, frame);
     }
