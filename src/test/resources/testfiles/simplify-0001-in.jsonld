@@ -1,0 +1,44 @@
+{
+   "rdfs:label" : "string1024",
+   "@context" : {
+      "void" : "http://rdfs.org/ns/void#",
+      "dtype" : "http://www.linkedmodel.org/schema/dtype#",
+      "ontology" : "http://omv.ontoware.org/2005/05/ontology#",
+      "dimension" : "http://qudt.org/schema/dimension#",
+      "owl1" : "http://www.w3.org/2002/07/owl#",
+      "creativecommons1" : "http://creativecommons.org/ns#",
+      "qudt-quantity" : "http://qudt.org/vocab/quantity#",
+      "voag1" : "http://voag.linkedmodel.org/schema/voag#",
+      "qudt" : "http://qudt.org/schema/qudt#",
+      "xsd1" : "http://www.w3.org/2001/XMLSchema#",
+      "vaem1" : "http://www.linkedmodel.org/schema/vaem#",
+      "unit1" : "http://qudt.org/vocab/unit#",
+      "skos" : "http://www.w3.org/2004/02/skos/core#",
+      "qudt-dimension1" : "http://qudt.org/vocab/dimension#",
+      "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+      "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "dc1" : "http://purl.org/dc/elements/1.1/",
+      "quantity1" : "http://qudt.org/schema/quantity#"
+   },
+   "owl1:equivalentClass" : {
+      "owl1:onDatatype" : {
+         "@id" : "xsd1:string"
+      },
+      "owl1:withRestrictions" : {
+         "@list" : [
+            {
+               "xsd1:maxLength" : {
+                  "@value" : "1024",
+                  "@type" : "xsd1:nonNegativeInteger"
+               }
+            }
+         ]
+      },
+      "@type" : "rdfs:Datatype"
+   },
+   "@id" : "http://qudt.org/schema/qudt#string1024",
+   "rdfs:subClassOf" : {
+      "@id" : "xsd1:string"
+   },
+   "@type" : "rdfs:Datatype"
+}

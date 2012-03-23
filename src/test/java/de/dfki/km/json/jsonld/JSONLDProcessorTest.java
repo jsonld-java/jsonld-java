@@ -91,7 +91,7 @@ public class JSONLDProcessorTest {
                 List<String> testType = (List<String>) test.get("@type");
                 if (// test.get("input").equals("normalize-0044-in.jsonld") && (
                 testType.contains("jld:NormalizeTest") || testType.contains("jld:ExpandTest") || testType.contains("jld:CompactTest")
-                        || testType.contains("jld:FrameTest") || testType.contains("jld:TriplesTest")
+                        || testType.contains("jld:FrameTest") || testType.contains("jld:TriplesTest") || testType.contains("jld:SimplifyTest")
                 // || testType.contains("jld:RDFTest")
                 ) {
                     System.out.println("Adding test: " + test.get("name"));
@@ -205,6 +205,8 @@ public class JSONLDProcessorTest {
         } else if (testType.contains("jld:RDFTest")) {
             // TODO: implement this
             // sparql query is stored in String sparql
+        } else if (testType.contains("jld:SimplifyTest")) {
+            result = new JSONLDProcessor().simplify((Map) inputJson);
         } else {
             assertFalse("Unknown test type", true);
         }

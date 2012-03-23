@@ -498,35 +498,26 @@ public class JSONLDProcessor {
         }
     }
 
-    public Object simplify(Map input) {
-        return simplify(input, new HashMap());
-    }
-
-    /**
-     * automatically builds a frame which attempts to simplify the keys and values as much as possible
-     * 
-     * NOTE: this is experimental and only built for specific conditions
-     * 
-     * @param input
-     * @param baseFrame
-     * @return
+    /*
+     * public Object simplify(Map input) { return simplify(input, new HashMap()); }
      */
-    public Object simplify(Map input, Map baseFrame) {
 
-        List<? extends Map<String, Object>> normalized = normalize(input);
-        Map<String, Object> framectx = new HashMap<String, Object>();
-
-        for (Map<String, Object> o : normalized) {
+    public static void generateSimplifyContext(Object input, Map<String, Object> ctx) {
+        if (input instanceof List) {
+            for (Object o : (List) input) {
+                generateSimplifyContext(o, ctx);
+            }
+        } else if (input instanceof Map) {
+            Map<String, Object> o = (Map<String, Object>) input;
             for (String key : o.keySet()) {
+                Object val = o.get(key);
                 if (key.matches("^https?://.+$")) {
-                    // try get a simple key from the uri by grabbing everything past the '#' if there is one.
                     int idx = key.lastIndexOf('#');
                     if (idx < 0) {
                         idx = key.lastIndexOf('/');
                     }
                     String skey = key.substring(idx + 1);
                     Object keyval = key;
-                    Object val = o.get(key);
                     if (val instanceof Map) {
                         if (((Map) val).containsKey("@id")) {
                             Map tmp = new HashMap();
@@ -537,45 +528,43 @@ public class JSONLDProcessor {
                     }
                     while (true) {
                         // check if the key is already in the frame ctx
-                        if (framectx.containsKey(skey)) {
+                        if (ctx.containsKey(skey)) {
                             // if so, check if the values are the same
-                            if (framectx.get(skey).equals(keyval)) {
+                            if (ctx.get(skey).equals(keyval)) {
                                 // if they are, skip adding this
                                 break;
                             }
                             // if not, add a _ to the simple key and try again
                             skey += "_";
                         } else {
-                            framectx.put(skey, keyval);
+                            ctx.put(skey, keyval);
                             break;
                         }
                     }
                 }
-            }
-        }
-
-        Map<String, Object> frame = (Map<String, Object>) JSONLDUtils.clone(baseFrame);
-        if (frame.containsKey("@context")) {
-            framectx = JSONLDUtils.mergeContexts(frame.get("@context"), framectx);
-        }
-
-        frame.put("@context", framectx);
-
-        // if there is no @type in the base frame, attempt to coerce it from the input
-        if (!frame.containsKey("@type") && input.containsKey("@type")) {
-            Object type = new ArrayList();
-            if (input.get("@type") instanceof List) {
-                for (String t : (List<String>) input.get("@type")) {
-                    ((List) type).add(JSONLDUtils.expandTerm((Map<String, Object>) input.get("@context"), t));
+                if (val instanceof Map || val instanceof List) {
+                    generateSimplifyContext(val, ctx);
                 }
-            } else {
-                // TODO: can we have other types of @type other than list or string?
-                type = JSONLDUtils.expandTerm((Map) input.get("@context"), (String) input.get("@type"));
             }
-            frame.put("@type", type);
         }
+    }
 
-        return frame(normalized, frame);
+    /**
+     * automatically builds a frame which attempts to simplify the keys and values as much as possible
+     * 
+     * NOTE: this is experimental and only built for specific conditions
+     * 
+     * @param input
+     * @return
+     */
+    public Object simplify(Map input) {
+
+        Object expanded = expand(input);
+        Map<String, Object> framectx = new HashMap<String, Object>();
+
+        generateSimplifyContext(expanded, framectx);
+
+        return compact(framectx, expanded);
     }
 
     public void nameBlankNodes(Object input) {

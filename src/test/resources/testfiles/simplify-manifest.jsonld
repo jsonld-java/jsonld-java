@@ -1,0 +1,13 @@
+{
+   "@context": "http://json-ld.org/test-suite/context.jsonld",
+   "@id": "",
+   "@type": "jld:Manifest",
+   "rdfs:comment": "JSON-LD to Simplify tests use object compare",
+   "name": "simplify",
+   "sequence": [{
+      "@type": ["test:TestCase", "jld:SimplifyTest"],
+      "name": "nested objects of the same type",
+      "input": "simplify-0001-in.jsonld",
+      "expect": "simplify-0001-out.jsonld"
+   }]
+}
