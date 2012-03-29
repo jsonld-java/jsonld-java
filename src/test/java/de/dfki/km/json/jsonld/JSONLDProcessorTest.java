@@ -213,7 +213,7 @@ public class JSONLDProcessorTest {
 
         boolean testpassed = false;
         try {
-            testpassed = compareResults(expect, result);
+            testpassed = JSONUtils.equals(expect, result);
             if (testpassed == false) {
                 System.out.println("failed test: " + test.get("input"));
                 System.out.println("{\"expected\": " + JSONUtils.toString(expect) + "\n,\"result\": " + JSONUtils.toString(result) + "}");
@@ -223,47 +223,5 @@ public class JSONLDProcessorTest {
         }
         assertTrue("\nFailed test: " + this.group + " " + this.test.get("name") + " (" + test.get("input") + "," + test.get("expect") + ")\n" + "expected: "
                 + JSONUtils.toString(expect) + "\nresult: " + JSONUtils.toString(result), testpassed);
-    }
-
-    private boolean compareResults(Object v1, Object v2) {
-        boolean rval = true;
-        // TODO Auto-generated method stub
-        if (v1 instanceof List && v2 instanceof List) {
-            if (((List) v1).size() != ((List) v2).size()) {
-                rval = false;
-            } else {
-                // TODO: should the order of things in the list matter?
-                for (int i = 0; i < ((List<Object>) v1).size() && rval == true; i++) {
-                    rval = compareResults(((List<Object>) v1).get(i), ((List<Object>) v2).get(i));
-                }
-            }
-        } else if (v1 instanceof Number && v2 instanceof Number) {
-            // TODO: this is VERY sketchy
-            double n1 = ((Number) v1).doubleValue();
-            double n2 = ((Number) v2).doubleValue();
-
-            rval = n1 == n2;
-        } else if (v1 instanceof String && v2 instanceof String) {
-            rval = ((String) v1).equals((String) v2);
-        } else if (v1 instanceof Map && v2 instanceof Map) {
-            if (((Map) v1).size() != ((Map) v2).size()) {
-                rval = false;
-            } else {
-                for (Object k1 : ((Map) v1).keySet()) {
-                    rval = ((Map) v2).containsKey(k1) ? compareResults(((Map) v1).get(k1), ((Map) v2).get(k1)) : false;
-                    if (rval != true) {
-                        break;
-                    }
-                }
-            }
-        } else if (v1 instanceof Boolean && v2 instanceof Boolean) {
-            rval = v1 == v2;
-        } else if (v1 != null && v2 != null) {
-            rval = v1.equals(v2);
-        } else {
-            rval = v1 == v2;
-        }
-
-        return rval;
     }
 }

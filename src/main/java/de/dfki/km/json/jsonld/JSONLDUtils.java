@@ -327,7 +327,7 @@ public class JSONLDUtils {
              * TODO: not sure what to do here exactly...
              * 
              * python can compare objects using the < and > operators. js pretends it can (i.e. it doesn't throw an error) but always returns false. thus the js
-             * code and the py code are in consistant.
+             * code and the py code are inconsistant.
              * 
              * // TODO: this assumes the order of keys doesn't matter if (((Map) v1).size() != ((Map) v2).size() ) { rval = 1; } else { if (((Map) v1).size() !=
              * ((Map) v2).size()) { rval = 1; } else { for (Object k1: ((Map) v1).keySet()) { rval = ((Map) v2).containsKey(k1) ? compare(((Map) v1).get(k1),

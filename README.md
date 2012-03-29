@@ -125,7 +125,7 @@ The function `ignoreKeyword(String)` in the `JSONLDProcessor` allows you to spec
 
 ### Simplify
 
-The function `simplify(Object,[Object])` is essentually the same as frame, except it goes over all the keys in the input and attempts to make "SimpleName":"URI" mappings for each key and generating a context for the frame based on these mappings. The resulting output should look like a very basic JSON document except for the @context,@id and @type keys (However, this isn't quite what i want yet). If the 2nd value is ommited (i.e. `simplify(Object)`) an empty frame will be used.
+The function `simplify(Object)` goes over all the keys in the input and attempts to make "SimpleName":"URI" mappings for each key and generates a new context for the input  based on these mappings. The resulting output should look like a very basic JSON document except for the @ keys.
 
 RDF2JSONLD
 ----------
