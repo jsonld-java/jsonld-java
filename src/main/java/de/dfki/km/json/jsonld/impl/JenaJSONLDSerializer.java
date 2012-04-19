@@ -31,7 +31,7 @@ public class JenaJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSerialize
         // add the prefixes to the context
         Map<String, String> nsPrefixMap = model.getNsPrefixMap();
         for (String prefix : nsPrefixMap.keySet()) {
-            setPrefix(prefix, nsPrefixMap.get(prefix));
+            setPrefix(nsPrefixMap.get(prefix), prefix);
         }
 
         // iterate over the list of subjects and add the edges to the json-ld
