@@ -127,6 +127,17 @@ public class JSONUtils {
         return fromReader(new BufferedReader(new InputStreamReader(content, enc)));
     }
 
+    public static String toPrettyString(Object obj) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            return mapper.defaultPrettyPrintingWriter().writeValueAsString(obj);
+        } catch (Exception e) {
+            // TODO: if the obj isn't valid json this should throw an exception of some kind
+            return "";
+        }
+    }
+
     public static String toString(Object obj) { // throws
                                                 // JsonGenerationException,
                                                 // JsonMappingException {

@@ -38,39 +38,32 @@ public class JenaJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSerialize
         // document
         ResIterator subjects = model.listSubjects();
         while (subjects.hasNext()) {
-
             Resource subject = subjects.next();
-            String subj = getID(subject);
-
-            StmtIterator statements = model.listStatements(subject, (Property) null, (RDFNode) null);
-            while (statements.hasNext()) {
-                Statement statement = statements.next();
-                Property predicate = statement.getPredicate();
-                RDFNode object = statement.getObject();
-
-                if (object.isLiteral()) {
-                    Literal literal = object.asLiteral();
-                    String value = literal.getLexicalForm();
-                    String datatypeURI = literal.getDatatypeURI();
-                    String language = literal.getLanguage();
-
-                    triple(subj, predicate.getURI(), value, datatypeURI, language);
-                } else {
-                    Resource resource = object.asResource();
-                    String res = getID(resource);
-
-                    triple(subj, predicate.getURI(), res);
-                }
-            }
-
+            importResource(subject);
         }
     }
 
-    public void importResource(Resource r) {
-        Model model = r.getModel();
-        if (model == null) {
-            return;
+    public void importResource(Resource subject) {
+        String subj = getID(subject);
+        StmtIterator statements = subject.getModel().listStatements(subject, (Property) null, (RDFNode) null);
+        while (statements.hasNext()) {
+            Statement statement = statements.next();
+            Property predicate = statement.getPredicate();
+            RDFNode object = statement.getObject();
+
+            if (object.isLiteral()) {
+                Literal literal = object.asLiteral();
+                String value = literal.getLexicalForm();
+                String datatypeURI = literal.getDatatypeURI();
+                String language = literal.getLanguage();
+
+                triple(subj, predicate.getURI(), value, datatypeURI, language);
+            } else {
+                Resource resource = object.asResource();
+                String res = getID(resource);
+
+                triple(subj, predicate.getURI(), res);
+            }
         }
-        importModel(model);
     }
 }
