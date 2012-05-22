@@ -498,11 +498,37 @@ public class JSONLDProcessor {
         }
     }
 
-    /*
-     * public Object simplify(Map input) { return simplify(input, new HashMap()); }
-     */
+    private static void processKeyVal(String key, Map<String, Object> ctx, Boolean isid) {
+        int idx = key.lastIndexOf('#');
+        if (idx < 0) {
+            idx = key.lastIndexOf('/');
+        }
+        String skey = key.substring(idx + 1);
+        Object keyval = key;
+        if (isid) {
+            Map tmp = new HashMap();
+            tmp.put("@type", "@id");
+            tmp.put("@id", key);
+            keyval = tmp;
+        }
+        while (true) {
+            // check if the key is already in the frame ctx
+            if (ctx.containsKey(skey)) {
+                // if so, check if the values are the same
+                if (ctx.get(skey).equals(keyval)) {
+                    // if they are, skip adding this
+                    break;
+                }
+                // if not, add a _ to the simple key and try again
+                skey += "_";
+            } else {
+                ctx.put(skey, keyval);
+                break;
+            }
+        }
+    }
 
-    public static void generateSimplifyContext(Object input, Map<String, Object> ctx) {
+    private static void generateSimplifyContext(Object input, Map<String, Object> ctx) {
         if (input instanceof List) {
             for (Object o : (List) input) {
                 generateSimplifyContext(o, ctx);
@@ -512,37 +538,22 @@ public class JSONLDProcessor {
             for (String key : o.keySet()) {
                 Object val = o.get(key);
                 if (key.matches("^https?://.+$")) {
-                    int idx = key.lastIndexOf('#');
-                    if (idx < 0) {
-                        idx = key.lastIndexOf('/');
-                    }
-                    String skey = key.substring(idx + 1);
-                    Object keyval = key;
-                    if (val instanceof Map) {
-                        if (((Map) val).containsKey("@id")) {
-                            Map tmp = new HashMap();
-                            tmp.put("@type", "@id");
-                            tmp.put("@id", key);
-                            keyval = tmp;
-                        }
-                    }
-                    while (true) {
-                        // check if the key is already in the frame ctx
-                        if (ctx.containsKey(skey)) {
-                            // if so, check if the values are the same
-                            if (ctx.get(skey).equals(keyval)) {
-                                // if they are, skip adding this
-                                break;
-                            }
-                            // if not, add a _ to the simple key and try again
-                            skey += "_";
-                        } else {
-                            ctx.put(skey, keyval);
-                            break;
-                        }
-                    }
+                    processKeyVal(key, ctx, (val instanceof Map) && ((Map) val).containsKey("@id"));
                 }
-                if (val instanceof Map || val instanceof List) {
+                if ("@type".equals(key)) {
+                    if (!(val instanceof List)) {
+                        List<Object> tmp = new ArrayList<Object>();
+                        tmp.add(val);
+                        val = tmp;
+                    }
+                    for (Object t : (List<Object>) val) {
+                        if (t instanceof String) {
+                            processKeyVal((String) t, ctx, true);
+                        } else {
+                            throw new RuntimeException("TODO: don't yet know how to handle non-string types in @type");
+                        }
+                    }
+                } else if (val instanceof Map || val instanceof List) {
                     generateSimplifyContext(val, ctx);
                 }
             }
@@ -561,6 +572,9 @@ public class JSONLDProcessor {
 
         Object expanded = expand(input);
         Map<String, Object> framectx = new HashMap<String, Object>();
+        if (input.containsKey("@context")) {
+            framectx.putAll((Map<? extends String, ? extends Object>) input.get("@context"));
+        }
 
         generateSimplifyContext(expanded, framectx);
 

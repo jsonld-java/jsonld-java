@@ -91,7 +91,8 @@ public class JSONLDProcessorTest {
                 List<String> testType = (List<String>) test.get("@type");
                 if (// test.get("input").equals("normalize-0044-in.jsonld") && (
                 testType.contains("jld:NormalizeTest") || testType.contains("jld:ExpandTest") || testType.contains("jld:CompactTest")
-                        || testType.contains("jld:FrameTest") || testType.contains("jld:TriplesTest") || testType.contains("jld:SimplifyTest")
+                        || testType.contains("jld:FrameTest") || testType.contains("jld:TriplesTest")
+                //|| testType.contains("jld:SimplifyTest")
                 // || testType.contains("jld:RDFTest")
                 ) {
                     System.out.println("Adding test: " + test.get("name"));
