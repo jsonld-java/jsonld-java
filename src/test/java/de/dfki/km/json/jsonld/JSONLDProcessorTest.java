@@ -26,6 +26,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import de.dfki.km.json.JSONUtils;
+import de.dfki.km.json.jsonld.JSONLDProcessor.Options;
 
 @RunWith(Parameterized.class)
 public class JSONLDProcessorTest {
@@ -90,8 +91,8 @@ public class JSONLDProcessorTest {
             for (Map<String, Object> test : (List<Map<String, Object>>) manifest.get("sequence")) {
                 List<String> testType = (List<String>) test.get("@type");
                 if (// test.get("input").equals("normalize-0044-in.jsonld") && (
-                testType.contains("jld:NormalizeTest") || testType.contains("jld:ExpandTest") || testType.contains("jld:CompactTest")
-                        || testType.contains("jld:FrameTest") || testType.contains("jld:TriplesTest")
+                testType.contains("jld:ExpandTest") //|| testType.contains("jld:NormalizeTest") || testType.contains("jld:CompactTest")
+                //|| testType.contains("jld:FrameTest") || testType.contains("jld:TriplesTest")
                 //|| testType.contains("jld:SimplifyTest")
                 // || testType.contains("jld:RDFTest")
                 ) {
@@ -183,10 +184,11 @@ public class JSONLDProcessorTest {
         Object result = null;
 
         List<String> testType = (List<String>) test.get("@type");
+        Options options = new JSONLDProcessor.Options("http://json-ld.org/test-suite/tests/" + test.get("input"));
         if (testType.contains("jld:NormalizeTest")) {
             result = new JSONLDProcessor().normalize(inputJson);
         } else if (testType.contains("jld:ExpandTest")) {
-            result = new JSONLDProcessor().expand(inputJson);
+            result = JSONLDProcessor.expand(inputJson, options);
         } else if (testType.contains("jld:CompactTest")) {
             InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
             Object contextJson = JSONUtils.fromInputStream(contextStream);

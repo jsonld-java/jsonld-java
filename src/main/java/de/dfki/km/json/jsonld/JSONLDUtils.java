@@ -11,6 +11,174 @@ import java.util.Set;
 
 public class JSONLDUtils {
 
+    /**
+     * Returns whether or not the given value is a keyword (or a keyword alias).
+     *
+     * @param v the value to check.
+     * @param [ctx] the active context to check against.
+     *
+     * @return true if the value is a keyword, false if not.
+     */
+    public static boolean isKeyword(String key) {
+        // TODO: this doesn't fit with my desire to have this list modifyable at runtime
+        // I may need to make this a method of JSONLDProcessor to support this
+        // which may result in a lot of the utils in this library becoming member functions
+        return "@context".equals(key) || "@container".equals(key) || "@default".equals(key) || "@embed".equals(key) || "@explicit".equals(key)
+                || "@graph".equals(key) || "@id".equals(key) || "@language".equals(key) || "@list".equals(key) || "@omitDefault".equals(key)
+                || "@preserve".equals(key) || "@set".equals(key) || "@type".equals(key) || "@value".equals(key);
+    }
+
+    public static boolean isKeyword(String key, Map<String, Object> ctx) {
+        if (ctx.containsKey("keywords")) {
+            Map<String, List<String>> keywords = (Map<String, List<String>>) ctx.get("keywords");
+            if (keywords.containsKey(key)) {
+                return true;
+            }
+            for (List<String> aliases : keywords.values()) {
+                if (aliases.contains(key)) {
+                    return true;
+                }
+            }
+        } else {
+            throw new RuntimeException("Error: missing keywords map in context!");
+        }
+        return false;
+    }
+
+    public static boolean isAbsoluteIri(String value) {
+        return value.contains(":");
+    }
+
+    /**
+     * Adds a value to a subject. If the subject already has the value, it will
+     * not be added. If the value is an array, all values in the array will be
+     * added.
+     *
+     * Note: If the value is a subject that already exists as a property of the
+     * given subject, this method makes no attempt to deeply merge properties.
+     * Instead, the value will not be added.
+     *
+     * @param subject the subject to add the value to.
+     * @param property the property that relates the value to the subject.
+     * @param value the value to add.
+     * @param [propertyIsArray] true if the property is always an array, false
+     *          if not (default: false).
+     * @param [propertyIsList] true if the property is a @list, false
+     *          if not (default: false).
+     */
+    public static void addValue(Map<String, Object> subject, String property, Object value, boolean propertyIsArray, boolean propertyIsList) {
+        if (value instanceof List) {
+            if (((List) value).size() == 0 && propertyIsArray && !subject.containsKey(property)) {
+                subject.put(property, new ArrayList<Object>());
+            }
+            for (Object val : (List) value) {
+                addValue(subject, property, val, propertyIsArray, propertyIsList);
+            }
+        } else if (subject.containsKey(property)) {
+            boolean hasValue = !propertyIsList && hasValue(subject, property, value);
+            if (!(subject.get(property) instanceof List) && (!hasValue || propertyIsArray)) {
+                List<Object> tmp = new ArrayList<Object>();
+                tmp.add(subject.get(property));
+                subject.put(property, tmp);
+            }
+            if (!hasValue) {
+                ((List<Object>) subject.get(property)).add(value);
+            }
+        } else {
+            Object tmp;
+            if (propertyIsArray) {
+                tmp = new ArrayList<Object>();
+                ((List<Object>) tmp).add(value);
+            } else {
+                tmp = value;
+            }
+            subject.put(property, tmp);
+        }
+    }
+
+    public static void addValue(Map<String, Object> subject, String property, Object value, boolean propertyIsArray) {
+        addValue(subject, property, value, propertyIsArray, "@list".equals(property));
+    }
+
+    public static void addValue(Map<String, Object> subject, String property, Object value) {
+        addValue(subject, property, value, false, "@list".equals(property));
+    }
+
+    /**
+     * Determines if the given value is a property of the given subject.
+     *
+     * @param subject the subject to check.
+     * @param property the property to check.
+     * @param value the value to check.
+     *
+     * @return true if the value exists, false if not.
+     */
+    public static boolean hasValue(Map<String, Object> subject, String property, Object value) {
+        boolean rval = false;
+        if (hasProperty(subject, property)) {
+            Object val = subject.get(property);
+            boolean isList = (val instanceof Map && ((Map<String, Object>) val).containsKey("@list"));
+            if (isList || val instanceof List) {
+                if (isList) {
+                    val = ((Map<String, Object>) val).get("@list");
+                }
+                for (Object i : (List) val) {
+                    if (compareValues(value, i)) {
+                        rval = true;
+                        break;
+                    }
+                }
+            } else if (!(value instanceof List)) {
+                rval = compareValues(value, val);
+            }
+        }
+        return rval;
+    }
+
+    private static boolean hasProperty(Map<String, Object> subject, String property) {
+        boolean rval = false;
+        if (subject.containsKey(property)) {
+            Object value = subject.get(property);
+            rval = (!(value instanceof List) || ((List) value).size() > 0);
+        }
+        return rval;
+    }
+
+    /**
+     * Compares two JSON-LD values for equality. Two JSON-LD values will be
+     * considered equal if:
+     *
+     * 1. They are both primitives of the same type and value.
+     * 2. They are both @values with the same @value, @type, and @language, OR
+     * 3. They both have @ids they are the same.
+     *
+     * @param v1 the first value.
+     * @param v2 the second value.
+     *
+     * @return true if v1 and v2 are considered equal, false if not.
+     */
+    public static boolean compareValues(Object v1, Object v2) {
+        if (v1.equals(v2)) {
+            return true;
+        }
+
+        if ((v1 instanceof Map && ((Map<String, Object>) v1).containsKey("@value")) && (v2 instanceof Map && ((Map<String, Object>) v2).containsKey("@value"))
+                && ((Map<String, Object>) v1).get("@value").equals(((Map<String, Object>) v2).get("@value"))
+                && ((Map<String, Object>) v1).get("@type").equals(((Map<String, Object>) v2).get("@type"))
+                && ((Map<String, Object>) v1).get("@language").equals(((Map<String, Object>) v2).get("@language"))) {
+            return true;
+        }
+
+        if ((v1 instanceof Map && ((Map<String, Object>) v1).containsKey("@id")) && (v2 instanceof Map && ((Map<String, Object>) v2).containsKey("@id"))
+                && ((Map<String, Object>) v1).get("@id").equals(((Map<String, Object>) v2).get("@id"))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // END OF NEW CODE
+
     public static class NameGenerator {
         private String prefix;
         private int count;
@@ -200,12 +368,6 @@ public class JSONLDUtils {
         }
 
         return rval;
-    }
-
-    @Deprecated
-    // TODO: remove depreciated
-    public static String expandTerm(Map<String, Object> ctx, String term) {
-        return expandTerm(ctx, term, null);
     }
 
     public static String expandTerm(Map<String, Object> ctx, String term, Map<String, Object> usedCtx) {
