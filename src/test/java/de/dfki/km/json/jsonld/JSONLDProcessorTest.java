@@ -91,7 +91,7 @@ public class JSONLDProcessorTest {
             for (Map<String, Object> test : (List<Map<String, Object>>) manifest.get("sequence")) {
                 List<String> testType = (List<String>) test.get("@type");
                 if (// test.get("input").equals("normalize-0044-in.jsonld") && (
-                testType.contains("jld:ExpandTest") //|| testType.contains("jld:NormalizeTest") || testType.contains("jld:CompactTest")
+                testType.contains("jld:ExpandTest") || testType.contains("jld:CompactTest") //|| testType.contains("jld:NormalizeTest")
                 //|| testType.contains("jld:FrameTest") || testType.contains("jld:TriplesTest")
                 //|| testType.contains("jld:SimplifyTest")
                 // || testType.contains("jld:RDFTest")
@@ -192,7 +192,7 @@ public class JSONLDProcessorTest {
         } else if (testType.contains("jld:CompactTest")) {
             InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
             Object contextJson = JSONUtils.fromInputStream(contextStream);
-            result = new JSONLDProcessor().compact(((Map<String, Object>) contextJson).get("@context"), inputJson);
+            result = JSONLDProcessor.compact(inputJson, (Map<String, Object>) contextJson, options);
         } else if (testType.contains("jld:FrameTest")) {
             InputStream frameStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("frame"));
             Object frameJson = JSONUtils.fromInputStream(frameStream);

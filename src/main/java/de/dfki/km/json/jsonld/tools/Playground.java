@@ -83,9 +83,9 @@ public class Playground {
 
                 Object outobj = null;
                 if ("--expand".equals(opt)) {
-                    outobj = p.expand(inobj);
+                    outobj = JSONLDProcessor.expand(inobj);
                 } else if ("--compact".equals(opt)) {
-                    outobj = p.compact(new HashMap<String, Object>(), inobj);
+                    outobj = JSONLDProcessor.compact(inobj, new HashMap<String, Object>());
                 } else if ("--normalize".equals(opt)) {
                     outobj = p.normalize(inobj);
                 } else if ("--frame".equals(opt)) {

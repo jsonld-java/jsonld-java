@@ -39,11 +39,26 @@ public class JSONLDProcessor {
     private NameGenerator ngc14n;
 
     public static class Options {
-        Options(String base) {
-            this.base = base;
+        Options() {
+            this.base = "";
+            this.strict = true;
         }
 
-        public String base;
+        Options(String base) {
+            this.base = base;
+            this.strict = true;
+        }
+
+        Options(String base, Boolean strict) {
+            this.base = base;
+            this.strict = strict;
+        }
+
+        public String base = null;
+        public Boolean strict = null;
+        public Boolean graph = null;
+        public Boolean optimize = null;
+        public Map<String, Object> optimizeCtx = null;
     }
 
     Options opts;
@@ -62,6 +77,7 @@ public class JSONLDProcessor {
 
     private class ActiveContext extends HashMap<String, Object> {
         public ActiveContext() {
+            // TODO: are mapping values always maps?
             mappings = new HashMap<String, Object>();
             keywords = new HashMap<String, List<String>>() {
                 {
@@ -373,6 +389,21 @@ public class JSONLDProcessor {
         return rval;
     }
 
+    private static ActiveContext processContext(ActiveContext activeCtx, Object localCtx, Options opts) {
+        JSONLDProcessor p = new JSONLDProcessor(opts);
+        if (localCtx == null) {
+            return p.new ActiveContext();
+        }
+
+        localCtx = JSONLDUtils.clone(localCtx);
+        if (localCtx instanceof Map && !((Map) localCtx).containsKey("@context")) {
+            Map<String, Object> tmp = new HashMap<String, Object>();
+            tmp.put("@context", localCtx);
+            localCtx = tmp;
+        }
+        return p.processContext(activeCtx, localCtx);
+    }
+
     /**
      * Expands a term into an absolute IRI. The term may be a regular term, a
      * prefix, a relative IRI, or an absolute IRI. In any case, the associated
@@ -504,6 +535,171 @@ public class JSONLDProcessor {
             throw new RuntimeException(
                     "Invalid JSON-LD syntax; \"@type\" value must a string, a subject reference, an array of strings or subject references, or an empty object.");
         }
+    }
+
+    /**
+     * Compacts an IRI or keyword into a term or prefix if it can be. If the
+     * IRI has an associated value it may be passed.
+     *
+     * @param ctx the active context to use.
+     * @param iri the IRI to compact.
+     * @param value the value to check or null.
+     *
+     * @return the compacted term, prefix, keyword alias, or the original IRI.
+     */
+    private String compactIri(ActiveContext ctx, String iri, Object value) {
+        if (iri == null) {
+            return iri;
+        }
+
+        if (JSONLDUtils.isKeyword(iri)) {
+            List<String> aliases = ctx.keywords.get(iri);
+            if (aliases.size() > 0) {
+                return aliases.get(0);
+            } else {
+                return iri;
+            }
+        }
+
+        List<String> terms = new ArrayList<String>();
+        int highest = 0;
+        boolean listContainer = false;
+        boolean isList = (value instanceof Map && ((Map<String, Object>) value).containsKey("@list"));
+        for (String term : ctx.mappings.keySet()) {
+            Map<String, Object> entry = (Map<String, Object>) ctx.mappings.get(term);
+            if (!iri.equals(entry.get("@id"))) {
+                continue;
+            }
+            if (isList && "@set".equals(entry.get("@container"))) {
+                continue;
+            }
+            if (!isList && "@list".equals(entry.get("@container"))) {
+                continue;
+            }
+            if (isList && listContainer && !"@list".equals(entry.get("@container"))) {
+                continue;
+            }
+
+            int rank = rankTerm(ctx, term, value);
+            if (rank > 0) {
+                if ("@set".equals(entry.get("@container"))) {
+                    rank += 1;
+                }
+
+                if (isList && !listContainer && "@list".equals(entry.get("@container"))) {
+                    listContainer = true;
+                    terms.clear();
+                    highest = rank;
+                    terms.add(term);
+                } else if (rank >= highest) {
+                    if (rank > highest) {
+                        terms.clear();
+                        highest = rank;
+                    }
+                    terms.add(term);
+                }
+            }
+        }
+
+        if (terms.size() == 0) {
+            for (String term : ctx.mappings.keySet()) {
+                if (term.contains(":")) {
+                    continue;
+                }
+
+                Map<String, Object> entry = (Map<String, Object>) ctx.mappings.get(term);
+                if (iri.equals(entry.get("@id")) || iri.indexOf((String) entry.get("@id")) != 0) {
+                    continue;
+                }
+
+                String curie = term + ":" + iri.substring(((String) entry.get("@id")).length());
+                if (!(ctx.mappings.containsKey(curie))) {
+                    terms.add(curie);
+                }
+            }
+        }
+
+        if (terms.size() == 0) {
+            return iri;
+        }
+
+        Collections.sort(terms, new Comparator<String>() {
+            // Compares two strings first based on length and then lexicographically
+            public int compare(String a, String b) {
+                if (a.length() < b.length()) {
+                    return -1;
+                } else if (b.length() < a.length()) {
+                    return 1;
+                }
+                return a.compareTo(b);
+            }
+        });
+
+        return terms.get(0);
+    }
+
+    private String compactIri(ActiveContext ctx, String iri) {
+        return compactIri(ctx, iri, null);
+    }
+
+    private int rankTerm(ActiveContext ctx, String term, Object value) {
+        if (value == null) {
+            return 3;
+        }
+
+        Map<String, Object> entry = (Map<String, Object>) ctx.mappings.get(term);
+        if (value instanceof Map && ((Map<String, Object>) value).containsKey("@list")) {
+            List<Object> list = (List<Object>) ((Map<String, Object>) value).get("@list");
+            if (list.size() == 0) {
+                return "@list".equals(entry.get("@container")) ? 1 : 0;
+            }
+            int sum = 0;
+            for (Object i : list) {
+                sum += rankTerm(ctx, term, i);
+            }
+            return sum;
+        }
+
+        if (value instanceof Map && ((Map<String, Object>) value).containsKey("@value")) {
+            if (((Map<String, Object>) value).containsKey("@type")) {
+                if (entry.containsKey("@type")) {
+                    Object vt = ((Map<String, Object>) value).get("@type");
+                    Object et = entry.get("@type");
+                    if ((vt == null && et == null) || (vt != null && vt.equals(et))) {
+                        return 3;
+                    }
+                }
+                return (!entry.containsKey("@type") && !entry.containsKey("@language")) ? 1 : 0;
+            }
+
+            if (!(((Map<String, Object>) value).get("@value") instanceof String)) {
+                return (!entry.containsKey("@type") && !entry.containsKey("@language")) ? 2 : 1;
+            }
+
+            if (!((Map<String, Object>) value).containsKey("@language")) {
+                if ((entry.containsKey("@language") && entry.get("@language") == null)
+                        || (!entry.containsKey("@type") && !entry.containsKey("@language") && !ctx.containsKey("@language"))) {
+                    return 3;
+                }
+                return 0;
+            }
+
+            Object vl = ((Map<String, Object>) value).get("@language");
+            Object el = entry.get("@language");
+            Object cl = ctx.get("@language");
+            if ((entry.containsKey("@language") && ((vl == null && el == null) || vl.equals(el)))
+                    || (!entry.containsKey("@type") && !entry.containsKey("@language") && (ctx.containsKey("@language") && ((vl == null && cl == null) || vl
+                            .equals(cl))))) {
+                return 3;
+            }
+            return (!entry.containsKey("@type") && !entry.containsKey("@language")) ? 1 : 0;
+        }
+
+        if ("@id".equals(entry.get("@type"))) {
+            return 3;
+        }
+
+        return (!entry.containsKey("@type") && !entry.containsKey("@language")) ? 1 : 0;
     }
 
     private Object expand(ActiveContext ctx, Object property, Object element) {
@@ -669,185 +865,235 @@ public class JSONLDProcessor {
         return expand(input, new Options(""));
     }
 
-    // TODO: note that in the spec, input is the first input, but in the ref
-    // impl, context is.
-    // using context here first because it matches everything else
-    public Object compact(Object context, Object input) {
+    /**
+     * Recursively compacts an element using the given active context. All values
+     * must be in expanded form before this method is called.
+     *
+     * @param ctx the active context to use.
+     * @param property the property that points to the element, null for none.
+     * @param element the element to compact.
+     *
+     * @return the compacted value.
+     */
+    public Object compact(ActiveContext ctx, String property, Object element) {
 
-        Object rval = null;
-
-        Map<String, Object> ctx;
-        if (context == null) {
-            ctx = new HashMap<String, Object>();
-        } else if (context instanceof Map) {
-            ctx = (Map<String, Object>) JSONLDUtils.clone(context);
-        } else if (context instanceof List) {
-            ctx = (Map<String, Object>) JSONLDUtils.mergeContexts(new HashMap<String, Object>(), context);
-        } else {
-            // TODO: are there any reasons that ctx shouldn't be a map?
-            throw new RuntimeException("non-map or list contexts not yes supported");
-        }
-
-        input = expand(input);
-
-        Map<String, Object> ctxOut = new HashMap<String, Object>();
-        Object out = compact(ctx, null, input, ctxOut);
-        rval = out;
-
-        if (ctxOut.size() > 0) {
-            rval = new HashMap<String, Object>();
-            ((Map<String, Object>) rval).put("@context", ctxOut);
-            if (out instanceof List) {
-                ((Map<String, Object>) rval).put(JSONLDUtils.getKeywords(ctxOut).get("@id"), out);
-            } else {
-                for (String key : ((Map<String, Object>) out).keySet()) {
-                    ((Map<String, Object>) rval).put(key, ((Map<String, Object>) out).get(key));
+        if (element instanceof List) {
+            List<Object> rval = new ArrayList<Object>();
+            for (Object i : (List) element) {
+                Object e = compact(ctx, property, i);
+                if (e != null) {
+                    rval.add(e);
                 }
             }
+            if (rval.size() == 1) {
+                Object container = ctx.getContextValue(property, "@container");
+                if (!("@list".equals(container) || "@set".equals(container))) {
+                    return rval.get(0);
+                }
+            }
+            return rval;
         }
 
-        return rval;
+        if (element instanceof Map) {
+            Map<String, Object> elem = (Map<String, Object>) element;
+            if (elem.containsKey("@value")) {
+                if (elem.size() == 1) {
+                    return elem.get("@value");
+                }
+
+                Object type = ctx.getContextValue(property, "@type");
+                Object language = ctx.getContextValue(property, "@language");
+
+                if (type != null && elem.containsKey("@type") && type.equals(elem.get("@type"))) {
+                    element = elem.get("@value");
+                } else if (language != null && elem.containsKey("@language") && language.equals(elem.get("@language"))) {
+                    element = elem.get("@value");
+                } else if (elem.containsKey("@type")) {
+                    elem.put("@type", compactIri(ctx, (String) elem.get("@type")));
+                }
+
+                return element;
+            }
+
+            // compact subject references
+            if (elem.size() == 1 && elem.containsKey("@id")) {
+                Object type = ctx.getContextValue(property, "@type");
+                if ("@id".equals(type) || "@graph".equals(property)) {
+                    return compactIri(ctx, (String) elem.get("@id"));
+                }
+            }
+
+            Map<String, Object> rval = new HashMap<String, Object>();
+            for (String key : elem.keySet()) {
+                Object value = elem.get(key);
+                if ("@id".equals(key) || "@type".equals(key)) {
+                    if (value instanceof String) {
+                        value = compactIri(ctx, (String) value);
+                    } else {
+                        List<String> types = new ArrayList<String>();
+                        for (String i : (List<String>) value) {
+                            types.add(compactIri(ctx, i));
+                        }
+                        value = types;
+                    }
+
+                    String prop = compactIri(ctx, key);
+                    JSONLDUtils.addValue(rval, prop, value, value instanceof List && ((List) value).size() == 0);
+                    continue;
+                }
+
+                // NOTE: value must be an array due to expansion algorithm
+
+                if (((List) value).size() == 0) {
+                    String prop = compactIri(ctx, key);
+                    JSONLDUtils.addValue(rval, prop, new ArrayList<Object>(), true);
+                }
+
+                for (Object v : (List) value) {
+                    boolean isList = (v instanceof Map && ((Map<String, Object>) v).containsKey("@list"));
+                    String prop = compactIri(ctx, key, v);
+
+                    if (isList) {
+                        v = ((Map<String, Object>) v).get("@list");
+                    }
+
+                    v = compact(ctx, prop, v);
+
+                    Object container = ctx.getContextValue(prop, "@container");
+
+                    if (isList && !"@list".equals(container)) {
+                        if (rval.containsKey(prop) && opts.strict) {
+                            throw new RuntimeException(
+                                    "JSON-LD compact error; property has a \"@list\" @container rule but there is more than a single @list that matches the compacted term in the document. Compaction might mix unwanted items into the list.");
+                        }
+                        String kwlist = compactIri(ctx, "@list");
+                        Map<String, Object> val = new HashMap<String, Object>();
+                        val.put(kwlist, v);
+                        v = val;
+
+                    }
+                    boolean isArray = ("@set".equals(container) || "@list".equals(container) || (v instanceof List && ((List) v).size() == 0));
+                    JSONLDUtils.addValue(rval, prop, v, isArray, "@list".equals(container));
+                }
+            }
+            return rval;
+        }
+        return element;
     }
 
-    /*
-     * TODO: this throws runtime exception. need to look at doing something more sane.
+    /**
+     * Performs JSON-LD compaction.
+     *
+     * @param input the JSON-LD input to compact.
+     * @param ctx the context to compact with.
+     * @param [options] options to use:
+     *          [base] the base IRI to use.
+     *          [strict] use strict mode (default: true).
+     *          [optimize] true to optimize the compaction (default: false).
+     *          [graph] true to always output a top-level graph (default: false).
+     *          [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
+     * @param callback(err, compacted, ctx) called once the operation completes.
      */
-    public Object compact(Map<String, Object> ctx, Object property, Object value, Map<String, Object> usedCtx) {
+    public static Object compact(Object input, Object ctx, Options opts) {
+        if (input == null) {
+            return null;
+        }
+        if (opts.strict == null) {
+            opts.strict = true;
+        }
+        if (opts.graph == null) {
+            opts.graph = false;
+        }
+        if (opts.optimize == null) {
+            opts.optimize = false;
+        }
+        JSONLDProcessor p = new JSONLDProcessor(opts);
 
-        Object rval = null;
-        Map<String, String> keywords = JSONLDUtils.getKeywords(ctx);
+        // expand input then do compaction
+        Object expanded;
+        try {
+            expanded = p.expand(p.new ActiveContext(), null, input);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Count not expand input before compaction", e);
+        }
 
-        if (value == null) {
-            rval = null;
-            // TODO: used ctx stuff may actually be handy here
-            JSONLDUtils.getCoercionType(ctx, (String) property, usedCtx);
-        } else if (value instanceof List) {
-            // recursively add compacted values to array
-            rval = new ArrayList<Object>();
-            for (Object o : (List<Object>) value) {
-                ((List) rval).add(compact(ctx, property, o, usedCtx));
+        // process context
+        ActiveContext activeCtx = p.new ActiveContext();
+        try {
+            activeCtx = JSONLDProcessor.processContext(activeCtx, ctx, opts);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Could not process context before compaction.", e);
+        }
+
+        if (opts.optimize) {
+            opts.optimizeCtx = new HashMap<String, Object>();
+        }
+
+        // do compaction
+        Object compacted = p.compact(activeCtx, null, expanded);
+
+        // cleanup
+        if (!opts.graph && compacted instanceof List && ((List<Object>) compacted).size() == 1) {
+            compacted = ((List<Object>) compacted).get(0);
+        } else if (opts.graph && compacted instanceof Map) {
+            List<Object> tmp = new ArrayList<Object>();
+            tmp.add(compacted);
+            compacted = tmp;
+        }
+
+        if (ctx instanceof Map && ((Map<String, Object>) ctx).containsKey("@context")) {
+            ctx = ((Map<String, Object>) ctx).get("@context");
+        }
+
+        ctx = JSONLDUtils.clone(ctx);
+        if (!(ctx instanceof List)) {
+            List<Object> lctx = new ArrayList<Object>();
+            lctx.add(ctx);
+            ctx = lctx;
+        }
+        // TODO: i need some cases where ctx is a list!
+
+        if (opts.optimize) {
+            ((List<Object>) ctx).add(opts.optimizeCtx);
+        }
+
+        List<Object> tmp = (List<Object>) ctx;
+        ctx = new ArrayList<Object>();
+        for (Object i : tmp) {
+            if (!(i instanceof Map) || ((Map) i).size() > 0) {
+                ((List<Object>) ctx).add(i);
             }
-        } else if (value instanceof Map && ((Map) value).containsKey("@id") && ((Map) value).get("@id") instanceof List) {
-            // graph literal/disjoint graph
-            rval = new HashMap<String, Object>();
-            ((Map<String, Object>) rval).put(keywords.get("@id"), compact(ctx, property, ((Map) value).get("@id"), usedCtx));
-        } else if (JSONLDUtils.isSubject(value)) { // recurse if value is a
-                                                   // subject
-            // recursively handle sub-properties that aren't a sub-context
-            rval = new HashMap<String, Object>();
-            for (String key : ((Map<String, Object>) value).keySet()) {
-                if (!"@context".equals(((Map<String, Object>) value).get(key))) {
-                    // set object to compacted property, only overwrite existing
-                    // properties if the property actually compacted
-                    String p = JSONLDUtils.compactIRI(ctx, key, usedCtx);
-                    if (!(key.equals(p)) || !((Map<String, Object>) rval).containsKey(p)) {
-                        ((Map<String, Object>) rval).put(p, compact(ctx, key, ((Map<String, Object>) value).get(key), usedCtx));
-                    }
+        }
+
+        boolean hasContext = ((List) ctx).size() > 0;
+        if (((List) ctx).size() == 1) {
+            ctx = ((List) ctx).get(0);
+        }
+
+        if (hasContext || opts.graph) {
+            if (compacted instanceof List) {
+                String kwgraph = p.compactIri(activeCtx, "@graph");
+                Object graph = compacted;
+                compacted = new HashMap<String, Object>();
+                if (hasContext) {
+                    ((Map<String, Object>) compacted).put("@context", ctx);
                 }
-            }
-        } else {
-            // get coerce type
-            String coerce = JSONLDUtils.getCoercionType(ctx, (String) property, usedCtx);
-
-            // get type from value, to ensure coercion is valid
-            String type = null;
-            if (value instanceof Map) {
-                // type coercion can only occur if language is not specified
-                if (!((Map) value).containsKey("@language")) {
-                    // type must match coerce type if specified
-                    if (((Map) value).containsKey("@type")) {
-                        type = (String) ((Map<String, Object>) value).get("@type");
-                    } else if (((Map) value).containsKey("@id")) { // type is ID
-                                                                   // (IRI)
-                        type = "@id";
-                    } else { // can be coerced to any type
-                        type = coerce;
-                    }
-                }
-            } else if (value instanceof String) {
-                // type can be coerced to anything
-                type = coerce;
-            }
-
-            // types that can be auto-coerced from a JSON-builtin
-            if (coerce == null && (JSONLDConsts.XSD_BOOLEAN.equals(type) || JSONLDConsts.XSD_INTEGER.equals(type) || JSONLDConsts.XSD_DOUBLE.equals(type))) {
-                coerce = type;
-            }
-
-            // do reverse type-coercion
-            if (coerce != null) {
-                // type is only None if a language was specified, which is an
-                // error if type coercion is specified
-                if (type == null) {
-                    throw new RuntimeException("Cannot coerce type when a language is " + "specified. The language information would be lost.");
-                } else if (!type.equals(coerce)) {
-                    // if the value type does not match the coerce type, it is
-                    // an error
-                    throw new RuntimeException("Cannot coerce type because the type does not match.");
-                } else {
-                    // do reverse type-coercion
-                    if (value instanceof Map) {
-                        if (((Map) value).containsKey("@id")) {
-                            rval = ((Map) value).get("@id");
-                        } else if (((Map) value).containsKey("@value")) {
-                            rval = ((Map) value).get("@value");
-                        }
-                    } else {
-                        rval = value;
-                    }
-
-                    // do basic JSON types conversion
-                    if (JSONLDConsts.XSD_BOOLEAN.equals(coerce)) {
-                        // TODO: this is a bit mad (and probably not exhaustive)
-                        if (rval instanceof String) {
-                            rval = "true".equals(rval);
-                        } else if (rval instanceof Integer) {
-                            rval = ((Integer) rval) != 0;
-                        } else if (rval instanceof Double) {
-                            rval = ((Double) rval) != 0.0;
-                        } else if (rval instanceof Long) {
-                            rval = ((Long) rval) != 0L;
-                        } else if (rval instanceof Float) {
-                            rval = ((Float) rval) != 0.0f;
-                        } else if (rval instanceof Short) {
-                            rval = ((Short) rval) != 0;
-                        } else if (!(rval instanceof Boolean)) {
-                            rval = false;
-                        }
-                    } else if (JSONLDConsts.XSD_DOUBLE.equals(coerce)) {
-                        if (rval instanceof String) {
-                            rval = Double.parseDouble((String) rval);
-                        } else if (rval instanceof Number) {
-                            rval = ((Number) rval).doubleValue();
-                        }
-                    } else if (JSONLDConsts.XSD_INTEGER.equals(coerce)) {
-                        if (rval instanceof String) {
-                            rval = Integer.parseInt((String) rval);
-                        } else if (rval instanceof Number) {
-                            rval = ((Number) rval).intValue();
-                        }
-                    }
-                }
-            } else if (value instanceof Map) {
-                // no type-coercion, just change keywords/copy value
-                rval = new HashMap<String, Object>();
-                for (String key : ((Map<String, Object>) value).keySet()) {
-                    ((Map<String, Object>) rval).put(keywords.get(key), ((Map) value).get(key));
-                }
-            } else {
-                rval = JSONLDUtils.clone(value);
-            }
-
-            if ("@id".equals(type)) {
-                // compact IRI
-                if (rval instanceof Map) {
-                    ((Map) rval).put(keywords.get("@id"), JSONLDUtils.compactIRI(ctx, (String) ((Map<String, Object>) rval).get(keywords.get("@id")), usedCtx));
-                } else {
-                    rval = JSONLDUtils.compactIRI(ctx, (String) rval, usedCtx);
+                ((Map<String, Object>) compacted).put(kwgraph, graph);
+            } else if (compacted instanceof Map) {
+                Map<String, Object> graph = (Map<String, Object>) compacted;
+                compacted = new HashMap<String, Object>();
+                ((Map) compacted).put("@context", ctx);
+                for (String key : graph.keySet()) {
+                    ((Map<String, Object>) compacted).put(key, graph.get(key));
                 }
             }
         }
-        return rval;
+
+        return compacted;
+    }
+
+    public static Object compact(Object input, Map<String, Object> ctx) {
+        return compact(input, ctx, new Options("", true));
     }
 
     public Object frame(Object input, Object frame) {
@@ -901,10 +1147,10 @@ public class JSONLDProcessor {
                 List tmp = (List) rval;
                 rval = new ArrayList();
                 for (Object i : tmp) {
-                    ((List) rval).add(compact(ctx, i));
+                    ((List) rval).add(compact(i, (Map<String, Object>) ctx));
                 }
             } else {
-                rval = compact(ctx, rval);
+                rval = compact(rval, (Map<String, Object>) ctx);
             }
         }
 
@@ -1103,7 +1349,7 @@ public class JSONLDProcessor {
 
         generateSimplifyContext(expanded, framectx);
 
-        return compact(framectx, expanded);
+        return compact(expanded, framectx);
     }
 
     public void nameBlankNodes(Object input) {
