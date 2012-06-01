@@ -179,9 +179,8 @@ public class JSONLDSerializer {
      * 
      * @return A Map representing the JSON-LD document.
      */
-    public Map<String, Object> asObject() {
+    public Object asObject() {
         JSONLDProcessor p = new JSONLDProcessor();
-        Map<String, Object> rval = new HashMap<String, Object>();
 
         // go through the list of subjects that were built, compact them based
         // of the current context
@@ -192,20 +191,15 @@ public class JSONLDSerializer {
             subjects.add(subj);
         }
 
-        if (subjects.size() > 1) {
-            // if there is more than one subject, add them as a list to the base
-            // objects
-            rval.put("@id", subjects);
-            // TODO: we probably want to clone the context object!
-            rval.put("@context", _context);
-        } else if (subjects.size() == 1) {
+        if (subjects.size() == 1) {
             // if there is only one subject, make the base object this object
+            Map<String, Object> rval = new HashMap<String, Object>();
             rval = (Map<String, Object>) subjects.get(0);
             rval.put("@context", _context);
-        } // if the subjects list is empty, we have no objects, so just return
-          // an empty map
-
-        return rval;
+            return rval;
+        } else {
+            return subjects;
+        }
     }
 
     /**
