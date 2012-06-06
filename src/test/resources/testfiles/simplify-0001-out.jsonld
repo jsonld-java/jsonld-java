@@ -1,34 +1,37 @@
 {
-   "@context" : {
-      "onDatatype" : {
-         "@id" : "http://www.w3.org/2002/07/owl#onDatatype",
-         "@type" : "@id"
-      },
-      "equivalentClass" : "http://www.w3.org/2002/07/owl#equivalentClass",
-      "withRestrictions" : "http://www.w3.org/2002/07/owl#withRestrictions",
-      "label" : "http://www.w3.org/2000/01/rdf-schema#label",
-      "subClassOf" : {
-         "@id" : "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-         "@type" : "@id"
-      },
-      "maxLength": "http://www.w3.org/2001/XMLSchema#maxLength"
-   },
-   "equivalentClass" : {
-      "onDatatype" : "http://www.w3.org/2001/XMLSchema#string",
-      "withRestrictions" : {
-         "@list" : [
-            {
-               "maxLength" : {
-                  "@value" : "1024",
-                  "@type" : "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
-               }
-            }
-         ]
-      },
-      "@type" : "http://www.w3.org/2000/01/rdf-schema#Datatype"
-   },
-   "@id" : "http://qudt.org/schema/qudt#string1024",
-   "label" : "string1024",
-   "@type" : "http://www.w3.org/2000/01/rdf-schema#Datatype",
-   "subClassOf" : "http://www.w3.org/2001/XMLSchema#string"
+    "@context" : {
+        "qudt" : "http://qudt.org/schema/qudt#",
+        "onDatatype" : {
+            "@id" : "http://www.w3.org/2002/07/owl#onDatatype",
+            "@type" : "@id"
+        },
+        "xsd1" : "http://www.w3.org/2001/XMLSchema#",
+        "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+        "maxLength" : "http://www.w3.org/2001/XMLSchema#maxLength",
+        "equivalentClass" : "http://www.w3.org/2002/07/owl#equivalentClass",
+        "withRestrictions" : "http://www.w3.org/2002/07/owl#withRestrictions",
+        "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+        "subClassOf" : {
+            "@id" : "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+            "@type" : "@id"
+        }
+    },
+    "equivalentClass" : {
+        "onDatatype" : "xsd1:string",
+        "withRestrictions" : {
+            "@list" : [
+                {
+                    "maxLength" : {
+                        "@value" : "1024",
+                        "@type" : "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+                    }
+                }
+            ]
+        },
+        "@type" : "rdfs:Datatype"
+    },
+    "@id" : "qudt:string1024",
+    "label" : "string1024",
+    "@type" : "rdfs:Datatype",
+    "subClassOf" : "xsd1:string"
 }

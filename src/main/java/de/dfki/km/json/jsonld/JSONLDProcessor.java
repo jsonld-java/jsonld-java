@@ -559,12 +559,88 @@ public class JSONLDProcessor {
      */
     public Object simplify(Map input) {
 
+        Map<String, Object> origCtx = (Map<String, Object>) input.get("@context");
         Object expanded = expand(input);
         Map<String, Object> framectx = new HashMap<String, Object>();
 
         generateSimplifyContext(expanded, framectx);
 
+        if (origCtx != null) {
+            framectx = JSONLDUtils.mergeContexts(origCtx, framectx);
+        }
+
         return compact(framectx, expanded);
+    }
+
+    private Map<String, Object> nestCore(Map<String, Object> rootObj, Map<String, Map<String, Object>> otherObjs) {
+        Map<String, Object> rval = new HashMap<String, Object>();
+        for (String key : rootObj.keySet()) {
+            Object val = rootObj.get(key);
+            if (val instanceof List) {
+                List<Object> lv = new ArrayList<Object>();
+                for (Map<String, Object> o : (List<Map<String, Object>>) val) {
+                    lv.add(nestCore(o, otherObjs));
+                }
+                rval.put(key, lv);
+            } else if (val instanceof Map) {
+                // TODO: should this be true as well? ((Map) val).size() == 1
+                if (((Map) val).containsKey("@id") && otherObjs.containsKey(((Map) val).get("@id"))) {
+                    rval.put(key, otherObjs.get(((Map) val).get("@id")));
+                } else {
+                    rval.put(key, nestCore((Map<String, Object>) val, otherObjs));
+                }
+            } else {
+                rval.put(key, val);
+            }
+        }
+        return rval;
+    }
+
+    /**
+     * expands all the objects in the input list, and nests all the non-root object lists
+     * into the root object, resulting in a single object
+     * 
+     * TODO: i'm not sure if the way i'm keeping the original context is what i really want 
+     * 
+     * @param input
+     * @param rootObjId
+     * @return
+     */
+    public Object nest(List<Map<String, Object>> input, String rootObjId) {
+        Map<String, Object> rootObj = null;
+        Map<String, Object> rootObjCtx = null;
+        Map<String, Map<String, Object>> otherObjs = new HashMap<String, Map<String, Object>>();
+        // find the root object and build a map of the non-root objects mapped by id
+        for (Map<String, Object> item : input) {
+            if (item.containsKey("@id")) {
+                if (rootObjId.equals(item.get("@id"))) {
+                    rootObjCtx = (Map<String, Object>) item.get("@context");
+                    rootObj = (Map<String, Object>) expand(item);
+                } else {
+                    //Map<String, Object> clone = (Map<String, Object>) JSONLDUtils.clone(item);
+                    //clone.remove("@id");
+                    otherObjs.put((String) item.get("@id"), (Map<String, Object>) expand(item));
+                }
+            }
+        }
+
+        if (rootObj == null) {
+            // no object matching the root object found, should probably return an error actually
+            // TODO: throw runtimeexception when the rest of the library is updated
+            return input;
+        }
+
+        // this nests all the elements in the input once (not including the root object)
+        Map<String, Map<String, Object>> nestedOthers = new HashMap<String, Map<String, Object>>();
+        for (String key : otherObjs.keySet()) {
+            Map<String, Object> val = otherObjs.get(key);
+            nestedOthers.put(key, nestCore(val, otherObjs));
+        }
+        // nests the root object with the nested other objects
+        Map<String, Object> rval = nestCore(rootObj, nestedOthers);
+
+        // compact the results with the original root object's context
+        return compact(rootObjCtx != null ? rootObjCtx : new HashMap<String, Object>(), rval);
     }
 
     public void nameBlankNodes(Object input) {
@@ -685,7 +761,7 @@ public class JSONLDProcessor {
         for (String iri : this.subjects.keySet()) {
             Map<String, Object> subject = (Map<String, Object>) this.subjects.get(iri);
             for (String key : subject.keySet()) {
-                if (!key.equals("@id")) {
+                if (!key.equals("@id") && !ignoredKeywords.contains(key)) {
                     Object object = subject.get(key);
                     List<Object> tmp = null;
                     if (object instanceof List) {

@@ -299,6 +299,11 @@ public class JSONLDUtils {
 
     public static int compare(Object v1, Object v2) {
         int rval = 0;
+        
+        // TODO: not sure if we should allow this, but as long as the tests pass it "should" be ok.
+        if (v1 == null && v2 == null) {
+        	return 0;
+        }
 
         if (v1 instanceof List && v2 instanceof List) {
             if (((List) v1).size() != ((List) v2).size()) {
@@ -353,7 +358,7 @@ public class JSONLDUtils {
 
         for (String p : a.keySet()) {
 
-            if (!p.equals("@id")) {
+            if (!p.equals("@id")) { // TODO: this should ignore "ignoreKeyword" keywords as well
                 int lenA = (a.get(p) instanceof List ? ((List<Object>) a.get(p)).size() : 1);
                 int lenB = (b.get(p) instanceof List ? ((List<Object>) b.get(p)).size() : 1);
                 rval = compare(lenA, lenB);
