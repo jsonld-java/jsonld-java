@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.Writer;
 
 import de.dfki.km.json.JSONUtils;
 
@@ -202,6 +203,15 @@ public class JSONLDSerializer {
         }
     }
 
+    public void toWriter(Writer writer) {
+        try {
+            JSONUtils.writePrettyPrint(writer, asObject());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 
      * @return A String representing the JSON-LD document.
@@ -216,5 +226,23 @@ public class JSONLDSerializer {
             return "{\"error\":\"" + e.getLocalizedMessage() + "\"}";
         }
     }
+
+    /**
+     * Returns a formated String representing the JSON-LD document using PrettyPrint writer.
+     * @return A String representing the JSON-LD document.
+     */
+    public String asString(boolean prettyPrint) {
+        // TODO: catching the exceptions here and returning JSON with the error
+        // messages may not
+        // be the best idea
+        try {
+            if (!prettyPrint)
+                return JSONUtils.toString(asObject());
+            else
+                return JSONUtils.toPrettyString(asObject());
+        } catch (Exception e) {
+            return "{\"error\":\"" + e.getLocalizedMessage() + "\"}";
+        }
+    }    
 
 }

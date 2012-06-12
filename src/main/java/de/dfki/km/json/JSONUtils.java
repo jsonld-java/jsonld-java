@@ -16,6 +16,7 @@ import org.codehaus.jackson.JsonLocation;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 
 /**
  * A bunch of functions to make loading JSON easy
@@ -117,6 +118,13 @@ public class JSONUtils {
         objectMapper.writeValue(w, jsonObject);
     }
 
+    public static void writePrettyPrint(Writer w, Object jsonObject) throws JsonGenerationException, JsonMappingException, IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
+        
+        objectWriter.writeValue(w, jsonObject);
+    }
+
     public static Object fromInputStream(InputStream content) throws IOException {
         return fromInputStream(content, "UTF-8"); // no readers from
                                                   // inputstreams w.o.
@@ -128,14 +136,16 @@ public class JSONUtils {
     }
 
     public static String toPrettyString(Object obj) {
-        ObjectMapper mapper = new ObjectMapper();
-
+        StringWriter sw = new StringWriter();
         try {
-            return mapper.defaultPrettyPrintingWriter().writeValueAsString(obj);
+            writePrettyPrint(sw, obj);
         } catch (Exception e) {
-            // TODO: if the obj isn't valid json this should throw an exception of some kind
-            return "";
+            // TODO Is this really possible with stringwriter?
+            // I think it's only there because of the interface
+            // however, if so... well, we have to do something!
+            // it seems weird for toString to throw an IOException
         }
+        return sw.toString();
     }
 
     public static String toString(Object obj) { // throws
