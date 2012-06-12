@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.Writer;
 
 import de.dfki.km.json.JSONUtils;
 
@@ -199,6 +200,15 @@ public class JSONLDSerializer {
             return rval;
         } else {
             return subjects;
+        }
+    }
+
+    public void toWriter(Writer writer) {
+        try {
+            JSONUtils.writePrettyPrint(writer, asObject());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
