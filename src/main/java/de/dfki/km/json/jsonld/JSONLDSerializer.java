@@ -217,4 +217,22 @@ public class JSONLDSerializer {
         }
     }
 
+    /**
+     * Returns a formated String representing the JSON-LD document using PrettyPrint writer.
+     * @return A String representing the JSON-LD document.
+     */
+    public String asString(boolean prettyPrint) {
+        // TODO: catching the exceptions here and returning JSON with the error
+        // messages may not
+        // be the best idea
+        try {
+            if (!prettyPrint)
+                return JSONUtils.toString(asObject());
+            else
+                return JSONUtils.toPrettyString(asObject());
+        } catch (Exception e) {
+            return "{\"error\":\"" + e.getLocalizedMessage() + "\"}";
+        }
+    }    
+
 }
