@@ -217,14 +217,7 @@ public class JSONLDSerializer {
      * @return A String representing the JSON-LD document.
      */
     public String asString() {
-        // TODO: catching the exceptions here and returning JSON with the error
-        // messages may not
-        // be the best idea
-        try {
-            return JSONUtils.toString(asObject());
-        } catch (Exception e) {
-            return "{\"error\":\"" + e.getLocalizedMessage() + "\"}";
-        }
+        return asString(false);
     }
 
     /**
