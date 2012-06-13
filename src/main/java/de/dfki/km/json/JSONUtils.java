@@ -120,6 +120,7 @@ public class JSONUtils {
 
     public static void writePrettyPrint(Writer w, Object jsonObject) throws JsonGenerationException, JsonMappingException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.getJsonFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         
         objectWriter.writeValue(w, jsonObject);
