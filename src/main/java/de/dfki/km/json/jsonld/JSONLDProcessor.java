@@ -1,12 +1,14 @@
 package de.dfki.km.json.jsonld;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -111,7 +113,7 @@ public class JSONLDProcessor {
                 } else {
                     ((Map<String, Object>) rval).put("@type", coerce);
                     if (coerce.equals(JSONLDConsts.XSD_DOUBLE)) {
-                        DecimalFormat decimalFormat = new DecimalFormat("0.000000E0");
+                        DecimalFormat decimalFormat = new DecimalFormat("0.000000E0", new DecimalFormatSymbols(Locale.US));
                         Double v = null;
                         if (value instanceof String) {
                             v = Double.parseDouble((String) value);
