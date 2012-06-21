@@ -578,7 +578,9 @@ public class JSONLDProcessor {
         Map<String, Object> rval = new HashMap<String, Object>();
         for (String key : rootObj.keySet()) {
             Object val = rootObj.get(key);
-            if (val instanceof List) {
+            if (ignoredKeywords.contains(key)) {
+            	rval.put(key, val);
+            } else if (val instanceof List) {
                 List<Object> lv = new ArrayList<Object>();
                 for (Map<String, Object> o : (List<Map<String, Object>>) val) {
                     lv.add(nestCore(o, otherObjs));
