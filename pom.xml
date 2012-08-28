@@ -9,7 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>dfki.km.json</groupId>
 	<artifactId>jsonld-java</artifactId>
-	<version>1.0.0-retobg-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>jsonld-java</name>
 	<description>Json-LD implementation</description>
 
