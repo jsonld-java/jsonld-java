@@ -1,6 +1,7 @@
 package de.dfki.km.json.jsonld;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -11,6 +12,8 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.hp.hpl.jena.reasoner.rulesys.builtins.IsBNode;
 
 import de.dfki.km.json.jsonld.JSONLDUtils.NameGenerator;
 
@@ -59,6 +62,8 @@ public class JSONLDProcessor {
         public Boolean graph = null;
         public Boolean optimize = null;
         public Map<String, Object> optimizeCtx = null;
+		public Boolean embed = null;
+		public Boolean explicit = null;
     }
 
     Options opts;
@@ -75,34 +80,54 @@ public class JSONLDProcessor {
         }
     }
 
+    /**
+     * A helper class which still stores all the values in a map
+     * but gives member variables easily access certain keys 
+     * 
+     * @author tristan
+     *
+     */
     private class ActiveContext extends HashMap<String, Object> {
         public ActiveContext() {
-            // TODO: are mapping values always maps?
-            mappings = new HashMap<String, Object>();
-            keywords = new HashMap<String, List<String>>() {
-                {
-                    put("@context", new ArrayList<String>());
-                    put("@container", new ArrayList<String>());
-                    put("@default", new ArrayList<String>());
-                    put("@embed", new ArrayList<String>());
-                    put("@explicit", new ArrayList<String>());
-                    put("@graph", new ArrayList<String>());
-                    put("@id", new ArrayList<String>());
-                    put("@language", new ArrayList<String>());
-                    put("@list", new ArrayList<String>());
-                    put("@omitDefault", new ArrayList<String>());
-                    put("@preserve", new ArrayList<String>());
-                    put("@set", new ArrayList<String>());
-                    put("@type", new ArrayList<String>());
-                    put("@value", new ArrayList<String>());
-                    // add ignored keywords
-                    for (String keyword : ignoredKeywords) {
-                        put(keyword, new ArrayList<String>());
+        	super();
+        	init();
+        }
+        
+        public ActiveContext(Map<String,Object> copy) {
+        	super(copy);
+        	init();
+        }
+        
+        private void init() {
+        	if (!this.containsKey("mappings")) {
+        		this.put("mappings", new HashMap<String,Object>());
+        	}
+        	if (!this.containsKey("keywords")) {
+        		this.put("keywords", new HashMap<String, List<String>>() {
+                    {
+                        put("@context", new ArrayList<String>());
+                        put("@container", new ArrayList<String>());
+                        put("@default", new ArrayList<String>());
+                        put("@embed", new ArrayList<String>());
+                        put("@explicit", new ArrayList<String>());
+                        put("@graph", new ArrayList<String>());
+                        put("@id", new ArrayList<String>());
+                        put("@language", new ArrayList<String>());
+                        put("@list", new ArrayList<String>());
+                        put("@omitDefault", new ArrayList<String>());
+                        put("@preserve", new ArrayList<String>());
+                        put("@set", new ArrayList<String>());
+                        put("@type", new ArrayList<String>());
+                        put("@value", new ArrayList<String>());
+                        // add ignored keywords
+                        for (String keyword : ignoredKeywords) {
+                            put(keyword, new ArrayList<String>());
+                        }
                     }
-                }
-            };
-            this.put("mappings", mappings);
-            this.put("keywords", keywords);
+        		});
+        	}
+        	mappings = (Map<String, Object>) this.get("mappings");
+        	keywords = (Map<String, List<String>>) this.get("keywords");
         }
 
         public Object getContextValue(String key, String type) {
@@ -131,6 +156,77 @@ public class JSONLDProcessor {
         public Map<String, List<String>> keywords;
     }
 
+    private class UniqueNamer {
+    	private String prefix;
+		private int counter;
+		private HashMap<String, String> existing;
+
+		/**
+		 * Creates a new UniqueNamer. A UniqueNamer issues unique names, keeping
+		 * track of any previously issued names.
+		 *
+		 * @param prefix the prefix to use ('<prefix><counter>').
+		 */
+		UniqueNamer(String prefix) {
+    		this.prefix = prefix;
+    		this.counter = 0;
+    		this.existing = new HashMap<String,String>();
+    	}
+		
+		/**
+		 * Copies this UniqueNamer.
+		 *
+		 * @return a copy of this UniqueNamer.
+		 */
+		public UniqueNamer clone() {
+			UniqueNamer copy = new UniqueNamer(this.prefix);
+			copy.counter = this.counter;
+			copy.existing = (HashMap<String, String>) JSONLDUtils.clone(this.existing);
+			return copy;
+		}
+		
+		/**
+		 * Gets the new name for the given old name, where if no old name is given
+		 * a new name will be generated.
+		 *
+		 * @param [oldName] the old name to get the new name for.
+		 *
+		 * @return the new name.
+		 */
+		public String getName(String oldName) {
+			if (oldName != null && this.existing.containsKey(oldName)) {
+				return this.existing.get(oldName);
+			}
+			
+			String name = this.prefix + this.counter;
+			this.counter++;
+			
+			if (oldName != null) {
+				this.existing.put(oldName, name);
+			}
+			
+			return name;
+		}
+		
+		public String getName() {
+			return getName(null);
+		}
+		
+		public Boolean isNamed(String oldName) {
+			return this.existing.containsKey(oldName);
+		}
+    }
+    
+    /**
+     * Defines a context mapping during context processing.
+     *
+     * @param activeCtx the current active context.
+     * @param ctx the local context being processed.
+     * @param key the key in the local context to define the mapping for.
+     * @param base the base IRI.
+     * @param defined a map of defining/defined keys to detect cycles and prevent
+     *          double definitions.
+     */
     private void defineContextMapping(ActiveContext activeCtx, Map<String, Object> ctx, String key, String base, Map<String, Boolean> defined) {
         if (defined.containsKey(key)) {
             if (defined.get(key) == Boolean.TRUE) {
@@ -284,6 +380,18 @@ public class JSONLDProcessor {
         defined.put(key, Boolean.TRUE);
     }
 
+    /**
+     * Expands a string value to a full IRI during context processing. It can
+     * be assumed that the value is not a keyword.
+     *
+     * @param activeCtx the current active context.
+     * @param ctx the local context being processed.
+     * @param value the string value to expand.
+     * @param base the base IRI.
+     * @param defined a map for tracking cycles in context definitions.
+     *
+     * @return the expanded value.
+     */
     private String expandContextIri(ActiveContext activeCtx, Map<String, Object> ctx, String value, String base, Map<String, Boolean> defined) {
         if (ctx.containsKey(value) && defined.get(value) != Boolean.TRUE) {
             defineContextMapping(activeCtx, ctx, value, base, defined);
@@ -389,6 +497,15 @@ public class JSONLDProcessor {
         return rval;
     }
 
+    /**
+     * Processes a local context and returns a new active context.
+     *
+     * @param activeCtx the current active context.
+     * @param localCtx the local context to process.
+     * @param options the context processing options.
+     *
+     * @return the new active context.
+     */
     private static ActiveContext processContext(ActiveContext activeCtx, Object localCtx, Options opts) {
         JSONLDProcessor p = new JSONLDProcessor(opts);
         if (localCtx == null) {
@@ -547,7 +664,7 @@ public class JSONLDProcessor {
      *
      * @return the compacted term, prefix, keyword alias, or the original IRI.
      */
-    private String compactIri(ActiveContext ctx, String iri, Object value) {
+    private static String compactIri(ActiveContext ctx, String iri, Object value) {
         if (iri == null) {
             return iri;
         }
@@ -638,11 +755,21 @@ public class JSONLDProcessor {
         return terms.get(0);
     }
 
-    private String compactIri(ActiveContext ctx, String iri) {
+    private static String compactIri(ActiveContext ctx, String iri) {
         return compactIri(ctx, iri, null);
     }
 
-    private int rankTerm(ActiveContext ctx, String term, Object value) {
+    /**
+     * Ranks a term that is possible choice for compacting an IRI associated with
+     * the given value.
+     *
+     * @param ctx the active context.
+     * @param term the term to rank.
+     * @param value the associated value.
+     *
+     * @return the term rank.
+     */
+    private static int rankTerm(ActiveContext ctx, String term, Object value) {
         if (value == null) {
             return 3;
         }
@@ -702,6 +829,21 @@ public class JSONLDProcessor {
         return (!entry.containsKey("@type") && !entry.containsKey("@language")) ? 1 : 0;
     }
 
+    /**
+     * Recursively expands an element using the given context. Any context in
+     * the element will be removed. All context URLs must have been resolved
+     * before calling this method.
+     *
+     * @param ctx the context to use.
+     * @param property the property for the element, null for none.
+     * @param element the element to expand.
+     * 
+     * TODO:
+     * @param options the expansion options.
+     * @param propertyIsList true if the property is a list, false if not.
+     *
+     * @return the expanded value.
+     */
     private Object expand(ActiveContext ctx, Object property, Object element) {
         if (element instanceof List) {
             List<Object> rval = new ArrayList<Object>();
@@ -1096,179 +1238,476 @@ public class JSONLDProcessor {
         return compact(input, ctx, new Options("", true));
     }
 
+    private class FramingContext {
+    	public Map<String,Object> embeds = null;
+    	public Map<String,Object> graphs = null;
+    	public Map<String,Object> subjects = null;
+    	public Boolean embed = true;
+    	public Boolean explicit = false;
+    	public Boolean omit = false;
+    	public Options options = opts;
+    }
+    
+    /**
+     * Performs JSON-LD framing.
+     *
+     * @param input the expanded JSON-LD to frame.
+     * @param frame the expanded JSON-LD frame to use.
+     * @param options the framing options.
+     *
+     * @return the framed output.
+     */
     public Object frame(Object input, Object frame) {
-        return frame(input, frame, null);
-    }
-
-    public Object frame(Object input, Object frame, Map options) {
-        Object rval = null;
-
-        input = normalize(input);
-
-        Object ctx = null;
-
-        if (frame instanceof Map && ((Map) frame).containsKey("@context")) {
-            ctx = JSONLDUtils.clone(((Map) frame).get("@context"));
-            frame = expand(frame);
-        } else if (frame instanceof List) {
-            if (((List) frame).size() > 0) {
-                Object f0 = ((List) frame).get(0);
-                if (f0 instanceof Map && ((Map) f0).containsKey("@context")) {
-                    ctx = JSONLDUtils.clone(((Map) f0).get("@context"));
-                }
-
-                List tmp = new ArrayList();
-                for (Object f : (List) frame) {
-                    tmp.add(expand(f));
-                }
-                frame = tmp;
-            }
-        }
-
-        Map defaultOptions = new HashMap();
-        Map tmpopts = new HashMap();
-        tmpopts.put("embedOn", true);
-        tmpopts.put("explicitOn", false);
-        tmpopts.put("omitDefaultOn", false);
-        defaultOptions.put("defaults", tmpopts);
-
-        // TODO: merge in options from input
-        options = defaultOptions;
-
-        Map subjects = new HashMap();
-        for (Object i : (List) input) {
-            subjects.put(((Map) i).get("@id"), i);
-        }
-
-        rval = JSONLDUtils.frame(subjects, (List) input, frame, new HashMap(), false, null, null, options);
-
-        if (ctx != null && rval != null) {
-            if (rval instanceof List) {
-                List tmp = (List) rval;
-                rval = new ArrayList();
-                for (Object i : tmp) {
-                    ((List) rval).add(compact(i, (Map<String, Object>) ctx));
-                }
-            } else {
-                rval = compact(rval, (Map<String, Object>) ctx);
-            }
-        }
-
-        return rval;
-    }
-
-    public List<? extends Map<String, Object>> normalize(Object input) {
-        // because the expanded output of items from the onlinebox are the same
-        // as the normalized version
-        // (just inside a list) i'm going to skip implementing the normalize
-        // function for now.
-        // TODO: implement this properly as if data is really to be imported
-        // into the OB with this method
-        // this will be needed (mainly for identifying embedded items)
-        List<Map<String, Object>> rval = new ArrayList<Map<String, Object>>();
-
-        if (input != null) {
-
-            Object expanded = null;//expand(new HashMap<String, Object>(), null, input);
-
-            nameBlankNodes(expanded);
-
-            Map<String, Object> subjects = new HashMap<String, Object>();
-            try {
-                flatten(null, null, expanded, subjects);
-            } catch (Exception e) {
-                // TODO: This should probably be thrown back to the caller
-                e.printStackTrace();
-                LOG.error("flatten failed!");
-                return null;
-            }
-
-            for (String key : subjects.keySet()) {
-                Map<String, Object> s = (Map<String, Object>) subjects.get(key);
-                // TODO: in javascript the keys are sorted and added back into
-                // the array
-                // in alphabetical order. however in HashMaps, this order isn't
-                // kept
-                rval.add(s);
-            }
-
-            canonicalizeBlankNodes(rval);
-
-            // sort the output
-            Collections.sort(rval, new Comparator<Map<String, Object>>() {
-                public int compare(Map<String, Object> a, Map<String, Object> b) {
-                    return JSONLDUtils.compare(a.get("@id"), b.get("@id"));
-                }
-            });
-        }
-
-        return rval;
+    	// create framing state
+    	FramingContext state = new FramingContext();
+    	//Map<String,Object> state = new HashMap<String, Object>();
+    	//state.put("options", this.opts);
+    	state.graphs = new HashMap<String, Object>();
+    	state.graphs.put("@default", new HashMap<String, Object>());
+    	state.graphs.put("@merged", new HashMap<String, Object>());
+    	
+    	// produce a map of all graphs and name each bnode
+    	UniqueNamer namer = new UniqueNamer("_:t");
+    	flatten(input, state.graphs, "@default", namer);
+    	namer = new UniqueNamer("_:t");
+    	flatten(input, state.graphs, "@merged", namer);
+    	// FIXME: currently uses subjects from @merged graph only
+    	state.subjects = (Map<String, Object>) state.graphs.get("@merged");
+    	
+    	// frame the subjects
+        List framed = new ArrayList();
+        frame(state, state.subjects.keySet(), frame, framed, null);
+    	return framed;
     }
 
     /**
-     * 
-     * 
-     * @return a list of objects returned by tripleCallback
+     * Frames subjects according to the given frame.
+     *
+     * @param state the current framing state.
+     * @param subjects the subjects to filter.
+     * @param frame the frame.
+     * @param parent the parent subject or top-level array.
+     * @param property the parent property, initialized to null.
      */
-    public void triples(Object input, JSONLDTripleCallback tripleCallback) {
-        Object normalized = normalize(input);
+    private static void frame(FramingContext state, Collection<String> subjects,
+			Object frame, Object parent, Object property) {
+		// validate the frame
+    	validateFrame(state, frame);
+    	frame(state, subjects, (Map)((List)frame).get(0), parent, property);
+    }
+    
+    private static void frame(FramingContext state, Collection<String> subjects, 
+    		Map<String,Object> frame, Object parent, Object property) {
+    	// filter out subjects that match the frame
+    	Map<String,Object> matches = filterSubjects(state, subjects, frame);
+    	
+    	Options options = state.options;
+    	Boolean embedOn = (frame.containsKey("@embed")) ? (Boolean)((List)frame.get("@embed")).get(0) : options.embed;
+    	Boolean explicicOn = (frame.containsKey("@explicit")) ? (Boolean)((List)frame.get("@explicit")).get(0) : options.explicit;
+    	
+    	// add matches to output
+    	for (String id: matches.keySet()) {
+    		
+    		// Note: In order to treat each top-level match as a compartmentalized
+    	    // result, create an independent copy of the embedded subjects map when the
+    	    // property is null, which only occurs at the top-level.
+    		if (property == null) {
+    			state.embeds = new HashMap<String,Object>();
+    		}
+    		
+    		// start output
+    		Map<String,Object> output = new HashMap<String,Object>();
+    		output.put("@id", id);
+    		
+    		// prepare embed meta info
+    		Map<String,Object> embed = new HashMap<String, Object>();
+    		embed.put("parent", parent);
+    		embed.put("property", property);
+    		
+    		if (embedOn && state.embeds.containsKey(id)) {
+    			embedOn = false;
+    			
+    			Map<String,Object> existing = (Map<String, Object>) state.embeds.get(id);
+    			if (existing.get("parent") instanceof List) {
+    				for (Object o: (List)existing.get("parent")) {
+    					if (JSONLDUtils.compareValues(output, o)) {
+    						embedOn = true;
+    						break;
+    					}
+    				}
+    			// existing embed's parent is an object
+    			} else if (JSONLDUtils.hasValue((Map<String,Object>)existing.get("parent"), (String)existing.get("property"), output)) {
+    				embedOn = true;
+    			}
+    			
+    			// existing embed has already been added, so allow an overwrite
+    			if (embedOn) {
+    				removeEmbed(state, id);
+    			}
+    		}
+    		
+    		if (!embedOn) {
+    			addFrameOutput(state, parent, property, output);
+    		} else {
+    			// add embed meta info
+    			state.embeds.put(id, embed);
+    			
+    			// iterate over subject properties
+    			Map<String,Object> subject = (Map<String,Object>) matches.get(id);
+    			for (Object prop: subject.values()) {
+    				
+    				// copy keywords to output
+    				if (prop instanceof String && JSONLDUtils.isKeyword((String)prop)) {
+    					output.put((String) prop, JSONLDUtils.clone(subject.get(prop)));
+    					continue;
+    				}
+    				
+    				// if property isn't in the frame
+    				if (!frame.containsKey(prop)) {
+    					// if explicit is off, embed values
+    					if (!explicicOn) {
+    						embedValues(state, subject, prop, output);
+    					}
+    					continue;
+    				}
+    				
+    				// add objects
+    				Object objects = subject.get(prop); 
+    				// TODO: i've done some crazy stuff here because i'm unsure if objects is always a list or if it can
+    				// be a map as well
+    				for (Object i: objects instanceof List ? (List)objects : ((Map)objects).keySet()) {
+    					Object o = objects instanceof List ? ((List)objects).get((Integer)i) : ((Map)objects).get(i);
+    					
+    					if (o instanceof Map && ((Map)o).containsKey("@list")) {
+    						// add empty list
+    						Map<String,Object> list = new HashMap<String, Object>();
+    						list.put("@list", new ArrayList<Object>());
+    						addFrameOutput(state, output, prop, list);
+    						
+    						// add list objects
+    						List src = (List)((Map)o).get("@list");
+    						for (Object n: src) {
+    							// recurse into subject reference
+    							if (n instanceof Map && ((Map)n).size() == 1 && ((Map) n).containsKey("@id")) {
+    								List tmp = new ArrayList();
+    								tmp.add(((Map)n).get("@id"));
+    								frame(state, tmp, frame.get(prop), list, "@list");
+    							} else {
+    								// include other values automatcially
+    								addFrameOutput(state, list, "@list", JSONLDUtils.clone(n));
+    							}
+    						}
+    						continue;
+    					}
+    					
+    					// recurse into subject reference
+    					if (o instanceof Map && ((Map)o).size() == 1 && ((Map) o).containsKey("@id")) {
+    						List tmp = new ArrayList();
+							tmp.add(((Map)o).get("@id"));
+							frame(state, tmp, frame.get(prop), output, prop);
+    					} else {
+    						// include other values automatically
+    						addFrameOutput(state, output, prop, JSONLDUtils.clone(o));
+    					}
+    				}
+    			}
+    			
+    			// handle defaults
+    			
+    			// TODO: continue impl here
+    		}
+    	}
 
-        if (tripleCallback == null) {
-            // TODO: make default triple callback
+	}
+
+    /**
+     * Returns a map of all of the subjects that match a parsed frame.
+     *
+     * @param state the current framing state.
+     * @param subjects the set of subjects to filter.
+     * @param frame the parsed frame.
+     *
+     * @return all of the matched subjects.
+     */
+    private static Map<String,Object> filterSubjects(FramingContext state,
+			Collection<String> subjects, Map<String,Object> frame) {
+    	// filter subjects in @id order
+		Map<String,Object> rval = new HashMap<String,Object>();
+		for (String id: subjects) {
+			Map<String,Object> subject = (Map<String, Object>) state.subjects.get(id);
+			if (filterSubject(subject, frame)) {
+				rval.put(id, subject);
+			}
+		}
+		return rval;
+	}
+
+    /**
+     * Returns true if the given subject matches the given frame.
+     *
+     * @param subject the subject to check.
+     * @param frame the frame to check.
+     *
+     * @return true if the subject matches, false if not.
+     */
+	private static boolean filterSubject(Map<String,Object> subject, Map<String,Object> frame) {
+		// check @type (object value means 'any' type, fall through to ducktyping)
+		Object t = frame.get("@type");
+		// TODO: it seems @type should always be a list
+		if (frame.containsKey("@type") && !(t instanceof List && ((List)t).size() == 1 && ((List)t).get(0) instanceof Map)) {
+			for (Object i: (List)t) {
+				if (JSONLDUtils.hasValue(subject, "@type", i)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		// check ducktype
+		for (String key: frame.keySet()) {
+			if ("@id".equals(key) || !JSONLDUtils.isKeyword(key) && !(subject.containsKey(key))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+     * Validates a JSON-LD frame, throwing an exception if the frame is invalid.
+     *
+     * @param state the current frame state.
+     * @param frame the frame to validate.
+     */
+	private static void validateFrame(FramingContext state, Object frame) {
+		if (!(frame instanceof List) || ((List)frame).size() != 1 || !(((List) frame).get(0) instanceof Map)) {
+			throw new RuntimeException("Invalid JSON-LD syntax; a JSON-LD frame must be a single object.");
+		}
+	}
+
+	/**
+     * Performs JSON-LD framing.
+     *
+     * @param input the JSON-LD input to frame.
+     * @param frame the JSON-LD frame to use.
+     * @param [options] the framing options.
+     *          [base] the base IRI to use.
+     *          [embed] default @embed flag (default: true).
+     *          [explicit] default @explicit flag (default: false).
+     *          [omitDefault] default @omitDefault flag (default: false).
+     *          [optimize] optimize when compacting (default: false).
+     *          [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
+     * @param callback(err, framed) called once the operation completes.
+     */
+    public static Object frame(Object input, Object frame, Options opts) {
+    	if (input == null) {
+            return null;
         }
-
-        List<Object> rval = new ArrayList<Object>();
-        for (Map<String, Object> e : (List<Map<String, Object>>) normalized) {
-            String s = (String) e.get("@id");
-
-            for (String p : e.keySet()) {
-                Object obj = e.get(p);
-
-                // don't generate a triple for the @id or any keys that should
-                // be ignored
-                if (p.equals("@id") || ignoredKeywords.contains(p)) {
-                    continue;
-                } else if (p.equals("@type")) {
-                    p = JSONLDConsts.RDF_SYNTAX_NS + "type";
-                }
-
-                if (!(obj instanceof List)) {
-                    List<Object> tmp = new ArrayList<Object>();
-                    tmp.add(obj);
-                    obj = tmp;
-                }
-                for (Object o : (List<Object>) obj) {
-                    if (o instanceof String) {
-                        // type is a special case where the uri isn't expanded
-                        // out into an object
-                        if (p.toString().equals(JSONLDConsts.RDF_SYNTAX_NS + "type")) {
-                            tripleCallback.triple(s, p, o.toString());
-                        } else {
-                            tripleCallback.triple(s, p, (String) o, JSONLDConsts.XSD_STRING, null);
-                        }
-                    } else if (o instanceof Map) {
-                        if (((Map) o).containsKey("@value")) {
-                            if (((Map) o).containsKey("@type")) {
-                                String datatypeURI = (String) ((Map) o).get("@type");
-                                String value = (String) ((Map) o).get("@value");
-                                tripleCallback.triple(s, p, value, datatypeURI, null);
-                            } else if (((Map) o).containsKey("@language")) {
-                                tripleCallback.triple(s, p, (String) ((Map) o).get("@value"), JSONLDConsts.XSD_STRING, (String) ((Map) o).get("@language"));
-                            } else {
-                                tripleCallback.triple(s, p, (String) ((Map) o).get("@value"), JSONLDConsts.XSD_STRING, null);
-                            }
-                        } else if (((Map) o).containsKey("@id")) {
-                            tripleCallback.triple(s, p, (String) ((Map) o).get("@id"));
-                        } else {
-                            // TODO: have i missed anything?
-                            return;
-                        }
-                    }
-                }
-            }
-        }
+    	if (opts.embed == null) {
+    		opts.embed  = true;
+    	}
+    	if (opts.optimize == null) {
+    		opts.optimize = false;
+    	}
+    	
+    	JSONLDProcessor p = new JSONLDProcessor(opts);
+    	
+    	// preserve frame context
+    	ActiveContext ctx;
+    	if (frame instanceof Map && ((Map<String, Object>) frame).containsKey("@context")) {
+    		ctx = p.new ActiveContext((Map<String, Object>) frame);
+    	} else {
+    		ctx = p.new ActiveContext();
+    	}
+    	
+    	// expand input
+    	Object _input = expand(input, opts);
+    	Object _frame = expand(frame, opts);
+    	
+    	Object framed = p.frame(_input, _frame);
+    	
+    	opts.graph = true;
+    	
+    	Map<String,Object> compacted = (Map<String, Object>) compact(framed, ctx, opts);
+    	String graph = compactIri(ctx, "@graph");
+    	compacted.put(graph, removePreserve(ctx, compacted.get(graph)));
+        return compacted;
     }
 
+    /**
+     * Removes the @preserve keywords as the last step of the framing algorithm.
+     *
+     * @param ctx the active context used to compact the input.
+     * @param input the framed, compacted output.
+     *
+     * @return the resulting output.
+     */
+    private static Object removePreserve(ActiveContext ctx, Object input) {
+		if (input instanceof List) {
+			List<Object> l = new ArrayList<Object>();
+			for (Object i: (List)input) {
+				Object r = removePreserve(ctx, i);
+				if (r != null) {
+					l.add(r);
+				}
+			}
+			input = l;
+		} else if (input instanceof Map) {
+			Map<String,Object> imap = (Map<String,Object>)input;
+			if (imap.containsKey("@preserve")) {
+				if ("@null".equals(imap.get("@preserve"))) {
+					return null;
+				}
+				return imap.get("@preserve");
+			}
+			
+			if (imap.containsKey("@value")) {
+				return input;
+			}
+			
+			if (imap.containsKey("@list")) {
+				imap.put("@list", removePreserve(ctx, imap.get("@list")));
+				return input;
+			}
+			
+			for (String key: imap.keySet()) {
+				Object res = removePreserve(ctx, imap.get(key));
+				Object container = ctx.getContextValue(key, "@container");
+				if (res instanceof List && ((List)res).size() == 1 && !"@set".equals(container) && !"@list".equals(container)) {
+					res = ((List<String>) res).get(0);
+				}
+				imap.put(key, res);
+			}
+		}
+		return input;
+	}
+
+    
+    /**
+     * Recursively flattens the subjects in the given JSON-LD expanded input.
+     *
+     * @param input the JSON-LD expanded input.
+     * @param graphs a map of graph name to subject map.
+     * @param graph the name of the current graph.
+     * @param namer the blank node namer.
+     * @param name the name assigned to the current input if it is a bnode.
+     * @param list the list to append to, null for none.
+     */
+    private static void flatten(Object input, Map<String,Object> graphs, String graph, UniqueNamer namer, String name, List<Object> list) {
+    	if (input instanceof List) {
+    		for (Object i: (List)input) {
+    			flatten(i, graphs, graph, namer, null, list);
+    		}
+    		return;
+    	}
+    	if (!(input instanceof Map) || ((Map)input).containsKey("@value")) {
+    		if (list != null) {
+    			list.add(input);
+    		}
+    		return;
+    	}
+    	
+    	// TODO: isUndefined (in js this is different from === null
+    	if (name == null) {
+    		name = JSONLDUtils.isBlankNode(input) ? namer.getName((String) ((Map<String, Object>) input).get("@id")) : (String)((Map<String, Object>) input).get("@id");
+    	}
+    	
+    	if (list != null) {
+    		HashMap<String, Object> map = new HashMap<String,Object>();
+    		map.put("@id", name);
+    		list.add(map);
+    	}
+    	
+    	Map<String,Object> subjects = (Map<String, Object>) graphs.get(graph);
+    	Map<String,Object> subject;
+    	if (subjects.containsKey(name)) {
+    		subject = (Map<String, Object>) subjects.get(name);
+    	} else {
+    		subject = new HashMap<String, Object>();
+    		subjects.put(name, subject);
+    	}
+    	subject.put("@id", name);
+    	for (String prop: ((Map<String, Object>) input).keySet()) {
+    		if ("@id".equals(prop)) {
+    			continue;
+    		}
+    		
+    		// recurse into graph
+    		if ("@graph".equals(prop)) {
+    			if (!graphs.containsKey(name)) {
+    				graphs.put(name, new HashMap<String, Object>());
+    			}
+    			String g = "@merged".equals(graph) ? graph : name;
+    			flatten(((Map<String, Object>) input).get(prop), graphs, g, namer, null, null);
+    			continue;
+    		}
+    		
+    		// copy non-@type keywords
+    		if (!"@type".equals(prop) && JSONLDUtils.isKeyword(prop)) {
+    			subject.put(prop, ((Map<String, Object>) input).get(prop));
+    			continue;
+    		}
+    		
+    		// iterate over objects
+    		Object objects = ((Map<String, Object>) input).get(prop);
+    		Object[] keys = null;
+    		int len = 0;
+    		if (objects instanceof Map) {
+    			keys = ((Map<String,Object>)objects).keySet().toArray();
+    			len = keys.length;
+    		} else {
+    			len = ((List)objects).size();
+    		}
+    		for (int i = 0; i < len; i++) {
+    			Object o;
+    			if (objects instanceof Map) {
+    				o = ((Map)objects).get(keys[i]);
+    			} else {
+    				o = ((List)objects).get(i);
+    			}
+    			
+    			if (JSONLDUtils.isSubject(o) || JSONLDUtils.isReference(o)) {
+    				// rename blank node @id
+    				String id = (String) (JSONLDUtils.isBlankNode(o) ? namer.getName((String) ((Map<String,Object>)o).get("@id")) : ((Map<String,Object>)o).get("@id"));
+    				
+    				// add reference and recurse
+    				Map<String,Object> tmp = new HashMap<String, Object>();
+    				tmp.put("@id", id);
+    				JSONLDUtils.addValue(subject, prop, tmp, true);
+    				flatten(o, graphs, graph, namer, id);
+    			} else {
+    				// recurse into list
+    				if (o instanceof Map && ((Map)o).containsKey("@list")) {
+    					List<Object> _list = new ArrayList<Object>();
+    					flatten(((Map)o).get("@list"), graphs, graph, namer, name, _list);
+    					o = new HashMap<String, Object>();
+    					((Map<String, Object>) o).put("@list", _list);
+    				// special-handle @type IRIs
+    				} else if ("@type".equals(prop) && o instanceof String && ((String) o).startsWith("_:")) {
+    					o = namer.getName((String) o);
+    				}
+    				
+    				// add non-subject
+    				JSONLDUtils.addValue(subject, prop, o, true);
+    			}
+    		}
+    	}
+    }
+    
+    private static void flatten(Object input, Map<String,Object> graphs, String graph, UniqueNamer namer, String name) {
+    	flatten(input, graphs, graph, namer, name, null);
+    }
+    
+    private static void flatten(Object input, Map<String,Object> graphs, String graph, UniqueNamer namer) {
+    	flatten(input, graphs, graph, namer, null, null);
+    }
+    
+	/**
+     * Generates a unique simplified key from a URI and add it to the context 
+     * 
+     * @param key to full URI to generate the simplified key from
+     * @param ctx the context to add the simplified key too
+     * @param isid whether to set the type to @id
+     */
     private static void processKeyVal(String key, Map<String, Object> ctx, Boolean isid) {
         int idx = key.lastIndexOf('#');
         if (idx < 0) {
@@ -1299,6 +1738,12 @@ public class JSONLDProcessor {
         }
     }
 
+    /**
+     * Generates the context to be used by simplify.
+     * 
+     * @param input
+     * @param ctx
+     */
     private static void generateSimplifyContext(Object input, Map<String, Object> ctx) {
         if (input instanceof List) {
             for (Object o : (List) input) {
@@ -1332,12 +1777,13 @@ public class JSONLDProcessor {
     }
 
     /**
-     * automatically builds a frame which attempts to simplify the keys and values as much as possible
+     * Automatically builds a context which attempts to simplify the keys and values as much as possible
+     * and uses that context to compact the input
      * 
      * NOTE: this is experimental and only built for specific conditions
      * 
      * @param input
-     * @return
+     * @return the simplified version of input
      */
     public Object simplify(Map input) {
 
@@ -1352,6 +1798,12 @@ public class JSONLDProcessor {
         return compact(expanded, framectx);
     }
 
+    
+    
+    // ALL CODE BELOW THIS IS UNUSED
+    
+    
+    
     public void nameBlankNodes(Object input) {
         JSONLDUtils.NameGenerator ng = new JSONLDUtils.NameGenerator("tmp");
         this.ngtmp = ng;
@@ -1368,97 +1820,6 @@ public class JSONLDProcessor {
                     ;
                 ((Map<String, Object>) bnode).put("@id", ng.current());
                 subjects.put(ng.current(), bnode);
-            }
-        }
-    }
-
-    private void flatten(Object parent, String parentProperty, Object value, Map<String, Object> subjects) throws Exception {
-
-        Object flattened = null;
-
-        if (value == null) {
-            // drop null values
-        } else if (value instanceof List) {
-            for (Object v : (List<Object>) value) {
-                flatten(parent, parentProperty, v, subjects);
-            }
-        } else if (value instanceof Map) {
-            Map<String, Object> mapVal = (Map<String, Object>) value;
-            if (mapVal.containsKey("@value") || "@type".equals(parentProperty)) {
-                // already-expanded value
-                flattened = JSONLDUtils.clone(value);
-            } else if (mapVal.get("@id") instanceof List) {
-                // graph literal/disjoint graph
-                if (parent != null) {
-                    // cannot flatten embedded graph literals
-                    throw new Exception("Embedded graph literals cannot be flattened");
-                }
-
-                // top-level graph literal
-                for (Object key : (List<Object>) mapVal.get("@id")) {
-                    if (!ignoredKeywords.contains(key)) {
-                        flatten(parent, parentProperty, key, subjects);
-                    }
-                }
-            } else { // regular subject
-                // create of fetch existing subject
-                Object subject;
-                if (subjects.containsKey(mapVal.get("@id"))) {
-                    subject = subjects.get(mapVal.get("@id"));
-                } else {
-                    subject = new HashMap<String, Object>();
-                    ((Map<String, Object>) subject).put("@id", mapVal.get("@id"));
-                    subjects.put((String) mapVal.get("@id"), subject);
-                }
-                flattened = new HashMap<String, Object>();
-                ((Map<String, Object>) flattened).put("@id", ((Map<String, Object>) subject).get("@id"));
-
-                for (String key : mapVal.keySet()) {
-                    Object v = mapVal.get(key);
-
-                    if (ignoredKeywords.contains(key)) {
-                        ((Map<String, Object>) subject).put(key, v);
-                    } else if (v != null && !"@id".equals(key)) {
-                        if (((Map<String, Object>) subject).containsKey(key)) {
-                            if (!(((Map<String, Object>) subject).get(key) instanceof List)) {
-                                Object tmp = ((Map<String, Object>) subject).get(key);
-                                List<Object> lst = new ArrayList<Object>();
-                                lst.add(tmp);
-                                ((Map<String, Object>) subject).put(key, lst);
-                            }
-                        } else {
-                            List<Object> lst = new ArrayList<Object>();
-                            ((Map<String, Object>) subject).put(key, lst);
-                        }
-
-                        flatten(((Map<String, Object>) subject).get(key), key, v, subjects);
-                        if (((List<Object>) ((Map<String, Object>) subject).get(key)).size() == 1) {
-                            // convert subject[key] to a single object if there
-                            // is only one object in the list
-                            ((Map<String, Object>) subject).put(key, ((List<Object>) ((Map<String, Object>) subject).get(key)).get(0));
-                        }
-                    }
-                }
-            }
-        } else {
-            // string value
-            flattened = value;
-        }
-
-        if (flattened != null && parent != null) {
-            if (parent instanceof List) {
-                boolean duplicate = false;
-                for (Object e : (List<Object>) parent) {
-                    if (JSONLDUtils.compareObjects(e, flattened) == 0) {
-                        duplicate = true;
-                        break;
-                    }
-                }
-                if (!duplicate) {
-                    ((List<Object>) parent).add(flattened);
-                }
-            } else {
-                ((Map<String, Object>) parent).put(parentProperty, flattened);
             }
         }
     }

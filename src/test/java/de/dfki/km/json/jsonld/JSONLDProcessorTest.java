@@ -186,7 +186,7 @@ public class JSONLDProcessorTest {
         List<String> testType = (List<String>) test.get("@type");
         Options options = new JSONLDProcessor.Options("http://json-ld.org/test-suite/tests/" + test.get("input"));
         if (testType.contains("jld:NormalizeTest")) {
-            result = new JSONLDProcessor().normalize(inputJson);
+            //result = new JSONLDProcessor().normalize(inputJson);
         } else if (testType.contains("jld:ExpandTest")) {
             result = JSONLDProcessor.expand(inputJson, options);
         } else if (testType.contains("jld:CompactTest")) {
@@ -201,7 +201,7 @@ public class JSONLDProcessorTest {
             // TODO: many of the tests here fail simply because of an ordering issue
 
             TestTripleCallback ttc = new TestTripleCallback();
-            new JSONLDProcessor().triples(inputJson, ttc);
+            //new JSONLDProcessor().triples(inputJson, ttc);
             List<String> results = ttc.getResults();
             Collections.sort(results);
             result = join(results, "\n");

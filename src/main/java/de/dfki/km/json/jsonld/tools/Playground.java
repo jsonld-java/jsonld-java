@@ -87,7 +87,7 @@ public class Playground {
                 } else if ("--compact".equals(opt)) {
                     outobj = JSONLDProcessor.compact(inobj, new HashMap<String, Object>());
                 } else if ("--normalize".equals(opt)) {
-                    outobj = p.normalize(inobj);
+                    //outobj = p.normalize(inobj);
                 } else if ("--frame".equals(opt)) {
                     if (frobj == null) {
                         System.out.println("Error: no frame file specified");

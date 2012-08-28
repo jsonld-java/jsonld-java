@@ -43,9 +43,7 @@ public class RDF2JSONLD {
 
             JSONLDProcessor processor = new JSONLDProcessor();
 
-            if (normalize) {
-                output = processor.normalize(output);
-            } else if (expand) {
+            if (expand) {
                 // normalization starts out by expanding the input, so we only
                 // need to do this
                 // if normalizaion hasn't happened
