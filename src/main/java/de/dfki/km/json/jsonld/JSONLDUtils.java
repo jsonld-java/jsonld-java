@@ -243,7 +243,12 @@ public class JSONLDUtils {
 
         }
 
-        return rval;
+        if (!term.equals(rval)) {
+        	//recurse
+        	return expandTerm(ctx, rval, usedCtx);
+        } else {
+        	return rval;
+        }
     }
 
     public static boolean isReference(Object value) {
