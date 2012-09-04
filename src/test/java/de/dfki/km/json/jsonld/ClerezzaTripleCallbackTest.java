@@ -2,6 +2,7 @@ package de.dfki.km.json.jsonld;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +31,25 @@ public class ClerezzaTripleCallbackTest {
 			System.out.println(t);
 		}
 		assertEquals("Graph size",13, graph.size());
+		
+	}
+	
+	@Test
+	public void curiesInContextTest() throws IOException {
+		InputStream in = getClass().getClassLoader().getResourceAsStream("testfiles/curies-in-context.jsonld");
+		Object input = JSONUtils.fromInputStream(in);
+		
+		JSONLDProcessor processor = new JSONLDProcessor();
+		ClerezzaTripleCallback callback = new ClerezzaTripleCallback();
+
+		processor.triples(input, callback);
+		MGraph graph = callback.getMGraph();
+
+		for (Triple t : graph) {
+			System.out.println(t);
+			assertTrue("Predicate got fully expanded", t.getPredicate().getUnicodeString().startsWith("http"));
+		}
+		assertEquals("Graph size",3, graph.size());
 		
 	}
 }
