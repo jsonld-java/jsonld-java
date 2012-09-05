@@ -22,9 +22,9 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.hp.hpl.jena</groupId>
-			<artifactId>jena</artifactId>
-			<version>2.6.4</version>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-core</artifactId>
+			<version>2.7.0-incubating</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -44,18 +44,31 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.5</version>
+			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jdk14</artifactId>
-			<scope>runtime</scope>
-			<version>1.5.11</version>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>test</scope>
+			<version>1.6.4</version>
 		</dependency>
 	</dependencies>
 	
 	<repositories>
+		<repository>
+			<id>apache-repo.releases</id>
+			<name>Apache Release Repository</name>
+			<url>https://repository.apache.org/content/repositories/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+		</repository>
 		<repository>
 			<id>artifactory2-libs-releases</id>
             <url>http://www.dfki.uni-kl.de/artifactory2/libs-releases</url>
