@@ -13,7 +13,16 @@ import org.apache.clerezza.rdf.core.impl.TypedLiteralImpl;
 
 public class ClerezzaTripleCallback implements JSONLDTripleCallback {
 
-    private MGraph mGraph = new SimpleMGraph();
+    private MGraph mGraph;
+    
+    public ClerezzaTripleCallback() {
+    	mGraph = new SimpleMGraph();
+    }
+    
+    public ClerezzaTripleCallback(MGraph mGraph) {
+    	this.mGraph = mGraph;
+    }
+    
     private Map<String, BNode> bNodeMap = new HashMap<String, BNode>();
 
     public void setMGraph(MGraph mGraph) {
