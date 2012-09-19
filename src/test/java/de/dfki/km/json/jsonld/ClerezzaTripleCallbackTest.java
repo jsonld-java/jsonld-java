@@ -9,6 +9,7 @@ import java.io.InputStream;
 
 import org.apache.clerezza.rdf.core.MGraph;
 import org.apache.clerezza.rdf.core.Triple;
+import org.apache.clerezza.rdf.core.UriRef;
 import org.junit.Test;
 
 import de.dfki.km.json.JSONUtils;
@@ -48,8 +49,11 @@ public class ClerezzaTripleCallbackTest {
 		for (Triple t : graph) {
 			System.out.println(t);
 			assertTrue("Predicate got fully expanded", t.getPredicate().getUnicodeString().startsWith("http"));
+			if (t.getPredicate().equals(new UriRef("http://xmlns.com/foaf/0.1/knows"))) {
+				assertTrue("Object of foaf:knows is a UriRes", t.getObject() instanceof UriRef);
+			}
 		}
-		assertEquals("Graph size",3, graph.size());
+		assertEquals("Graph size",4, graph.size());
 		
 	}
 }

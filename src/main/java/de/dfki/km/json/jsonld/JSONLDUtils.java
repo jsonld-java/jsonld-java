@@ -180,6 +180,7 @@ public class JSONLDUtils {
     public static String getCoercionType(Map<String, Object> ctx, String property, Map<String, Object> usedCtx) {
         String rval = null;
 
+         
         // get expanded property
         String p = expandTerm(ctx, property, null);
 
@@ -194,6 +195,16 @@ public class JSONLDUtils {
                 rval = expandTerm(ctx, type, usedCtx);
                 if (usedCtx != null) {
                     usedCtx.put(p, clone(ctx.get(p)));
+                }
+            } else {
+            	//bot sure why this is expanded and compacted agin, but simplification tests fail without this
+            	p = property;
+            	if (ctx.containsKey(p) && ctx.get(p) instanceof Map && ((Map<String, String>) ctx.get(p)).containsKey("@type")) {
+                    String type = ((Map<String, String>) ctx.get(p)).get("@type");
+                    rval = expandTerm(ctx, type, usedCtx);
+                    if (usedCtx != null) {
+                        usedCtx.put(p, clone(ctx.get(p)));
+                    }
                 }
             }
 

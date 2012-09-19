@@ -2,9 +2,14 @@
   "@context": {
     "Person": "foaf:Person",
     "foaf": "http://xmlns.com/foaf/0.1/",
-    "name": "foaf:name"
+    "name": "foaf:name",
+    "knows": {
+    	"@id": "foaf:knows",
+        "@type": "@id"
+     }
   },
   "@type": "Person",
   "name": "Santa Claus",
-  "foaf:nick": "Sämi"
+  "foaf:nick": "Sämi",
+  "knows": "http://examle.org/me"
 }
