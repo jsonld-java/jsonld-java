@@ -92,6 +92,20 @@ Note that these currently fail due to the lack of an implementation of frame.
     processor.triples(jsonObject, callback);
     // If you didn't use your own Sesame graph, get the resulting one with:
     Graph output = callback.getStorageGraph();
+    
+### Parsing JSON-LD triples in Clerezza
+
+By adding the jsonld-java jar to the classpath of your application the parser 
+(`org.apache.clerezza.rdf.core.serializedform.Parser`) support parsing content
+of the format "application/rdf+json".
+
+E.g.:
+
+    Graph g = Parser.getInstance().parse(inputStream, "application/rdf+json");
+    
+At compile time here's no specific json-ld dependency, this means the json-ld jar can 
+simply be added to existing Clerezza application for them to support consumings JSON-LD
+content.
 
 ### Serializing a Jena Model to JSON-LD
 
