@@ -59,24 +59,13 @@
 	<repositories>
 		<repository>
 			<id>artifactory2-libs-releases</id>
-            <url>http://www.dfki.uni-kl.de/artifactory2/libs-releases</url>
+            <url>http://www.dfki.uni-kl.de/artifactory/libs-releases</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-		</repository>
-		<repository>
-			<id>aduna-opensource.releases</id>
-			<name>Aduna repository</name>
-			<url>http://repo.aduna-software.org/maven2/releases</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
 		</repository>
 	</repositories>
 	
