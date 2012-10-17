@@ -25,7 +25,7 @@ public class JSONLDUtils {
         // which may result in a lot of the utils in this library becoming member functions
         return "@context".equals(key) || "@container".equals(key) || "@default".equals(key) || "@embed".equals(key) || "@explicit".equals(key)
                 || "@graph".equals(key) || "@id".equals(key) || "@language".equals(key) || "@list".equals(key) || "@omitDefault".equals(key)
-                || "@preserve".equals(key) || "@set".equals(key) || "@type".equals(key) || "@value".equals(key);
+                || "@preserve".equals(key) || "@set".equals(key) || "@type".equals(key) || "@value".equals(key) || "@vocab".equals(key);
     }
 
     public static boolean isKeyword(String key, Map<String, Object> ctx) {
@@ -63,19 +63,19 @@ public class JSONLDUtils {
      * @param value the value to add.
      * @param [propertyIsArray] true if the property is always an array, false
      *          if not (default: false).
-     * @param [propertyIsList] true if the property is a @list, false
+     * @param [allowDuplicate] true if the property is a @list, false
      *          if not (default: false).
      */
-    public static void addValue(Map<String, Object> subject, String property, Object value, boolean propertyIsArray, boolean propertyIsList) {
+    public static void addValue(Map<String, Object> subject, String property, Object value, boolean propertyIsArray, boolean allowDuplicate) {
         if (value instanceof List) {
             if (((List) value).size() == 0 && propertyIsArray && !subject.containsKey(property)) {
                 subject.put(property, new ArrayList<Object>());
             }
             for (Object val : (List) value) {
-                addValue(subject, property, val, propertyIsArray, propertyIsList);
+                addValue(subject, property, val, propertyIsArray, allowDuplicate);
             }
         } else if (subject.containsKey(property)) {
-            boolean hasValue = !propertyIsList && hasValue(subject, property, value);
+            boolean hasValue = !allowDuplicate && hasValue(subject, property, value);
             if (!(subject.get(property) instanceof List) && (!hasValue || propertyIsArray)) {
                 List<Object> tmp = new ArrayList<Object>();
                 tmp.add(subject.get(property));
@@ -97,11 +97,11 @@ public class JSONLDUtils {
     }
 
     public static void addValue(Map<String, Object> subject, String property, Object value, boolean propertyIsArray) {
-        addValue(subject, property, value, propertyIsArray, "@list".equals(property));
+        addValue(subject, property, value, propertyIsArray, true);
     }
 
     public static void addValue(Map<String, Object> subject, String property, Object value) {
-        addValue(subject, property, value, false, "@list".equals(property));
+        addValue(subject, property, value, false, true);
     }
 
     /**
@@ -176,6 +176,45 @@ public class JSONLDUtils {
 
         return false;
     }
+    
+    /**
+     * Removes a value from a subject.
+     *
+     * @param subject the subject.
+     * @param property the property that relates the value to the subject.
+     * @param value the value to remove.
+     * @param [options] the options to use:
+     *          [propertyIsArray] true if the property is always an array, false
+     *            if not (default: false).
+     */
+    public static void removeValue(Map<String, Object> subject, String property,
+			Map<String, Object> value) {
+		removeValue(subject, property, value, false);
+	}
+    public static void removeValue(Map<String, Object> subject, String property,
+			Map<String, Object> value, boolean propertyIsArray) {
+		// filter out value
+    	List<Object> values = new ArrayList<Object>();
+    	if (subject.get(property) instanceof List) {
+    		for (Object e: ((List)subject.get(property))) {
+    			if (!(value.equals(e))) {
+    				values.add(value);
+    			}
+    		}
+    	} else {
+    		if (!value.equals(subject.get(property))) {
+    			values.add(subject.get(property));
+    		}
+    	}
+    	
+    	if (values.size() == 0) {
+    		subject.remove(property);
+    	} else if (values.size() == 1 && !propertyIsArray) {
+    		subject.put(property, values.get(0));
+    	} else {
+    		subject.put(property, values);
+    	}
+	}
 
     // END OF NEW CODE
 

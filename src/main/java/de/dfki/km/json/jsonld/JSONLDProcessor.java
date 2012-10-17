@@ -64,6 +64,7 @@ public class JSONLDProcessor {
         public Map<String, Object> optimizeCtx = null;
 		public Boolean embed = null;
 		public Boolean explicit = null;
+		public Boolean omitDefault = null;
     }
 
     Options opts;
@@ -119,6 +120,7 @@ public class JSONLDProcessor {
                         put("@set", new ArrayList<String>());
                         put("@type", new ArrayList<String>());
                         put("@value", new ArrayList<String>());
+                        put("@vocab", new ArrayList<String>());
                         // add ignored keywords
                         for (String keyword : ignoredKeywords) {
                             put(keyword, new ArrayList<String>());
@@ -226,33 +228,69 @@ public class JSONLDProcessor {
      * @param base the base IRI.
      * @param defined a map of defining/defined keys to detect cycles and prevent
      *          double definitions.
+     * @throws JSONLDProcessingError 
      */
-    private void defineContextMapping(ActiveContext activeCtx, Map<String, Object> ctx, String key, String base, Map<String, Boolean> defined) {
+    private void defineContextMapping(ActiveContext activeCtx, Map<String, Object> ctx, String key, String base, Map<String, Boolean> defined) throws JSONLDProcessingError {
         if (defined.containsKey(key)) {
+        	// key already defined
             if (defined.get(key) == Boolean.TRUE) {
                 return;
             }
-            throw new RuntimeException("Cyclical context definition detected");
+            // cycle detected
+            throw new JSONLDProcessingError("Cyclical context definition detected")
+            	.setDetail("context", ctx)
+            	.setDetail("key", key);
         }
+        // now defining key
         defined.put(key, Boolean.FALSE);
 
+        // if key has a prefix, define it first
         String prefix = null;
         int colon = key.indexOf(":");
         if (colon != -1) {
             prefix = key.substring(0, colon);
             if (ctx.containsKey(prefix)) {
+            	// define parent prefix
                 defineContextMapping(activeCtx, ctx, prefix, base, defined);
             }
         }
 
+        // get context key value
         Object value = ctx.get(key);
 
         if (JSONLDUtils.isKeyword(key)) {
-            if (!"@language".equals(key)) {
-                throw new RuntimeException("Invalid JSON-LD syntax; keywords cannot be overridden");
+        	
+        	// support @vocab
+            if ("@vocab".equals(key)) {
+            	if (!value.equals(null) && !(value instanceof String)) {
+            		throw new JSONLDProcessingError("Invalid JSON-LD syntax; the value of \"@vocab\" in a @context must be a string or null.")
+                		.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                		.setDetail("context", ctx);
+            	}
+            	if (((String)value).indexOf(":") == -1) {
+            		throw new JSONLDProcessingError("Invalid JSON-LD syntax; the value of \"@vocab\" in a @context must be an absolute IRI.")
+            		.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+            		.setDetail("context", ctx);
+            	}
+            	if (value == null) {
+            		activeCtx.remove("@vocab");
+            	} else {
+            		activeCtx.put("@vocab", value);
+            	}
+            	defined.put(key, Boolean.TRUE);
+            	return;
             }
-            if (value != null && !(value instanceof String)) {
-                throw new RuntimeException("Invalid JSON-LD syntax; the value of \"@language\" in a @context must be a string or null");
+        	
+            // only @language is permitted
+            if (!"@language".equals(key)) {
+                throw new JSONLDProcessingError("Invalid JSON-LD syntax; keywords cannot be overridden")
+                	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                	.setDetail("context", ctx);
+            }
+            if (!value.equals(null) && !(value instanceof String)) {
+                throw new JSONLDProcessingError("Invalid JSON-LD syntax; the value of \"@language\" in a @context must be a string or null")
+                	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                	.setDetail("context", ctx);
             }
             if (value == null) {
                 activeCtx.remove("@language");
@@ -263,8 +301,10 @@ public class JSONLDProcessor {
             return;
         }
 
+        // clear context entry
         if (value == null || (value instanceof Map && ((Map<String, Object>) value).containsKey("@id") && ((Map<String, Object>) value).get("@id") == null)) {
             if (activeCtx.mappings.containsKey(key)) {
+            	// if key is a keyword alias, remove it
                 String kw = (String) ((Map<String, Object>) activeCtx.mappings.get(key)).get("@id");
                 if (JSONLDUtils.isKeyword(kw)) {
                     List<String> aliases = activeCtx.keywords.get(kw);
@@ -278,10 +318,12 @@ public class JSONLDProcessor {
 
         if (value instanceof String) {
             if (JSONLDUtils.isKeyword((String) value)) {
+            	// disallow aliasing @context and @preserve
                 if ("@context".equals(value) || "@preserve".equals(value)) {
-                    throw new RuntimeException("Invalid JSON-LD syntax; @context and @preserve cannot be aliased");
+                    throw new JSONLDProcessingError("Invalid JSON-LD syntax; @context and @preserve cannot be aliased")
+                    	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
                 }
-
+                // uniquely add key as a keyword alias and resort
                 List<String> aliases = activeCtx.keywords.get(value);
                 if (!aliases.contains(key)) {
                     aliases.add(key);
@@ -298,9 +340,11 @@ public class JSONLDProcessor {
                     });
                 }
             } else {
+            	// expand value to a full IRI
                 value = expandContextIri(activeCtx, ctx, (String) value, base, defined);
             }
 
+            // define/redefine key to expanded IRI/keyword
             Map<String, Object> tmp = new HashMap<String, Object>();
             tmp.put("@id", value);
             activeCtx.mappings.put(key, tmp);
@@ -309,27 +353,43 @@ public class JSONLDProcessor {
         }
 
         if (!(value instanceof Map)) {
-            throw new RuntimeException("Invalid JSON-LD syntax; @context property values must be strings or objects.");
+            throw new JSONLDProcessingError("Invalid JSON-LD syntax; @context property values must be strings or objects.")
+            	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+            	.setDetail("context", ctx);
         }
-
-        Map<String, Object> val = (Map<String, Object>) value;
+        // create new mapping
         Map<String, Object> mapping = new HashMap<String, Object>();
 
+        // helper to make accessing the value as a map easier
+        Map<String, Object> val = (Map<String, Object>) value;
+        
         if (val.containsKey("@id")) {
             if (!(val.get("@id") instanceof String)) {
-                throw new RuntimeException("Invalid JSON-LD syntax; @context @id values must be strings.");
+                throw new JSONLDProcessingError("Invalid JSON-LD syntax; @context @id values must be strings.")
+                	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                	.setDetail("context", ctx);
             }
             String id = (String) val.get("@id");
 
+            // expand @id if it is not @type
             if (!"@type".equals(id)) {
+            	// expand @id to full IRI
                 id = expandContextIri(activeCtx, ctx, id, base, defined);
             }
-
+            
+            // add @id to mapping
             mapping.put("@id", id);
+        } else if (activeCtx.containsKey("@vocab") && activeCtx.get("@vocab") != null) {
+        	// NOTE: this is not implemented in javascript (which actually fails tests that need it)
+        	String id = activeCtx.get("@vocab") + key;
+        	mapping.put("@id", id);
         } else {
             // non-IRIs *must* define @ids
             if (prefix == null) {
-                throw new RuntimeException("Invalid JSON-LD syntax; @context terms must define an @id.");
+                throw new JSONLDProcessingError("Invalid JSON-LD syntax; @context terms must define an @id.")
+                	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                	.setDetail("context", ctx)
+                	.setDetail("key", val);
             }
 
             if (activeCtx.mappings.containsKey(prefix)) {
@@ -342,32 +402,42 @@ public class JSONLDProcessor {
 
         if (val.containsKey("@type")) {
             if (!(val.get("@type") instanceof String)) {
-                throw new RuntimeException("Invalid JSON-LD syntax; @context @type values must be strings.");
+                throw new JSONLDProcessingError("Invalid JSON-LD syntax; @context @type values must be strings.")
+                	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                	.setDetail("context", ctx);
             }
             String type = (String) val.get("@type");
             if (!"@id".equals(type)) {
-                type = expandContextIri(activeCtx, ctx, type, "", defined);
+            	// expand @type to full IRI
+                type = expandContextIri(activeCtx, ctx, type, null, defined);
             }
-
+            // add @type to mapping
             mapping.put("@type", type);
         }
 
         if (val.containsKey("@container")) {
             Object container = val.get("@container");
             if (!("@list".equals(container) || "@set".equals(container))) {
-                throw new RuntimeException("Invalid JSON-LD syntax; @context @container value must be \"@list\" or \"@set\".");
+                throw new JSONLDProcessingError("Invalid JSON-LD syntax; @context @container value must be \"@list\" or \"@set\".")
+                	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                	.setDetail("context", ctx);
             }
+            // add @container to mapping
             mapping.put("@container", container);
         }
 
         if (val.containsKey("@language")) {
             Object lang = val.get("@language");
             if (lang != null && !(lang instanceof String)) {
-                throw new RuntimeException("Invalid JSON-LD syntax; @context @language must be a string or null.");
+                throw new JSONLDProcessingError("Invalid JSON-LD syntax; @context @language must be a string or null.")
+                	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                	.setDetail("context", ctx);
             }
+            // add @language to mapping
             mapping.put("@language", lang);
         }
 
+        // merge onto parent mapping if one exists for a prefix
         if (prefix != null && activeCtx.mappings.containsKey(prefix)) {
             Map<String, Object> child = mapping;
             mapping = (Map<String, Object>) JSONLDUtils.clone(activeCtx.mappings.get(prefix));
@@ -376,6 +446,7 @@ public class JSONLDProcessor {
             }
         }
 
+        // define key mapping
         activeCtx.mappings.put(key, mapping);
         defined.put(key, Boolean.TRUE);
     }
@@ -391,20 +462,25 @@ public class JSONLDProcessor {
      * @param defined a map for tracking cycles in context definitions.
      *
      * @return the expanded value.
+     * @throws JSONLDProcessingError 
      */
-    private String expandContextIri(ActiveContext activeCtx, Map<String, Object> ctx, String value, String base, Map<String, Boolean> defined) {
+    private String expandContextIri(ActiveContext activeCtx, Map<String, Object> ctx, String value, String base, Map<String, Boolean> defined) throws JSONLDProcessingError {
+    	// dependency not defined, define it
         if (ctx.containsKey(value) && defined.get(value) != Boolean.TRUE) {
             defineContextMapping(activeCtx, ctx, value, base, defined);
         }
 
+        // recurse if value is a term
         if (activeCtx.mappings.containsKey(value)) {
             String id = ((Map<String, String>) activeCtx.mappings.get(value)).get("@id");
+            // value is already an absolute IRI
             if (id != null && id.equals(value)) {
                 return value;
             }
             return expandContextIri(activeCtx, ctx, id, base, defined);
         }
 
+        // split value into prefix:suffix
         int colon = value.indexOf(':');
         if (colon != -1) {
             String prefix = value.substring(0, colon);
@@ -434,15 +510,36 @@ public class JSONLDProcessor {
             // consider the value an absolute IRI
             return value;
         }
-
-        if ("".equals(value) || value.startsWith("#")) {
-            value = base + value;
-        } else {
-            value = base.substring(0, base.lastIndexOf('/') + 1) + value;
+        
+        if (JSONLDUtils.isKeyword(value)) {
+        	
+        }
+        // prepend vocab
+        else if (base == null && ctx.containsKey("@vocab")) {
+        	// TODO: this is _prependBase, move to a function if it's used often
+        	// TODO: this line seems broken.. trying something else
+        	//if ("".equals(value) || value.startsWith("#")) {
+        	if ("".equals(value) || value.startsWith("#") || ((String)ctx.get("@vocab")).endsWith("#")) {
+        		value = ctx.get("@vocab") + value;
+        	} else {
+        		String b = (String) ctx.get("@vocab");
+        		value = b.substring(0, b.lastIndexOf("/") + 1) + value;
+        	}
+        // prepend base
+        } else if (base != null) {
+        	if ("".equals(value) || value.startsWith("#") || base.endsWith("#")) {
+        		value = base + value;
+        	} else {
+        		value = base.substring(0, base.lastIndexOf("/") + 1) + value;
+        	}
         }
 
+        // value must now be an absolute IRI
         if (!JSONLDUtils.isAbsoluteIri(value)) {
-            throw new RuntimeException("Invalid JSON-LD syntax; a @context value does not expand to an absolute IRI.");
+            throw new JSONLDProcessingError("Invalid JSON-LD syntax; a @context value does not expand to an absolute IRI.")
+            	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+            	.setDetail("context", ctx)
+            	.setDetail("value", value);
         }
 
         return value;
@@ -457,10 +554,13 @@ public class JSONLDProcessor {
      * @param [options] the options to use:
      *          [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
      * @param callback(err, ctx) called once the operation completes.
+     * @throws JSONLDProcessingError 
      */
-    public ActiveContext processContext(ActiveContext activeCtx, Object localCtx) {
+    public ActiveContext processContext(ActiveContext activeCtx, Object localCtx) throws JSONLDProcessingError {
+    	// initialize the resulting context
         ActiveContext rval = (ActiveContext) JSONLDUtils.clone(activeCtx);
 
+        // normalize local context to an array of @context objects
         if (localCtx instanceof Map && ((Map) localCtx).containsKey("@context") && ((Map) localCtx).get("@context") instanceof List) {
             localCtx = ((Map) localCtx).get("@context");
         }
@@ -473,25 +573,33 @@ public class JSONLDProcessor {
             ctxs.add((Map<String, Object>) localCtx);
         }
 
-        try {
-            for (Map<String, Object> ctx : ctxs) {
-                if (ctx == null) {
-                    // reset to initial context
-                    rval = new ActiveContext();
-                    continue;
-                }
-
-                if (ctx.containsKey("@context")) {
-                    ctx = (Map<String, Object>) ctx.get("@context");
-                }
-
-                HashMap<String, Boolean> defined = new HashMap<String, Boolean>();
-                for (String key : ctx.keySet()) {
-                    defineContextMapping(rval, ctx, key, opts.base, defined);
-                }
+        // process each context in order
+        for (Object ctx : ctxs) {
+        	if (ctx == null) {
+        		// reset to initial context
+        		rval = new ActiveContext();
+        		continue;
             }
-        } catch (ClassCastException e) {
-            throw new RuntimeException("@context must be an object");
+        	
+        	// context must be an object by now, all URLs resolved before this call
+        	if (ctx instanceof Map) {
+
+        		// dereference @context key if present
+                if (((Map<String, Object>) ctx).containsKey("@context")) {
+                    ctx = (Map<String, Object>) ((Map<String, Object>) ctx).get("@context");
+                }
+
+                // define context mappings for keys in local context
+                HashMap<String, Boolean> defined = new HashMap<String, Boolean>();
+                for (String key : ((Map<String, Object>) ctx).keySet()) {
+                    defineContextMapping(rval, (Map<String, Object>) ctx, key, opts.base, defined);
+                }
+            } else {
+            	// context must be an object by now, all URLs resolved before this call
+                throw new JSONLDProcessingError("@context must be an object")
+                	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                	.setDetail("context", ctx);
+            }
         }
 
         return rval;
@@ -505,8 +613,9 @@ public class JSONLDProcessor {
      * @param options the context processing options.
      *
      * @return the new active context.
+     * @throws JSONLDProcessingError 
      */
-    private static ActiveContext processContext(ActiveContext activeCtx, Object localCtx, Options opts) {
+    private static ActiveContext processContext(ActiveContext activeCtx, Object localCtx, Options opts) throws JSONLDProcessingError {
         JSONLDProcessor p = new JSONLDProcessor(opts);
         if (localCtx == null) {
             return p.new ActiveContext();
@@ -533,18 +642,22 @@ public class JSONLDProcessor {
      * @return the expanded term as an absolute IRI.
      */
     private String expandTerm(ActiveContext ctx, String term, String base) {
+    	// nothing to expand
         if (term == null) {
             return null;
         }
 
+        // the term has a mapping, so it is a plain term
         if (ctx.mappings.containsKey(term)) {
             String id = (String) ((Map<String, Object>) ctx.mappings.get(term)).get("@id");
+            // term is already an absolute IRI
             if (term.equals(id)) {
                 return term;
             }
             return expandTerm(ctx, id, base);
         }
 
+        // split term into prefix:suffix
         int colon = term.indexOf(':');
         if (colon != -1) {
             String prefix = term.substring(0, colon);
@@ -560,15 +673,36 @@ public class JSONLDProcessor {
                 return term;
             }
 
+            // the term's prefix has a mapping, so it is a CURIE
             if (ctx.mappings.containsKey(prefix)) {
                 return expandTerm(ctx, (String) ((Map<String, Object>) ctx.mappings.get(prefix)).get("@id"), base) + suffix;
             }
 
+            // consider term an absolute IRI
             return term;
         }
-
-        if (base != null) {
-            if ("".equals(term) || term.startsWith("#")) {
+        
+        
+        // TODO: 5) Otherwise, if the IRI being processed does not contain a colon and is a property,
+        // i.e., a key in a JSON object, or the value of @type and the active context has a @vocab 
+        // mapping, join the mapped value to the suffix using textual concatenation.
+        
+        // TODO: this seems to be missing a check to see if this is a keyword
+        if (JSONLDUtils.isKeyword(term)) {
+        	// then we just return the term
+        }
+        // use vocab // TODO: added base check, since terms that are not key's or values of @type should prioritise base before @vocab
+        else if (base == null && ctx.containsKey("@vocab")) {
+        	// TODO: this is _prependBase, move to a function if it's used often
+        	if ("".equals(term) || term.startsWith("#") || ((String)ctx.get("@vocab")).endsWith("#")) {
+        		term = ctx.get("@vocab") + term;
+        	} else {
+        		String b = (String) ctx.get("@vocab");
+        		term = b.substring(0, b.lastIndexOf("/") + 1) + term;
+        	}
+        // prepend base to term
+        } else if (base != null) {
+            if ("".equals(term) || term.startsWith("#") || base.endsWith("#")) {
                 term = base + term;
             } else {
                 term = base.substring(0, base.lastIndexOf('/') + 1) + term;
@@ -594,18 +728,25 @@ public class JSONLDProcessor {
      * @return the expanded value.
      */
     private Object expandValue(ActiveContext ctx, String property, Object value, String base) {
+    	// nothing to expand
         if (value == null) {
             return null;
         }
+        
+        // default to simple string return value
         Object rval = value;
+        
+        // special-case expand @id and @type (skips '@id' expansion)
         String prop = expandTerm(ctx, property);
         if ("@id".equals(prop)) {
             rval = expandTerm(ctx, (String) value, base);
         } else if ("@type".equals(prop)) {
             rval = expandTerm(ctx, (String) value);
         } else {
+        	// get type definition from context
             Object type = ctx.getContextValue(property, "@type");
 
+            // do @id expansion (automatic for @graph)
             if ("@id".equals(type) || "@graph".equals(prop)) {
                 Map<String, Object> tmp = new HashMap<String, Object>();
                 tmp.put("@id", expandTerm(ctx, (String) value, base));
@@ -614,8 +755,11 @@ public class JSONLDProcessor {
                 Map<String, Object> tmp = new HashMap<String, Object>();
                 tmp.put("@value", value);
                 rval = tmp;
+                
+                // other type
                 if (type != null) {
                     tmp.put("@type", type);
+                // check for language tagging
                 } else {
                     Object language = ctx.getContextValue(property, "@language");
                     if (language != null) {
@@ -631,12 +775,15 @@ public class JSONLDProcessor {
      * Throws an exception if the given value is not a valid @type value.
      *
      * @param v the value to check.
+     * @throws JSONLDProcessingError 
      */
-    private void validateTypeValue(Object v) {
+    private boolean validateTypeValue(Object v) throws JSONLDProcessingError {
+    	// must be a string, subject reference, or empty object
         if (v instanceof String || (v instanceof Map && (((Map<String, Object>) v).containsKey("@id") || ((Map<String, Object>) v).size() == 0))) {
-            return;
+            return true;
         }
 
+        // must be an array
         boolean isValid = false;
         if (v instanceof List) {
             isValid = true;
@@ -649,9 +796,12 @@ public class JSONLDProcessor {
         }
 
         if (!isValid) {
-            throw new RuntimeException(
-                    "Invalid JSON-LD syntax; \"@type\" value must a string, a subject reference, an array of strings or subject references, or an empty object.");
+            throw new JSONLDProcessingError(
+                    "Invalid JSON-LD syntax; \"@type\" value must a string, a subject reference, an array of strings or subject references, or an empty object.")
+            	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+            	.setDetail("value", v);
         }
+        return true;
     }
 
     /**
@@ -665,49 +815,65 @@ public class JSONLDProcessor {
      * @return the compacted term, prefix, keyword alias, or the original IRI.
      */
     private static String compactIri(ActiveContext ctx, String iri, Object value) {
+    	// can't compact null
         if (iri == null) {
             return iri;
         }
 
+        // term is a keyword
         if (JSONLDUtils.isKeyword(iri)) {
+        	// return alias if available
             List<String> aliases = ctx.keywords.get(iri);
             if (aliases.size() > 0) {
                 return aliases.get(0);
             } else {
+            	// no alias, keep original keyword
                 return iri;
             }
         }
+        
+        // default value to null
+        // NOTE: since there is no 'undefined' in Java, there's nothing to do here
 
+        // find all possible term matches
         List<String> terms = new ArrayList<String>();
         int highest = 0;
         boolean listContainer = false;
         boolean isList = (value instanceof Map && ((Map<String, Object>) value).containsKey("@list"));
         for (String term : ctx.mappings.keySet()) {
+        	// skip terms with non-matching iris
             Map<String, Object> entry = (Map<String, Object>) ctx.mappings.get(term);
             if (!iri.equals(entry.get("@id"))) {
                 continue;
             }
+            // skip @set containers for @lists
             if (isList && "@set".equals(entry.get("@container"))) {
                 continue;
             }
-            if (!isList && "@list".equals(entry.get("@container"))) {
+            // skip @list containers for non-@lists
+            if (!isList && "@list".equals(entry.get("@container")) && value != null) {
                 continue;
             }
+            // for @lists, if listContainer is set, skip non-list containers
             if (isList && listContainer && !"@list".equals(entry.get("@container"))) {
                 continue;
             }
 
+            // rank term
             int rank = rankTerm(ctx, term, value);
             if (rank > 0) {
+            	// add 1 to rank if container is a @set
                 if ("@set".equals(entry.get("@container"))) {
                     rank += 1;
                 }
 
+                // for @lists, give preference to @list containers
                 if (isList && !listContainer && "@list".equals(entry.get("@container"))) {
                     listContainer = true;
                     terms.clear();
                     highest = rank;
                     terms.add(term);
+                // only push match if rank meets current threshold
                 } else if (rank >= highest) {
                     if (rank > highest) {
                         terms.clear();
@@ -717,18 +883,35 @@ public class JSONLDProcessor {
                 }
             }
         }
+        
+        // no matching terms, use @vocab if available
+        if (terms.size() == 0 && ctx.containsKey("@vocab")) {
+        	// determine if vocab is a prefix of the iri
+        	String vocab = (String) ctx.get("@vocab");
+        	if (iri.startsWith(vocab)) {
+        		// use suffix as relative iri if it is not a term in the active context
+        		String suffix = iri.substring(vocab.length());
+        		if (!ctx.mappings.containsKey(suffix)) {
+        			return suffix;
+        		}
+        	}
+        }
 
+        // no term matches, add possible CURIEs
         if (terms.size() == 0) {
             for (String term : ctx.mappings.keySet()) {
+            	// skip terms with colons, they can't be prefixes
                 if (term.contains(":")) {
                     continue;
                 }
 
+                // skip entries with @ids that are not partial matches
                 Map<String, Object> entry = (Map<String, Object>) ctx.mappings.get(term);
                 if (iri.equals(entry.get("@id")) || iri.indexOf((String) entry.get("@id")) != 0) {
                     continue;
                 }
 
+                // add CURIE as term if it has no mapping
                 String curie = term + ":" + iri.substring(((String) entry.get("@id")).length());
                 if (!(ctx.mappings.containsKey(curie))) {
                     terms.add(curie);
@@ -736,10 +919,13 @@ public class JSONLDProcessor {
             }
         }
 
+        // no matching terms,
         if (terms.size() == 0) {
+        	// use iri
             return iri;
         }
 
+        // return shortest and lexicographically-least term
         Collections.sort(terms, new Comparator<String>() {
             // Compares two strings first based on length and then lexicographically
             public int compare(String a, String b) {
@@ -770,25 +956,34 @@ public class JSONLDProcessor {
      * @return the term rank.
      */
     private static int rankTerm(ActiveContext ctx, String term, Object value) {
+    	// no term restrictions for a null value
         if (value == null) {
             return 3;
         }
 
+        // get context entry for term
         Map<String, Object> entry = (Map<String, Object>) ctx.mappings.get(term);
+        
+        // @list rank is the sum of its values' ranks
         if (value instanceof Map && ((Map<String, Object>) value).containsKey("@list")) {
             List<Object> list = (List<Object>) ((Map<String, Object>) value).get("@list");
             if (list.size() == 0) {
                 return "@list".equals(entry.get("@container")) ? 1 : 0;
             }
+            // sum term ranks for each list value
             int sum = 0;
             for (Object i : list) {
                 sum += rankTerm(ctx, term, i);
             }
             return sum;
         }
+        
+        // Note: Value must be an object that is a @value or subject/reference.
 
         if (value instanceof Map && ((Map<String, Object>) value).containsKey("@value")) {
+        	// value has a @type
             if (((Map<String, Object>) value).containsKey("@type")) {
+            	// @types match
                 if (entry.containsKey("@type")) {
                     Object vt = ((Map<String, Object>) value).get("@type");
                     Object et = entry.get("@type");
@@ -799,10 +994,12 @@ public class JSONLDProcessor {
                 return (!entry.containsKey("@type") && !entry.containsKey("@language")) ? 1 : 0;
             }
 
+            // rank non-string value
             if (!(((Map<String, Object>) value).get("@value") instanceof String)) {
                 return (!entry.containsKey("@type") && !entry.containsKey("@language")) ? 2 : 1;
             }
 
+            // value has no @type or @language
             if (!((Map<String, Object>) value).containsKey("@language")) {
                 if ((entry.containsKey("@language") && entry.get("@language") == null)
                         || (!entry.containsKey("@type") && !entry.containsKey("@language") && !ctx.containsKey("@language"))) {
@@ -811,6 +1008,8 @@ public class JSONLDProcessor {
                 return 0;
             }
 
+            // @languages match or entry has no @type or @language but default
+            // @language matches
             Object vl = ((Map<String, Object>) value).get("@language");
             Object el = entry.get("@language");
             Object cl = ctx.get("@language");
@@ -822,6 +1021,7 @@ public class JSONLDProcessor {
             return (!entry.containsKey("@type") && !entry.containsKey("@language")) ? 1 : 0;
         }
 
+        // value must be a subject/reference
         if ("@id".equals(entry.get("@type"))) {
             return 3;
         }
@@ -841,80 +1041,117 @@ public class JSONLDProcessor {
      * TODO:
      * @param options the expansion options.
      * @param propertyIsList true if the property is a list, false if not.
+     *  NOTE: not implemented in the java version as it seems that it's only (and always) true if property === "@list"
      *
      * @return the expanded value.
+     * @throws JSONLDProcessingError 
      */
-    private Object expand(ActiveContext ctx, Object property, Object element) {
+    private Object expand(ActiveContext ctx, Object property, Object element) throws JSONLDProcessingError {
+    	// NOTE: undefined is not really null, and since there's no equivalent in Java we can't test this.
+    	// infact, it shouldn't actually be possible.
+    	//if (element == null) {
+    	//	throw new JSONLDProcessingError("Invalid JSON-LD syntax; undefined element.")
+        //		.setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
+    	//}
+    	
+    	// recursively expand array
         if (element instanceof List) {
             List<Object> rval = new ArrayList<Object>();
             for (Object i : (List<Object>) element) {
+            	// expand element
                 Object e = expand(ctx, property, i);
                 if (e instanceof List && "@list".equals(property)) {
-                    throw new RuntimeException("Invalid JSON-LD syntax; lists of lists are not permitted.");
+                	// lists of lists are illegal
+                    throw new JSONLDProcessingError("Invalid JSON-LD syntax; lists of lists are not permitted.")
+                    	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
+                // drop null values
                 } else if (e != null) {
-                    // drop null values
                     rval.add(e);
                 }
             }
             return rval;
         }
+        
+        // recursively expand object
         if (element instanceof Map) {
+        	// access helper
             Map<String, Object> elem = (Map<String, Object>) element;
+            
+        	// if element has a context, process it
             if (elem.containsKey("@context")) {
                 ctx = processContext(ctx, elem.get("@context"));
                 elem.remove("@context");
             }
 
             Map<String, Object> rval = new HashMap<String, Object>();
-
             for (String key : elem.keySet()) {
+            	// expand property
                 String prop = expandTerm(ctx, key);
 
+                // drop non-absolute IRI keys that aren't keywords
                 if (!JSONLDUtils.isAbsoluteIri(prop) && !JSONLDUtils.isKeyword(prop, ctx)) {
                     continue;
                 }
 
+                // if value is null and property is not @value, continue
                 Object value = elem.get(key);
                 if (value == null && !"@value".equals(prop)) {
                     continue;
                 }
 
+                // syntax error if @id is not a string
                 if ("@id".equals(prop) && !(value instanceof String)) {
-                    throw new RuntimeException("Invalid JSON-LD syntax; \"@id\" value must a string.");
+                    throw new JSONLDProcessingError("Invalid JSON-LD syntax; \"@id\" value must a string.")
+                    	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                    	.setDetail("value", value);
                 }
 
+                // validate @type value
                 if ("@type".equals(prop)) {
                     validateTypeValue(value);
                 }
 
+                // @graph must be an array or an object
                 if ("@graph".equals(prop) && !(value instanceof Map || value instanceof List)) {
-                    throw new RuntimeException("Invalid JSON-LD syntax; \"@graph\" value must be an object or an array.");
+                    throw new JSONLDProcessingError("Invalid JSON-LD syntax; \"@graph\" value must be an object or an array.")
+                    	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                    	.setDetail("value", value);
                 }
 
+                // @value must not be an object or an array
                 if ("@value".equals(prop) && (value instanceof Map || value instanceof List)) {
-                    throw new RuntimeException("Invalid JSON-LD syntax; \"@value\" value must not be an object or an array.");
+                    throw new JSONLDProcessingError("Invalid JSON-LD syntax; \"@value\" value must not be an object or an array.")
+                    	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                    	.setDetail("value", value);
                 }
 
+                // @language must be a string
                 if ("@language".equals(prop) && !(value instanceof String)) {
-                    throw new RuntimeException("Invalid JSON-LD syntax; \"@language\" value must be a string.");
+                    throw new JSONLDProcessingError("Invalid JSON-LD syntax; \"@language\" value must be a string.")
+                    	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                    	.setDetail("value", value);
                 }
 
-                // 2.2.7
+                // recurse into @list or @set keeping the active property
                 if ("@list".equals(prop) || "@set".equals(prop)) {
                     value = expand(ctx, property, value);
                     if ("@list".equals(prop) && (value instanceof Map && ((Map<String, Object>) value).containsKey("@list"))) {
-                        throw new RuntimeException("Invalid JSON-LD syntax; lists of lists are not permitted.");
+                        throw new JSONLDProcessingError("Invalid JSON-LD syntax; lists of lists are not permitted.")
+                        	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
                     }
                 } else {
-                    // 2.2.8
+                	// update active property and recursively expand value
                     property = key;
                     value = expand(ctx, property, value);
                 }
 
+                // drop null values if property is not @value (dropped below)
                 if (value != null || "@value".equals(prop)) {
+                	// convert value to @list if container specifies it
                     if (!"@list".equals(prop) && !(value instanceof Map && ((Map<String, Object>) value).containsKey("@list"))) {
                         Object container = ctx.getContextValue((String) property, "@container");
                         if ("@list".equals(container)) {
+                        	// ensure value is an array
                             Map<String, Object> tmp = new HashMap<String, Object>();
                             List<Object> tl;
                             if (value instanceof List) {
@@ -928,6 +1165,7 @@ public class JSONLDProcessor {
                         }
                     }
 
+                    // optimize away @id for @type
                     if ("@type".equals(prop)) {
                         if (value instanceof Map && ((Map<String, Object>) value).containsKey("@id")) {
                             value = ((Map<String, Object>) value).get("@id");
@@ -944,34 +1182,48 @@ public class JSONLDProcessor {
                         }
                     }
 
+                    // add value, use an array if not @id, @type, @value, or @language
                     boolean useArray = !("@id".equals(prop) || "@type".equals(prop) || "@value".equals(prop) || "@language".equals(prop));
                     JSONLDUtils.addValue(rval, prop, value, useArray);
                 }
             }
 
+            // @value must only have @language or @type
             if (rval.containsKey("@value")) {
                 if ((rval.size() == 2 && !rval.containsKey("@type") && !rval.containsKey("@language")) || rval.size() > 2) {
-                    throw new RuntimeException(
-                            "Invalid JSON-LD syntax; an element containing \"@value\" must have at most one other property which can be \"@type\" or \"@language\".");
+                    throw new JSONLDProcessingError(
+                            "Invalid JSON-LD syntax; an element containing \"@value\" must have at most one other property which can be \"@type\" or \"@language\".")
+                    	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                    	.setDetail("element", rval);
                 }
+                // value @type must be a string
                 if (rval.containsKey("@type") && !(rval.get("@type") instanceof String)) {
-                    throw new RuntimeException("Invalid JSON-LD syntax; the \"@type\" value of an element containing \"@value\" must be a string.");
+                    throw new JSONLDProcessingError("Invalid JSON-LD syntax; the \"@type\" value of an element containing \"@value\" must be a string.")
+                    	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                    	.setDetail("element", rval);
                 }
+                // drop null @values
                 if (rval.get("@value") == null) {
                     rval = null;
                 }
+            // convert @type to an array
             } else if (rval.containsKey("@type") && !(rval.get("@type") instanceof List)) {
                 List<Object> tmp = new ArrayList<Object>();
                 tmp.add(rval.get("@type"));
                 rval.put("@type", tmp);
+            // handle @set and @list
             } else if (rval.containsKey("@set") || rval.containsKey("@list")) {
                 if (rval.size() != 1) {
-                    throw new RuntimeException(
-                            "Invalid JSON-LD syntax; if an element has the property \"@set\" or \"@list\", then it must be its only property.");
+                    throw new JSONLDProcessingError(
+                            "Invalid JSON-LD syntax; if an element has the property \"@set\" or \"@list\", then it must be its only property.")
+                    	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+                    	.setDetail("element", rval);
                 }
+                // optimize away @set
                 if (rval.containsKey("@set")) {
                     return rval.get("@set");
                 }
+            // drop objects with only @language
             } else if (rval.containsKey("@language") && rval.size() == 1) {
                 rval = null;
             }
@@ -979,6 +1231,7 @@ public class JSONLDProcessor {
             return rval;
         }
 
+        // expand element according to value expansion rules
         return expandValue(ctx, (String) property, element, opts.base);
     }
 
@@ -986,9 +1239,10 @@ public class JSONLDProcessor {
      * Performs JSON-LD expansion.
      *
      * @param input the JSON-LD input to expand.
+     * @throws JSONLDProcessingError 
      */
-    public static Object expand(Object input, Options opts) {
-        JSONLDProcessor p = new JSONLDProcessor(opts);
+    public static Object expand(Object input, Options opts) throws JSONLDProcessingError {
+    	JSONLDProcessor p = new JSONLDProcessor(opts);
         Object expanded = p.expand(p.new ActiveContext(), null, input);
 
         if (expanded instanceof Map && ((Map) expanded).containsKey("@graph") && ((Map) expanded).size() == 1) {
@@ -1003,7 +1257,7 @@ public class JSONLDProcessor {
         return expanded;
     }
 
-    public static Object expand(Object input) {
+    public static Object expand(Object input) throws JSONLDProcessingError {
         return expand(input, new Options(""));
     }
 
@@ -1016,18 +1270,22 @@ public class JSONLDProcessor {
      * @param element the element to compact.
      *
      * @return the compacted value.
+     * @throws JSONLDProcessingError 
      */
-    public Object compact(ActiveContext ctx, String property, Object element) {
+    public Object compact(ActiveContext ctx, String property, Object element) throws JSONLDProcessingError {
 
+    	// recursively compact array
         if (element instanceof List) {
             List<Object> rval = new ArrayList<Object>();
             for (Object i : (List) element) {
                 Object e = compact(ctx, property, i);
+                // drop null values
                 if (e != null) {
                     rval.add(e);
                 }
             }
             if (rval.size() == 1) {
+            	// use single element if no container is specified
                 Object container = ctx.getContextValue(property, "@container");
                 if (!("@list".equals(container) || "@set".equals(container))) {
                     return rval.get(0);
@@ -1036,25 +1294,47 @@ public class JSONLDProcessor {
             return rval;
         }
 
+        // recursively compact object
         if (element instanceof Map) {
+        	// access helper
             Map<String, Object> elem = (Map<String, Object>) element;
+            // element is a @value
             if (elem.containsKey("@value")) {
+            	// if @value is the only key
                 if (elem.size() == 1) {
-                    return elem.get("@value");
+                	// if there is no default language or @value is not a string,
+                    // return value of @value
+                    if (!ctx.containsKey("@language") || elem.get("@value") instanceof String) {
+                    	return elem.get("@value");
+                    }
+                    // return full element, alias @value
+                    Map<String, Object> rval = new HashMap<String, Object>();
+                    rval.put(compactIri(ctx, "@value"), elem.get("@value"));
+                    return rval;
                 }
 
+                // get type and language context rules
                 Object type = ctx.getContextValue(property, "@type");
                 Object language = ctx.getContextValue(property, "@language");
 
+                // matching @type specified in context, compact element
                 if (type != null && elem.containsKey("@type") && type.equals(elem.get("@type"))) {
-                    element = elem.get("@value");
+                    return elem.get("@value");
+                // matching @language specified in context, compact element
                 } else if (language != null && elem.containsKey("@language") && language.equals(elem.get("@language"))) {
-                    element = elem.get("@value");
-                } else if (elem.containsKey("@type")) {
-                    elem.put("@type", compactIri(ctx, (String) elem.get("@type")));
+                    return elem.get("@value");
+                } else {
+                	Map<String, Object> rval = new HashMap<String, Object>();
+                	if (elem.containsKey("@type")) {
+                		rval.put(compactIri(ctx, "@type"), compactIri(ctx, (String) elem.get("@type")));
+                	}
+                	// alias @language
+                	else if (elem.containsKey("@language")) {
+                		rval.put(compactIri(ctx, "@language"), elem.get("@language"));
+                	}
+                	rval.put(compactIri(ctx, "@value"), elem.get("@value"));
+                	return rval;
                 }
-
-                return element;
             }
 
             // compact subject references
@@ -1065,12 +1345,16 @@ public class JSONLDProcessor {
                 }
             }
 
+            // recursively process element keys
             Map<String, Object> rval = new HashMap<String, Object>();
             for (String key : elem.keySet()) {
                 Object value = elem.get(key);
+                
+                // compact @id and @type(s)
                 if ("@id".equals(key) || "@type".equals(key)) {
                     if (value instanceof String) {
                         value = compactIri(ctx, (String) value);
+                    // value must be a @type array
                     } else {
                         List<String> types = new ArrayList<String>();
                         for (String i : (List<String>) value) {
@@ -1079,6 +1363,7 @@ public class JSONLDProcessor {
                         value = types;
                     }
 
+                    // compact property and add value
                     String prop = compactIri(ctx, key);
                     JSONLDUtils.addValue(rval, prop, value, value instanceof List && ((List) value).size() == 0);
                     continue;
@@ -1086,40 +1371,57 @@ public class JSONLDProcessor {
 
                 // NOTE: value must be an array due to expansion algorithm
 
+                // preserve empty arrays
                 if (((List) value).size() == 0) {
                     String prop = compactIri(ctx, key);
                     JSONLDUtils.addValue(rval, prop, new ArrayList<Object>(), true);
                 }
 
+                // recusively process array values
                 for (Object v : (List) value) {
                     boolean isList = (v instanceof Map && ((Map<String, Object>) v).containsKey("@list"));
+                    
+                    // compact property
                     String prop = compactIri(ctx, key, v);
 
+                    // remove @list for recursion (will be re-added if necessary)
                     if (isList) {
                         v = ((Map<String, Object>) v).get("@list");
                     }
 
+                    // recursively compact value
                     v = compact(ctx, prop, v);
 
+                    // get container type for property
                     Object container = ctx.getContextValue(prop, "@container");
 
+                    // handle @list
                     if (isList && !"@list".equals(container)) {
+                    	// handle messy @list compaction
                         if (rval.containsKey(prop) && opts.strict) {
-                            throw new RuntimeException(
-                                    "JSON-LD compact error; property has a \"@list\" @container rule but there is more than a single @list that matches the compacted term in the document. Compaction might mix unwanted items into the list.");
+                            throw new JSONLDProcessingError(
+                                    "JSON-LD compact error; property has a \"@list\" @container rule but there is more than a single @list that matches the compacted term in the document. Compaction might mix unwanted items into the list.")
+                            	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
                         }
+                        // reintroduce @list keyword
                         String kwlist = compactIri(ctx, "@list");
                         Map<String, Object> val = new HashMap<String, Object>();
                         val.put(kwlist, v);
                         v = val;
 
                     }
+                    // if @container is @set or @list or value is an empty array, use
+                    // an array when adding value
                     boolean isArray = ("@set".equals(container) || "@list".equals(container) || (v instanceof List && ((List) v).size() == 0));
+                    
+                    // add compact value
                     JSONLDUtils.addValue(rval, prop, v, isArray, "@list".equals(container));
                 }
             }
             return rval;
         }
+        
+        // only primitives remain which are already compact
         return element;
     }
 
@@ -1135,8 +1437,9 @@ public class JSONLDProcessor {
      *          [graph] true to always output a top-level graph (default: false).
      *          [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
      * @param callback(err, compacted, ctx) called once the operation completes.
+     * @throws JSONLDProcessingError 
      */
-    public static Object compact(Object input, Object ctx, Options opts) {
+    public static Object compact(Object input, Object ctx, Options opts) throws JSONLDProcessingError {
         if (input == null) {
             return null;
         }
@@ -1234,7 +1537,7 @@ public class JSONLDProcessor {
         return compacted;
     }
 
-    public static Object compact(Object input, Map<String, Object> ctx) {
+    public static Object compact(Object input, Map<String, Object> ctx) throws JSONLDProcessingError {
         return compact(input, ctx, new Options("", true));
     }
 
@@ -1256,8 +1559,9 @@ public class JSONLDProcessor {
      * @param options the framing options.
      *
      * @return the framed output.
+     * @throws JSONLDProcessingError 
      */
-    public Object frame(Object input, Object frame) {
+    public Object frame(Object input, Object frame) throws JSONLDProcessingError {
     	// create framing state
     	FramingContext state = new FramingContext();
     	//Map<String,Object> state = new HashMap<String, Object>();
@@ -1288,19 +1592,22 @@ public class JSONLDProcessor {
      * @param frame the frame.
      * @param parent the parent subject or top-level array.
      * @param property the parent property, initialized to null.
+     * @throws JSONLDProcessingError 
      */
     private static void frame(FramingContext state, Collection<String> subjects,
-			Object frame, Object parent, Object property) {
+			Object frame, Object parent, String property) throws JSONLDProcessingError {
 		// validate the frame
     	validateFrame(state, frame);
+    	// NOTE: once validated we move to the function where the frame is specifically a map
     	frame(state, subjects, (Map)((List)frame).get(0), parent, property);
     }
     
     private static void frame(FramingContext state, Collection<String> subjects, 
-    		Map<String,Object> frame, Object parent, Object property) {
+    		Map<String,Object> frame, Object parent, String property) throws JSONLDProcessingError {
     	// filter out subjects that match the frame
     	Map<String,Object> matches = filterSubjects(state, subjects, frame);
     	
+    	// get flags for current frame
     	Options options = state.options;
     	Boolean embedOn = (frame.containsKey("@embed")) ? (Boolean)((List)frame.get("@embed")).get(0) : options.embed;
     	Boolean explicicOn = (frame.containsKey("@explicit")) ? (Boolean)((List)frame.get("@explicit")).get(0) : options.explicit;
@@ -1324,9 +1631,14 @@ public class JSONLDProcessor {
     		embed.put("parent", parent);
     		embed.put("property", property);
     		
+    		// if embed is on and there is an existing embed
     		if (embedOn && state.embeds.containsKey(id)) {
+    			// only overwrite an existing embed if it has already been added to its
+    			// parent -- otherwise its parent is somewhere up the tree from this
+    			// embed and the embed would occur twice once the tree is added
     			embedOn = false;
     			
+    			// existing embed's parent is an array
     			Map<String,Object> existing = (Map<String, Object>) state.embeds.get(id);
     			if (existing.get("parent") instanceof List) {
     				for (Object o: (List)existing.get("parent")) {
@@ -1346,6 +1658,7 @@ public class JSONLDProcessor {
     			}
     		}
     		
+    		// not embedding, add output without any other properties
     		if (!embedOn) {
     			addFrameOutput(state, parent, property, output);
     		} else {
@@ -1354,7 +1667,7 @@ public class JSONLDProcessor {
     			
     			// iterate over subject properties
     			Map<String,Object> subject = (Map<String,Object>) matches.get(id);
-    			for (Object prop: subject.values()) {
+    			for (String prop: subject.keySet()) {
     				
     				// copy keywords to output
     				if (prop instanceof String && JSONLDUtils.isKeyword((String)prop)) {
@@ -1376,8 +1689,9 @@ public class JSONLDProcessor {
     				// TODO: i've done some crazy stuff here because i'm unsure if objects is always a list or if it can
     				// be a map as well
     				for (Object i: objects instanceof List ? (List)objects : ((Map)objects).keySet()) {
-    					Object o = objects instanceof List ? ((List)objects).get((Integer)i) : ((Map)objects).get(i);
+    					Object o = objects instanceof List ? i : ((Map)objects).get(i);
     					
+    					// recurse into list
     					if (o instanceof Map && ((Map)o).containsKey("@list")) {
     						// add empty list
     						Map<String,Object> list = new HashMap<String, Object>();
@@ -1394,7 +1708,7 @@ public class JSONLDProcessor {
     								frame(state, tmp, frame.get(prop), list, "@list");
     							} else {
     								// include other values automatcially
-    								addFrameOutput(state, list, "@list", JSONLDUtils.clone(n));
+    								addFrameOutput(state, list, "@list", (Map<String, Object>) JSONLDUtils.clone(n));
     							}
     						}
     						continue;
@@ -1407,20 +1721,165 @@ public class JSONLDProcessor {
 							frame(state, tmp, frame.get(prop), output, prop);
     					} else {
     						// include other values automatically
-    						addFrameOutput(state, output, prop, JSONLDUtils.clone(o));
+    						addFrameOutput(state, output, prop, (Map<String, Object>) JSONLDUtils.clone(o));
     					}
     				}
     			}
     			
     			// handle defaults
+    			List<String> props = new ArrayList<String>();
+    			props.addAll(frame.keySet());
+    			Collections.sort(props);
+    			for (String prop: props) {
+    				// skip keywords
+    				if (JSONLDUtils.isKeyword(prop)) {
+    					continue;
+    				}
+    				
+    				// if omit default is off, then include default values for properties
+    		        // that appear in the next frame but are not in the matching subject
+    				Map<String,Object> next = (Map<String, Object>) ((List<Object>) frame.get(prop)).get(0);
+    				boolean omitDefaultOn = 
+    						(next.containsKey("@omitDefault")) ? (Boolean)((List)next.get("@omitDefault")).get(0) : options.omitDefault ;
+    				if (!omitDefaultOn && !output.containsKey(prop)) {
+    					Object preserve = "@null";
+    					if (next.containsKey("@default")) {
+    						preserve = JSONLDUtils.clone(next.get("@default"));
+    					}
+    					Map<String,Object> tmp = new HashMap<String, Object>();
+    					tmp.put("@perserve", preserve);
+    					output.put(prop, tmp);
+    				}
+    			}
     			
-    			// TODO: continue impl here
+    			// add output to parent
+    			addFrameOutput(state, parent, property, output);
     		}
     	}
-
+	}
+    
+    /**
+     * Embeds values for the given subject and property into the given output
+     * during the framing algorithm.
+     *
+     * @param state the current framing state.
+     * @param subject the subject.
+     * @param property the property.
+     * @param output the output.
+     */
+    private static void embedValues(FramingContext state,
+			Map<String, Object> subject, String property, Object output) {
+    	// embed subject properties in output
+    	Object objects = subject.get(property);
+    	
+    	// NOTE: more crazyness due to lack of knowledge about whether objects should
+    	// be an array or an object
+    	for (Object i: objects instanceof List ? (List)objects : ((Map)objects).keySet()) {
+			Object o = objects instanceof List ? i : ((Map)objects).get(i);
+			
+			// recurse into @list
+			if (o instanceof Map && ((Map) o).containsKey("@list")) {
+				Map<String,Object> list = new HashMap<String, Object>();
+				list.put("@list", new ArrayList());
+				addFrameOutput(state, output, property, list);
+				embedValues(state, (Map<String,Object>)o, "@list", list.get("@list"));
+				return;
+			}
+			
+			// handle subject reference
+			if (o instanceof Map && ((Map) o).size() == 1 && ((Map) o).containsKey("@id")) {
+				String id = (String) ((Map<String, Object>) o).get("@id");
+				
+				// embed full subject if isn't already embedded
+				if (!state.embeds.containsKey(id)) {
+					// add embed
+					Map<String,Object> embed = new HashMap<String, Object>();
+					embed.put("parent", output);
+					embed.put("property", property);
+					state.embeds.put(id, embed);
+					
+					// recurse into subject
+					o = new HashMap<String,Object>();
+					Map<String,Object> s = (Map<String, Object>) state.subjects.get(id);
+					for (String prop: s.keySet()) {
+						// copy keywords
+						if (JSONLDUtils.isKeyword(prop)) {
+							((Map<String, Object>) o).put(prop, JSONLDUtils.clone(s.get(prop)));
+							continue;
+						}
+						embedValues(state, s, prop, o);
+					}
+				}
+				addFrameOutput(state, output, property, (Map<String, Object>) o);
+			}
+			// copy non-subject value
+			else {
+				addFrameOutput(state, output, property, (Map<String, Object>) JSONLDUtils.clone(o));
+			}
+    	}
+		
 	}
 
-    /**
+	/**
+     * Adds framing output to the given parent.
+     *
+     * @param state the current framing state.
+     * @param parent the parent to add to.
+     * @param property the parent property.
+     * @param output the output to add.
+     */
+    private static void addFrameOutput(FramingContext state, Object parent,
+			String property, Map<String, Object> output) {
+		if (parent instanceof Map) {
+			JSONLDUtils.addValue((Map<String,Object>)parent, property, output, true);
+		} else {
+			((List)parent).add(output);
+		}
+		
+	}
+
+	private static void removeEmbed(FramingContext state, String id) {
+		// get existing embed
+		Map<String, Object> embeds = state.embeds;
+		Object parent = ((Map<String, Object>) embeds.get(id)).get("parent");
+		String property = (String) ((Map<String, Object>) embeds.get(id)).get("property");
+		
+		// create reference to replace embed
+		Map<String,Object> subject = new HashMap<String, Object>();
+		subject.put("@id", id);
+		
+		// remove existing embed
+		if (parent instanceof List) {
+			// replace subject with reference
+			for (int i = 0; i < ((List)parent).size(); i++) {
+				if (JSONLDUtils.compareValues(((List)parent).get(i), subject)) {
+					((List)parent).set(i, subject);
+					break;
+				}
+			}
+		} else {
+			// replace subject with reference
+			JSONLDUtils.removeValue(((Map<String,Object>)parent), property, subject, ((Map<String, Object>) parent).get(property) instanceof List);
+			JSONLDUtils.addValue(((Map<String,Object>)parent), property, subject, ((Map<String, Object>) parent).get(property) instanceof List);
+		}
+		
+		// recursively remove dependent dangling embeds
+		removeDependents(embeds, id);
+	}
+    
+    private static void removeDependents(Map<String,Object> embeds, String id) {
+    	Set<String> ids = embeds.keySet();
+    	for (String next: ids) {
+    		if (embeds.containsKey(next) && 
+    				((Map<String, Object>) embeds.get(next)).get("parent") instanceof Map &&
+    				id.equals(((Map<String, Object>) ((Map<String, Object>) embeds.get(next)).get("parent")).get("@id"))) {
+    			embeds.remove(next);
+    			removeDependents(embeds, next);
+    		}
+    	}
+    }
+
+	/**
      * Returns a map of all of the subjects that match a parsed frame.
      *
      * @param state the current framing state.
@@ -1477,10 +1936,13 @@ public class JSONLDProcessor {
      *
      * @param state the current frame state.
      * @param frame the frame to validate.
+	 * @throws JSONLDProcessingError 
      */
-	private static void validateFrame(FramingContext state, Object frame) {
+	private static void validateFrame(FramingContext state, Object frame) throws JSONLDProcessingError {
 		if (!(frame instanceof List) || ((List)frame).size() != 1 || !(((List) frame).get(0) instanceof Map)) {
-			throw new RuntimeException("Invalid JSON-LD syntax; a JSON-LD frame must be a single object.");
+			throw new JSONLDProcessingError("Invalid JSON-LD syntax; a JSON-LD frame must be a single object.")
+				.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+				.setDetail("frame", frame);
 		}
 	}
 
@@ -1497,8 +1959,9 @@ public class JSONLDProcessor {
      *          [optimize] optimize when compacting (default: false).
      *          [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
      * @param callback(err, framed) called once the operation completes.
+	 * @throws JSONLDProcessingError 
      */
-    public static Object frame(Object input, Object frame, Options opts) {
+    public static Object frame(Object input, Object frame, Options opts) throws JSONLDProcessingError {
     	if (input == null) {
             return null;
         }
@@ -1784,8 +2247,9 @@ public class JSONLDProcessor {
      * 
      * @param input
      * @return the simplified version of input
+     * @throws JSONLDProcessingError 
      */
-    public Object simplify(Map input) {
+    public Object simplify(Map input) throws JSONLDProcessingError {
 
         Object expanded = expand(input);
         Map<String, Object> framectx = new HashMap<String, Object>();

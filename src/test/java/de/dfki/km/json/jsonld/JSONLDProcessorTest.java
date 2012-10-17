@@ -134,7 +134,7 @@ public class JSONLDProcessorTest {
     }
 
     @Test
-    public void runTest() throws URISyntaxException, IOException {
+    public void runTest() throws URISyntaxException, IOException, JSONLDProcessingError {
         System.out.println("running test: " + test.get("input"));
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
