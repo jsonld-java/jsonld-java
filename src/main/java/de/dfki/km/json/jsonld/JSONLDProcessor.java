@@ -1,6 +1,10 @@
 package de.dfki.km.json.jsonld;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -417,7 +421,7 @@ public class JSONLDProcessor {
 
         if (val.containsKey("@container")) {
             Object container = val.get("@container");
-            if (!("@list".equals(container) || "@set".equals(container))) {
+            if (!("@list".equals(container) || "@set".equals(container) || "@language".equals(container))) {
                 throw new JSONLDProcessingError("Invalid JSON-LD syntax; @context @container value must be \"@list\" or \"@set\".")
                 	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
                 	.setDetail("context", ctx);
@@ -517,21 +521,10 @@ public class JSONLDProcessor {
         // prepend vocab
         else if (base == null && ctx.containsKey("@vocab")) {
         	// TODO: this is _prependBase, move to a function if it's used often
-        	// TODO: this line seems broken.. trying something else
-        	//if ("".equals(value) || value.startsWith("#")) {
-        	if ("".equals(value) || value.startsWith("#") || ((String)ctx.get("@vocab")).endsWith("#")) {
-        		value = ctx.get("@vocab") + value;
-        	} else {
-        		String b = (String) ctx.get("@vocab");
-        		value = b.substring(0, b.lastIndexOf("/") + 1) + value;
-        	}
+        	value = prependBaseAndnormalizeURI((String)ctx.get("@vocab"), value);
         // prepend base
         } else if (base != null) {
-        	if ("".equals(value) || value.startsWith("#") || base.endsWith("#")) {
-        		value = base + value;
-        	} else {
-        		value = base.substring(0, base.lastIndexOf("/") + 1) + value;
-        	}
+        	value = prependBaseAndnormalizeURI(base, value);
         }
 
         // value must now be an absolute IRI
@@ -642,6 +635,11 @@ public class JSONLDProcessor {
      * @return the expanded term as an absolute IRI.
      */
     private String expandTerm(ActiveContext ctx, String term, String base) {
+    	return expandTerm(ctx, term, base, false, false);
+    }
+    
+    // NOTE: adding isKey and isValueOfType flags to support points 4.3.5/6 
+    private String expandTerm(ActiveContext ctx, String term, String base, Boolean isKey, Boolean isValueOfType) {
     	// nothing to expand
         if (term == null) {
             return null;
@@ -692,25 +690,71 @@ public class JSONLDProcessor {
         	// then we just return the term
         }
         // use vocab // TODO: added base check, since terms that are not key's or values of @type should prioritise base before @vocab
-        else if (base == null && ctx.containsKey("@vocab")) {
-        	// TODO: this is _prependBase, move to a function if it's used often
-        	if ("".equals(term) || term.startsWith("#") || ((String)ctx.get("@vocab")).endsWith("#")) {
-        		term = ctx.get("@vocab") + term;
-        	} else {
-        		String b = (String) ctx.get("@vocab");
-        		term = b.substring(0, b.lastIndexOf("/") + 1) + term;
-        	}
+        else if ((isKey || isValueOfType) && ctx.containsKey("@vocab")) {
+        	term = prependBaseAndnormalizeURI((String) ctx.get("@vocab"), term);
         // prepend base to term
-        } else if (base != null) {
-            if ("".equals(term) || term.startsWith("#") || base.endsWith("#")) {
-                term = base + term;
-            } else {
-                term = base.substring(0, base.lastIndexOf('/') + 1) + term;
-            }
+        } else if (!isKey && base != null) {
+        	term = prependBaseAndnormalizeURI(base, term);            
         }
 
         return term;
     }
+    
+    /**
+     * prepends the iri to the base uri and normalizes that URI
+     * 
+     * @param base
+     * @param iri
+     * @return the new normalized uri or the original iri if base is not a valid uri
+     */
+    private String prependBaseAndnormalizeURI(String base, String iri) {
+        try {
+        	URI b = new URI(base);
+        	URI rval;
+        	// URI.resolve does not handle query strings or bases ending with # correctly
+        	if (iri.startsWith("?") || base.endsWith("#")) {
+        		rval = new URI(base + iri);
+        	} else {
+        		rval = b.resolve(iri);
+        	}
+
+			rval = rval.normalize();
+			// check if there are ./ or ../ still in the uri path, and if so normalize manually (as java doesn't handle excessive ../ correctly
+			if (rval.getPath().contains("./")) {
+				List<String> pathelems = new ArrayList<String>(Arrays.asList(rval.getPath().split("/")));
+				String tmp; // used to force remove (int)
+				for (int i = 0; i < pathelems.size(); i++) {
+					if (".".equals(pathelems.get(i))) {
+						tmp = pathelems.remove(i);
+						--i;
+					} else if ("..".equals(pathelems.get(i))) {
+						 tmp = pathelems.remove(i);
+						// make sure we don't remove the first element ""
+						if (i > 1) {
+							tmp = pathelems.remove(i-1);
+							i =- 2;
+						} else {
+							--i;
+						}
+					}
+				}
+				String path = "";
+				for (String p: pathelems) {
+					path += p + "/";
+				}
+				if (!rval.getPath().endsWith("/")) {
+					path = path.substring(0, path.length()-1); // remove trailing / if the original path doesn't end with one
+				}
+				rval = rval.resolve(path);
+			}
+			return rval.toString();
+			
+		} catch (URISyntaxException e) {
+			// if we have an error here just ignore it and return the unmodified IRI
+			return iri;
+		}
+
+	}
 
     private String expandTerm(ActiveContext ctx, String term) {
         return expandTerm(ctx, term, null);
@@ -737,11 +781,11 @@ public class JSONLDProcessor {
         Object rval = value;
         
         // special-case expand @id and @type (skips '@id' expansion)
-        String prop = expandTerm(ctx, property);
+        String prop = expandTerm(ctx, property, base, true, false);
         if ("@id".equals(prop)) {
-            rval = expandTerm(ctx, (String) value, base);
+            rval = expandTerm(ctx, (String) value, base, false, false);
         } else if ("@type".equals(prop)) {
-            rval = expandTerm(ctx, (String) value);
+            rval = expandTerm(ctx, (String) value, base, false, true);
         } else {
         	// get type definition from context
             Object type = ctx.getContextValue(property, "@type");
@@ -1046,7 +1090,7 @@ public class JSONLDProcessor {
      * @return the expanded value.
      * @throws JSONLDProcessingError 
      */
-    private Object expand(ActiveContext ctx, Object property, Object element) throws JSONLDProcessingError {
+    private Object expand(ActiveContext ctx, String property, Object element) throws JSONLDProcessingError {
     	// NOTE: undefined is not really null, and since there's no equivalent in Java we can't test this.
     	// infact, it shouldn't actually be possible.
     	//if (element == null) {
@@ -1072,6 +1116,28 @@ public class JSONLDProcessor {
             return rval;
         }
         
+        // NOTE: HANDLING TEST-CASE 30 HERE
+        // TODO: this will be incomplete as it doesn't seem to be defined yet in the spec
+        // and isn't implemented in the javascript code, but as long as the tests pass I don't care!
+        if (property != null && ctx.mappings.containsKey(property) && 
+        		ctx.mappings.get(property) instanceof Map && ((Map)ctx.mappings.get(property)).containsKey("@container") &&
+        		"@language".equals(((Map)ctx.mappings.get(property)).get("@container"))) {
+        	// prob becomes @language
+        	// value becomes @value
+        	List<Object> rval = new ArrayList<Object>();
+        	for (String key : ((Map<String,Object>)element).keySet()) {
+        		Object value = ((Map<String,Object>)element).get(key);
+        		value = expand(ctx, null, value);
+        		value = handleNestedLanguageContainer(value, key);
+        		if (value instanceof List) {
+        			rval.addAll((List)value);
+        		} else {
+        			rval.add(value);
+        		}
+        	}
+        	return rval;
+        }
+        
         // recursively expand object
         if (element instanceof Map) {
         	// access helper
@@ -1086,7 +1152,7 @@ public class JSONLDProcessor {
             Map<String, Object> rval = new HashMap<String, Object>();
             for (String key : elem.keySet()) {
             	// expand property
-                String prop = expandTerm(ctx, key);
+                String prop = expandTerm(ctx, key, null, true, false);
 
                 // drop non-absolute IRI keys that aren't keywords
                 if (!JSONLDUtils.isAbsoluteIri(prop) && !JSONLDUtils.isKeyword(prop, ctx)) {
@@ -1236,6 +1302,47 @@ public class JSONLDProcessor {
     }
 
     /**
+     * Used in the handling of @language containers
+     * 
+     * @param value
+     * @param lang
+     * @return
+     */
+    private Object handleNestedLanguageContainer(Object value, String lang) {
+    	if (value == null) {
+    		return null;
+    	}
+    	if (value instanceof String) {
+    		// since we expand out values before we call this function, a string @value should be represented as a map with
+    		// an @value tag again, so we'll ignore these cases
+    		return value;
+    	}
+    	if (value instanceof List) {
+    		List<Object> rval = new ArrayList<Object>();
+			for (Object v: ((List)value)) {
+				rval.add(handleNestedLanguageContainer(v, lang));
+			}
+			return rval;
+		}
+    	// only thing left is a map
+    	Map<String,Object> rval;
+    	
+    	// if that map already has a @value key, just add a @language tag to it
+    	if (((Map<String,Object>)value).containsKey("@value")) {
+    		rval = (Map<String, Object>)JSONLDUtils.clone(value);
+    		rval.put("@language", lang);
+    		return rval;
+    	}
+    	
+    	rval = new HashMap<String,Object>();
+    	for (String key: ((Map<String, Object>) value).keySet()) {
+			rval.put(key, handleNestedLanguageContainer(((Map<String,Object>)value).get(key), lang));
+		}
+		return rval;
+		
+	}
+
+	/**
      * Performs JSON-LD expansion.
      *
      * @param input the JSON-LD input to expand.
