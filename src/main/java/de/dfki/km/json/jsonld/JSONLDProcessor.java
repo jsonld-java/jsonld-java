@@ -1407,11 +1407,16 @@ public class JSONLDProcessor {
             Map<String, Object> elem = (Map<String, Object>) element;
             // element is a @value
             if (elem.containsKey("@value")) {
+                // get type and language context rules
+                Object type = ctx.getContextValue(property, "@type");
+                Object language = ctx.getContextValue(property, "@language");
+
             	// if @value is the only key
                 if (elem.size() == 1) {
                 	// if there is no default language or @value is not a string,
                     // return value of @value
-                    if (!ctx.containsKey("@language") || elem.get("@value") instanceof String) {
+                	// NOTE: language == null check done to make test compact-0015 pass
+                    if (language == null || !(elem.get("@value") instanceof String)) {
                     	return elem.get("@value");
                     }
                     // return full element, alias @value
@@ -1419,10 +1424,6 @@ public class JSONLDProcessor {
                     rval.put(compactIri(ctx, "@value"), elem.get("@value"));
                     return rval;
                 }
-
-                // get type and language context rules
-                Object type = ctx.getContextValue(property, "@type");
-                Object language = ctx.getContextValue(property, "@language");
 
                 // matching @type specified in context, compact element
                 if (type != null && elem.containsKey("@type") && type.equals(elem.get("@type"))) {
@@ -1522,7 +1523,7 @@ public class JSONLDProcessor {
                     boolean isArray = ("@set".equals(container) || "@list".equals(container) || (v instanceof List && ((List) v).size() == 0));
                     
                     // add compact value
-                    JSONLDUtils.addValue(rval, prop, v, isArray, "@list".equals(container));
+                    JSONLDUtils.addValue(rval, prop, v, isArray);
                 }
             }
             return rval;
