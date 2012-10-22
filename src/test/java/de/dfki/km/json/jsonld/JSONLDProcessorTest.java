@@ -92,7 +92,7 @@ public class JSONLDProcessorTest {
                 List<String> testType = (List<String>) test.get("@type");
                 if (// test.get("input").equals("normalize-0044-in.jsonld") && (
                 testType.contains("jld:ExpandTest") || testType.contains("jld:CompactTest") //|| testType.contains("jld:NormalizeTest")
-                //|| testType.contains("jld:FrameTest") || testType.contains("jld:TriplesTest")
+                || testType.contains("jld:FrameTest")// || testType.contains("jld:TriplesTest")
                 //|| testType.contains("jld:SimplifyTest")
                 // || testType.contains("jld:RDFTest")
                 ) {
@@ -196,7 +196,7 @@ public class JSONLDProcessorTest {
         } else if (testType.contains("jld:FrameTest")) {
             InputStream frameStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("frame"));
             Object frameJson = JSONUtils.fromInputStream(frameStream);
-            result = new JSONLDProcessor().frame(inputJson, frameJson);
+            result = JSONLDProcessor.frame(inputJson, frameJson, options);
         } else if (testType.contains("jld:TriplesTest")) {
             // TODO: many of the tests here fail simply because of an ordering issue
 

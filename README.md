@@ -148,6 +148,9 @@ This is a simple function which takes an input file in rdfxml or n3 and outputs 
 NOTES
 =====
 
+compact-0018 still fails (it doesn't pass in the javascript version either)
+
+fixing this requires fixing the term rank algorithm
 
 TODO
 ====

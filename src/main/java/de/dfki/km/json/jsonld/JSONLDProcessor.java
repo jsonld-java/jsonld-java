@@ -520,9 +520,12 @@ public class JSONLDProcessor {
         }
         // prepend vocab
         else if (base == null && ctx.containsKey("@vocab")) {
-        	// TODO: this is _prependBase, move to a function if it's used often
         	value = prependBaseAndnormalizeURI((String)ctx.get("@vocab"), value);
-        // prepend base
+        } else if (base != null && activeCtx.containsKey("@vocab")) {
+        	// NOTE: this fulfills the case where @vocab is in the root of the active content
+        	// which from the expected results of test compact-0021 is required to be used
+        	// over the value of base
+        	value = prependBaseAndnormalizeURI((String)activeCtx.get("@vocab"), value);
         } else if (base != null) {
         	value = prependBaseAndnormalizeURI(base, value);
         }
@@ -855,10 +858,11 @@ public class JSONLDProcessor {
      * @param ctx the active context to use.
      * @param iri the IRI to compact.
      * @param value the value to check or null.
+     * @param isKey if this is a key in the object map, or a value of @type
      *
      * @return the compacted term, prefix, keyword alias, or the original IRI.
      */
-    private static String compactIri(ActiveContext ctx, String iri, Object value) {
+    private static String compactIri(ActiveContext ctx, String iri, Object value, boolean isKey) {
     	// can't compact null
         if (iri == null) {
             return iri;
@@ -888,7 +892,7 @@ public class JSONLDProcessor {
         	// skip terms with non-matching iris
             Map<String, Object> entry = (Map<String, Object>) ctx.mappings.get(term);
             if (!iri.equals(entry.get("@id"))) {
-                continue;
+            	continue;
             }
             // skip @set containers for @lists
             if (isList && "@set".equals(entry.get("@container"))) {
@@ -928,39 +932,88 @@ public class JSONLDProcessor {
             }
         }
         
-        // no matching terms, use @vocab if available
-        if (terms.size() == 0 && ctx.containsKey("@vocab")) {
-        	// determine if vocab is a prefix of the iri
-        	String vocab = (String) ctx.get("@vocab");
-        	if (iri.startsWith(vocab)) {
-        		// use suffix as relative iri if it is not a term in the active context
-        		String suffix = iri.substring(vocab.length());
-        		if (!ctx.mappings.containsKey(suffix)) {
-        			return suffix;
-        		}
-        	}
-        }
-
-        // no term matches, add possible CURIEs
-        if (terms.size() == 0) {
-            for (String term : ctx.mappings.keySet()) {
-            	// skip terms with colons, they can't be prefixes
-                if (term.contains(":")) {
-                    continue;
-                }
-
-                // skip entries with @ids that are not partial matches
-                Map<String, Object> entry = (Map<String, Object>) ctx.mappings.get(term);
-                if (iri.equals(entry.get("@id")) || iri.indexOf((String) entry.get("@id")) != 0) {
-                    continue;
-                }
-
-                // add CURIE as term if it has no mapping
-                String curie = term + ":" + iri.substring(((String) entry.get("@id")).length());
-                if (!(ctx.mappings.containsKey(curie))) {
-                    terms.add(curie);
-                }
-            }
+        // if this is a key or the value of @type, compact with @vocab first
+        // otherwise do it the otherway around
+        // NOTE: this helps to satisfy test compact-0021
+        // TODO: remove duplicate code
+        
+        if (isKey) {  
+	        // NOTE: added this after the check for CURRIES to support test compact-0021
+	        // no matching terms, use @vocab if available
+	        if (terms.size() == 0 && ctx.containsKey("@vocab")) {
+	        	// determine if vocab is a prefix of the iri
+	        	String vocab = (String) ctx.get("@vocab");
+	        	if (iri.startsWith(vocab)) {
+	        		// use suffix as relative iri if it is not a term in the active context
+	        		String suffix = iri.substring(vocab.length());
+	        		if (!ctx.mappings.containsKey(suffix)) {
+	        			return suffix;
+	        		}
+	        	}
+	        }
+	        // no term matches, add possible CURIEs
+	        if (terms.size() == 0) {
+	            for (String term : ctx.mappings.keySet()) {
+	            	// skip terms with colons, they can't be prefixes
+	                if (term.contains(":")) {
+	                    continue;
+	                }
+	
+	                // skip entries with @ids that are not partial matches
+	                Map<String, Object> entry = (Map<String, Object>) ctx.mappings.get(term);
+	                String entryid = (String) entry.get("@id");
+	                if (entryid == null || !(entryid.endsWith("/") || entryid.endsWith("#")) || iri.equals(entryid) || !iri.startsWith(entryid)) {
+	                	// TODO: added skip of entries that don't end with / or # since they are most likely not prefixes
+	                	// but this may not always be true.
+	                    continue;
+	                }
+	
+	                // add CURIE as term if it has no mapping
+	                String curie = term + ":" + iri.substring(((String) entry.get("@id")).length());
+	                if (!(ctx.mappings.containsKey(curie))) {
+	                    terms.add(curie);
+	                }
+	            }
+	        }
+        } else {
+        	// no term matches, add possible CURIEs
+	        if (terms.size() == 0) {
+	            for (String term : ctx.mappings.keySet()) {
+	            	// skip terms with colons, they can't be prefixes
+	                if (term.contains(":")) {
+	                    continue;
+	                }
+	
+	                // skip entries with @ids that are not partial matches
+	                Map<String, Object> entry = (Map<String, Object>) ctx.mappings.get(term);
+	                String entryid = (String) entry.get("@id");
+	                if (entryid == null || !(entryid.endsWith("/") || entryid.endsWith("#")) || iri.equals(entryid) || !iri.startsWith(entryid)) {
+	                	// TODO: added skip of entries that don't end with / or # since they are most likely not prefixes
+	                	// but this may not always be true.
+	                    continue;
+	                }
+	
+	                // add CURIE as term if it has no mapping
+	                String curie = term + ":" + iri.substring(((String) entry.get("@id")).length());
+	                if (!(ctx.mappings.containsKey(curie))) {
+	                    terms.add(curie);
+	                }
+	            }
+	        }
+        	// NOTE: added this after the check for CURRIES to support test compact-0021
+	        // no matching terms, use @vocab if available
+	        if (terms.size() == 0 && ctx.containsKey("@vocab")) {
+	        	// determine if vocab is a prefix of the iri
+	        	String vocab = (String) ctx.get("@vocab");
+	        	if (iri.startsWith(vocab)) {
+	        		// use suffix as relative iri if it is not a term in the active context
+	        		String suffix = iri.substring(vocab.length());
+	        		if (!ctx.mappings.containsKey(suffix)) {
+	        			return suffix;
+	        		}
+	        	}
+	        }
+        	
         }
 
         // no matching terms,
@@ -986,7 +1039,7 @@ public class JSONLDProcessor {
     }
 
     private static String compactIri(ActiveContext ctx, String iri) {
-        return compactIri(ctx, iri, null);
+        return compactIri(ctx, iri, null, false);
     }
 
     /**
@@ -1434,7 +1487,7 @@ public class JSONLDProcessor {
                 } else {
                 	Map<String, Object> rval = new HashMap<String, Object>();
                 	if (elem.containsKey("@type")) {
-                		rval.put(compactIri(ctx, "@type"), compactIri(ctx, (String) elem.get("@type")));
+                		rval.put(compactIri(ctx, "@type"), compactIri(ctx, (String) elem.get("@type"), null, true));
                 	}
                 	// alias @language
                 	else if (elem.containsKey("@language")) {
@@ -1461,18 +1514,18 @@ public class JSONLDProcessor {
                 // compact @id and @type(s)
                 if ("@id".equals(key) || "@type".equals(key)) {
                     if (value instanceof String) {
-                        value = compactIri(ctx, (String) value);
+                        value = compactIri(ctx, (String) value, null, "@type".equals(key));
                     // value must be a @type array
                     } else {
                         List<String> types = new ArrayList<String>();
                         for (String i : (List<String>) value) {
-                            types.add(compactIri(ctx, i));
+                            types.add(compactIri(ctx, i, null, "@type".equals(key)));
                         }
                         value = types;
                     }
 
                     // compact property and add value
-                    String prop = compactIri(ctx, key);
+                    String prop = compactIri(ctx, key, null, "@type".equals(key));
                     JSONLDUtils.addValue(rval, prop, value, value instanceof List && ((List) value).size() == 0);
                     continue;
                 }
@@ -1481,7 +1534,7 @@ public class JSONLDProcessor {
 
                 // preserve empty arrays
                 if (((List) value).size() == 0) {
-                    String prop = compactIri(ctx, key);
+                    String prop = compactIri(ctx, key, null, true);
                     JSONLDUtils.addValue(rval, prop, new ArrayList<Object>(), true);
                 }
 
@@ -1490,7 +1543,7 @@ public class JSONLDProcessor {
                     boolean isList = (v instanceof Map && ((Map<String, Object>) v).containsKey("@list"));
                     
                     // compact property
-                    String prop = compactIri(ctx, key, v);
+                    String prop = compactIri(ctx, key, v, true);
 
                     // remove @list for recursion (will be re-added if necessary)
                     if (isList) {
@@ -1512,7 +1565,7 @@ public class JSONLDProcessor {
                             	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
                         }
                         // reintroduce @list keyword
-                        String kwlist = compactIri(ctx, "@list");
+                        String kwlist = compactIri(ctx, "@list", null, true);
                         Map<String, Object> val = new HashMap<String, Object>();
                         val.put(kwlist, v);
                         v = val;
@@ -1855,7 +1908,7 @@ public class JSONLDProcessor {
     						preserve = JSONLDUtils.clone(next.get("@default"));
     					}
     					Map<String,Object> tmp = new HashMap<String, Object>();
-    					tmp.put("@perserve", preserve);
+    					tmp.put("@preserve", preserve);
     					output.put(prop, tmp);
     				}
     			}
@@ -2079,6 +2132,13 @@ public class JSONLDProcessor {
     	if (opts.optimize == null) {
     		opts.optimize = false;
     	}
+    	if (opts.explicit == null) {
+    		opts.explicit = false;
+    	}
+    	if (opts.omitDefault == null) {
+    		opts.omitDefault = false;
+    	}
+    	
     	
     	JSONLDProcessor p = new JSONLDProcessor(opts);
     	
@@ -2113,6 +2173,7 @@ public class JSONLDProcessor {
      * @return the resulting output.
      */
     private static Object removePreserve(ActiveContext ctx, Object input) {
+    	// recurse through arrays
 		if (input instanceof List) {
 			List<Object> l = new ArrayList<Object>();
 			for (Object i: (List)input) {
@@ -2123,6 +2184,7 @@ public class JSONLDProcessor {
 			}
 			input = l;
 		} else if (input instanceof Map) {
+			// remove @preserve
 			Map<String,Object> imap = (Map<String,Object>)input;
 			if (imap.containsKey("@preserve")) {
 				if ("@null".equals(imap.get("@preserve"))) {
@@ -2164,12 +2226,15 @@ public class JSONLDProcessor {
      * @param list the list to append to, null for none.
      */
     private static void flatten(Object input, Map<String,Object> graphs, String graph, UniqueNamer namer, String name, List<Object> list) {
+    	// recurse through array
     	if (input instanceof List) {
     		for (Object i: (List)input) {
     			flatten(i, graphs, graph, namer, null, list);
     		}
     		return;
     	}
+    	
+    	// add non-object or value
     	if (!(input instanceof Map) || ((Map)input).containsKey("@value")) {
     		if (list != null) {
     			list.add(input);
@@ -2178,16 +2243,19 @@ public class JSONLDProcessor {
     	}
     	
     	// TODO: isUndefined (in js this is different from === null
+    	// get name for subject
     	if (name == null) {
     		name = JSONLDUtils.isBlankNode(input) ? namer.getName((String) ((Map<String, Object>) input).get("@id")) : (String)((Map<String, Object>) input).get("@id");
     	}
     	
+    	// add subject reference to list
     	if (list != null) {
     		HashMap<String, Object> map = new HashMap<String,Object>();
     		map.put("@id", name);
     		list.add(map);
     	}
     	
+    	// create new subject or merge into existing one
     	Map<String,Object> subjects = (Map<String, Object>) graphs.get(graph);
     	Map<String,Object> subject;
     	if (subjects.containsKey(name)) {
@@ -2198,12 +2266,14 @@ public class JSONLDProcessor {
     	}
     	subject.put("@id", name);
     	for (String prop: ((Map<String, Object>) input).keySet()) {
+    		// skip @id
     		if ("@id".equals(prop)) {
     			continue;
     		}
     		
     		// recurse into graph
     		if ("@graph".equals(prop)) {
+    			// add graph subjects map entry
     			if (!graphs.containsKey(name)) {
     				graphs.put(name, new HashMap<String, Object>());
     			}
