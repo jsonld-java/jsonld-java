@@ -2,6 +2,7 @@ package de.dfki.km.json.jsonld;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,24 @@ public class JSONLDSerializer {
     private Map<String, Map<String, Object>> _subjects;
     private Map<String, Object> _context;
 
-    JSONLDUtils.NameGenerator _ng;
+    // name generator
+    Iterator<String> _ng = new Iterator<String>() {
+		int i = 0;
+		@Override
+		public void remove() {
+			i++;
+		}
+		
+		@Override
+		public String next() {
+			return "_:t" + i++;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return true;
+		}
+	};
     Map<String, String> _bns;
 
     public JSONLDSerializer() {
@@ -35,7 +53,7 @@ public class JSONLDSerializer {
         _context.put("rdfs", JSONLDConsts.RDF_SCHEMA_NS);
         _context.put("xsd", JSONLDConsts.XSD_NS);
 
-        _ng = new JSONLDUtils.NameGenerator("bn");
+        //_ng = new JSONLDUtils.NameGenerator("bn");
         _bns = new HashMap<String, String>();
     }
 

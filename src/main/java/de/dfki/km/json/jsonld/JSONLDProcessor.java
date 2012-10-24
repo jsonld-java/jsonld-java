@@ -19,12 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.reasoner.rulesys.builtins.IsBNode;
 
-import de.dfki.km.json.jsonld.JSONLDUtils.NameGenerator;
-
 public class JSONLDProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(JSONLDProcessor.class);
-    private NameGenerator ngtmp;
 
     private Set<String> ignoredKeywords = new HashSet<String>();
 
@@ -43,7 +40,6 @@ public class JSONLDProcessor {
     private Map<String, Object> subjects;
     private Map<String, Object> renamed;
     private Map<String, Object> serializations;
-    private NameGenerator ngc14n;
 
     public static class Options {
         Options() {
@@ -2143,11 +2139,13 @@ public class JSONLDProcessor {
     	JSONLDProcessor p = new JSONLDProcessor(opts);
     	
     	// preserve frame context
-    	ActiveContext ctx;
+    	ActiveContext ctx = p.new ActiveContext();
+    	Map<String, Object> fctx;
     	if (frame instanceof Map && ((Map<String, Object>) frame).containsKey("@context")) {
-    		ctx = p.new ActiveContext((Map<String, Object>) frame);
+    		fctx = (Map<String, Object>) ((Map<String, Object>) frame).get("@context");
+    		ctx = processContext(ctx, fctx, opts);
     	} else {
-    		ctx = p.new ActiveContext();
+    		fctx = new HashMap<String, Object>();
     	}
     	
     	// expand input
@@ -2158,7 +2156,7 @@ public class JSONLDProcessor {
     	
     	opts.graph = true;
     	
-    	Map<String,Object> compacted = (Map<String, Object>) compact(framed, ctx, opts);
+    	Map<String,Object> compacted = (Map<String, Object>) compact(framed, fctx, opts);
     	String graph = compactIri(ctx, "@graph");
     	compacted.put(graph, removePreserve(ctx, compacted.get(graph)));
         return compacted;
@@ -2306,9 +2304,9 @@ public class JSONLDProcessor {
     				o = ((List)objects).get(i);
     			}
     			
-    			if (JSONLDUtils.isSubject(o) || JSONLDUtils.isReference(o)) {
+    			if (JSONLDUtils.isSubject(o) || JSONLDUtils.isSubjectReference(o)) {
     				// rename blank node @id
-    				String id = (String) (JSONLDUtils.isBlankNode(o) ? namer.getName((String) ((Map<String,Object>)o).get("@id")) : ((Map<String,Object>)o).get("@id"));
+    				String id = (JSONLDUtils.isBlankNode(o) ? namer.getName((String) ((Map<String,Object>)o).get("@id")) : (String)((Map<String,Object>)o).get("@id"));
     				
     				// add reference and recurse
     				Map<String,Object> tmp = new HashMap<String, Object>();
@@ -2444,7 +2442,7 @@ public class JSONLDProcessor {
     
     // ALL CODE BELOW THIS IS UNUSED
     
-    
+    /*
     
     public void nameBlankNodes(Object input) {
         JSONLDUtils.NameGenerator ng = new JSONLDUtils.NameGenerator("tmp");
@@ -2962,6 +2960,8 @@ public class JSONLDProcessor {
             }
         }
     }
+    
+    */
 
     /**
      * TODO: this whole thing should probably be optimized
@@ -2971,6 +2971,8 @@ public class JSONLDProcessor {
      * @author tristan
      * 
      */
+    
+    /*
     private class MappingBuilder {
 
         public MappingBuilder() {
@@ -2999,15 +3001,7 @@ public class JSONLDProcessor {
         public int count;
         public Map<String, String> mapping;
 
-        /**
-         * Maps the next name to the given bnode IRI if the bnode IRI isn't already in the mapping. If the given bnode IRI is canonical, then it will be given a
-         * shortened form of the same name.
-         * 
-         * @param iri
-         *            the blank node IRI to map the next name to.
-         * 
-         * @return the mapped name.
-         */
+      
         public String mapNode(String iri) {
             if (!this.mapping.containsKey(iri)) {
                 if (iri.startsWith("_:c14n")) {
@@ -3088,7 +3082,7 @@ public class JSONLDProcessor {
             rval.s = this.s;
             return rval;
         }
-
     }
+    */
 
 }

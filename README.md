@@ -149,7 +149,6 @@ NOTES
 =====
 
 compact-0018 still fails (it doesn't pass in the javascript version either)
-
 fixing this requires fixing the term rank algorithm
 
 TODO
