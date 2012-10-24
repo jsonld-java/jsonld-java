@@ -187,7 +187,7 @@ public class JSONLDSerializer {
         // redundant.
         triple(s, p, (Object) val);
     }
-
+    
     public void setPrefix(String fullUri, String prefix) {
         _context.put(prefix, fullUri);
     }
@@ -207,7 +207,7 @@ public class JSONLDSerializer {
         List<Object> subjects = new ArrayList<Object>();
         for (Map<String, Object> subj : _subjects.values()) {
             try {
-				subj = (Map<String, Object>) p.compact(_context, subj);
+				subj = (Map<String, Object>) JSONLD.compact(_context, subj);
 				subjects.add(subj);
 			} catch (JSONLDProcessingError e) {
 				// TODO Auto-generated catch block

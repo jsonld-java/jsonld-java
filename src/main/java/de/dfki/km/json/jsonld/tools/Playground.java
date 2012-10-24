@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.dfki.km.json.JSONUtils;
+import de.dfki.km.json.jsonld.JSONLD;
 import de.dfki.km.json.jsonld.JSONLDProcessor;
 
 public class Playground {
@@ -83,9 +84,9 @@ public class Playground {
 
                 Object outobj = null;
                 if ("--expand".equals(opt)) {
-                    outobj = JSONLDProcessor.expand(inobj);
+                    outobj = JSONLD.expand(inobj);
                 } else if ("--compact".equals(opt)) {
-                    outobj = JSONLDProcessor.compact(inobj, new HashMap<String, Object>());
+                    outobj = JSONLD.compact(inobj, new HashMap<String, Object>());
                 } else if ("--normalize".equals(opt)) {
                     //outobj = p.normalize(inobj);
                 } else if ("--frame".equals(opt)) {

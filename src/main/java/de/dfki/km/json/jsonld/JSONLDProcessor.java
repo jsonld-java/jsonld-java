@@ -3,6 +3,7 @@ package de.dfki.km.json.jsonld;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,12 +18,25 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.reasoner.rulesys.builtins.IsBNode;
-
 public class JSONLDProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(JSONLDProcessor.class);
 
+    // constants
+	private static final String XSD_BOOLEAN = "http://www.w3.org/2001/XMLSchema#boolean";
+	private static final String XSD_DOUBLE = "http://www.w3.org/2001/XMLSchema#double";
+	private static final String XSD_INTEGER = "http://www.w3.org/2001/XMLSchema#integer";
+	private static final String XSD_STRING = "http://www.w3.org/2001/XMLSchema#string";
+
+	private static final String RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+	private static final String RDF_FIRST = RDF + "first";
+	private static final String RDF_REST = RDF + "rest";
+	private static final String RDF_NIL = RDF + "nil";
+	private static final String RDF_TYPE = RDF + "type";
+	private static final String RDF_PLAIN_LITERAL = RDF + "PlainLiteral";
+	private static final String RDF_XML_LITERAL = RDF + "XMLLiteral";
+	private static final String RDF_OBJECT = RDF + "object";
+	
     private Set<String> ignoredKeywords = new HashSet<String>();
 
     /**
@@ -65,6 +79,7 @@ public class JSONLDProcessor {
 		public Boolean embed = null;
 		public Boolean explicit = null;
 		public Boolean omitDefault = null;
+		public Boolean collate = null;
     }
 
     Options opts;
@@ -88,7 +103,7 @@ public class JSONLDProcessor {
      * @author tristan
      *
      */
-    private class ActiveContext extends HashMap<String, Object> {
+    public class ActiveContext extends HashMap<String, Object> {
         public ActiveContext() {
         	super();
         	init();
@@ -158,7 +173,7 @@ public class JSONLDProcessor {
         public Map<String, List<String>> keywords;
     }
 
-    private class UniqueNamer {
+    public class UniqueNamer {
     	private String prefix;
 		private int counter;
 		private HashMap<String, String> existing;
@@ -169,7 +184,7 @@ public class JSONLDProcessor {
 		 *
 		 * @param prefix the prefix to use ('<prefix><counter>').
 		 */
-		UniqueNamer(String prefix) {
+		public UniqueNamer(String prefix) {
     		this.prefix = prefix;
     		this.counter = 0;
     		this.existing = new HashMap<String,String>();
@@ -607,7 +622,7 @@ public class JSONLDProcessor {
      * @return the new active context.
      * @throws JSONLDProcessingError 
      */
-    private static ActiveContext processContext(ActiveContext activeCtx, Object localCtx, Options opts) throws JSONLDProcessingError {
+    public static ActiveContext processContext(ActiveContext activeCtx, Object localCtx, Options opts) throws JSONLDProcessingError {
         JSONLDProcessor p = new JSONLDProcessor(opts);
         if (localCtx == null) {
             return p.new ActiveContext();
@@ -710,8 +725,8 @@ public class JSONLDProcessor {
         try {
         	URI b = new URI(base);
         	URI rval;
-        	// URI.resolve does not handle query strings or bases ending with # correctly
-        	if (iri.startsWith("?") || base.endsWith("#")) {
+        	// URI.resolve does not handle query strings, bases ending with # or empty iris correctly
+        	if (iri.startsWith("?") || base.endsWith("#") || "".equals(iri)) {
         		rval = new URI(base + iri);
         	} else {
         		rval = b.resolve(iri);
@@ -858,7 +873,7 @@ public class JSONLDProcessor {
      *
      * @return the compacted term, prefix, keyword alias, or the original IRI.
      */
-    private static String compactIri(ActiveContext ctx, String iri, Object value, boolean isKey) {
+    public static String compactIri(ActiveContext ctx, String iri, Object value, boolean isKey) {
     	// can't compact null
         if (iri == null) {
             return iri;
@@ -1034,7 +1049,7 @@ public class JSONLDProcessor {
         return terms.get(0);
     }
 
-    private static String compactIri(ActiveContext ctx, String iri) {
+    public static String compactIri(ActiveContext ctx, String iri) {
         return compactIri(ctx, iri, null, false);
     }
 
@@ -1139,7 +1154,7 @@ public class JSONLDProcessor {
      * @return the expanded value.
      * @throws JSONLDProcessingError 
      */
-    private Object expand(ActiveContext ctx, String property, Object element) throws JSONLDProcessingError {
+    public Object expand(ActiveContext ctx, String property, Object element) throws JSONLDProcessingError {
     	// NOTE: undefined is not really null, and since there's no equivalent in Java we can't test this.
     	// infact, it shouldn't actually be possible.
     	//if (element == null) {
@@ -1391,32 +1406,6 @@ public class JSONLDProcessor {
 		
 	}
 
-	/**
-     * Performs JSON-LD expansion.
-     *
-     * @param input the JSON-LD input to expand.
-     * @throws JSONLDProcessingError 
-     */
-    public static Object expand(Object input, Options opts) throws JSONLDProcessingError {
-    	JSONLDProcessor p = new JSONLDProcessor(opts);
-        Object expanded = p.expand(p.new ActiveContext(), null, input);
-
-        if (expanded instanceof Map && ((Map) expanded).containsKey("@graph") && ((Map) expanded).size() == 1) {
-            expanded = ((Map<String, Object>) expanded).get("@graph");
-        }
-
-        if (!(expanded instanceof List)) {
-            List<Object> tmp = new ArrayList<Object>();
-            tmp.add(expanded);
-            expanded = tmp;
-        }
-        return expanded;
-    }
-
-    public static Object expand(Object input) throws JSONLDProcessingError {
-        return expand(input, new Options(""));
-    }
-
     /**
      * Recursively compacts an element using the given active context. All values
      * must be in expanded form before this method is called.
@@ -1580,122 +1569,6 @@ public class JSONLDProcessor {
         
         // only primitives remain which are already compact
         return element;
-    }
-
-    /**
-     * Performs JSON-LD compaction.
-     *
-     * @param input the JSON-LD input to compact.
-     * @param ctx the context to compact with.
-     * @param [options] options to use:
-     *          [base] the base IRI to use.
-     *          [strict] use strict mode (default: true).
-     *          [optimize] true to optimize the compaction (default: false).
-     *          [graph] true to always output a top-level graph (default: false).
-     *          [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
-     * @param callback(err, compacted, ctx) called once the operation completes.
-     * @throws JSONLDProcessingError 
-     */
-    public static Object compact(Object input, Object ctx, Options opts) throws JSONLDProcessingError {
-        if (input == null) {
-            return null;
-        }
-        if (opts.strict == null) {
-            opts.strict = true;
-        }
-        if (opts.graph == null) {
-            opts.graph = false;
-        }
-        if (opts.optimize == null) {
-            opts.optimize = false;
-        }
-        JSONLDProcessor p = new JSONLDProcessor(opts);
-
-        // expand input then do compaction
-        Object expanded;
-        try {
-            expanded = p.expand(p.new ActiveContext(), null, input);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Count not expand input before compaction", e);
-        }
-
-        // process context
-        ActiveContext activeCtx = p.new ActiveContext();
-        try {
-            activeCtx = JSONLDProcessor.processContext(activeCtx, ctx, opts);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Could not process context before compaction.", e);
-        }
-
-        if (opts.optimize) {
-            opts.optimizeCtx = new HashMap<String, Object>();
-        }
-
-        // do compaction
-        Object compacted = p.compact(activeCtx, null, expanded);
-
-        // cleanup
-        if (!opts.graph && compacted instanceof List && ((List<Object>) compacted).size() == 1) {
-            compacted = ((List<Object>) compacted).get(0);
-        } else if (opts.graph && compacted instanceof Map) {
-            List<Object> tmp = new ArrayList<Object>();
-            tmp.add(compacted);
-            compacted = tmp;
-        }
-
-        if (ctx instanceof Map && ((Map<String, Object>) ctx).containsKey("@context")) {
-            ctx = ((Map<String, Object>) ctx).get("@context");
-        }
-
-        ctx = JSONLDUtils.clone(ctx);
-        if (!(ctx instanceof List)) {
-            List<Object> lctx = new ArrayList<Object>();
-            lctx.add(ctx);
-            ctx = lctx;
-        }
-        // TODO: i need some cases where ctx is a list!
-
-        if (opts.optimize) {
-            ((List<Object>) ctx).add(opts.optimizeCtx);
-        }
-
-        List<Object> tmp = (List<Object>) ctx;
-        ctx = new ArrayList<Object>();
-        for (Object i : tmp) {
-            if (!(i instanceof Map) || ((Map) i).size() > 0) {
-                ((List<Object>) ctx).add(i);
-            }
-        }
-
-        boolean hasContext = ((List) ctx).size() > 0;
-        if (((List) ctx).size() == 1) {
-            ctx = ((List) ctx).get(0);
-        }
-
-        if (hasContext || opts.graph) {
-            if (compacted instanceof List) {
-                String kwgraph = p.compactIri(activeCtx, "@graph");
-                Object graph = compacted;
-                compacted = new HashMap<String, Object>();
-                if (hasContext) {
-                    ((Map<String, Object>) compacted).put("@context", ctx);
-                }
-                ((Map<String, Object>) compacted).put(kwgraph, graph);
-            } else if (compacted instanceof Map) {
-                Map<String, Object> graph = (Map<String, Object>) compacted;
-                compacted = new HashMap<String, Object>();
-                ((Map) compacted).put("@context", ctx);
-                for (String key : graph.keySet()) {
-                    ((Map<String, Object>) compacted).put(key, graph.get(key));
-                }
-            }
-        }
-
-        return compacted;
-    }
-
-    public static Object compact(Object input, Map<String, Object> ctx) throws JSONLDProcessingError {
-        return compact(input, ctx, new Options("", true));
     }
 
     private class FramingContext {
@@ -2103,65 +1976,6 @@ public class JSONLDProcessor {
 		}
 	}
 
-	/**
-     * Performs JSON-LD framing.
-     *
-     * @param input the JSON-LD input to frame.
-     * @param frame the JSON-LD frame to use.
-     * @param [options] the framing options.
-     *          [base] the base IRI to use.
-     *          [embed] default @embed flag (default: true).
-     *          [explicit] default @explicit flag (default: false).
-     *          [omitDefault] default @omitDefault flag (default: false).
-     *          [optimize] optimize when compacting (default: false).
-     *          [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
-     * @param callback(err, framed) called once the operation completes.
-	 * @throws JSONLDProcessingError 
-     */
-    public static Object frame(Object input, Object frame, Options opts) throws JSONLDProcessingError {
-    	if (input == null) {
-            return null;
-        }
-    	if (opts.embed == null) {
-    		opts.embed  = true;
-    	}
-    	if (opts.optimize == null) {
-    		opts.optimize = false;
-    	}
-    	if (opts.explicit == null) {
-    		opts.explicit = false;
-    	}
-    	if (opts.omitDefault == null) {
-    		opts.omitDefault = false;
-    	}
-    	
-    	
-    	JSONLDProcessor p = new JSONLDProcessor(opts);
-    	
-    	// preserve frame context
-    	ActiveContext ctx = p.new ActiveContext();
-    	Map<String, Object> fctx;
-    	if (frame instanceof Map && ((Map<String, Object>) frame).containsKey("@context")) {
-    		fctx = (Map<String, Object>) ((Map<String, Object>) frame).get("@context");
-    		ctx = processContext(ctx, fctx, opts);
-    	} else {
-    		fctx = new HashMap<String, Object>();
-    	}
-    	
-    	// expand input
-    	Object _input = expand(input, opts);
-    	Object _frame = expand(frame, opts);
-    	
-    	Object framed = p.frame(_input, _frame);
-    	
-    	opts.graph = true;
-    	
-    	Map<String,Object> compacted = (Map<String, Object>) compact(framed, fctx, opts);
-    	String graph = compactIri(ctx, "@graph");
-    	compacted.put(graph, removePreserve(ctx, compacted.get(graph)));
-        return compacted;
-    }
-
     /**
      * Removes the @preserve keywords as the last step of the framing algorithm.
      *
@@ -2170,7 +1984,7 @@ public class JSONLDProcessor {
      *
      * @return the resulting output.
      */
-    private static Object removePreserve(ActiveContext ctx, Object input) {
+    public static Object removePreserve(ActiveContext ctx, Object input) {
     	// recurse through arrays
 		if (input instanceof List) {
 			List<Object> l = new ArrayList<Object>();
@@ -2340,6 +2154,253 @@ public class JSONLDProcessor {
     	flatten(input, graphs, graph, namer, null, null);
     }
     
+    
+    /**
+     * Performs RDF normalization on the given JSON-LD input.
+     *
+     * @param input the expanded JSON-LD object to normalize.
+     * @param options the normalization options.
+     * @param callback(err, normalized) called once the operation completes.
+     */
+	public List normalize(Object expanded) {
+		List statements = new ArrayList<Object>();
+		Map<String,Object> bnodes = new HashMap<String, Object>();
+		UniqueNamer namer = new UniqueNamer("_:t");
+		return null;
+	}
+	
+	/**
+	 * Outputs the RDF statements found in the given JSON-LD element.
+	 *
+	 * @param element the JSON-LD element.
+	 * @param namer the UniqueNamer for assigning bnode names.
+	 * @param subject the active subject.
+	 * @param property the active property.
+	 * @param graph the graph name.
+	 * @param callback(err, statement) called when a statement is output, with the
+	 *          last statement as null.
+	 */
+	public void toRDF(Object element, UniqueNamer namer, String subject, String property, Object graph, JSONLDTripleCallback callback) {
+		_toRDF(element, namer, subject, property, graph, callback);
+		callback(callback, null);
+	}
+    
+	/**
+	 * Recursively outputs the RDF statements found in the given JSON-LD element.
+	 *
+	 * @param element the JSON-LD element.
+	 * @param namer the UniqueNamer for assigning bnode names.
+	 * @param subject the active subject.
+	 * @param property the active property.
+	 * @param graph the graph name.
+	 * @param callback(err, statement) called when a statement is output, with the
+	 *          last statement as null.
+	 */
+	private static void _toRDF(Object elem, UniqueNamer namer, Object subject, Object property, Object graph, JSONLDTripleCallback callback) {
+		if (elem instanceof Map) {
+			Map<String,Object> element = (Map<String, Object>) elem;
+			if (element.containsKey("@value")) {
+				Object value = element.get("@value");
+				Object datatype = element.get("@type"); // || null;
+				if (value instanceof Boolean || value instanceof Number) {
+					// convert to XSD datatype
+					if (value instanceof Boolean) {
+						value = value.toString();
+						if (datatype == null) {
+							datatype = XSD_BOOLEAN;
+						}
+					} else if (value instanceof Double || value instanceof Float) {
+						DecimalFormat df = new DecimalFormat("0.0###############E0");
+						value = df.format(value);
+						if (datatype == null) {
+							datatype = XSD_DOUBLE;
+						}
+					} else {
+						DecimalFormat df = new DecimalFormat("0");
+						value = df.format(value);
+						if (datatype == null) {
+							datatype = XSD_INTEGER;
+						}
+					}
+				}
+				
+				if (datatype == null) {
+					datatype = XSD_STRING;
+				}
+				
+				Map<String,Object> object = new HashMap<String, Object>();
+				object.put("nominalValue", value);
+				object.put("interfaceName", "LiteralNode");
+				Map<String,Object> objdt = new HashMap<String, Object>();
+				objdt.put("nominalValue", datatype);
+				objdt.put("intergaceName", "IRI");
+				object.put("datatype", objdt);
+				
+				if (element.containsKey("@language") && XSD_STRING.equals(datatype)) {
+					object.put("language", element.get("@language"));
+				}
+				
+				// emit literal
+				Map<String,Object> statement = new HashMap<String, Object>();
+				statement.put("subject", JSONLDUtils.clone(subject));
+				statement.put("property", JSONLDUtils.clone(property));
+				statement.put("object", object);
+				
+				if (graph != null) {
+					statement.put("name", graph);
+				}
+				
+				// TODO:
+				callback(callback, statement);
+				return;
+			}
+			
+			if (element.containsKey("@list")) {
+				// convert @list array into embedded blank node linked list in reverse
+				List<Object> list = (List<Object>) element.get("@list");
+				int len = list.size();
+				Map<String,Object> tail = new HashMap<String, Object>();
+				tail.put("@id", RDF_NIL);
+				for (int i = len - 1; i >= 0; --i) {
+					Map<String,Object> e = new HashMap<String, Object>();
+					List<Object> f = new ArrayList<Object>();
+					f.add(list.get(i));
+					List<Object> r = new ArrayList<Object>();
+					r.add(tail);
+					e.put(RDF_FIRST, f);
+					e.put(RDF_REST, r);
+					tail = e;
+				}
+				
+				_toRDF(tail, namer, subject, property, graph, callback);
+				return;
+			}
+			
+			// Note: element must be a subject
+			
+			// get subject @id (generate one if it is a bnode)
+			Boolean isBnode = JSONLDUtils.isBlankNode(element);
+			String id = isBnode ? namer.getName((String) element.get("@id")) : (String)element.get("@id");
+			
+			// create object 
+			Map<String,Object> object = new HashMap<String, Object>();
+			object.put("nominalValue", id);
+			object.put("interfaceName", isBnode ? "BlankNode" : "IRI");
+			
+			if (subject != null) {
+				Map<String,Object> statement = new HashMap<String, Object>();
+				statement.put("subject", JSONLDUtils.clone(subject));
+				statement.put("property", JSONLDUtils.clone(property));
+				statement.put("object", object);
+				
+				if (graph != null) {
+					statement.put("name", graph);
+				}
+				// TODO:
+				callback(callback, statement);
+			}
+			
+			// set new active subject to object
+			subject = object;
+			
+			// recurse over subject properties in order
+			List<String> props = new ArrayList<String>(element.keySet());
+			Collections.sort(props);
+			for (String prop: props) {
+				Object e = element.get(prop);
+				
+				// convert @type to rdf:type
+				if ("@type".equals(prop)) {
+					prop = RDF_TYPE;
+				}
+				
+				// recurse into @graph
+				if ("@graph".equals(prop)) {
+					_toRDF(e, namer, null, null, subject, callback);
+					continue;
+				}
+				
+				// skip keywords
+				if (JSONLDUtils.isKeyword(prop)) {
+					continue;
+				}
+				
+				// create new active property
+				property = new HashMap<String, Object>();
+				((Map<String, Object>) property).put("nominalValue", prop);
+				((Map<String, Object>) property).put("interfaceName", "IRI");
+				
+				// recurse into value
+				_toRDF(e, namer, subject, property, graph, callback);
+			}
+			
+			return;
+		}
+		
+		if (elem instanceof List) {
+			// recurse into arrays
+			for (Object element: (List)elem) {
+				_toRDF(element, namer, subject, property, graph, callback);
+			}
+			return;
+		}
+		
+		// element must be an rdf:type IRI (@values covered above)
+		if (elem instanceof String) {
+			// emit IRI
+			Map<String,Object> object = new HashMap<String, Object>();
+			object.put("nominalValue", elem);
+			object.put("interfaceName", "IRI");
+			Map<String,Object> statement = new HashMap<String, Object>();
+			statement.put("subject", JSONLDUtils.clone(subject));
+			statement.put("property", JSONLDUtils.clone(property));
+			statement.put("object", object);
+			
+			if (graph != null) {
+				statement.put("name", graph);
+			}
+			
+			// TODO:
+			callback(callback, statement);
+			return;
+		}
+	}
+	
+	private static void callback(JSONLDTripleCallback callback, 
+			Map<String, Object> statement) {
+		callback(callback, statement, null);
+	}
+	private static void callback(JSONLDTripleCallback callback, 
+			Map<String, Object> statement, String bnode) {
+		if (statement == null) {
+			return;
+		}
+		Map<String,Object> s = (Map<String, Object>) statement.get("subject");
+		Map<String,Object> p = (Map<String, Object>) statement.get("property");
+		Map<String,Object> o = (Map<String, Object>) statement.get("object");
+		Map<String,Object> g = (Map<String, Object>) statement.get("name");
+		
+		String sub = (String) s.get("nominalValue");
+		String pre = (String) p.get("nominalValue");
+		String obj = (String) o.get("nominalValue");
+		
+		String graph = null;
+		if (g != null) {
+			graph = (String) g.get("nominalValue");
+		}
+		
+		if (o.containsKey("datatype") && 
+				!XSD_STRING.equals(((Map<String, Object>) o.get("datatype")).get("nominalValue"))) {
+			callback.triple(sub, pre, obj, (String) ((Map<String, Object>) o.get("datatype")).get("nominalValue"), null, graph);
+		} else if (o.containsKey("language")) {
+			callback.triple(sub, pre, obj, (String) null, (String)o.get("language"), graph);
+		} else if ("LiteralNode".equals(o.get("interfaceName"))) {
+			callback.triple(sub, pre, obj, null, null, graph);
+		} else {
+			callback.triple(sub, pre, obj, graph);
+		}
+	}
+
 	/**
      * Generates a unique simplified key from a URI and add it to the context 
      * 
@@ -2427,7 +2488,7 @@ public class JSONLDProcessor {
      */
     public Object simplify(Map input) throws JSONLDProcessingError {
 
-        Object expanded = expand(input);
+        Object expanded = JSONLD.expand(input);
         Map<String, Object> framectx = new HashMap<String, Object>();
         if (input.containsKey("@context")) {
             framectx.putAll((Map<? extends String, ? extends Object>) input.get("@context"));
@@ -2435,7 +2496,7 @@ public class JSONLDProcessor {
 
         generateSimplifyContext(expanded, framectx);
 
-        return compact(expanded, framectx);
+        return JSONLD.compact(expanded, framectx);
     }
 
     
