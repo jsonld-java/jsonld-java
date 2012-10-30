@@ -3,6 +3,8 @@ package de.dfki.km.json.jsonld;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,9 +16,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.dfki.km.json.jsonld.impl.NQuadTripleCallback;
+import de.dfki.km.json.jsonld.utils.Obj;
 
 public class JSONLDProcessor {
 
@@ -80,6 +86,8 @@ public class JSONLDProcessor {
 		public Boolean explicit = null;
 		public Boolean omitDefault = null;
 		public Boolean collate = null;
+		public Boolean useRdfType = null;
+		public Boolean useNativeTypes = null;
     }
 
     Options opts;
@@ -2154,18 +2162,432 @@ public class JSONLDProcessor {
     	flatten(input, graphs, graph, namer, null, null);
     }
     
-    
-    /**
+    private class MapStatements extends JSONLDTripleCallback {
+
+    	List<List<String>> statements = new ArrayList<List<String>>();
+    	Map<String,Object> bnodes = new HashMap<String, Object>();
+    	UniqueNamer namer = new UniqueNamer("_:t");
+    	
+		@Override
+		public void triple(String s, String p, String o, String graph) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triple(String s, String p, String value, String datatype,
+				String language, String graph) {
+			// TODO Auto-generated method stub
+			
+		}
+    	
+    }
+	
+	private interface CallbackWrapper {
+		public void callback(Map<String,Object> statement);
+	}
+	
+	private class ToRDFCallback implements CallbackWrapper {
+		private JSONLDTripleCallback cb;
+		public ToRDFCallback(JSONLDTripleCallback cb) {
+			this.cb = cb;
+		}
+		public void callback(Map<String,Object> statement) {
+			if (statement == null) {
+				return;
+			}
+			Map<String,Object> s = (Map<String, Object>) statement.get("subject");
+			Map<String,Object> p = (Map<String, Object>) statement.get("property");
+			Map<String,Object> o = (Map<String, Object>) statement.get("object");
+			Map<String,Object> g = (Map<String, Object>) statement.get("name");
+			
+			String sub = (String) s.get("nominalValue");
+			String pre = (String) p.get("nominalValue");
+			String obj = (String) o.get("nominalValue");
+			
+			String graph = null;
+			if (g != null) {
+				graph = (String) g.get("nominalValue");
+			}
+			
+			if (o.containsKey("datatype") && 
+					!XSD_STRING.equals(((Map<String, Object>) o.get("datatype")).get("nominalValue"))) {
+				cb.triple(sub, pre, obj, (String) ((Map<String, Object>) o.get("datatype")).get("nominalValue"), null, graph);
+			} else if (o.containsKey("language")) {
+				cb.triple(sub, pre, obj, (String) null, (String)o.get("language"), graph);
+			} else if ("LiteralNode".equals(o.get("interfaceName"))) {
+				cb.triple(sub, pre, obj, null, null, graph);
+			} else {
+				cb.triple(sub, pre, obj, graph);
+			}
+		}
+	}
+	
+	private class NormalizeCallback implements CallbackWrapper {
+		
+		List<Map<String,Object>> statements = new ArrayList<Map<String,Object>>();
+		Map<String,Map<String,Object>> bnodes = new HashMap<String, Map<String,Object>>();
+		UniqueNamer namer = new UniqueNamer("_:c14n");
+					
+		public void callback(Map<String, Object> statement) {
+			if (statement == null) {
+				finalise();
+			}
+			
+			for (Map<String,Object> s: statements) {
+				if (compareRdfStatements(s, statement)) {
+					return;
+				}
+			}
+			
+			statements.add(statement);
+			
+			for (String n: new String[] { "subject", "object" }) {
+				Map<String,Object> node = (Map<String, Object>) statement.get(n);
+				String id = (String) node.get("nominalValue");
+				if ("BlankNode".equals(node.get("interfaceName"))) {
+					List<Object> stmts;
+					if (bnodes.containsKey(id)) {
+						stmts = (List<Object>) bnodes.get(id).get("statements");
+					} else {
+						stmts = new ArrayList<Object>();
+						Map<String,Object> tmp = new HashMap<String, Object>();
+						tmp.put("statements", stmts);
+						bnodes.put(id, tmp);
+					}
+					stmts.add(statement);
+				}
+			}
+		}
+		
+		public void hashBlankNodes(List<String> unnamed) {
+			// generate unique and duplicate hashes for bnodes
+			List<String> nextUnnamed = new ArrayList<String>();
+			Map<String,List<String>> duplicates = new HashMap<String, List<String>>();
+			Map<String,String> unique = new HashMap<String, String>();
+			
+			for (String bnode: unnamed) {
+
+				String hash = hashStatements(bnode, bnodes, namer);
+				
+				// store hash as unique or a duplicate
+				if (duplicates.containsKey(hash)) {
+					duplicates.get(hash).add(bnode);
+					nextUnnamed.add(bnode);
+				} else if (unique.containsKey(hash)) {
+					List<String> tmp = new ArrayList<String>();
+					tmp.add(unique.get(hash));
+					tmp.add(bnode);
+					duplicates.put(hash, tmp);
+					unique.remove(hash);
+				} else {
+					unique.put(hash, bnode);
+				}
+			}
+			
+			// name blank nodes
+			nameBlankNodes(unique, duplicates, nextUnnamed);
+		}
+
+		private void nameBlankNodes(Map<String, String> unique,
+				Map<String, List<String>> duplicates, List<String> unnamed) {
+			boolean named = false;
+			List<String> hashes = new ArrayList<String>(unique.keySet());
+			Collections.sort(hashes);
+			for (String hash: hashes) {
+				String bnode = unique.get(hash);
+				namer.getName(bnode);
+				named = true;
+			}
+			
+			if (named) {
+				hashBlankNodes(unnamed);
+			} else {
+				nameDuplicates(duplicates);
+			}
+			
+		}
+
+		private void nameDuplicates(Map<String, List<String>> duplicates) {
+			List<String> hashes = new ArrayList<String>(duplicates.keySet());
+			Collections.sort(hashes);
+			
+			// process each group
+			for (String hash: hashes) {
+				// name each group member
+				List<String> group = duplicates.get(hash);
+				List<Map<String,Object>> results = new ArrayList<Map<String,Object>>();
+				
+				for (String bnode: group) {
+					// skip already-named bnodes
+					if (namer.isNamed(bnode)) {
+						continue;
+					}
+					
+					// hash bnode paths
+					UniqueNamer pathNamer = new UniqueNamer("_:t");
+					pathNamer.getName(bnode);
+						try {
+							// create SHA-1 digest
+							MessageDigest md = MessageDigest.getInstance("SHA-1");
+							
+							// group adjacent bnodes by hash, keep properties and references separate
+							Map<String,List<String>> groups = new HashMap<String, List<String>>();
+							List<Object> statements = (List<Object>) bnodes.get(bnode).get("statements");
+							
+							for (Object statement: statements) {
+								// get adjacent bnode
+								String adjbnode = 
+										("BlankNode".equals(((Map<String, Object>) ((Map<String, Object>) statement).get("subject")).get("interfaceName")) &&
+											!bnode.equals(((Map<String, Object>) ((Map<String, Object>) statement).get("subject")).get("nominalValue"))) ?
+													(String)((Map<String, Object>) ((Map<String, Object>) statement).get("subject")).get("nominalValue") : null;
+								String direction = null;
+								if (adjbnode != null) {
+									direction = "p";
+								} else {
+									adjbnode = 
+											("BlankNode".equals(((Map<String, Object>) ((Map<String, Object>) statement).get("object")).get("interfaceName")) &&
+												!bnode.equals(((Map<String, Object>) ((Map<String, Object>) statement).get("object")).get("nominalValue"))) ?
+														(String)((Map<String, Object>) ((Map<String, Object>) statement).get("object")).get("nominalValue") : null;
+									if (adjbnode != null) {
+										direction = "r";
+									}
+								}
+								
+								if (adjbnode != null) {
+									// get bnode name (try canonical, path, then hash
+									String name;
+									if (namer.isNamed(adjbnode)) {
+										name = namer.getName(adjbnode);
+									} else if (pathNamer.isNamed(adjbnode)) {
+										name = pathNamer.getName(adjbnode);
+									} else {
+										// TODO: _hashStatements(adjbnode, bnodes, namer);
+										name = "";
+									}
+									
+									MessageDigest md1 = MessageDigest.getInstance("SHA-1");
+									md1.update(direction.getBytes());
+									md1.update(((String) ((Map<String, Object>) ((Map<String, Object>) statement).get("property")).get("nominalValue")).getBytes());
+									md1.update(name.getBytes());
+									String groupHash = new String(md1.digest());
+									
+									if (groups.containsKey(groupHash)) {
+										groups.get(groupHash).add(adjbnode);
+									} else {
+										List<String> tmp = new ArrayList<String>();
+										tmp.add(adjbnode);
+										groups.put(adjbnode, tmp);
+									}
+								}
+							}
+							
+							// hashGroup: hashes a group of adjacent bnodes
+							List<String> groupHashes = new ArrayList<String>(groups.keySet());
+							Collections.sort(groupHashes);
+							for (String groupHash: groupHashes) {
+								// digest group hash
+								md.update(groupHash.getBytes());
+								
+								// choose a path and namer from the permutations
+								// TODO: impt Permutator
+								// TODO: continue impl @ L2341 of jsonld.js
+							}
+							
+						} catch (NoSuchAlgorithmException e) {
+							throw new RuntimeException(e);
+						}
+				}
+				
+				// name bnodes in hash order
+				Collections.sort(results, new Comparator<Map<String,Object>>() {
+					@Override
+					public int compare(Map<String, Object> o1,
+							Map<String, Object> o2) {
+						String a = (String) o1.get("hash");
+						String b = (String) o2.get("hash");
+						return a.compareTo(b);
+					}
+				});
+				for (Map<String,Object> r: results) {
+					// name all bnodes in path namer in key-entry order
+		            // Note: key-order is preserved in javascript
+					for (String key: ((UniqueNamer)r.get("pathNamer")).existing.keySet()) {
+						namer.getName(key);
+					}
+				}
+			}
+			
+			// done, create JSON-LD array
+			createArray();
+			
+		}
+
+		private void createArray() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void finalise() {
+			// TODO Auto-generated method stub
+			hashBlankNodes(new ArrayList<String>(bnodes.keySet()));
+		}
+	}
+	
+	/**
+	 * Hashes all of the statements about a blank node.
+	 *
+	 * @param id the ID of the bnode to hash statements for.
+	 * @param bnodes the mapping of bnodes to statements.
+	 * @param namer the canonical bnode namer.
+	 *
+	 * @return the new hash.
+	 */
+	private String hashStatements(String id, Map<String,Map<String,Object>> bnodes, UniqueNamer namer) {
+		if (bnodes.get(id).containsKey("hash")) {
+			return (String) bnodes.get("id").get("hash");
+		}
+		
+		List<Map<String,Object>> statements = (List<Map<String, Object>>) bnodes.get(id).get("statements");
+		List<String> nquads = new ArrayList<String>();
+		for (Map<String,Object> statement: statements) {
+			// TODO: this is _toNQuad, and some of the code is pointless in this 
+			// case and some is duplicated code.
+			Map<String,Object> s = (Map<String, Object>) statement.get("subject");
+			Map<String,Object> p = (Map<String, Object>) statement.get("property");
+			Map<String,Object> o = (Map<String, Object>) statement.get("object");
+			Map<String,Object> g = (Map<String, Object>) statement.get("name");
+			
+			String quad = "";
+			
+			if ("IRI".equals(s.get("interfaceName"))) {
+				quad += "<" + s.get("nominalValue") + ">";
+			} else if (id != null) {
+				quad += (id.equals(s.get("nominalValue")) ? "_:a" : "_:z");
+			} else {
+				quad += s.get("nominalValue");
+			}
+			
+			quad += " <" + p.get("nominalValue") + "> ";
+			
+			if ("IRI".equals(o.get("interfaceName"))) {
+				quad += "<" + o.get("nominalValue") + ">";
+			} else if ("BlankNode".equals(o.get("interfaceName"))) {
+				if (id != null) {
+					quad += (id.equals(o.get("nominalValue")) ? "_:a" : "_:z");
+				} else {
+					quad += o.get("nominalValue");
+				}
+			} else {
+				String escaped = ((String)o.get("nominalValue"))
+						.replaceAll("\\\\", "\\\\\\\\")
+						.replaceAll("\\t", "\\\\t")
+						.replaceAll("\\n", "\\\\n")
+						.replaceAll("\\r", "\\\\r")
+						.replaceAll("\\\"", "\\\\\"");
+				quad += "\"" + escaped + "\"";
+				if (o.containsKey("datatype") && !XSD_STRING.equals(((Map<String, Object>) o.get("datatype")).get("nominalValue"))) {
+					quad += "^^<" + ((Map<String, Object>) o.get("datatype")).get("nominalValue") + ">";
+				} else if (o.containsKey("language")) {
+					quad += "@" + o.get("language");
+				}
+			}
+			
+			if (g != null) {
+				if ("IRI".equals(g.get("interfaceName"))) {
+					quad += " <" + g.get("nominalValue") + ">";
+				} else if (id != null) {
+					quad += "_:g";
+				} else {
+					quad += " " + g.get("nominalValue");
+				}
+			}
+			
+			quad += " .";
+			// END OF _toNQuad
+			
+			nquads.add(quad);
+		}
+		
+		Collections.sort(nquads);
+		String hash = "";
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-1");
+			for (String nquad: nquads) {
+				md.update(nquad.getBytes());
+			}
+			hash = new String(md.digest());
+		} catch (NoSuchAlgorithmException e) {
+			// TODO: i don't expect that SHA-1 is even NOT going to be available?
+			// look into this further
+			throw new RuntimeException(e);
+		}
+		return hash;
+	}
+	
+	/**
+	 * Compares two RDF statements for equality.
+	 *
+	 * @param s1 the first statement.
+	 * @param s2 the second statement.
+	 *
+	 * @return true if the statements are the same, false if not.
+	 */
+	public static boolean compareRdfStatements(Map<String,Object> s1, Map<String,Object> s2) {
+		for (String attr: new String[] { "subject", "property", "object" }) {
+			Object s1int = ((Map<String, Object>) s1.get(attr)).get("interfaceName");
+			Object s2int = ((Map<String, Object>) s2.get(attr)).get("interfaceName");
+			Object s1nom = ((Map<String, Object>) s1.get(attr)).get("nominalValue");
+			Object s2nom = ((Map<String, Object>) s2.get(attr)).get("nominalValue");
+			if ( !(s1int != null && s1int.equals(s2int) || s1int == null && s2int == null) ||
+				 !(s1nom != null && s1nom.equals(s2nom) || s1nom == null && s2nom == null)) {
+				return false;
+			}
+		}
+		Object s1lang = ((Map<String, Object>) s1.get("object")).get("language");
+		Object s2lang = ((Map<String, Object>) s2.get("object")).get("language");
+		if (!(s1lang != null && s1lang.equals(s2lang) || s1lang == null && s2lang == null)) {
+			return false;
+		}
+		
+		if (((Map<String, Object>) s1.get("object")).containsKey("datatype") != ((Map<String, Object>) s2.get("object")).containsKey("datatype")) {
+			return false;
+		}
+		
+		if (((Map<String, Object>) s1.get("object")).containsKey("datatype")) {
+			Object s1int = ((Map<String, Object>) s1.get("object")).get("interfaceName");
+			Object s2int = ((Map<String, Object>) s2.get("object")).get("interfaceName");
+			Object s1nom = ((Map<String, Object>) s1.get("object")).get("nominalValue");
+			Object s2nom = ((Map<String, Object>) s2.get("object")).get("nominalValue");
+			if ( !(s1int != null && s1int.equals(s2int) || s1int == null && s2int == null) ||
+				 !(s1nom != null && s1nom.equals(s2nom) || s1nom == null && s2nom == null)) {
+				return false;
+			}
+		}
+		
+		Object s1name = s1.get("name");
+		Object s2name = s2.get("name");
+		if (!(s1name != null && s1name.equals(s2name) || s1name == null && s2name == null)) {
+			return false;
+		}
+		return true;
+	}
+	
+	public static boolean compareRdfStatements(String s1, String s2) {
+		return s1 != null && s1.equals(s2) || s1 == null && s2 == null;
+	}
+	
+	 /**
      * Performs RDF normalization on the given JSON-LD input.
      *
      * @param input the expanded JSON-LD object to normalize.
      * @param options the normalization options.
      * @param callback(err, normalized) called once the operation completes.
      */
-	public List normalize(Object expanded) {
-		List statements = new ArrayList<Object>();
-		Map<String,Object> bnodes = new HashMap<String, Object>();
-		UniqueNamer namer = new UniqueNamer("_:t");
+	public List normalize(Object input) {
+		NormalizeCallback cb = new NormalizeCallback();
+		_toRDF(input, new UniqueNamer("_:t"), null, null, null, cb);
+		cb.finalise();
 		return null;
 	}
 	
@@ -2181,8 +2603,9 @@ public class JSONLDProcessor {
 	 *          last statement as null.
 	 */
 	public void toRDF(Object element, UniqueNamer namer, String subject, String property, Object graph, JSONLDTripleCallback callback) {
-		_toRDF(element, namer, subject, property, graph, callback);
-		callback(callback, null);
+		CallbackWrapper cbw = new ToRDFCallback(callback);
+		_toRDF(element, namer, subject, property, graph, cbw);
+		cbw.callback(null);
 	}
     
 	/**
@@ -2196,7 +2619,7 @@ public class JSONLDProcessor {
 	 * @param callback(err, statement) called when a statement is output, with the
 	 *          last statement as null.
 	 */
-	private static void _toRDF(Object elem, UniqueNamer namer, Object subject, Object property, Object graph, JSONLDTripleCallback callback) {
+	private static void _toRDF(Object elem, UniqueNamer namer, Object subject, Object property, Object graph, CallbackWrapper callback) {
 		if (elem instanceof Map) {
 			Map<String,Object> element = (Map<String, Object>) elem;
 			if (element.containsKey("@value")) {
@@ -2251,7 +2674,7 @@ public class JSONLDProcessor {
 				}
 				
 				// TODO:
-				callback(callback, statement);
+				callback.callback(statement);
 				return;
 			}
 			
@@ -2296,8 +2719,7 @@ public class JSONLDProcessor {
 				if (graph != null) {
 					statement.put("name", graph);
 				}
-				// TODO:
-				callback(callback, statement);
+				callback.callback(statement);
 			}
 			
 			// set new active subject to object
@@ -2360,45 +2782,248 @@ public class JSONLDProcessor {
 				statement.put("name", graph);
 			}
 			
-			// TODO:
-			callback(callback, statement);
+			callback.callback(statement);
 			return;
 		}
 	}
 	
-	private static void callback(JSONLDTripleCallback callback, 
-			Map<String, Object> statement) {
-		callback(callback, statement, null);
+	/**
+	 * Converts RDF statements into JSON-LD.
+	 *
+	 * @param statements the RDF statements.
+	 * @param options the RDF conversion options.
+	 * @param callback(err, output) called once the operation completes.
+	 * @throws JSONLDProcessingError 
+	 */
+	public Object fromRDF(List<Map<String, Object>> statements) throws JSONLDProcessingError {
+		Map<String,Object> defaultGraph = new HashMap<String, Object>();
+		defaultGraph.put("subjects", new HashMap<String, Object>());
+		defaultGraph.put("listMap", new HashMap<String, Object>());
+		Map<String,Map<String,Object>> graphs = new HashMap<String, Map<String,Object>>();
+		graphs.put("", (Map<String,Object>)defaultGraph);
+		
+		for (Map<String,Object> statement: statements) {
+			// get subject, property, object, and graph name (default to '')
+			String s = (String)Obj.get(statement, "subject", "nominalValue");
+			String p = (String)Obj.get(statement, "property", "nominalValue");
+			Map<String,Object> o = (Map<String, Object>) statement.get("object");
+			String name = statement.containsKey("name") ? (String)Obj.get(statement, "name", "nominalValue") : "";
+			
+			// create a graph entry as needed
+			Map<String,Object> graph;
+			if (!graphs.containsKey(name)) {
+				graph = new HashMap<String,Object>();
+				graph.put("subjects", new HashMap<String, Object>());
+				graph.put("listMap", new HashMap<String, Object>());
+				graphs.put(name, graph);
+			} else {
+				graph = graphs.get(name);
+			}
+			
+			// handle element in @list
+			if (RDF_FIRST.equals(p)) {
+				// create list entry as needed
+				Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
+				Map<String,Object> entry;
+				if (!listMap.containsKey(s)) {
+					entry = new HashMap<String, Object>();
+					listMap.put(s, entry);
+				} else {
+					entry = (Map<String, Object>) listMap.get(s);
+				}
+				// set object value
+				entry.put("first", rdfToObject(o));
+				continue;
+			}
+			
+			// handle other element in @list
+			if (RDF_REST.equals(p)) {
+				// set next in list
+				if ("BlankNode".equals(o.get("interfaceName"))) {
+					// create list entry as needed
+					Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
+					Map<String,Object> entry;
+					if (!listMap.containsKey(s)) {
+						entry = new HashMap<String, Object>();
+						listMap.put(s, entry);
+					} else {
+						entry = (Map<String, Object>) listMap.get(s);
+					}
+					// set object value
+					entry.put("rest", o.get("nominalValue"));
+				}
+				continue;
+			}
+			
+			// add graph subject to default graph as needed
+			if (!"".equals(name) && !Obj.contains(defaultGraph, "subjects", name)) {
+				Map<String,Object> tmp = new HashMap<String, Object>();
+				tmp.put("@id", name);
+				Obj.put(defaultGraph, "subjects", name, tmp);
+			}
+			
+			// add subject to graph as needed
+			Map<String,Object> subjects = (Map<String, Object>) graph.get("subjects");
+			Map<String,Object> value;
+			if (!subjects.containsKey(s)) {
+				value = new HashMap<String, Object>();
+				value.put("@id", s);
+				subjects.put(s, value);
+			} else {
+				value = (Map<String, Object>) subjects.get(s);
+			}
+			
+			// convert to @type unless options indicate to treat rdf:type as a property
+			if (RDF_TYPE.equals(p) && !opts.useRdfType) {
+				// add value of object as @type
+				JSONLDUtils.addValue(value, "@type", o.get("nominalValue"), true);
+			} else {
+				// add property to value as needed
+				Object object = rdfToObject(o);
+				JSONLDUtils.addValue(value, p, object, true);
+				
+				// a bnode might be the beginning of a list, so add it to the list map
+				if ("BlankNode".equals(o.get("interfaceName"))) {
+					String id = (String) Obj.get(object, "@id");
+					Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
+					Map<String,Object> entry;
+					if (!listMap.containsKey(id)) {
+						entry = new HashMap<String, Object>();
+						listMap.put(id, entry);
+					} else {
+						entry = (Map<String, Object>) listMap.get(id);
+					}
+					entry.put("head", object);
+				}
+			}
+		}
+		
+		// build @lists
+		for (String name: graphs.keySet()) {
+			Map<String,Object> graph = graphs.get(name);
+			
+			// find list head
+			Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
+			for (String subject: listMap.keySet()) {
+				Map<String,Object> entry = (Map<String, Object>) listMap.get(subject);
+				
+				// head found, build lists
+				if (entry.containsKey("head") && entry.containsKey("first")) {
+					// replace bnode @id with @list
+					Obj.remove(entry, "head", "@id");
+					List<Object> list = new ArrayList<Object>();
+					list.add(entry.get("first"));
+					Obj.put(entry, "head", "@list", list);
+					while (entry.containsKey("rest")) {
+						String rest = (String) entry.get("rest");
+						entry = (Map<String, Object>) listMap.get(rest);
+						if (!entry.containsKey("first")) {
+							throw new JSONLDProcessingError("Invalid RDF list entry.)")
+									.setType(JSONLDProcessingError.Error.RDF_ERROR)
+									.setDetail("bnode", rest);
+						}
+						list.add(entry.get("first"));
+					}
+				}
+			}
+		}
+		
+		// build default graph in subject @id order
+		List<Object> output = new ArrayList<Object>();
+		Map<String,Object> subjects = (Map<String, Object>) defaultGraph.get("subjects");
+		List<String> ids = new ArrayList<String>(subjects.keySet());
+		Collections.sort(ids);
+		for (String id: ids) {
+			// add subject to default graph
+			Map<String,Object> subject = (Map<String, Object>) subjects.get(id);
+			output.add(subject);
+			
+			// output named graph in subject @id order
+			if (graphs.containsKey(id)) {
+				List<Object> graph = new ArrayList<Object>();
+				subject.put("@graph", graph);
+				Map<String,Object> _subjects = (Map<String, Object>) Obj.get(graphs, id, "subjects");
+				List<String> _ids = new ArrayList<String>(_subjects.keySet());
+				for (String _id: _ids) {
+					graph.add(_subjects.get(_id));
+				}
+			}
+		}
+		
+		return output;
 	}
-	private static void callback(JSONLDTripleCallback callback, 
-			Map<String, Object> statement, String bnode) {
-		if (statement == null) {
-			return;
-		}
-		Map<String,Object> s = (Map<String, Object>) statement.get("subject");
-		Map<String,Object> p = (Map<String, Object>) statement.get("property");
-		Map<String,Object> o = (Map<String, Object>) statement.get("object");
-		Map<String,Object> g = (Map<String, Object>) statement.get("name");
+	
+	/**
+	 * Converts an RDF statement object to a JSON-LD object.
+	 *
+	 * @param o the RDF statement object to convert.
+	 * @param useNativeTypes true to output native types, false not to.
+	 *
+	 * @return the JSON-LD object.
+	 */
+	private Object rdfToObject(Map<String, Object> o) {
+		Map<String,Object> rval = new HashMap<String, Object>();
 		
-		String sub = (String) s.get("nominalValue");
-		String pre = (String) p.get("nominalValue");
-		String obj = (String) o.get("nominalValue");
-		
-		String graph = null;
-		if (g != null) {
-			graph = (String) g.get("nominalValue");
+		// convert empty list
+		if ("IRI".equals(o.get("interfaceName")) && RDF_NIL.equals(o.get("nominalValue"))) {
+			rval.put("@list", new ArrayList<Object>());
+			return rval;
 		}
 		
-		if (o.containsKey("datatype") && 
-				!XSD_STRING.equals(((Map<String, Object>) o.get("datatype")).get("nominalValue"))) {
-			callback.triple(sub, pre, obj, (String) ((Map<String, Object>) o.get("datatype")).get("nominalValue"), null, graph);
-		} else if (o.containsKey("language")) {
-			callback.triple(sub, pre, obj, (String) null, (String)o.get("language"), graph);
-		} else if ("LiteralNode".equals(o.get("interfaceName"))) {
-			callback.triple(sub, pre, obj, null, null, graph);
-		} else {
-			callback.triple(sub, pre, obj, graph);
+		// convert IRI/BlankNode object to JSON-LD
+		if ("IRI".equals(o.get("interfaceName")) || "BlankNode".equals(o.get("interfaceName"))) {
+			rval.put("@id", o.get("nominalValue"));
+			return rval;
 		}
+		
+		// convert literal object to JSON-LD
+		rval.put("@value", o.get("nominalValue"));
+		
+		// add datatype
+		if (o.containsKey("datatype")) {
+			String type = (String) Obj.get(o, "datatype", "nominalValue");
+			if (opts.useNativeTypes) {
+				// use native datatypes for certain xsd types
+				if (XSD_BOOLEAN.equals(type)) {
+					if ("true".equals(rval.get("@value"))) {
+						rval.put("@value", Boolean.TRUE);
+					} else if ("false".equals(rval.get("@value"))) {
+						rval.put("@value", Boolean.FALSE);
+					}
+				} else if (Pattern.matches("^[+-]?[0-9]+((?:\\.?[0-9]+((?:E?[+-]?[0-9]+)|)|))$", (String)rval.get("@value"))){
+					try {
+						Double d = Double.parseDouble((String)rval.get("@value"));
+						if (!Double.isNaN(d) && !Double.isInfinite(d)) {
+							if (XSD_INTEGER.equals(type)) {
+								Integer i = d.intValue();
+								if (i.toString().equals(rval.get("@value"))) {
+									rval.put("@value", i);
+								}
+							} else if (XSD_DOUBLE.equals(type)) {
+								rval.put("@value", d);
+							} else {
+								// we don't know the type, so we should add it to the JSON-LD
+								rval.put("@type", type);
+							}
+						}
+					} catch (NumberFormatException e) {
+						// TODO: This should never happen since we match the value with regex!
+					}
+				}
+				// do not add xsd:string type
+				else if (!XSD_STRING.equals(type)) {
+					rval.put("@type", type);
+				}
+			} else {
+				rval.put("@type", type);
+			}
+		}
+		// add language
+		if (o.containsKey("language")) {
+			rval.put("@language", o.get("language"));
+		}
+		
+		return rval;
 	}
 
 	/**
@@ -2498,8 +3123,6 @@ public class JSONLDProcessor {
 
         return JSONLD.compact(expanded, framectx);
     }
-
-    
     
     // ALL CODE BELOW THIS IS UNUSED
     

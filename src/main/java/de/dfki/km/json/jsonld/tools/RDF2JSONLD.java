@@ -13,8 +13,9 @@ public class RDF2JSONLD {
 
     /**
      * @param args
+     * @throws JSONLDProcessingError 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JSONLDProcessingError {
         if (args.length < 1) {
             usage();
         } else {
@@ -40,19 +41,12 @@ public class RDF2JSONLD {
 
             Model model = FileManager.get().loadModel(input);
             JenaJSONLDSerializer serializer = new JenaJSONLDSerializer();
-            serializer.importModel(model);
-            Object output = serializer.asObject();
+            
+            Object output = JSONLD.fromRDF(model, serializer);
 
             if (expand) {
-                // normalization starts out by expanding the input, so we only
-                // need to do this
-                // if normalizaion hasn't happened
-                try {
-					output = JSONLD.expand(output);
-				} catch (JSONLDProcessingError e) {
-					// TODO Print out the error message!
-					return;
-				}
+                output = JSONLD.expand(output);
+				
             }
 
             if (output != null) {

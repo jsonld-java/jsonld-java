@@ -156,5 +156,20 @@ TODO
 
 *   Make sure Jena Implementation is correct (i.e. write some real tests)
 *   Tests for the serializations
-*   Implement frame.
+*   Implement normalization.
 *   As the code is almost a direct translation from the javascript and python implementation, there is probably a lot of optimization work to do.
+
+OPEN ISSUES
+===========
+
+### fromRDF and JSONLDSerializer API
+
+CHANGELOG
+=========
+
+### 30.10.2012
+
+* Brought the implementation up to date with the reference implementation (minus the normalization stuff)
+* Changed entry point for the functions to the static functions in the JSONLD class
+* Changed the JSONLDSerializer to an abstract class, requiring the implementation of a "parse" function. The JSONLDSerializer is now passed to the JSONLD.fromRDF function.
+* Added JSONLDProcessingError class to handle errors more efficiently

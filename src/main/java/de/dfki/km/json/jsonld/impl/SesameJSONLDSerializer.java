@@ -11,6 +11,8 @@ import org.openrdf.model.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.km.json.jsonld.JSONLDProcessingError;
+
 public class SesameJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSerializer {
     private static final Logger LOG = LoggerFactory.getLogger(SesameJSONLDSerializer.class);
 
@@ -45,5 +47,12 @@ public class SesameJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSeriali
             triple(subject.stringValue(), predicate.stringValue(), object.stringValue());
         }
     }
+
+	@Override
+	public void parse(Object input) throws JSONLDProcessingError {
+		if (input instanceof Statement) {
+			handleStatement((Statement)input);
+		}
+	}
 
 }

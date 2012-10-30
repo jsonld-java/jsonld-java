@@ -27,6 +27,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.dfki.km.json.JSONUtils;
 import de.dfki.km.json.jsonld.JSONLDProcessor.Options;
+import de.dfki.km.json.jsonld.impl.NQuadJSONLDSerializer;
 import de.dfki.km.json.jsonld.impl.NQuadTripleCallback;
 
 @RunWith(Parameterized.class)
@@ -68,7 +69,7 @@ public class JSONLDProcessorTest {
                 testType.contains("jld:ExpandTest") || testType.contains("jld:CompactTest") //|| testType.contains("jld:NormalizeTest")
                 || testType.contains("jld:FrameTest")// || testType.contains("jld:TriplesTest")
                 //|| testType.contains("jld:SimplifyTest")
-                 || testType.contains("jld:ToRDFTest")
+                 || testType.contains("jld:ToRDFTest") || testType.contains("jld:FromRDFTest")
                 ) {
                     System.out.println("Adding test: " + test.get("name"));
                     rdata.add(new Object[] { manifest.get("name"), test });
@@ -112,16 +113,34 @@ public class JSONLDProcessorTest {
         System.out.println("running test: " + test.get("input"));
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-        InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("input"));
+        String inputFile = (String) test.get("input");
+        InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/" + inputFile);
         assertNotNull("unable to find input file: " + test.get("input"), inputStream);
+        String inputType = inputFile.substring(inputFile.lastIndexOf(".") + 1);
 
-        Object inputJson = JSONUtils.fromInputStream(inputStream);
+        Object input = null;
+        if (inputType.equals("jsonld")) {
+        	input = JSONUtils.fromInputStream(inputStream);
+        } else if (inputType.equals("nt") || inputType.equals("nq")) {
+        	List<String> inputLines = new ArrayList<String>();
+            BufferedReader buf = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = buf.readLine()) != null) {
+                line = line.trim();
+                if (line.length() == 0 || line.charAt(0) == '#') {
+                    continue;
+                }
+                inputLines.add(line);
+            }
+            //Collections.sort(inputLines);
+            input = join(inputLines, "\n");
+        }
         Object expect = null;
         String sparql = null;
         String expectFile = (String) test.get("expect");
         String sparqlFile = (String) test.get("sparql");
         if (expectFile != null) {
-            InputStream expectStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("expect"));
+            InputStream expectStream = cl.getResourceAsStream(TEST_DIR + "/" + expectFile);
             assertNotNull("unable to find expect file: " + test.get("expect"), expectStream);
 
             String expectType = expectFile.substring(expectFile.lastIndexOf(".") + 1);
@@ -162,26 +181,25 @@ public class JSONLDProcessorTest {
         if (testType.contains("jld:NormalizeTest")) {
             //result = new JSONLDProcessor().normalize(inputJson);
         } else if (testType.contains("jld:ExpandTest")) {
-            result = JSONLD.expand(inputJson, options);
+            result = JSONLD.expand(input, options);
         } else if (testType.contains("jld:CompactTest")) {
             InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
             Object contextJson = JSONUtils.fromInputStream(contextStream);
-            result = JSONLD.compact(inputJson, (Map<String, Object>) contextJson, options);
+            result = JSONLD.compact(input, (Map<String, Object>) contextJson, options);
         } else if (testType.contains("jld:FrameTest")) {
             InputStream frameStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("frame"));
             Object frameJson = JSONUtils.fromInputStream(frameStream);
-            result = JSONLD.frame(inputJson, frameJson, options);
+            result = JSONLD.frame(input, frameJson, options);
         } else if (testType.contains("jld:ToRDFTest")) {
             // TODO: many of the tests here fail simply because of an ordering issue
         	NQuadTripleCallback nqtc = new NQuadTripleCallback();
-        	JSONLD.toRDF(inputJson, options, nqtc);
+        	JSONLD.toRDF(input, options, nqtc);
         	
             result = nqtc.getResult();
-        } else if (testType.contains("jld:RDFTest")) {
-            // TODO: implement this
-            // sparql query is stored in String sparql
+        } else if (testType.contains("jld:FromRDFTest")) {
+        	result = JSONLD.fromRDF(input, new NQuadJSONLDSerializer());
         } else if (testType.contains("jld:SimplifyTest")) {
-            result = new JSONLDProcessor().simplify((Map) inputJson);
+            result = new JSONLDProcessor().simplify((Map) input);
         } else {
             assertFalse("Unknown test type", true);
         }

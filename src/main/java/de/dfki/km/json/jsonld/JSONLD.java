@@ -267,7 +267,22 @@ public class JSONLD {
     	p.toRDF(expanded, namer, null, null, null, callback);
     }
     
-    public static void toRdf(Object input, JSONLDTripleCallback callback) throws JSONLDProcessingError {
+    public static void toRDF(Object input, JSONLDTripleCallback callback) throws JSONLDProcessingError {
     	toRDF(input, new Options(""), callback);
+    }
+    
+    public static Object fromRDF(Object input, Options opts, JSONLDSerializer serializer) throws JSONLDProcessingError {
+    	if (opts.useRdfType == null) {
+    		opts.useRdfType = false;
+    	}
+    	if (opts.useNativeTypes == null) {
+    		opts.useNativeTypes = true;
+    	}
+    	serializer.parse(input);
+    	return new JSONLDProcessor(opts).fromRDF(serializer.getStatements());
+    }
+    
+    public static Object fromRDF(Object input, JSONLDSerializer serializer) throws JSONLDProcessingError {
+    	return fromRDF(input, new Options(""), serializer);
     }
 }
