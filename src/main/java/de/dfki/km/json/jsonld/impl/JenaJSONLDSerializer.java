@@ -11,6 +11,8 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
+import de.dfki.km.json.jsonld.JSONLDProcessingError;
+
 public class JenaJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSerializer {
 
     // private static final Logger LOG = LoggerFactory.getLogger(
@@ -57,13 +59,24 @@ public class JenaJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSerialize
                 String datatypeURI = literal.getDatatypeURI();
                 String language = literal.getLanguage();
 
-                triple(subj, predicate.getURI(), value, datatypeURI, language);
+                triple(subj, predicate.getURI(), value, datatypeURI, language, null);
             } else {
                 Resource resource = object.asResource();
                 String res = getID(resource);
 
-                triple(subj, predicate.getURI(), res);
+                triple(subj, predicate.getURI(), res, null);
             }
         }
     }
+
+	@Override
+	public void parse(Object input) throws JSONLDProcessingError {
+		if (input instanceof Resource) {
+			importResource((Resource) input);
+		} else if (input instanceof Model) {
+			importModel((Model)input);
+		} else {
+			throw new JSONLDProcessingError("Jena Serializer expects Model or resource input");
+		}
+	}
 }

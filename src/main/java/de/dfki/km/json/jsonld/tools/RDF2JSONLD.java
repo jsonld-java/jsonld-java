@@ -4,6 +4,8 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.util.FileManager;
 
 import de.dfki.km.json.JSONUtils;
+import de.dfki.km.json.jsonld.JSONLD;
+import de.dfki.km.json.jsonld.JSONLDProcessingError;
 import de.dfki.km.json.jsonld.JSONLDProcessor;
 import de.dfki.km.json.jsonld.impl.JenaJSONLDSerializer;
 
@@ -11,8 +13,9 @@ public class RDF2JSONLD {
 
     /**
      * @param args
+     * @throws JSONLDProcessingError 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JSONLDProcessingError {
         if (args.length < 1) {
             usage();
         } else {
@@ -38,18 +41,12 @@ public class RDF2JSONLD {
 
             Model model = FileManager.get().loadModel(input);
             JenaJSONLDSerializer serializer = new JenaJSONLDSerializer();
-            serializer.importModel(model);
-            Object output = serializer.asObject();
+            
+            Object output = JSONLD.fromRDF(model, serializer);
 
-            JSONLDProcessor processor = new JSONLDProcessor();
-
-            if (normalize) {
-                output = processor.normalize(output);
-            } else if (expand) {
-                // normalization starts out by expanding the input, so we only
-                // need to do this
-                // if normalizaion hasn't happened
-                output = processor.expand(output);
+            if (expand) {
+                output = JSONLD.expand(output);
+				
             }
 
             if (output != null) {

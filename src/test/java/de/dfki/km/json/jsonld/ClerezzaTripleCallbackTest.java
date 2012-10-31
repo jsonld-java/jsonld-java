@@ -17,14 +17,13 @@ import de.dfki.km.json.jsonld.impl.ClerezzaTripleCallback;
 public class ClerezzaTripleCallbackTest {
 
 	@Test
-	public void triplesTest() throws IOException {
+	public void triplesTest() throws IOException, JSONLDProcessingError {
 		InputStream in = getClass().getClassLoader().getResourceAsStream("testfiles/product.jsonld");
 		Object input = JSONUtils.fromInputStream(in);
 		
-		JSONLDProcessor processor = new JSONLDProcessor();
 		ClerezzaTripleCallback callback = new ClerezzaTripleCallback();
 
-		processor.triples(input, callback);
+		JSONLD.toRDF(input, callback);
 		MGraph graph = callback.getMGraph();
 
 		for (Triple t : graph) {
@@ -35,14 +34,13 @@ public class ClerezzaTripleCallbackTest {
 	}
 	
 	@Test
-	public void curiesInContextTest() throws IOException {
+	public void curiesInContextTest() throws IOException, JSONLDProcessingError {
 		InputStream in = getClass().getClassLoader().getResourceAsStream("testfiles/curies-in-context.jsonld");
 		Object input = JSONUtils.fromInputStream(in);
 		
-		JSONLDProcessor processor = new JSONLDProcessor();
 		ClerezzaTripleCallback callback = new ClerezzaTripleCallback();
 
-		processor.triples(input, callback);
+		JSONLD.toRDF(input, callback);
 		MGraph graph = callback.getMGraph();
 
 		for (Triple t : graph) {

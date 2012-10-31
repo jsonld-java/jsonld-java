@@ -26,38 +26,14 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import de.dfki.km.json.JSONUtils;
+import de.dfki.km.json.jsonld.JSONLDProcessor.Options;
+import de.dfki.km.json.jsonld.impl.NQuadJSONLDSerializer;
+import de.dfki.km.json.jsonld.impl.NQuadTripleCallback;
 
 @RunWith(Parameterized.class)
 public class JSONLDProcessorTest {
 
     private static final String TEST_DIR = "testfiles";
-
-    private class TestTripleCallback implements JSONLDTripleCallback {
-
-        List<String> results = new ArrayList<String>();
-
-        @Override
-        public void triple(String s, String p, String o) {
-            results.add("<" + s + "> <" + p + "> <" + o + "> .");
-        }
-
-        @Override
-        public void triple(String s, String p, String value, String datatype, String language) {
-            if (language != null) {
-                results.add("<" + s + "> <" + p + "> \"" + value + "\"@" + language + " .");
-            } else {
-                if (datatype.equals(JSONLDConsts.XSD_STRING)) {
-                    results.add("<" + s + "> <" + p + "> \"" + value + "\" .");
-                } else {
-                    results.add("<" + s + "> <" + p + "> \"" + value + "\"^^<" + datatype + "> .");
-                }
-            }
-        }
-
-        public List<String> getResults() {
-            return results;
-        }
-    }
 
     @Parameters
     public static Collection<Object[]> data() throws URISyntaxException, IOException {
@@ -90,9 +66,10 @@ public class JSONLDProcessorTest {
             for (Map<String, Object> test : (List<Map<String, Object>>) manifest.get("sequence")) {
                 List<String> testType = (List<String>) test.get("@type");
                 if (// test.get("input").equals("normalize-0044-in.jsonld") && (
-                testType.contains("jld:NormalizeTest") || testType.contains("jld:ExpandTest") || testType.contains("jld:CompactTest")
-                        || testType.contains("jld:FrameTest") || testType.contains("jld:TriplesTest") || testType.contains("jld:SimplifyTest")
-                // || testType.contains("jld:RDFTest")
+                testType.contains("jld:ExpandTest") || testType.contains("jld:CompactTest") //|| testType.contains("jld:NormalizeTest")
+                || testType.contains("jld:FrameTest")// || testType.contains("jld:TriplesTest")
+                //|| testType.contains("jld:SimplifyTest")
+                 || testType.contains("jld:ToRDFTest") || testType.contains("jld:FromRDFTest")
                 ) {
                     System.out.println("Adding test: " + test.get("name"));
                     rdata.add(new Object[] { manifest.get("name"), test });
@@ -118,7 +95,7 @@ public class JSONLDProcessorTest {
         this.test = test;
     }
 
-    private static String join(Collection<String> list, String delim) {
+    public static String join(Collection<String> list, String delim) {
         StringBuilder builder = new StringBuilder();
         Iterator<String> iter = list.iterator();
         while (iter.hasNext()) {
@@ -132,26 +109,44 @@ public class JSONLDProcessorTest {
     }
 
     @Test
-    public void runTest() throws URISyntaxException, IOException {
+    public void runTest() throws URISyntaxException, IOException, JSONLDProcessingError {
         System.out.println("running test: " + test.get("input"));
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-        InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("input"));
+        String inputFile = (String) test.get("input");
+        InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/" + inputFile);
         assertNotNull("unable to find input file: " + test.get("input"), inputStream);
+        String inputType = inputFile.substring(inputFile.lastIndexOf(".") + 1);
 
-        Object inputJson = JSONUtils.fromInputStream(inputStream);
+        Object input = null;
+        if (inputType.equals("jsonld")) {
+        	input = JSONUtils.fromInputStream(inputStream);
+        } else if (inputType.equals("nt") || inputType.equals("nq")) {
+        	List<String> inputLines = new ArrayList<String>();
+            BufferedReader buf = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = buf.readLine()) != null) {
+                line = line.trim();
+                if (line.length() == 0 || line.charAt(0) == '#') {
+                    continue;
+                }
+                inputLines.add(line);
+            }
+            //Collections.sort(inputLines);
+            input = join(inputLines, "\n");
+        }
         Object expect = null;
         String sparql = null;
         String expectFile = (String) test.get("expect");
         String sparqlFile = (String) test.get("sparql");
         if (expectFile != null) {
-            InputStream expectStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("expect"));
+            InputStream expectStream = cl.getResourceAsStream(TEST_DIR + "/" + expectFile);
             assertNotNull("unable to find expect file: " + test.get("expect"), expectStream);
 
             String expectType = expectFile.substring(expectFile.lastIndexOf(".") + 1);
             if (expectType.equals("jsonld")) {
                 expect = JSONUtils.fromInputStream(expectStream);
-            } else if (expectType.equals("nt")) {
+            } else if (expectType.equals("nt") || expectType.equals("nq")) {
                 List<String> expectLines = new ArrayList<String>();
                 BufferedReader buf = new BufferedReader(new InputStreamReader(expectStream));
                 String line;
@@ -182,31 +177,29 @@ public class JSONLDProcessorTest {
         Object result = null;
 
         List<String> testType = (List<String>) test.get("@type");
+        Options options = new JSONLDProcessor.Options("http://json-ld.org/test-suite/tests/" + test.get("input"));
         if (testType.contains("jld:NormalizeTest")) {
-            result = new JSONLDProcessor().normalize(inputJson);
+            //result = new JSONLDProcessor().normalize(inputJson);
         } else if (testType.contains("jld:ExpandTest")) {
-            result = new JSONLDProcessor().expand(inputJson);
+            result = JSONLD.expand(input, options);
         } else if (testType.contains("jld:CompactTest")) {
             InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
             Object contextJson = JSONUtils.fromInputStream(contextStream);
-            result = new JSONLDProcessor().compact(((Map<String, Object>) contextJson).get("@context"), inputJson);
+            result = JSONLD.compact(input, (Map<String, Object>) contextJson, options);
         } else if (testType.contains("jld:FrameTest")) {
             InputStream frameStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("frame"));
             Object frameJson = JSONUtils.fromInputStream(frameStream);
-            result = new JSONLDProcessor().frame(inputJson, frameJson);
-        } else if (testType.contains("jld:TriplesTest")) {
+            result = JSONLD.frame(input, frameJson, options);
+        } else if (testType.contains("jld:ToRDFTest")) {
             // TODO: many of the tests here fail simply because of an ordering issue
-
-            TestTripleCallback ttc = new TestTripleCallback();
-            new JSONLDProcessor().triples(inputJson, ttc);
-            List<String> results = ttc.getResults();
-            Collections.sort(results);
-            result = join(results, "\n");
-        } else if (testType.contains("jld:RDFTest")) {
-            // TODO: implement this
-            // sparql query is stored in String sparql
+        	NQuadTripleCallback nqtc = new NQuadTripleCallback();
+        	JSONLD.toRDF(input, options, nqtc);
+        	
+            result = nqtc.getResult();
+        } else if (testType.contains("jld:FromRDFTest")) {
+        	result = JSONLD.fromRDF(input, new NQuadJSONLDSerializer());
         } else if (testType.contains("jld:SimplifyTest")) {
-            result = new JSONLDProcessor().simplify((Map) inputJson);
+            result = new JSONLDProcessor().simplify((Map) input);
         } else {
             assertFalse("Unknown test type", true);
         }

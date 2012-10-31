@@ -23,12 +23,11 @@ public class SesameTripleCallbackTest {
 		String expectedString = "(http://nonexistent.com/abox#Document1823812, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, http://nonexistent.com/tbox#Document)";
 		Object input = JSONUtils.fromString(inputstring);
 		
-		JSONLDProcessor processor = new JSONLDProcessor();
 		SesameTripleCallback callback = new SesameTripleCallback();
 		Graph graph = null;
 
 		try {
-			processor.triples(input, callback);
+			JSONLD.toRDF(input, callback);
 			graph = callback.getStorageGraph();
 			
 			Iterator<Statement> statements = graph.iterator();

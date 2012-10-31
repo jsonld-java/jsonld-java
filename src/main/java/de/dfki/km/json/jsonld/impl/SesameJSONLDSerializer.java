@@ -11,6 +11,8 @@ import org.openrdf.model.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.km.json.jsonld.JSONLDProcessingError;
+
 public class SesameJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSerializer {
     private static final Logger LOG = LoggerFactory.getLogger(SesameJSONLDSerializer.class);
 
@@ -25,7 +27,8 @@ public class SesameJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSeriali
         Resource subject = nextStatement.getSubject();
         URI predicate = nextStatement.getPredicate();
         Value object = nextStatement.getObject();
-
+        String graph = nextStatement.getContext() == null ? null : nextStatement.getContext().stringValue();
+        
         if (object instanceof Literal) {
             Literal literal = (Literal) object;
             String value = literal.getLabel();
@@ -40,10 +43,17 @@ public class SesameJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSeriali
                 datatype = datatypeURI.stringValue();
             }
             
-            triple(subject.stringValue(), predicate.stringValue(), value, datatype, language);
+            triple(subject.stringValue(), predicate.stringValue(), value, datatype, language, graph);
         } else {
-            triple(subject.stringValue(), predicate.stringValue(), object.stringValue());
+            triple(subject.stringValue(), predicate.stringValue(), object.stringValue(), graph);
         }
     }
+
+	@Override
+	public void parse(Object input) throws JSONLDProcessingError {
+		if (input instanceof Statement) {
+			handleStatement((Statement)input);
+		}
+	}
 
 }

@@ -1,6 +1,6 @@
 package de.dfki.km.json.jsonld;
 
-public interface JSONLDTripleCallback {
+public abstract class JSONLDTripleCallback {
     /**
      * Construct a triple with three URIs.
      * 
@@ -10,9 +10,15 @@ public interface JSONLDTripleCallback {
      *            The Predicate URI
      * @param o
      *            The Object URI
+     * @param graph
+     * 			  The graph URI associated with this triple (null if none)
      * @return The generated triple, or null to force triple generation to stop
      */
-    void triple(String s, String p, String o);
+    void triple(String s, String p, String o) {
+    	triple(s, p, o, null);
+    }
+    
+    public abstract void triple(String s, String p, String o, String graph);
 
     /**
      * Constructs a triple with a Literal object, which may or may not contain a
@@ -28,7 +34,14 @@ public interface JSONLDTripleCallback {
      *            The literal datatype
      * @param language
      *            The literal language (NOTE: may be null if not specified!)
+     * @param graph
+     * 			  The graph URI associated with this triple (null if none)
      * @return The generated triple, or null to force triple generation to stop
      */
-    void triple(String s, String p, String value, String datatype, String language);
+    void triple(String s, String p, String value, String datatype, String language) {
+    	triple(s, p, value, datatype, language, null);
+    }
+    
+	public abstract void triple(String s, String p, String value, String datatype,
+			String language, String graph);
 }

@@ -9,7 +9,7 @@ import org.openrdf.model.impl.GraphImpl;
 
 import de.dfki.km.json.jsonld.JSONLDTripleCallback;
 
-public class SesameTripleCallback implements JSONLDTripleCallback {
+public class SesameTripleCallback extends JSONLDTripleCallback {
 
     private ValueFactory vf;
 
@@ -24,7 +24,7 @@ public class SesameTripleCallback implements JSONLDTripleCallback {
     }
 
     @Override
-    public void triple(String s, String p, String o) {
+    public void triple(String s, String p, String o, String graph) {
         if (s == null || p == null || o == null) {
             // TODO: i don't know what to do here!!!!
             return;
@@ -32,12 +32,18 @@ public class SesameTripleCallback implements JSONLDTripleCallback {
 
         // This method is always called with three URIs as subject predicate and
         // object
-        Statement result = vf.createStatement(vf.createURI(s), vf.createURI(p), vf.createURI(o));
-        storageGraph.add(result);
+        if(graph == null) {
+            Statement result = vf.createStatement(vf.createURI(s), vf.createURI(p), vf.createURI(o));
+            storageGraph.add(result);
+        } else {
+            Statement result = vf.createStatement(vf.createURI(s), vf.createURI(p), vf.createURI(o), vf.createURI(graph));
+            storageGraph.add(result);
+        }
+        
     }
 
     @Override
-    public void triple(String s, String p, String value, String datatype, String language) {
+    public void triple(String s, String p, String value, String datatype, String language, String graph) {
 
         if (s == null || p == null || value == null) {
             // TODO: i don't know what to do here!!!!
@@ -57,8 +63,13 @@ public class SesameTripleCallback implements JSONLDTripleCallback {
             object = vf.createLiteral(value);
         }
 
-        Statement result = vf.createStatement(subject, predicate, object);
-        storageGraph.add(result);
+        if(graph == null) {
+            Statement result = vf.createStatement(subject, predicate, object);
+            storageGraph.add(result);
+        } else {
+            Statement result = vf.createStatement(subject, predicate, object, vf.createURI(graph));
+            storageGraph.add(result);
+        }
     }
 
     /**

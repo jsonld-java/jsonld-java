@@ -9,7 +9,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 
 import de.dfki.km.json.jsonld.JSONLDTripleCallback;
 
-public class JenaTripleCallback implements JSONLDTripleCallback {
+public class JenaTripleCallback extends JSONLDTripleCallback {
 
     private Model jenaModel = ModelFactory.createDefaultModel();
 
@@ -21,7 +21,7 @@ public class JenaTripleCallback implements JSONLDTripleCallback {
         return jenaModel;
     }
 
-    public void triple(String s, String p, String o) {
+    public void triple(String s, String p, String o, String graph) {
         if (s == null || p == null || o == null) {
             // TODO: i don't know what to do here!!!!
             return;
@@ -46,7 +46,7 @@ public class JenaTripleCallback implements JSONLDTripleCallback {
     }
 
     @Override
-    public void triple(String s, String p, String value, String datatype, String language) {
+    public void triple(String s, String p, String value, String datatype, String language, String graph) {
         // TODO Auto-generated method stub
 
         Resource sR = jenaModel.getResource(s);

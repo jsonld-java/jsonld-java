@@ -172,8 +172,19 @@ public class JSONUtils {
                 rval = false;
             } else {
                 // TODO: should the order of things in the list matter?
+            	// I think not, but if it is decided so, then use this code instead
+            	// of the code below it
+            	/*
                 for (int i = 0; i < ((List<Object>) v1).size() && rval == true; i++) {
                     rval = equals(((List<Object>) v1).get(i), ((List<Object>) v2).get(i));
+                }
+                */
+            	for (int i = 0; i < ((List<Object>) v1).size() && rval == true; i++) {
+            		boolean found = false;
+            		for (int j = 0; j < ((List<Object>) v2).size() && found == false; j++) {
+            			found = equals(((List<Object>) v1).get(i), ((List<Object>) v2).get(j));
+            		}
+            		rval = found;
                 }
             }
         } else if (v1 instanceof Number && v2 instanceof Number) {

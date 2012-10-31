@@ -11,7 +11,7 @@ import org.apache.clerezza.rdf.core.impl.SimpleMGraph;
 import org.apache.clerezza.rdf.core.impl.TripleImpl;
 import org.apache.clerezza.rdf.core.impl.TypedLiteralImpl;
 
-public class ClerezzaTripleCallback implements JSONLDTripleCallback {
+public class ClerezzaTripleCallback extends JSONLDTripleCallback {
 
     private MGraph mGraph = new SimpleMGraph();
     private Map<String, BNode> bNodeMap = new HashMap<String, BNode>();
@@ -25,7 +25,8 @@ public class ClerezzaTripleCallback implements JSONLDTripleCallback {
         return mGraph;
     }
 
-    public void triple(String s, String p, String o) {
+    @Override
+    public void triple(String s, String p, String o, String graph) {
         if (s == null || p == null || o == null) {
             // TODO: i don't know what to do here!!!!
             return;
@@ -38,7 +39,7 @@ public class ClerezzaTripleCallback implements JSONLDTripleCallback {
     }
 
     @Override
-    public void triple(String s, String p, String value, String datatype, String language) {
+    public void triple(String s, String p, String value, String datatype, String language, String graph) {
         NonLiteral subject = getNonLiteral(s);
 		UriRef predicate = new UriRef(p);
 		Resource object;

@@ -62,10 +62,8 @@ Note that these currently fail due to the lack of an implementation of frame.
     // Read the file into an Object (The type of this object will be a List, Map, String, Boolean,
     // Number or null depending on the root object in the file).
     Object jsonObject = JSONUtils.fromInputStream(inputStream);
-    // Create a JSONLDProcessor
-    JSONLDProcessor processor = new JSONLDProcessor();
     // Call whichever JSONLD function you want! (e.g. normalize)
-    Object normalized = processor.normalize(jsonObject);
+    Object compact = JSONLD.compact(jsonObject);
     // Print out the result (or don't, it's your call!)
     System.out.println(JSONUtils.toString(normalized));
 
@@ -76,8 +74,8 @@ Note that these currently fail due to the lack of an implementation of frame.
     // Optionally add your Jena Model to the callback (a default Model will be created if you don't
     // run this).
     callback.setJenaModel(jenaModel);
-    // call the triples function of the processor
-    processor.triples(jsonObject, callback);
+    // call the toRDF function
+    JSONLD.toRDF(jsonObject, callback);
     // If you didn't use your own Jena Model, get the resulting one with:
     Model m = callback.getJenaModel();
 
@@ -88,8 +86,8 @@ Note that these currently fail due to the lack of an implementation of frame.
     // Optionally add your Sesame Graph to the callback (a default Graph will be created if you don't
     // run this).
     callback.setStorageGraph(storageGraph);
-    // call the triples function of the processor
-    processor.triples(jsonObject, callback);
+    // call the toRDF function
+    JSONLD.toRDF(jsonObject, callback);
     // If you didn't use your own Sesame graph, get the resulting one with:
     Graph output = callback.getStorageGraph();
 
@@ -97,31 +95,45 @@ Note that these currently fail due to the lack of an implementation of frame.
 
     // Create an instance of the Jena serializer
     JenaJSONLDSerializer serializer = new JenaJSONLDSerializer();
-    // import the Jena Model
-    serializer.importModel(model);
-    // grab the resulting JSON-LD map
-    Map<String,Object> jsonld = serializer.asObject();
+    // call the fromRDF function (passing it the Jena Model)
+    Object json = JSONLD.fromRDF(model, serializer);
 
 ### Serializing to JSON-LD from other sources
 
     // Create an instance of the serializer
-    JSONLDSerializer serializer = new JSONLDSerializer();
-    // Optionally Add and extra prefix->uri mappinds you want (e.g. the following line)
-    serializer.setPrefix("http://xmlns.com/foaf/0.1/", "foaf");
-    // for each triple you have where the object is a literal
-    // (if datatypeURI is null, a plain literal will be assumed and language may be null or an empty string)
-    serializer.triple(subjectURI, perdicateURI, value, datatypeURI, language);
-    // for each triple you have where the object is an URI
-    serializer.triple(subjectURI, predicateURI, objectURI);
-    // grab the resulting JSON-LD map
-    Map<String,Object> jsonld = serializer.asObject();
+    JSONLDSerializer serializer = new JSONLDSerializer() {
+        // implement the parse function
+        public void parse(Object input) throws JSONLDProcessingError {
+            ...
+            // for each triple you have where the object is a literal
+            // (if datatypeURI is null, a plain literal will be assumed and language may be null or an empty string)
+            triple(subjectURI, perdicateURI, value, datatypeURI, language);
+            // for each triple you have where the object is an URI
+            triple(subjectURI, predicateURI, objectURI);
+            // if the triple belongs to a specific graph, include the graphURI at the end of the triple function call
+            triple(subjectURI, perdicateURI, value, datatypeURI, language, graphURI);
+            // or
+            triple(subjectURI, predicateURI, objectURI, graphURI);
+       }
+       // if you need to do any post-processing of the resulting JSON-LD, override the finalize function
+       public Object finalize(Object json) {
+           ...
+           return newjson;
+       }
+   }
+
+See the [NQuad Serializer](https://github.com/tristan/jsonld-java/tree/master/src/main/java/de/dfki/km/json/jsonld/impl/NQuadJSONLDSerializer.java) for a specific example of a parse implementation
+
+### Processor options
+
+The Options specified by the [JSON-LD API Specification](http://json-ld.org/spec/latest/json-ld-api/#jsonldoptions) are accessible via the `JSONLDProcessor.Options` class, and each `JSONLD.*` function has an optional input to take an instance of this class.
 
 Non-Specification Extras
 ------------------------
 
-### Ignore Keywords
+### Ignore Keys
 
-The function `ignoreKeyword(String)` in the `JSONLDProcessor` allows you to specify any keys that should not be treated as JSON-LD, and thus not processed. Any keys specified to be ignored will still be present in resulting objects, but will be exactly the same as their original. The only exception is triples, which simply skips over the keys as it doesn't make sense to generate triples for objects that aren't RDF.
+The `JSONLDProcessor.Options' class has been extended with a `ignoreKey(String)` function. This function allows you to specify any keys that should not be treated as JSON-LD, and thus not processed. Any keys specified to be ignored will still be present in resulting objects, but will be exactly the same as their original. The only exception is toRDF, which simply skips over the keys as it doesn't make sense to generate triples for objects that aren't RDF.
 
 ### Simplify
 
@@ -148,11 +160,38 @@ This is a simple function which takes an input file in rdfxml or n3 and outputs 
 NOTES
 =====
 
+compact-0018 still fails (it doesn't pass in the javascript version either)
+fixing this requires fixing the term rank algorithm
 
 TODO
 ====
 
 *   Make sure Jena Implementation is correct (i.e. write some real tests)
 *   Tests for the serializations
-*   Implement frame.
+*   Implement normalization.
 *   As the code is almost a direct translation from the javascript and python implementation, there is probably a lot of optimization work to do.
+
+OPEN ISSUES
+===========
+
+### RDF-Graph normalization
+
+As the current [RDF Graph Normalization Specification](http://json-ld.org/spec/latest/rdf-graph-normalization/) is currently out of date and marked as "[Do Not Implement](http://json-ld.org/spec/latest/rdf-graph-normalization/#normalization)" and the javascript reference implementation is quite long, I've decided to skip it for the moment and wait for it to stabalize.
+
+### fromRDF and JSONLDSerializer API
+
+I've changed the Serialization API to more closely resemble the javascript reference impelementation and the fromRDF method listed in the [JSON-LD API Specification(http://json-ld.org/spec/latest/json-ld-api/#methods). I'm personally not happy with how it works from a Java perspective and would be interested to hear other peoples opinions and suggestions for improving it.
+
+### ignored Keys
+
+If an ignore key is included in a value object (i.e. an object containing a `@value` key), they will be ignored, but like any other key that is invalid in a value context it will be removed in the resulting object. I'm not yet sure if I should leave it like this or not (things get a bit complicated in compaction algorithms that can break down the value object into a plain string or integer).
+
+CHANGELOG
+=========
+
+### 30.10.2012
+
+* Brought the implementation up to date with the reference implementation (minus the normalization stuff)
+* Changed entry point for the functions to the static functions in the JSONLD class
+* Changed the JSONLDSerializer to an abstract class, requiring the implementation of a "parse" function. The JSONLDSerializer is now passed to the JSONLD.fromRDF function.
+* Added JSONLDProcessingError class to handle errors more efficiently

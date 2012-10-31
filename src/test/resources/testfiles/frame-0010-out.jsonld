@@ -4,9 +4,15 @@
     "dc:creator": {
       "@type": "@id"
     },
+    "foaf": "http://xmlns.com/foaf/0.1/",
     "ps": "http://purl.org/payswarm#"
   },
-  "@id": "http://example.com/asset",
-  "@type": "ps:Asset",
-  "dc:creator": null
+  "@graph": [{
+    "@id": "http://example.com/asset",
+    "@type": "ps:Asset",
+    "dc:creator": {
+      "@id": "_:t0",
+      "foaf:name": "John Doe"
+    }
+  }]
 }
