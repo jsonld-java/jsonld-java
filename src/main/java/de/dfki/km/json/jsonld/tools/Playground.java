@@ -8,6 +8,7 @@ import java.util.Map;
 import de.dfki.km.json.JSONUtils;
 import de.dfki.km.json.jsonld.JSONLD;
 import de.dfki.km.json.jsonld.JSONLDProcessor;
+import de.dfki.km.json.jsonld.JSONLDProcessor.Options;
 
 public class Playground {
 
@@ -25,7 +26,7 @@ public class Playground {
                 usage();
             } else {
 
-                JSONLDProcessor p = new JSONLDProcessor();
+                Options opts = new Options("");
                 Object inobj = null;
                 Object frobj = null;
                 String opt = null;
@@ -33,7 +34,7 @@ public class Playground {
                     if ("--ignorekeys".equals(args[i])) {
                         i++;
                         while (i < args.length && !validOption(args[i])) {
-                            p.ignoreKeyword(args[i++]);
+                            opts.ignoreKey(args[i++]);
                         }
                     } else if (validOption(args[i])) {
                         if (opt != null) {
@@ -84,9 +85,9 @@ public class Playground {
 
                 Object outobj = null;
                 if ("--expand".equals(opt)) {
-                    outobj = JSONLD.expand(inobj);
+                    outobj = JSONLD.expand(inobj, opts);
                 } else if ("--compact".equals(opt)) {
-                    outobj = JSONLD.compact(inobj, new HashMap<String, Object>());
+                    outobj = JSONLD.compact(inobj, new HashMap<String, Object>(), opts);
                 } else if ("--normalize".equals(opt)) {
                     //outobj = p.normalize(inobj);
                 } else if ("--frame".equals(opt)) {
@@ -95,10 +96,10 @@ public class Playground {
                         usage();
                         return;
                     } else {
-                        outobj = p.frame(inobj, frobj);
+                        outobj = JSONLD.frame(inobj, frobj, opts);
                     }
                 } else if ("--simplify".equals(opt)) {
-                    outobj = p.simplify((Map) inobj);
+                    outobj = JSONLD.simplify((Map) inobj, opts);
                 } else {
                     System.out.println("Error: invalid option \"" + opt + "\"");
                     usage();

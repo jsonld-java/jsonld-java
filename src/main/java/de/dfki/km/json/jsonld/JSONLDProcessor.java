@@ -43,36 +43,23 @@ public class JSONLDProcessor {
 	private static final String RDF_XML_LITERAL = RDF + "XMLLiteral";
 	private static final String RDF_OBJECT = RDF + "object";
 	
-    private Set<String> ignoredKeywords = new HashSet<String>();
-
-    /**
-     * Tells the processor to skip over the key specified by keyword any time it encounters it. Objects under this key will not be manipulated by any of the
-     * processor functions and no triples will be created using it.
-     * 
-     * @param keyword
-     *            The name of the key this processor should ignore.
-     */
-    public void ignoreKeyword(String keyword) {
-        ignoredKeywords.add(keyword);
-    }
-
     private Map<String, Object> edges;
     private Map<String, Object> subjects;
     private Map<String, Object> renamed;
     private Map<String, Object> serializations;
 
     public static class Options {
-        Options() {
+        public Options() {
             this.base = "";
             this.strict = true;
         }
 
-        Options(String base) {
+        public Options(String base) {
             this.base = base;
             this.strict = true;
         }
 
-        Options(String base, Boolean strict) {
+        public Options(String base, Boolean strict) {
             this.base = base;
             this.strict = strict;
         }
@@ -88,6 +75,26 @@ public class JSONLDProcessor {
 		public Boolean collate = null;
 		public Boolean useRdfType = null;
 		public Boolean useNativeTypes = null;
+		
+		private Set<String> ignoredKeys = new HashSet<String>();
+		
+		private Set<String> ignoredKeywords = new HashSet<String>();
+
+	    /**
+	     * Tells the processor to skip over the key specified by "key" any time it encounters it. Objects under this key will not be manipulated by any of the
+	     * processor functions and no triples will be created using it.
+	     * 
+	     * @param key
+	     *            The name of the key this processor should ignore.
+	     */
+		public Options ignoreKey(String key) {
+			ignoredKeys.add(key);
+			return this;
+		}
+		
+		public Boolean isIgnored(String key) {
+			return ignoredKeys.contains(key);
+		}
     }
 
     Options opts;
@@ -145,9 +152,11 @@ public class JSONLDProcessor {
                         put("@value", new ArrayList<String>());
                         put("@vocab", new ArrayList<String>());
                         // add ignored keywords
-                        for (String keyword : ignoredKeywords) {
+                        /*
+                        for (String key : ignoredKeywords) {
                             put(keyword, new ArrayList<String>());
                         }
+                        */
                     }
         		});
         	}
@@ -1226,6 +1235,12 @@ public class JSONLDProcessor {
             	// expand property
                 String prop = expandTerm(ctx, key, null, true, false);
 
+                // handle ignored keys
+                if (opts.isIgnored(key)) {
+                	JSONLDUtils.addValue(rval, key, elem.get(key), false);
+                	continue;
+                }
+                
                 // drop non-absolute IRI keys that aren't keywords
                 if (!JSONLDUtils.isAbsoluteIri(prop) && !JSONLDUtils.isKeyword(prop, ctx)) {
                     continue;
@@ -1504,6 +1519,12 @@ public class JSONLDProcessor {
             for (String key : elem.keySet()) {
                 Object value = elem.get(key);
                 
+                // handle ignored keys
+                if (opts.isIgnored(key)) {
+                	JSONLDUtils.addValue(rval, key, value, false);
+                	continue;
+                }
+                
                 // compact @id and @type(s)
                 if ("@id".equals(key) || "@type".equals(key)) {
                     if (value instanceof String) {
@@ -1632,7 +1653,7 @@ public class JSONLDProcessor {
      * @param property the parent property, initialized to null.
      * @throws JSONLDProcessingError 
      */
-    private static void frame(FramingContext state, Collection<String> subjects,
+    private void frame(FramingContext state, Collection<String> subjects,
 			Object frame, Object parent, String property) throws JSONLDProcessingError {
 		// validate the frame
     	validateFrame(state, frame);
@@ -1640,7 +1661,7 @@ public class JSONLDProcessor {
     	frame(state, subjects, (Map)((List)frame).get(0), parent, property);
     }
     
-    private static void frame(FramingContext state, Collection<String> subjects, 
+    private void frame(FramingContext state, Collection<String> subjects, 
     		Map<String,Object> frame, Object parent, String property) throws JSONLDProcessingError {
     	// filter out subjects that match the frame
     	Map<String,Object> matches = filterSubjects(state, subjects, frame);
@@ -1706,6 +1727,12 @@ public class JSONLDProcessor {
     			// iterate over subject properties
     			Map<String,Object> subject = (Map<String,Object>) matches.get(id);
     			for (String prop: subject.keySet()) {
+
+    				// handle ignored keys
+    				if (opts.isIgnored(prop)) {
+    					output.put((String) prop, JSONLDUtils.clone(subject.get(prop)));
+    					continue;
+    				}
     				
     				// copy keywords to output
     				if (prop instanceof String && JSONLDUtils.isKeyword((String)prop)) {
@@ -2045,7 +2072,7 @@ public class JSONLDProcessor {
      * @param name the name assigned to the current input if it is a bnode.
      * @param list the list to append to, null for none.
      */
-    private static void flatten(Object input, Map<String,Object> graphs, String graph, UniqueNamer namer, String name, List<Object> list) {
+    private void flatten(Object input, Map<String,Object> graphs, String graph, UniqueNamer namer, String name, List<Object> list) {
     	// recurse through array
     	if (input instanceof List) {
     		for (Object i: (List)input) {
@@ -2102,6 +2129,12 @@ public class JSONLDProcessor {
     			continue;
     		}
     		
+    		// copy ignored keys
+    		if (opts.isIgnored(prop)) {
+    			subject.put(prop, ((Map<String, Object>) input).get(prop));
+    			continue;
+    		}
+    		
     		// copy non-@type keywords
     		if (!"@type".equals(prop) && JSONLDUtils.isKeyword(prop)) {
     			subject.put(prop, ((Map<String, Object>) input).get(prop));
@@ -2154,11 +2187,11 @@ public class JSONLDProcessor {
     	}
     }
     
-    private static void flatten(Object input, Map<String,Object> graphs, String graph, UniqueNamer namer, String name) {
+    private void flatten(Object input, Map<String,Object> graphs, String graph, UniqueNamer namer, String name) {
     	flatten(input, graphs, graph, namer, name, null);
     }
     
-    private static void flatten(Object input, Map<String,Object> graphs, String graph, UniqueNamer namer) {
+    private void flatten(Object input, Map<String,Object> graphs, String graph, UniqueNamer namer) {
     	flatten(input, graphs, graph, namer, null, null);
     }
     
@@ -2619,7 +2652,7 @@ public class JSONLDProcessor {
 	 * @param callback(err, statement) called when a statement is output, with the
 	 *          last statement as null.
 	 */
-	private static void _toRDF(Object elem, UniqueNamer namer, Object subject, Object property, Object graph, CallbackWrapper callback) {
+	private void _toRDF(Object elem, UniqueNamer namer, Object subject, Object property, Object graph, CallbackWrapper callback) {
 		if (elem instanceof Map) {
 			Map<String,Object> element = (Map<String, Object>) elem;
 			if (element.containsKey("@value")) {
@@ -2729,6 +2762,12 @@ public class JSONLDProcessor {
 			List<String> props = new ArrayList<String>(element.keySet());
 			Collections.sort(props);
 			for (String prop: props) {
+				
+				// skip ignored keys
+				if (opts.isIgnored(prop)) {
+					continue;
+				}
+				
 				Object e = element.get(prop);
 				
 				// convert @type to rdf:type

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.dfki.km.json.JSONUtils;
+import de.dfki.km.json.jsonld.utils.Obj;
 
 /**
  * Base class for constructing the list of statements used by JSONLDProcessor.fromRDF to
@@ -66,8 +67,47 @@ public abstract class JSONLDSerializer {
 		return statements;
 	}
 
+    public List<Map<String,Object>> getStatements(String subjectUri, String propertyUri, String objectUri) {
+		List<Map<String,Object>> rval = new ArrayList<Map<String,Object>>();
+		for (Map<String,Object> statement: getStatements()) {
+			if (subjectUri != null) {
+				if (!subjectUri.equals(Obj.get(statement, "subject", "nominalValue"))) {
+					continue;
+				}
+			}
+			if (propertyUri != null) {
+				if (!propertyUri.equals(Obj.get(statement, "property", "nominalValue"))) {
+					continue;
+				}
+			}
+			if (objectUri != null) {
+				if (!objectUri.equals(Obj.get(statement, "object", "nominalValue"))) {
+					continue;
+				}
+			}
+			
+			rval.add(statement);
+		}
+		return rval;
+	}
     
+    /**
+     * take input and generate a list of statements from that input
+     * 
+     * @param input
+     * @throws JSONLDProcessingError
+     */
     public abstract void parse(Object input) throws JSONLDProcessingError;
+
+    /**
+     * used by fromRDF to apply any domain specific results to the resulting JSON-LD
+     * 
+     * @param rval
+     * @return
+     */
+    public Object finalize(Object rval) {
+		return rval;
+	}
     
 	protected void triple(String s, String p, String o, String g) {
     	Map<String,Object> statement = new HashMap<String, Object>();
@@ -185,6 +225,4 @@ public abstract class JSONLDSerializer {
     protected void triple(String s, String p, String value, String datatype, String language) {
         triple(s, p, value, datatype, language, null);
     }
-    
-    
 }

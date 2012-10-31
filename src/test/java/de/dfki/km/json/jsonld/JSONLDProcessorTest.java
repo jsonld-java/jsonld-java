@@ -95,7 +95,7 @@ public class JSONLDProcessorTest {
         this.test = test;
     }
 
-    private static String join(Collection<String> list, String delim) {
+    public static String join(Collection<String> list, String delim) {
         StringBuilder builder = new StringBuilder();
         Iterator<String> iter = list.iterator();
         while (iter.hasNext()) {

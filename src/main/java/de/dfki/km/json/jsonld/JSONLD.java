@@ -212,6 +212,10 @@ public class JSONLD {
         return compacted;
     }
     
+    public static Object frame(Object input, Object frame) throws JSONLDProcessingError {
+    	return frame(input, frame, new Options(""));
+    }
+    
     /**
      * Performs RDF normalization on the given JSON-LD input. The output is
      * a sorted array of RDF statements unless the 'format' option is used.
@@ -279,10 +283,17 @@ public class JSONLD {
     		opts.useNativeTypes = true;
     	}
     	serializer.parse(input);
-    	return new JSONLDProcessor(opts).fromRDF(serializer.getStatements());
+    	Object rval = new JSONLDProcessor(opts).fromRDF(serializer.getStatements());
+    	rval = serializer.finalize(rval);
+    	return rval;
     }
     
     public static Object fromRDF(Object input, JSONLDSerializer serializer) throws JSONLDProcessingError {
     	return fromRDF(input, new Options(""), serializer);
     }
+
+	public static Object simplify(Map inobj, Options opts) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
