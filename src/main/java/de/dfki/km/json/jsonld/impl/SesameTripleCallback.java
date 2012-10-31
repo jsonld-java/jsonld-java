@@ -32,8 +32,14 @@ public class SesameTripleCallback extends JSONLDTripleCallback {
 
         // This method is always called with three URIs as subject predicate and
         // object
-        Statement result = vf.createStatement(vf.createURI(s), vf.createURI(p), vf.createURI(o));
-        storageGraph.add(result);
+        if(graph == null) {
+            Statement result = vf.createStatement(vf.createURI(s), vf.createURI(p), vf.createURI(o));
+            storageGraph.add(result);
+        } else {
+            Statement result = vf.createStatement(vf.createURI(s), vf.createURI(p), vf.createURI(o), vf.createURI(graph));
+            storageGraph.add(result);
+        }
+        
     }
 
     @Override
@@ -57,8 +63,13 @@ public class SesameTripleCallback extends JSONLDTripleCallback {
             object = vf.createLiteral(value);
         }
 
-        Statement result = vf.createStatement(subject, predicate, object);
-        storageGraph.add(result);
+        if(graph == null) {
+            Statement result = vf.createStatement(subject, predicate, object);
+            storageGraph.add(result);
+        } else {
+            Statement result = vf.createStatement(subject, predicate, object, vf.createURI(graph));
+            storageGraph.add(result);
+        }
     }
 
     /**
