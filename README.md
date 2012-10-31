@@ -180,7 +180,7 @@ As the current [RDF Graph Normalization Specification](http://json-ld.org/spec/l
 
 ### fromRDF and JSONLDSerializer API
 
-I've changed the Serialization API to more closely resemble the javascript reference impelementation and the fromRDF method listed in the [JSON-LD API Specification(http://json-ld.org/spec/latest/json-ld-api/#methods). I'm personally not happy with how it works from a Java perspective and would be interested to hear other peoples opinions and suggestions for improving it.
+I've changed the Serialization API to more closely resemble the javascript reference impelementation and the fromRDF method listed in the [JSON-LD API Specification](http://json-ld.org/spec/latest/json-ld-api/#methods). I'm personally not happy with how it works from a Java perspective and would be interested to hear other peoples opinions and suggestions for improving it ([a ticket for discussion here](https://github.com/tristan/jsonld-java/issues/28)).
 
 ### ignored Keys
 
