@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.km.json.JSONUtils;
 import de.dfki.km.json.jsonld.impl.NQuadTripleCallback;
 import de.dfki.km.json.jsonld.utils.Obj;
 
@@ -3072,24 +3073,47 @@ public class JSONLDProcessor {
      * @param ctx the context to add the simplified key too
      * @param isid whether to set the type to @id
      */
-    private static void processKeyVal(String key, Map<String, Object> ctx, Boolean isid) {
+    private static void processKeyVal(Map<String, Object> ctx, String key, Object val) {
         int idx = key.lastIndexOf('#');
         if (idx < 0) {
             idx = key.lastIndexOf('/');
         }
         String skey = key.substring(idx + 1);
         Object keyval = key;
-        if (isid) {
-            Map tmp = new HashMap();
-            tmp.put("@type", "@id");
-            tmp.put("@id", key);
-            keyval = tmp;
-        }
+        Map entry = new HashMap();
+        entry.put("@id", keyval);
+        Object v = val;
+    	while (true) {
+    		if (v instanceof List && ((List)v).size() > 0) {
+    			// use the first entry as a reference
+    			v = ((List)v).get(0);
+    			continue;
+    		}
+    		if (v instanceof Map && ((Map)v).containsKey("@list")) {
+    			v = ((Map)v).get("@list");
+    			entry.put("@container", "@list");
+    			continue;
+    		}
+    		if (v instanceof Map && ((Map)v).containsKey("@set")) {
+    			v = ((Map)v).get("@set");
+    			entry.put("@container", "@set");
+    			continue;
+    		}
+    		break;
+    	}
+    	if (v instanceof Map && ((Map) v).containsKey("@id")) {
+    		entry.put("@type", "@id");
+    	}
+    	if (entry.size() == 1) {
+    		keyval = entry.get("@id");
+    	} else {
+    		keyval = entry;
+    	}
         while (true) {
             // check if the key is already in the frame ctx
             if (ctx.containsKey(skey)) {
                 // if so, check if the values are the same
-                if (ctx.get(skey).equals(keyval)) {
+                if (JSONUtils.equals(ctx.get(skey), keyval)) {
                     // if they are, skip adding this
                     break;
                 }
@@ -3115,10 +3139,11 @@ public class JSONLDProcessor {
             }
         } else if (input instanceof Map) {
             Map<String, Object> o = (Map<String, Object>) input;
+            Map<String, Object> localCtx = (Map<String, Object>) o.remove("@context");
             for (String key : o.keySet()) {
                 Object val = o.get(key);
                 if (key.matches("^https?://.+$")) {
-                    processKeyVal(key, ctx, (val instanceof Map) && ((Map) val).containsKey("@id"));
+                	processKeyVal(ctx, key, val);
                 }
                 if ("@type".equals(key)) {
                     if (!(val instanceof List)) {
@@ -3128,7 +3153,9 @@ public class JSONLDProcessor {
                     }
                     for (Object t : (List<Object>) val) {
                         if (t instanceof String) {
-                            processKeyVal((String) t, ctx, true);
+                            processKeyVal(ctx, (String) t, new HashMap<String,Object>() {{
+                            	put("@id", "");
+                            }});
                         } else {
                             throw new RuntimeException("TODO: don't yet know how to handle non-string types in @type");
                         }
@@ -3150,17 +3177,18 @@ public class JSONLDProcessor {
      * @return the simplified version of input
      * @throws JSONLDProcessingError 
      */
-    public Object simplify(Map input) throws JSONLDProcessingError {
+    public Object simplify(Object input) throws JSONLDProcessingError {
 
         Object expanded = JSONLD.expand(input);
-        Map<String, Object> framectx = new HashMap<String, Object>();
-        if (input.containsKey("@context")) {
-            framectx.putAll((Map<? extends String, ? extends Object>) input.get("@context"));
-        }
+        Map<String, Object> ctx = new HashMap<String,Object>();
+        
+        generateSimplifyContext(expanded, ctx);
 
-        generateSimplifyContext(expanded, framectx);
-
-        return JSONLD.compact(expanded, framectx);
+        Map<String,Object> tmp = new HashMap<String, Object>();
+        tmp.put("@context", ctx);
+        Options opts = new Options("");
+        opts.optimize = true;
+        return JSONLD.compact(input, tmp, opts);
     }
     
     // ALL CODE BELOW THIS IS UNUSED

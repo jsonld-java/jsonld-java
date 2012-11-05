@@ -5,7 +5,10 @@
             "@type" : "@id"
         },
         "equivalentClass" : "http://www.w3.org/2002/07/owl#equivalentClass",
-        "withRestrictions" : "http://www.w3.org/2002/07/owl#withRestrictions",
+        "withRestrictions" :  {
+            "@container" : "@list",
+            "@id" : "http://www.w3.org/2002/07/owl#withRestrictions"
+        },
         "label" : "http://www.w3.org/2000/01/rdf-schema#label",
         "subClassOf" : {
             "@id" : "http://www.w3.org/2000/01/rdf-schema#subClassOf",
@@ -23,16 +26,14 @@
     },
     "equivalentClass" : {
         "onDatatype" : "http://www.w3.org/2001/XMLSchema#string",
-        "withRestrictions" : {
-            "@list" : [
-                {
-                    "maxLength" : {
-                        "@value" : "1024",
-                        "@type" : "nonNegativeInteger"
-                    }
+        "withRestrictions" : [
+            {
+                "maxLength" : {
+                    "@value" : "1024",
+                    "@type" : "nonNegativeInteger"
                 }
-            ]
-        },
+            }
+        ],
         "@type" : "Datatype"
     },
     "@id" : "http://qudt.org/schema/qudt#string1024",

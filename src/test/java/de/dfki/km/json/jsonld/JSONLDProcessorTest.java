@@ -68,8 +68,8 @@ public class JSONLDProcessorTest {
                 if (// test.get("input").equals("normalize-0044-in.jsonld") && (
                 testType.contains("jld:ExpandTest") || testType.contains("jld:CompactTest") //|| testType.contains("jld:NormalizeTest")
                 || testType.contains("jld:FrameTest")// || testType.contains("jld:TriplesTest")
-                //|| testType.contains("jld:SimplifyTest")
-                 || testType.contains("jld:ToRDFTest") || testType.contains("jld:FromRDFTest")
+                || testType.contains("jld:SimplifyTest")
+                || testType.contains("jld:ToRDFTest") || testType.contains("jld:FromRDFTest")
                 ) {
                     System.out.println("Adding test: " + test.get("name"));
                     rdata.add(new Object[] { manifest.get("name"), test });
@@ -199,7 +199,7 @@ public class JSONLDProcessorTest {
         } else if (testType.contains("jld:FromRDFTest")) {
         	result = JSONLD.fromRDF(input, new NQuadJSONLDSerializer());
         } else if (testType.contains("jld:SimplifyTest")) {
-            result = new JSONLDProcessor().simplify((Map) input);
+        	result = JSONLD.simplify(input, options);
         } else {
             assertFalse("Unknown test type", true);
         }
@@ -209,6 +209,7 @@ public class JSONLDProcessorTest {
             testpassed = JSONUtils.equals(expect, result);
             if (testpassed == false) {
                 System.out.println("failed test: " + test.get("input"));
+                jsonDiff("/", expect, result);
                 System.out.println("{\"expected\": " + JSONUtils.toString(expect) + "\n,\"result\": " + JSONUtils.toString(result) + "}");
             }
         } catch (Exception e) {
@@ -217,4 +218,47 @@ public class JSONLDProcessorTest {
         assertTrue("\nFailed test: " + this.group + " " + this.test.get("name") + " (" + test.get("input") + "," + test.get("expect") + ")\n" + "expected: "
                 + JSONUtils.toString(expect) + "\nresult: " + JSONUtils.toString(result), testpassed);
     }
+
+	private void jsonDiff(String parent, Object expect, Object result) {
+		if (expect instanceof Map && result instanceof Map) {
+			Map<String,Object> e = (Map<String,Object>)expect;
+			Map<String,Object> r = (Map<String,Object>)JSONLDUtils.clone(result);
+			for (String k: e.keySet()) {
+				if (r.containsKey(k)){
+					jsonDiff(parent + "/" + k, e.get(k), r.remove(k));
+				} else {
+					System.out.println(parent + " result missing key: " + k);
+				}
+			}
+			for (String k: r.keySet()) {
+				System.out.println(parent + " result has extra key: " + k);
+			}
+		}
+		// List diffs are hard if we aren't strict with array ordering!
+		else if (expect instanceof List && result instanceof List) {
+			List<Object> e = (List<Object>)expect;
+			List<Object> r = (List<Object>)JSONLDUtils.clone(result);
+			if (e.size() != r.size()) {
+				System.out.println(parent + " results are not the same size");
+			}
+			int i = 0;
+			for (Object o: e) {
+				int j = r.indexOf(o);
+				if (j < 0) {
+					System.out.println(parent + " result missing value at index: " + i);
+				} else {
+					r.remove(j);
+				}
+				i++;
+			}
+			for (Object o: r) {
+				System.out.println(parent + " result has extra items");
+			}
+		}
+		else {
+			if (!expect.equals(result)) {
+				System.out.println(parent + " results are not equal: \"" + expect + "\" != \"" + result + "\"");
+			}
+		}
+	}
 }

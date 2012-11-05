@@ -326,8 +326,15 @@ public class JSONLD {
     	return fromRDF(input, new Options(""), serializer);
     }
 
-	public static Object simplify(Map inobj, Options opts) {
+	public static Object simplify(Object input, Options opts) throws JSONLDProcessingError {
 		// TODO Auto-generated method stub
-		return null;
+		if (opts.base == null) {
+    		opts.base = "";
+    	}
+		return new JSONLDProcessor(opts).simplify(input);
+	}
+	
+	public static Object simplify(Object input) throws JSONLDProcessingError {
+		return simplify(input, new Options(""));
 	}
 }
