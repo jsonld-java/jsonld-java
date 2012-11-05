@@ -25,7 +25,7 @@ public class JSONLDProcessingError extends Exception {
 	}
 
 	public enum Error {
-		SYNTAX_ERROR, PARSE_ERROR, RDF_ERROR
+		SYNTAX_ERROR, PARSE_ERROR, RDF_ERROR, CONTEXT_URL_ERROR, INVALID_URL, COMPACT_ERROR
 	}
 
 	public JSONLDProcessingError setType(Error error) {

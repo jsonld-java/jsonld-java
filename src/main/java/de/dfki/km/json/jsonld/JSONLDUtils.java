@@ -1,6 +1,10 @@
 package de.dfki.km.json.jsonld;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -8,10 +12,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+
+import org.codehaus.jackson.JsonParseException;
+
+import de.dfki.km.json.JSONUtils;
 
 public class JSONLDUtils {
 
-    /**
+    private static final int MAX_CONTEXT_URLS = 10;
+
+	/**
      * Returns whether or not the given value is a keyword (or a keyword alias).
      *
      * @param v the value to check.
@@ -270,7 +281,165 @@ public class JSONLDUtils {
     	return (v instanceof Map && ((Map<String, Object>) v).size() == 1 && ((Map<String, Object>) v).containsKey("@id"));
     }
     
-    // END OF NEW CODE
+    /**
+     * Resolves external @context URLs using the given URL resolver. Each
+     * instance of @context in the input that refers to a URL will be replaced
+     * with the JSON @context found at that URL.
+     *
+     * @param input the JSON-LD input with possible contexts.
+     * @param resolver(url, callback(err, jsonCtx)) the URL resolver to use.
+     * @param callback(err, input) called once the operation completes.
+     * @throws JSONLDProcessingError 
+     */
+    public static void resolveContextUrls(Object input) throws JSONLDProcessingError {
+    	resolve(input, new HashMap<String, Object>());
+	}
+    
+    private static void resolve(Object input, Map<String, Object> cycles) throws JSONLDProcessingError {
+    	Pattern regex = Pattern.compile("(http|https)://(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(/|/([\\w#!:.?+=&%@!\\-/]))?");
+    	
+    	if (cycles.size() > MAX_CONTEXT_URLS) {
+    		throw new JSONLDProcessingError("Maximum number of @context URLs exceeded.")
+    			.setType(JSONLDProcessingError.Error.CONTEXT_URL_ERROR)
+    			.setDetail("max", MAX_CONTEXT_URLS);
+    	}
+    	
+    	// for tracking the URLs to resolve
+    	Map<String,Object> urls = new HashMap<String, Object>();
+    	
+    	// find all URLs in the given input
+    	if (!findContextUrls(input, urls, false)) {
+    		// finished
+    		findContextUrls(input, urls, true);
+    	}
+    	
+    	// queue all unresolved URLs
+    	List<String> queue = new ArrayList<String>();
+    	for (String url: urls.keySet()) {
+    		if (Boolean.FALSE.equals((Boolean)urls.get(url))) {
+    			// validate URL
+    			if (!regex.matcher(url).matches()) {
+    				throw new JSONLDProcessingError("Malformed URL.")
+    					.setType(JSONLDProcessingError.Error.INVALID_URL)
+    					.setDetail("url", url);
+    			}
+    			queue.add(url);
+    		}
+    	}
+    	
+    	// resolve URLs in queue
+    	int count = queue.size();
+    	for (String url: queue) {
+    		// check for context URL cycle
+    		if (cycles.containsKey(url)) {
+    			throw new JSONLDProcessingError("Cyclical @context URLs detected.")
+    				.setType(JSONLDProcessingError.Error.CONTEXT_URL_ERROR)
+    				.setDetail("url", url);
+    		}
+    		Map<String, Object> _cycles = (Map<String, Object>) clone(cycles);
+    		_cycles.put(url, Boolean.TRUE);
+    		
+    		try {
+				Map<String,Object> ctx = (Map<String,Object>)JSONUtils.fromString((String)new URL(url).getContent());
+				if (!ctx.containsKey("@context")) {
+					ctx = new HashMap<String, Object>();
+					ctx.put("@context", new HashMap<String, Object>());
+				}
+				resolve(ctx, _cycles);
+				urls.put(url, ctx.get("@context"));
+				count -= 1;
+				if (count == 0) {
+					findContextUrls(input, urls, true);
+				}
+			} catch (JsonParseException e) {
+				throw new JSONLDProcessingError("URL does not resolve to a valid JSON-LD object.")
+					.setType(JSONLDProcessingError.Error.INVALID_URL)
+					.setDetail("url", url);
+			} catch (MalformedURLException e) {
+				throw new JSONLDProcessingError("Malformed URL.")
+					.setType(JSONLDProcessingError.Error.INVALID_URL)
+					.setDetail("url", url);
+			} catch (IOException e) {
+				throw new JSONLDProcessingError("Unable to open URL.")
+					.setType(JSONLDProcessingError.Error.INVALID_URL)
+					.setDetail("url", url);
+			}
+    	}
+		
+	}
+
+	/**
+     * Finds all @context URLs in the given JSON-LD input.
+     *
+     * @param input the JSON-LD input.
+     * @param urls a map of URLs (url => false/@contexts).
+     * @param replace true to replace the URLs in the given input with the
+     *           @contexts from the urls map, false not to.
+     *
+     * @return true if new URLs to resolve were found, false if not.
+     */
+    private static boolean findContextUrls(Object input,
+			Map<String, Object> urls, Boolean replace) {
+		int count = urls.size();
+		if (input instanceof List) {
+			for (Object i: (List)input) {
+				findContextUrls(i, urls, replace);
+			}
+			return count < urls.size();
+		} else if (input instanceof Map) {
+			for (String key: ((Map<String,Object>)input).keySet()) {
+				if (!"@context".equals(key)) {
+					findContextUrls(((Map) input).get(key), urls, replace);
+					continue;
+				}
+				
+				// get @context
+				Object ctx = ((Map) input).get(key);
+				
+				// array @context
+				if (ctx instanceof List) {
+					int length = ((List) ctx).size();
+					for (int i = 0; i < length; i++) {
+						Object _ctx = ((List) ctx).get(i);
+						if (_ctx instanceof String) {
+							// replace w/@context if requested
+							if (replace) {
+								_ctx = urls.get(_ctx);
+								if (_ctx instanceof List) {
+									// add flattened context
+									((List)ctx).remove(i);
+									((List)ctx).addAll((Collection) _ctx);
+									i += ((List) _ctx).size();
+									length += ((List) _ctx).size();
+								} else {
+									((List)ctx).set(i, _ctx);
+								}
+							}
+							// @context URL found
+							else if (!urls.containsKey(_ctx)) {
+								urls.put((String)_ctx, Boolean.FALSE);
+							}
+						}
+					}
+				}
+				// string @context
+				else if (ctx instanceof String) {
+					// replace w/@context if requested
+					if (replace) {
+						((Map) input).put(key, urls.get((String)ctx));
+					}
+					// @context URL found
+					else if (!urls.containsKey(ctx)) {
+						urls.put((String)ctx, Boolean.FALSE);
+					}
+				}
+			}
+			return (count < urls.size());
+		}
+		return false;
+	}
+
+	// END OF NEW CODE
 
     public static Object clone(Object value) {// throws
     	// CloneNotSupportedException {

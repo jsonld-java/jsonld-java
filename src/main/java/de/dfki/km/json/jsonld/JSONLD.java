@@ -26,8 +26,12 @@ public class JSONLD {
      * @throws JSONLDProcessingError 
      */
     public static Object compact(Object input, Object ctx, Options opts) throws JSONLDProcessingError {
+    	// nothing to compact
         if (input == null) {
             return null;
+        }
+        if (opts.base == null) {
+        	opts.base = "";
         }
         if (opts.strict == null) {
             opts.strict = true;
@@ -44,16 +48,20 @@ public class JSONLD {
         Object expanded;
         try {
             expanded = p.expand(p.new ActiveContext(), null, input);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Count not expand input before compaction", e);
+        } catch (JSONLDProcessingError e) {
+        	throw new JSONLDProcessingError("Could not expand input before compaction.")
+        		.setType(JSONLDProcessingError.Error.COMPACT_ERROR)
+        		.setDetail("cause", e);
         }
 
         // process context
         ActiveContext activeCtx = p.new ActiveContext();
         try {
-            activeCtx = JSONLDProcessor.processContext(activeCtx, ctx, opts);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Could not process context before compaction.", e);
+            activeCtx = processContext(activeCtx, ctx, opts);
+        } catch (JSONLDProcessingError e) {
+            throw new JSONLDProcessingError("Could not process context before compaction.")
+            	.setType(JSONLDProcessingError.Error.COMPACT_ERROR)
+        		.setDetail("cause", e);
         }
 
         if (opts.optimize) {
@@ -134,13 +142,24 @@ public class JSONLD {
      * @throws JSONLDProcessingError 
      */
     public static Object expand(Object input, Options opts) throws JSONLDProcessingError {
+    	if (opts.base == null) {
+    		opts.base = "";
+    	}
+    	
+    	// resolve all @context URLs in the input
+    	input = JSONLDUtils.clone(input);
+    	JSONLDUtils.resolveContextUrls(input);
+    	
+    	// do expansion
     	JSONLDProcessor p = new JSONLDProcessor(opts);
         Object expanded = p.expand(p.new ActiveContext(), null, input);
 
+        // optimize away @graph with no other properties
         if (expanded instanceof Map && ((Map) expanded).containsKey("@graph") && ((Map) expanded).size() == 1) {
             expanded = ((Map<String, Object>) expanded).get("@graph");
         }
 
+        // normalize to an array
         if (!(expanded instanceof List)) {
             List<Object> tmp = new ArrayList<Object>();
             tmp.add(expanded);
@@ -214,6 +233,21 @@ public class JSONLD {
     
     public static Object frame(Object input, Object frame) throws JSONLDProcessingError {
     	return frame(input, frame, new Options(""));
+    }
+    
+    private static ActiveContext processContext(ActiveContext activeCtx, Object localCtx, Options opts) throws JSONLDProcessingError {
+    	JSONLDProcessor p = new JSONLDProcessor(opts);
+    	if (localCtx == null) {
+    		return p.new ActiveContext();
+    	}
+    	localCtx = JSONLDUtils.clone(localCtx);
+    	if (localCtx instanceof Map && !((Map)localCtx).containsKey("@context")) {
+    		Object tmp = localCtx;
+    		localCtx = new HashMap<String, Object>();
+    		((HashMap<String, Object>) localCtx).put("@context", tmp);
+    	}
+    	JSONLDUtils.resolveContextUrls(localCtx);
+    	return p.processContext(activeCtx, localCtx);
     }
     
     /**
