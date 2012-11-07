@@ -71,6 +71,10 @@ public class JenaJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSerialize
 
 	@Override
 	public void parse(Object input) throws JSONLDProcessingError {
+		// allow null input so we can use importModel and importResource before calling fromRDF
+		if (input == null) {
+			return;
+		}
 		if (input instanceof Resource) {
 			importResource((Resource) input);
 		} else if (input instanceof Model) {

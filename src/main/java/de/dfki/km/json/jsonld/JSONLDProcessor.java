@@ -78,8 +78,6 @@ public class JSONLDProcessor {
 		public Boolean useNativeTypes = null;
 		
 		private Set<String> ignoredKeys = new HashSet<String>();
-		
-		private Set<String> ignoredKeywords = new HashSet<String>();
 
 	    /**
 	     * Tells the processor to skip over the key specified by "key" any time it encounters it. Objects under this key will not be manipulated by any of the
@@ -95,6 +93,24 @@ public class JSONLDProcessor {
 		
 		public Boolean isIgnored(String key) {
 			return ignoredKeys.contains(key);
+		}
+		
+		public Options clone() {
+			Options rval = new Options(base);
+			rval.strict = strict;
+			rval.graph = graph;
+			rval.optimize = optimize;
+			rval.optimizeCtx = (Map<String, Object>) JSONLDUtils.clone(optimizeCtx);
+			rval.embed = embed;
+			rval.explicit = explicit;
+			rval.omitDefault = omitDefault;
+			rval.collate = collate;
+			rval.useNativeTypes = useNativeTypes;
+			rval.useRdfType = useRdfType;
+			for (String key: ignoredKeys) {
+				rval.ignoreKey(key);
+			}
+			return rval;
 		}
     }
 
@@ -3179,16 +3195,18 @@ public class JSONLDProcessor {
      */
     public Object simplify(Object input) throws JSONLDProcessingError {
 
-        Object expanded = JSONLD.expand(input);
+        Object expanded = JSONLD.expand(input, opts);
         Map<String, Object> ctx = new HashMap<String,Object>();
         
         generateSimplifyContext(expanded, ctx);
 
         Map<String,Object> tmp = new HashMap<String, Object>();
         tmp.put("@context", ctx);
-        Options opts = new Options("");
-        opts.optimize = true;
-        return JSONLD.compact(input, tmp, opts);
+        
+        // add optimize flag to opts (clone the opts so we don't change the flag for the base processor)
+        Options opts1 = opts.clone();
+        opts1.optimize = true;
+        return JSONLD.compact(input, tmp, opts1);
     }
     
     // ALL CODE BELOW THIS IS UNUSED
