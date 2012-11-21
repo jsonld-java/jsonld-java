@@ -58,6 +58,9 @@ public class JenaJSONLDSerializer extends de.dfki.km.json.jsonld.JSONLDSerialize
                 String value = literal.getLexicalForm();
                 String datatypeURI = literal.getDatatypeURI();
                 String language = literal.getLanguage();
+                if ("".equals(language)) {
+                	language = null;
+                }
 
                 triple(subj, predicate.getURI(), value, datatypeURI, language, null);
             } else {
