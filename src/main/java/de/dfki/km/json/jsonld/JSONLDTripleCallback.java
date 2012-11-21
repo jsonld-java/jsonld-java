@@ -44,4 +44,14 @@ public abstract class JSONLDTripleCallback {
     
 	public abstract void triple(String s, String p, String value, String datatype,
 			String language, String graph);
+
+	/**
+	 * Implement this to trigger special processing for ignored keywords
+	 * 
+	 * @param parent the parent object which contains the ignored keyword
+	 * @param key
+	 * @param value
+	 */
+	public void processIgnored(Object parent, String parentId, String key, Object value) {
+	}
 }

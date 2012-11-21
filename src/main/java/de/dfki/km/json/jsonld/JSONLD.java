@@ -47,7 +47,8 @@ public class JSONLD {
         // expand input then do compaction
         Object expanded;
         try {
-            expanded = p.expand(p.new ActiveContext(), null, input);
+            
+            expanded = p.expand(p.new ActiveContext(), p.new UniqueNamer("_:t"), null, input);
         } catch (JSONLDProcessingError e) {
         	throw new JSONLDProcessingError("Could not expand input before compaction.")
         		.setType(JSONLDProcessingError.Error.COMPACT_ERROR)
@@ -152,7 +153,8 @@ public class JSONLD {
     	
     	// do expansion
     	JSONLDProcessor p = new JSONLDProcessor(opts);
-        Object expanded = p.expand(p.new ActiveContext(), null, input);
+    	UniqueNamer namer = p.new UniqueNamer("_:t");
+        Object expanded = p.expand(p.new ActiveContext(), namer, null, input);
 
         // optimize away @graph with no other properties
         if (expanded instanceof Map && ((Map) expanded).containsKey("@graph") && ((Map) expanded).size() == 1) {
@@ -227,7 +229,7 @@ public class JSONLD {
     	
     	Map<String,Object> compacted = (Map<String, Object>) JSONLD.compact(framed, fctx, opts);
     	String graph = JSONLDProcessor.compactIri(ctx, "@graph");
-    	compacted.put(graph, JSONLDProcessor.removePreserve(ctx, compacted.get(graph)));
+    	compacted.put(graph, p.removePreserve(ctx, compacted.get(graph)));
         return compacted;
     }
     

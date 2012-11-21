@@ -78,6 +78,10 @@ public class JSONLDProcessor {
 		public Boolean useNativeTypes = null;
 		
 		private Set<String> ignoredKeys = new HashSet<String>();
+		
+		// custom option to give to expand and compact which will generate @id's for elements that don't
+		// have a specific @id
+		public Boolean addBlankNodeIDs = false;
 
 	    /**
 	     * Tells the processor to skip over the key specified by "key" any time it encounters it. Objects under this key will not be manipulated by any of the
@@ -107,6 +111,7 @@ public class JSONLDProcessor {
 			rval.collate = collate;
 			rval.useNativeTypes = useNativeTypes;
 			rval.useRdfType = useRdfType;
+			rval.addBlankNodeIDs = addBlankNodeIDs;
 			for (String key: ignoredKeys) {
 				rval.ignoreKey(key);
 			}
@@ -1188,7 +1193,7 @@ public class JSONLDProcessor {
      * @return the expanded value.
      * @throws JSONLDProcessingError 
      */
-    public Object expand(ActiveContext ctx, String property, Object element) throws JSONLDProcessingError {
+    public Object expand(ActiveContext ctx, UniqueNamer namer, String property, Object element) throws JSONLDProcessingError {
     	// NOTE: undefined is not really null, and since there's no equivalent in Java we can't test this.
     	// infact, it shouldn't actually be possible.
     	//if (element == null) {
@@ -1201,7 +1206,7 @@ public class JSONLDProcessor {
             List<Object> rval = new ArrayList<Object>();
             for (Object i : (List<Object>) element) {
             	// expand element
-                Object e = expand(ctx, property, i);
+                Object e = expand(ctx, namer, property, i);
                 if (e instanceof List && "@list".equals(property)) {
                 	// lists of lists are illegal
                     throw new JSONLDProcessingError("Invalid JSON-LD syntax; lists of lists are not permitted.")
@@ -1225,7 +1230,7 @@ public class JSONLDProcessor {
         	List<Object> rval = new ArrayList<Object>();
         	for (String key : ((Map<String,Object>)element).keySet()) {
         		Object value = ((Map<String,Object>)element).get(key);
-        		value = expand(ctx, null, value);
+        		value = expand(ctx, namer, null, value);
         		value = handleNestedLanguageContainer(value, key);
         		if (value instanceof List) {
         			rval.addAll((List)value);
@@ -1254,7 +1259,8 @@ public class JSONLDProcessor {
 
                 // handle ignored keys
                 if (opts.isIgnored(key)) {
-                	JSONLDUtils.addValue(rval, key, elem.get(key), false);
+                	//JSONLDUtils.addValue(rval, key, elem.get(key), false);
+                	rval.put(key, elem.get(key));
                 	continue;
                 }
                 
@@ -1304,7 +1310,7 @@ public class JSONLDProcessor {
 
                 // recurse into @list or @set keeping the active property
                 if ("@list".equals(prop) || "@set".equals(prop)) {
-                    value = expand(ctx, property, value);
+                    value = expand(ctx, namer, property, value);
                     if ("@list".equals(prop) && (value instanceof Map && ((Map<String, Object>) value).containsKey("@list"))) {
                         throw new JSONLDProcessingError("Invalid JSON-LD syntax; lists of lists are not permitted.")
                         	.setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
@@ -1312,7 +1318,7 @@ public class JSONLDProcessor {
                 } else {
                 	// update active property and recursively expand value
                     property = key;
-                    value = expand(ctx, property, value);
+                    value = expand(ctx, namer, property, value);
                 }
 
                 // drop null values if property is not @value (dropped below)
@@ -1396,6 +1402,10 @@ public class JSONLDProcessor {
             // drop objects with only @language
             } else if (rval.containsKey("@language") && rval.size() == 1) {
                 rval = null;
+            }
+            
+            if (opts.addBlankNodeIDs && JSONLDUtils.isSubject(rval) && !rval.containsKey("@id")) {
+            	rval.put("@id", namer.getName());
             }
 
             return rval;
@@ -1538,7 +1548,8 @@ public class JSONLDProcessor {
                 
                 // handle ignored keys
                 if (opts.isIgnored(key)) {
-                	JSONLDUtils.addValue(rval, key, value, false);
+                	//JSONLDUtils.addValue(rval, key, value, false);
+                	rval.put(key, value);
                 	continue;
                 }
                 
@@ -1849,7 +1860,7 @@ public class JSONLDProcessor {
      * @param property the property.
      * @param output the output.
      */
-    private static void embedValues(FramingContext state,
+    private void embedValues(FramingContext state,
 			Map<String, Object> subject, String property, Object output) {
     	// embed subject properties in output
     	Object objects = subject.get(property);
@@ -1885,18 +1896,18 @@ public class JSONLDProcessor {
 					Map<String,Object> s = (Map<String, Object>) state.subjects.get(id);
 					for (String prop: s.keySet()) {
 						// copy keywords
-						if (JSONLDUtils.isKeyword(prop)) {
+						if (JSONLDUtils.isKeyword(prop) || opts.isIgnored(prop)) {
 							((Map<String, Object>) o).put(prop, JSONLDUtils.clone(s.get(prop)));
 							continue;
 						}
 						embedValues(state, s, prop, o);
 					}
 				}
-				addFrameOutput(state, output, property, (Map<String, Object>) o);
+				addFrameOutput(state, output, property, o);
 			}
 			// copy non-subject value
 			else {
-				addFrameOutput(state, output, property, (Map<String, Object>) JSONLDUtils.clone(o));
+				addFrameOutput(state, output, property, JSONLDUtils.clone(o));
 			}
     	}
 		
@@ -1911,7 +1922,7 @@ public class JSONLDProcessor {
      * @param output the output to add.
      */
     private static void addFrameOutput(FramingContext state, Object parent,
-			String property, Map<String, Object> output) {
+			String property, Object output) {
 		if (parent instanceof Map) {
 			JSONLDUtils.addValue((Map<String,Object>)parent, property, output, true);
 		} else {
@@ -2036,7 +2047,7 @@ public class JSONLDProcessor {
      *
      * @return the resulting output.
      */
-    public static Object removePreserve(ActiveContext ctx, Object input) {
+    public Object removePreserve(ActiveContext ctx, Object input) {
     	// recurse through arrays
 		if (input instanceof List) {
 			List<Object> l = new ArrayList<Object>();
@@ -2067,12 +2078,14 @@ public class JSONLDProcessor {
 			}
 			
 			for (String key: imap.keySet()) {
-				Object res = removePreserve(ctx, imap.get(key));
-				Object container = ctx.getContextValue(key, "@container");
-				if (res instanceof List && ((List)res).size() == 1 && !"@set".equals(container) && !"@list".equals(container)) {
-					res = ((List<String>) res).get(0);
+				if (!opts.isIgnored(key)) {
+					Object res = removePreserve(ctx, imap.get(key));
+					Object container = ctx.getContextValue(key, "@container");
+					if (res instanceof List && ((List)res).size() == 1 && !"@set".equals(container) && !"@list".equals(container)) {
+						res = ((List<String>) res).get(0);
+					}
+					imap.put(key, res);
 				}
-				imap.put(key, res);
 			}
 		}
 		return input;
@@ -2235,6 +2248,7 @@ public class JSONLDProcessor {
 	
 	private interface CallbackWrapper {
 		public void callback(Map<String,Object> statement);
+		public void processIgnored(Object parent, String parentId, String prop, Object object);
 	}
 	
 	private class ToRDFCallback implements CallbackWrapper {
@@ -2270,6 +2284,10 @@ public class JSONLDProcessor {
 			} else {
 				cb.triple(sub, pre, obj, graph);
 			}
+		}
+		@Override
+		public void processIgnored(Object parent, String parentId, String prop, Object object) {
+			cb.processIgnored(parent, parentId, prop, object);
 		}
 	}
 	
@@ -2481,6 +2499,11 @@ public class JSONLDProcessor {
 		public void finalise() {
 			// TODO Auto-generated method stub
 			hashBlankNodes(new ArrayList<String>(bnodes.keySet()));
+		}
+
+		@Override
+		public void processIgnored(Object parent, String parentId, String prop, Object object) {
+			// TODO Auto-generated method stub
 		}
 	}
 	
@@ -2754,7 +2777,7 @@ public class JSONLDProcessor {
 			// get subject @id (generate one if it is a bnode)
 			Boolean isBnode = JSONLDUtils.isBlankNode(element);
 			String id = isBnode ? namer.getName((String) element.get("@id")) : (String)element.get("@id");
-			
+						
 			// create object 
 			Map<String,Object> object = new HashMap<String, Object>();
 			object.put("nominalValue", id);
@@ -2782,6 +2805,14 @@ public class JSONLDProcessor {
 				
 				// skip ignored keys
 				if (opts.isIgnored(prop)) {
+					
+					// TODO: I need the id of the parent object, even if it's a
+					// blank node, so i'm passing the subject value here, where
+					// element makes more sense (but does not have to contain
+					// the @id, or in the cases of blank nodes, may not have the
+					// same @id as the resulting rdf.
+					callback.processIgnored(subject, id, prop, element.get(prop));
+					
 					continue;
 				}
 				
