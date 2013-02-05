@@ -3,6 +3,7 @@ package de.dfki.km.json.jsonld;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -220,7 +221,10 @@ public class JSONLDProcessorTest {
     }
 
 	private void jsonDiff(String parent, Object expect, Object result) {
-		if (expect instanceof Map && result instanceof Map) {
+	    if (expect == null) {
+	        fail("Expected object was null");
+	    }
+	    else if (expect instanceof Map && result instanceof Map) {
 			Map<String,Object> e = (Map<String,Object>)expect;
 			Map<String,Object> r = (Map<String,Object>)JSONLDUtils.clone(result);
 			for (String k: e.keySet()) {
