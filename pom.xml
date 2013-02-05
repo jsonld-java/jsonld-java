@@ -1,0 +1,116 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+	<parent>
+		<artifactId>config-java6</artifactId>
+		<groupId>dfki.km.maven</groupId>
+		<version>0.3.2</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>dfki.km.json</groupId>
+	<artifactId>jsonld-java-parent</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>JSONLD Java Parent POM</name>
+	<description>Json-LD Parent POM</description>
+	<packaging>pom</packaging>	
+	
+	<modules>
+		<module>core</module>
+		<module>integration</module>
+		<module>tools</module>
+	</modules>	
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-mapper-asl</artifactId>
+				<version>1.9.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.clerezza</groupId>
+				<artifactId>rdf.core</artifactId>
+				<version>0.12-incubating</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openrdf.sesame</groupId>
+				<artifactId>sesame-model</artifactId>
+				<version>2.7.0-beta2</version>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.11</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-jdk14</artifactId>
+				<scope>runtime</scope>
+				<version>1.7.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-core</artifactId>
+				<version>2.7.4</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<repositories>
+		<repository>
+			<id>artifactory2-libs-releases</id>
+			<url>http://www.dfki.uni-kl.de/artifactory/libs-releases</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>appassembler-maven-plugin</artifactId>
+					<version>1.2</version>
+				</plugin>
+			</plugins>		
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>assemble</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<programs>
+						<program>
+							<mainClass>de.dfki.km.json.jsonld.tools.RDF2JSONLD</mainClass>
+							<name>rdf2jsonld</name>
+						</program>
+						<program>
+							<mainClass>de.dfki.km.json.jsonld.tools.Playground</mainClass>
+							<name>jsonldplayground</name>
+						</program>
+					</programs>
+				</configuration>
+			</plugin>
+		</plugins>	
+	</build>
+	
+</project>
+
