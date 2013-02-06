@@ -3,8 +3,8 @@
 # The following commands are required to be run before this can be used (left out of the script itself
 # because they can take a while to run):
 #     chmod +x rdf2jsonld
-# 	  mvn -quiet compile
-#	  mvn -quiet dependency:build-classpath -Dmdep.outputFile=tools/target/cp.txt
+#     chmod +x tools/target/appassembler/bin/*
+# 	  mvn -quiet install
 # run ./rdf2jsonld for the usage
 
-java -cp tools/target/classes:`cat tools/target/cp.txt` de.dfki.km.json.jsonld.tools.RDF2JSONLD $@
+tools/target/appassembler/bin/rdf2jsonld
