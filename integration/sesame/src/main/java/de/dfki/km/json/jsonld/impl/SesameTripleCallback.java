@@ -5,7 +5,7 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.GraphImpl;
+import org.openrdf.model.impl.LinkedHashModel;
 
 import de.dfki.km.json.jsonld.JSONLDTripleCallback;
 
@@ -16,7 +16,7 @@ public class SesameTripleCallback extends JSONLDTripleCallback {
     private Graph storageGraph;
 
     public SesameTripleCallback() {
-        this(new GraphImpl());
+        this(new LinkedHashModel());
     }
 
     public SesameTripleCallback(Graph nextGraph) {
