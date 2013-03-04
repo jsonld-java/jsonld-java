@@ -1,26 +1,33 @@
 package de.dfki.km.json.jsonld.impl;
 
-import org.openrdf.model.Graph;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.LinkedHashModel;
+import org.openrdf.model.impl.ValueFactoryImpl;
+import org.openrdf.rio.RDFHandler;
+import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.helpers.StatementCollector;
 
 import de.dfki.km.json.jsonld.JSONLDTripleCallback;
 
 public class SesameTripleCallback extends JSONLDTripleCallback {
 
-    private ValueFactory vf;
+    private ValueFactory vf = ValueFactoryImpl.getInstance();
 
-    private Graph storageGraph;
+    private RDFHandler handler;
 
     public SesameTripleCallback() {
-        this(new LinkedHashModel());
+        this(new StatementCollector(new LinkedHashModel()));
     }
 
-    public SesameTripleCallback(Graph nextGraph) {
-        setStorageGraph(nextGraph);
+    public SesameTripleCallback(RDFHandler nextHandler) {
+        handler = nextHandler;
+    }
+
+    public SesameTripleCallback(RDFHandler nextHandler, ValueFactory vf) {
+        handler = nextHandler;
     }
 
     @Override
@@ -34,10 +41,18 @@ public class SesameTripleCallback extends JSONLDTripleCallback {
         // object
         if(graph == null) {
             Statement result = vf.createStatement(vf.createURI(s), vf.createURI(p), vf.createURI(o));
-            storageGraph.add(result);
+            try {
+		handler.handleStatement(result);
+	    } catch (RDFHandlerException e) {
+		throw new RuntimeException(e);
+	    }
         } else {
             Statement result = vf.createStatement(vf.createURI(s), vf.createURI(p), vf.createURI(o), vf.createURI(graph));
-            storageGraph.add(result);
+            try {
+		handler.handleStatement(result);
+	    } catch (RDFHandlerException e) {
+		throw new RuntimeException(e);
+	    }
         }
         
     }
@@ -65,30 +80,34 @@ public class SesameTripleCallback extends JSONLDTripleCallback {
 
         if(graph == null) {
             Statement result = vf.createStatement(subject, predicate, object);
-            storageGraph.add(result);
+            try {
+		handler.handleStatement(result);
+	    } catch (RDFHandlerException e) {
+		throw new RuntimeException(e);
+	    }
         } else {
             Statement result = vf.createStatement(subject, predicate, object, vf.createURI(graph));
-            storageGraph.add(result);
+            try {
+		handler.handleStatement(result);
+	    } catch (RDFHandlerException e) {
+		throw new RuntimeException(e);
+	    }
         }
     }
 
     /**
-     * @return the storageGraph
+     * @return the handler
      */
-    public Graph getStorageGraph() {
-        return storageGraph;
+    public RDFHandler getHandler() {
+	return handler;
     }
 
     /**
-     * @param storageGraph
-     *            the storageGraph to set
+     * @param handler the handler to set
      */
-    public void setStorageGraph(Graph storageGraph) {
-        this.storageGraph = storageGraph;
-
-        if (storageGraph != null) {
-            vf = storageGraph.getValueFactory();
-        }
+    public void setHandler(RDFHandler handler) {
+	this.handler = handler;
     }
+
 
 }
