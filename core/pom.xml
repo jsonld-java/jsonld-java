@@ -8,7 +8,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jsonld-java</artifactId>
-	<name>jsonld-java</name>
+	<name>JSONLD Java :: Core</name>
 	<description>Json-LD core implementation</description>
 	<packaging>jar</packaging>	
 

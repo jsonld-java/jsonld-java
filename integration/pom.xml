@@ -8,7 +8,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jsonld-java-integration</artifactId>
-	<name>JSONLD integration modules</name>
+	<name>JSONLD Java :: Integration Modules Parent</name>
 	<description>Json-LD integration with other java RDF frameworks</description>
 	<packaging>pom</packaging>
 	

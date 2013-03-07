@@ -8,7 +8,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jsonld-java-jena</artifactId>
-	<name>JSONLD Java Jena Integration</name>
+	<name>JSONLD Java :: Jena Integration</name>
 	<description>JSON-LD Java integration module for Jena</description>
 	<packaging>jar</packaging>
 

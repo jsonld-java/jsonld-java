@@ -10,8 +10,8 @@
 	<groupId>dfki.km.json</groupId>
 	<artifactId>jsonld-java-parent</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>JSONLD Java Parent POM</name>
-	<description>Json-LD Parent POM</description>
+	<name>JSONLD Java :: Parent</name>
+	<description>Json-LD Java Parent POM</description>
 	<packaging>pom</packaging>	
 	
 	<modules>

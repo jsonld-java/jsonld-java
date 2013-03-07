@@ -8,7 +8,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jsonld-java-tools</artifactId>
-	<name>JSONLD Java Tools</name>
+	<name>JSONLD Java :: Tools</name>
 	<description>JSON-LD Java tools</description>
 	<packaging>jar</packaging>
 
