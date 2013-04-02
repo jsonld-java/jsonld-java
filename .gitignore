@@ -3,3 +3,5 @@
 .settings
 target/
 .svn/
+*.iml
+.idea
