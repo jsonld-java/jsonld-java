@@ -162,6 +162,7 @@ NOTES
 
 compact-0018 still fails (it doesn't pass in the javascript version either)
 fixing this requires fixing the term rank algorithm
+This test is currently ignored in the test suite.
 
 TODO
 ====
@@ -188,6 +189,12 @@ If an ignore key is included in a value object (i.e. an object containing a `@va
 
 CHANGELOG
 =========
+
+### 18.04.2013
+
+* Updated to Sesame 2.7.0, Jena 2.10.0, Jackson 2.1.4
+* Fixing a character encoding issue in the JSONLDProcessorTests
+* Bumping to 1.0.1 to reflect dependency changes
 
 ### 30.10.2012
 
