@@ -1,7 +1,8 @@
 package de.dfki.km.json.jsonld;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
+import com.fasterxml.jackson.core.JsonParseException;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.Test;
 
 import com.hp.hpl.jena.rdf.model.Model;

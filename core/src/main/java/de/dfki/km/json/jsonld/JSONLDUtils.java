@@ -14,8 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.codehaus.jackson.JsonParseException;
-
+import com.fasterxml.jackson.core.JsonParseException;
 import de.dfki.km.json.JSONUtils;
 
 public class JSONLDUtils {
