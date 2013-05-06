@@ -13,20 +13,20 @@
 	<packaging>jar</packaging>	
 
 	<dependencies>
-                <dependency>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>jsonld-java</artifactId>
-                        <version>${project.version}</version>
-                        <type>jar</type> 
-                        <scope>compile</scope> 
-                </dependency>
-                <dependency>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>jsonld-java</artifactId>
-                        <version>${project.version}</version>
-                        <type>test-jar</type>
-                        <scope>test</scope>
-                </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>jsonld-java</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>jsonld-java</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-model</artifactId>
@@ -34,6 +34,11 @@
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-rio-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-rio-testsuite</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
