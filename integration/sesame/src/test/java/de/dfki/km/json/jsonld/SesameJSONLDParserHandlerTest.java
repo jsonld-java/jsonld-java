@@ -75,7 +75,7 @@ public class SesameJSONLDParserHandlerTest extends AbstractParserHandlingTest {
 	}
 	jsonldWriter.endRDF();
 
-	System.out.println(writer.toString());
+	// System.out.println(writer.toString());
 
 	return new ByteArrayInputStream(writer.toString().getBytes(
 		Charset.forName("UTF-8")));
