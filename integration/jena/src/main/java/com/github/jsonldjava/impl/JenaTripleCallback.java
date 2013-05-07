@@ -9,7 +9,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
 
-public class JenaTripleCallback extends JSONLDTripleCallback {
+public class JenaTripleCallback implements JSONLDTripleCallback {
 
     private Model jenaModel = ModelFactory.createDefaultModel();
 
@@ -68,5 +68,22 @@ public class JenaTripleCallback extends JSONLDTripleCallback {
         Statement statement = jenaModel.createStatement(sR, pR, oR);
         jenaModel.add(statement);
     }
+
+    @Override
+	public void triple(String s, String p, String o) {
+		triple(s, p, o, null);
+	}
+
+	@Override
+	public void triple(String s, String p, String value, String datatype,
+			String language) {
+		triple(s, p, value, datatype, language, null);
+	}
+
+	@Override
+	public void processIgnored(Object parent, String parentId, String key,
+			Object value) {
+		// nothing to process
+	}
 
 }

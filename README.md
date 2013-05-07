@@ -190,6 +190,12 @@ If an ignore key is included in a value object (i.e. an object containing a `@va
 CHANGELOG
 =========
 
+### 07.05.2013
+
+* Changed base package names to com.github.jsonldjava
+* Reverted version to 0.1-SNAPSHOT to allow version incrementing pre 1.0 while allowing a 1.0 release when the json-ld spec is finalised.
+* Turned JSONLDTripleCallback into an interface.
+
 ### 18.04.2013
 
 * Updated to Sesame 2.7.0, Jena 2.10.0, Jackson 2.1.4

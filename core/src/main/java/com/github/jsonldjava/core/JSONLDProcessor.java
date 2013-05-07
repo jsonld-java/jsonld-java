@@ -2226,7 +2226,7 @@ public class JSONLDProcessor {
     	flatten(input, graphs, graph, namer, null, null);
     }
     
-    private class MapStatements extends JSONLDTripleCallback {
+    private class MapStatements implements JSONLDTripleCallback {
 
     	List<List<String>> statements = new ArrayList<List<String>>();
     	Map<String,Object> bnodes = new HashMap<String, Object>();
@@ -2243,6 +2243,23 @@ public class JSONLDProcessor {
 				String language, String graph) {
 			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public void triple(String s, String p, String o) {
+			triple(s, p, o, null);
+		}
+
+		@Override
+		public void triple(String s, String p, String value, String datatype,
+				String language) {
+			triple(s, p, value, datatype, language, null);
+		}
+
+		@Override
+		public void processIgnored(Object parent, String parentId, String key,
+				Object value) {
+			// nothing to process
 		}
     	
     }

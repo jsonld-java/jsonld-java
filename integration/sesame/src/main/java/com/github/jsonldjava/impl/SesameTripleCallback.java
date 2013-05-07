@@ -19,7 +19,7 @@ import org.openrdf.rio.helpers.StatementCollector;
 import com.github.jsonldjava.core.JSONLDTripleCallback;
 
 
-public class SesameTripleCallback extends JSONLDTripleCallback {
+public class SesameTripleCallback implements JSONLDTripleCallback {
 
     private ValueFactory vf;
 
@@ -170,5 +170,22 @@ public class SesameTripleCallback extends JSONLDTripleCallback {
     public void setValueFactory(ValueFactory vf) {
 	this.vf = vf;
     }
+    
+    @Override
+	public void triple(String s, String p, String o) {
+		triple(s, p, o, null);
+	}
+
+	@Override
+	public void triple(String s, String p, String value, String datatype,
+			String language) {
+		triple(s, p, value, datatype, language, null);
+	}
+
+	@Override
+	public void processIgnored(Object parent, String parentId, String key,
+			Object value) {
+		// nothing to process
+	}
 
 }

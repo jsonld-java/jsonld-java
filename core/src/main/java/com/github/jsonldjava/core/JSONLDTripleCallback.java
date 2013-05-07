@@ -1,6 +1,6 @@
 package com.github.jsonldjava.core;
 
-public abstract class JSONLDTripleCallback {
+public interface JSONLDTripleCallback {
     /**
      * Construct a triple with three URIs.
      * 
@@ -14,11 +14,8 @@ public abstract class JSONLDTripleCallback {
      * 			  The graph URI associated with this triple (null if none)
      * @return The generated triple, or null to force triple generation to stop
      */
-    void triple(String s, String p, String o) {
-    	triple(s, p, o, null);
-    }
-    
-    public abstract void triple(String s, String p, String o, String graph);
+    void triple(String s, String p, String o);
+    void triple(String s, String p, String o, String graph);
 
     /**
      * Constructs a triple with a Literal object, which may or may not contain a
@@ -38,11 +35,8 @@ public abstract class JSONLDTripleCallback {
      * 			  The graph URI associated with this triple (null if none)
      * @return The generated triple, or null to force triple generation to stop
      */
-    void triple(String s, String p, String value, String datatype, String language) {
-    	triple(s, p, value, datatype, language, null);
-    }
-    
-	public abstract void triple(String s, String p, String value, String datatype,
+    void triple(String s, String p, String value, String datatype, String language);
+	void triple(String s, String p, String value, String datatype,
 			String language, String graph);
 
 	/**
@@ -52,6 +46,5 @@ public abstract class JSONLDTripleCallback {
 	 * @param key
 	 * @param value
 	 */
-	public void processIgnored(Object parent, String parentId, String key, Object value) {
-	}
+	public void processIgnored(Object parent, String parentId, String key, Object value);
 }
