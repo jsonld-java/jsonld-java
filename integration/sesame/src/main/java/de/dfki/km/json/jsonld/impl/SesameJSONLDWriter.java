@@ -18,12 +18,17 @@ import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFWriter;
+import org.openrdf.rio.helpers.BasicParserSettings;
+import org.openrdf.rio.helpers.BasicWriterSettings;
+import org.openrdf.rio.helpers.JSONLDMode;
+import org.openrdf.rio.helpers.JSONLDSettings;
 import org.openrdf.rio.helpers.RDFWriterBase;
 import org.openrdf.rio.helpers.StatementCollector;
 
 import de.dfki.km.json.JSONUtils;
 import de.dfki.km.json.jsonld.JSONLD;
 import de.dfki.km.json.jsonld.JSONLDProcessingError;
+import de.dfki.km.json.jsonld.JSONLDProcessor;
 
 /**
  * @author Peter Ansell p_ansell@yahoo.com
@@ -73,21 +78,34 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
 	try {
 	    Object output = JSONLD.fromRDF(model, serialiser);
 
-	    boolean expand = false;
-	    if (expand) {
-		output = JSONLD.expand(output);
+	    JSONLDMode mode = getWriterConfig().get(JSONLDSettings.JSONLD_MODE);
+
+	    JSONLDProcessor.Options opts = new JSONLDProcessor.Options();
+	    opts.addBlankNodeIDs = getWriterConfig().get(
+		    BasicParserSettings.PRESERVE_BNODE_IDS);
+	    opts.useRdfType = getWriterConfig()
+		    .get(JSONLDSettings.USE_RDF_TYPE);
+	    opts.useNativeTypes = getWriterConfig().get(
+		    JSONLDSettings.USE_NATIVE_TYPES);
+	    opts.optimize = getWriterConfig().get(JSONLDSettings.OPTIMIZE);
+
+	    if (mode == JSONLDMode.EXPAND) {
+		output = JSONLD.expand(output, opts);
 	    }
-	    boolean frame = false;
+	    // TODO: Implement inframe in JSONLDSettings
 	    Object inframe = null;
-	    if (frame) {
-		output = JSONLD.frame(output, inframe);
+	    if (mode == JSONLDMode.FLATTEN) {
+		output = JSONLD.frame(output, inframe, opts);
 	    }
-	    boolean simplify = false;
-	    if (simplify) {
-		output = JSONLD.simplify(output);
+	    if (mode == JSONLDMode.COMPACT) {
+		output = JSONLD.simplify(output, opts);
+	    }
+	    if (getWriterConfig().get(BasicWriterSettings.PRETTY_PRINT)) {
+		JSONUtils.writePrettyPrint(writer, output);
+	    } else {
+		JSONUtils.write(writer, output);
 	    }
 
-	    JSONUtils.write(writer, output);
 	} catch (JSONLDProcessingError e) {
 	    throw new RDFHandlerException("Could not render JSONLD", e);
 	} catch (JsonGenerationException e) {
