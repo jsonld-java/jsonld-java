@@ -53,12 +53,18 @@ public class SesameJSONLDParser extends RDFParserBase implements RDFParser {
     public void parse(final InputStream in, final String baseURI)
 	    throws IOException, RDFParseException, RDFHandlerException {
 	SesameTripleCallback callback = new SesameTripleCallback(
-		getRDFHandler(), valueFactory);
+		getRDFHandler(), valueFactory, getParserConfig(),
+		getParseErrorListener());
 
 	try {
 	    JSONLD.toRDF(JSONUtils.fromInputStream(in), callback);
 	} catch (JSONLDProcessingError e) {
 	    throw new RDFParseException("Could not parse JSONLD", e);
+	} catch (RuntimeException e) {
+	    if(e.getCause() != null && e.getCause() instanceof RDFParseException) {
+		throw (RDFParseException)e.getCause();
+	    }
+	    throw e;
 	}
     }
 
@@ -66,12 +72,18 @@ public class SesameJSONLDParser extends RDFParserBase implements RDFParser {
     public void parse(final Reader reader, final String baseURI)
 	    throws IOException, RDFParseException, RDFHandlerException {
 	SesameTripleCallback callback = new SesameTripleCallback(
-		getRDFHandler(), valueFactory);
+		getRDFHandler(), valueFactory, getParserConfig(),
+		getParseErrorListener());
 
 	try {
 	    JSONLD.toRDF(JSONUtils.fromReader(reader), callback);
 	} catch (JSONLDProcessingError e) {
 	    throw new RDFParseException("Could not parse JSONLD", e);
+	} catch (RuntimeException e) {
+	    if(e.getCause() != null && e.getCause() instanceof RDFParseException) {
+		throw (RDFParseException)e.getCause();
+	    }
+	    throw e;
 	}
     }
 

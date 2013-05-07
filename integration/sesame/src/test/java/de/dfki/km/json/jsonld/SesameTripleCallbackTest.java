@@ -14,6 +14,9 @@ import de.dfki.km.json.jsonld.impl.SesameTripleCallback;
 import org.openrdf.model.Graph;
 import org.openrdf.model.Statement;
 import org.openrdf.model.impl.LinkedHashModel;
+import org.openrdf.model.impl.ValueFactoryImpl;
+import org.openrdf.rio.ParserConfig;
+import org.openrdf.rio.helpers.ParseErrorCollector;
 import org.openrdf.rio.helpers.StatementCollector;
 
 public class SesameTripleCallbackTest {
@@ -26,7 +29,9 @@ public class SesameTripleCallbackTest {
 		Object input = JSONUtils.fromString(inputstring);
 		
 		Graph graph = new LinkedHashModel();
-		SesameTripleCallback callback = new SesameTripleCallback(new StatementCollector(graph));
+		ParseErrorCollector parseErrorListener = new ParseErrorCollector();
+		ParserConfig parserConfig = new ParserConfig();
+		SesameTripleCallback callback = new SesameTripleCallback(new StatementCollector(graph), ValueFactoryImpl.getInstance(), parserConfig, parseErrorListener);
 
 		JSONLD.toRDF(input, callback);
 			
@@ -39,6 +44,10 @@ public class SesameTripleCallbackTest {
 			System.out.println(stmt.toString());
 			assertEquals("Output was not as expected", stmt.toString(), expectedString);
 		}
+		
+		assertEquals(0, parseErrorListener.getFatalErrors().size());
+		assertEquals(0, parseErrorListener.getErrors().size());
+		assertEquals(0, parseErrorListener.getWarnings().size());
 	}
 	
 }

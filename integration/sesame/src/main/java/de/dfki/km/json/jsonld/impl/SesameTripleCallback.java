@@ -7,28 +7,44 @@ import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.model.impl.ValueFactoryImpl;
+import org.openrdf.rio.ParseErrorListener;
+import org.openrdf.rio.ParserConfig;
 import org.openrdf.rio.RDFHandler;
 import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.RDFParseException;
+import org.openrdf.rio.helpers.ParseErrorLogger;
+import org.openrdf.rio.helpers.RDFParserHelper;
 import org.openrdf.rio.helpers.StatementCollector;
 
 import de.dfki.km.json.jsonld.JSONLDTripleCallback;
 
 public class SesameTripleCallback extends JSONLDTripleCallback {
 
-    private ValueFactory vf = ValueFactoryImpl.getInstance();
+    private ValueFactory vf;
 
     private RDFHandler handler;
+
+    private ParserConfig parserConfig;
+
+    private ParseErrorListener parseErrorListener;
 
     public SesameTripleCallback() {
 	this(new StatementCollector(new LinkedHashModel()));
     }
 
     public SesameTripleCallback(RDFHandler nextHandler) {
-	handler = nextHandler;
+	this(nextHandler, ValueFactoryImpl.getInstance());
     }
 
     public SesameTripleCallback(RDFHandler nextHandler, ValueFactory vf) {
-	handler = nextHandler;
+	this(nextHandler, vf, new ParserConfig(), new ParseErrorLogger());
+    }
+
+    public SesameTripleCallback(RDFHandler nextHandler, ValueFactory vf, ParserConfig parserConfig, ParseErrorListener parseErrorListener) {
+	this.handler = nextHandler;
+	this.vf = vf;
+	this.parserConfig = parserConfig;
+	this.parseErrorListener = parseErrorListener;
     }
 
     @Override
@@ -83,14 +99,13 @@ public class SesameTripleCallback extends JSONLDTripleCallback {
 	Resource subject = createResource(s);
 
 	URI predicate = vf.createURI(p);
-
+	URI datatypeURI = datatype == null ? null : vf.createURI(datatype);
+	
 	Value object;
-	if (language != null) {
-	    object = vf.createLiteral(value, language);
-	} else if (datatype != null) {
-	    object = vf.createLiteral(value, vf.createURI(datatype));
-	} else {
-	    object = vf.createLiteral(value);
+	try {
+	    object = RDFParserHelper.createLiteral(value, language, datatypeURI, getParserConfig(), getParserErrorListener(), getValueFactory());
+	} catch (RDFParseException e) {
+	    throw new RuntimeException(e);
 	}
 
 	Statement result;
@@ -108,6 +123,10 @@ public class SesameTripleCallback extends JSONLDTripleCallback {
 	}
     }
 
+    public ParseErrorListener getParserErrorListener() {
+	return this.parseErrorListener;
+    }
+
     /**
      * @return the handler
      */
@@ -121,6 +140,34 @@ public class SesameTripleCallback extends JSONLDTripleCallback {
      */
     public void setHandler(RDFHandler handler) {
 	this.handler = handler;
+    }
+
+    /**
+     * @return the parserConfig
+     */
+    public ParserConfig getParserConfig() {
+	return parserConfig;
+    }
+
+    /**
+     * @param parserConfig the parserConfig to set
+     */
+    public void setParserConfig(ParserConfig parserConfig) {
+	this.parserConfig = parserConfig;
+    }
+
+    /**
+     * @return the vf
+     */
+    public ValueFactory getValueFactory() {
+	return vf;
+    }
+
+    /**
+     * @param vf the vf to set
+     */
+    public void setValueFactory(ValueFactory vf) {
+	this.vf = vf;
     }
 
 }

@@ -25,7 +25,6 @@ import de.dfki.km.json.jsonld.impl.SesameJSONLDWriter;
  * 
  * @author Peter Ansell p_ansell@yahoo.com
  */
-@Ignore
 public class SesameJSONLDParserHandlerTest extends AbstractParserHandlingTest {
 
     @Override
