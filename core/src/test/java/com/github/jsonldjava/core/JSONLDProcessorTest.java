@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.security.auth.login.FailedLoginException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -31,7 +33,6 @@ import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.JSONLDProcessor;
 import com.github.jsonldjava.core.JSONLDUtils;
-import com.github.jsonldjava.core.JSONLDProcessor.Options;
 import com.github.jsonldjava.impl.NQuadJSONLDSerializer;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
@@ -42,7 +43,7 @@ public class JSONLDProcessorTest {
 
     private static final String TEST_DIR = "json-ld.org";
 
-    @Parameters
+    @Parameters(name="{0}{1}")
     public static Collection<Object[]> data() throws URISyntaxException, IOException {
 
         // TODO: look into getting the test data from github, which will help more
@@ -73,16 +74,21 @@ public class JSONLDProcessorTest {
             for (Map<String, Object> test : (List<Map<String, Object>>) manifest.get("sequence")) {
                 List<String> testType = (List<String>) test.get("@type");
                 if (// test.get("input").equals("normalize-0044-in.jsonld") && (
-                testType.contains("jld:ExpandTest") || testType.contains("jld:CompactTest") //|| testType.contains("jld:NormalizeTest")
-                || testType.contains("jld:FrameTest")// || testType.contains("jld:TriplesTest")
-                || testType.contains("jld:SimplifyTest")
-                || testType.contains("jld:ToRDFTest") || testType.contains("jld:FromRDFTest")
+                testType.contains("jld:ExpandTest") 
+                || testType.contains("jld:CompactTest") 
+                || testType.contains("jld:NormalizeTest")
+                //|| testType.contains("jld:FrameTest")
+                //|| testType.contains("jld:TriplesTest")
+                //|| testType.contains("jld:SimplifyTest")
+                //|| testType.contains("jld:ToRDFTest")
+                //|| testType.contains("jld:FromRDFTest")
+                //&& test.get("@id").equals("#t0001") // used for running specific tests
                 ) {
                     System.out.println("Adding test: " + test.get("name"));
-                    rdata.add(new Object[] { manifest.get("name"), test });
+                    rdata.add(new Object[] { manifest.get("name"), test.get("@id"), test });
                 } else {
                     // TODO: many disabled while implementation is incomplete
-                    System.out.println("Skipping test: " + test.get("name"));
+                    //System.out.println("Skipping test: " + test.get("name"));
                 }
 
                 // Uncomment this to print a list of all the tests (may make debugging easier
@@ -97,7 +103,7 @@ public class JSONLDProcessorTest {
     private String group;
     private Map<String, Object> test;
 
-    public JSONLDProcessorTest(final String group, final Map<String, Object> test) {
+    public JSONLDProcessorTest(final String group, final String id, final Map<String, Object> test) {
         this.group = group;
         this.test = test;
     }
@@ -119,11 +125,13 @@ public class JSONLDProcessorTest {
     public void runTest() throws URISyntaxException, IOException, JSONLDProcessingError {
         // skipping the known failure
         // todo undo this when its passing
-        assumeTrue(!test.get("input").equals("compact-0018-in.jsonld"));
+        //assumeTrue(!test.get("input").equals("compact-0018-in.jsonld"));
 
-        System.out.println("running test: " + test.get("input"));
+        System.out.println("running test: " + group + test.get("@id") + " :: " + test.get("name"));
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
+        List<String> testType = (List<String>) test.get("@type");
+        
         String inputFile = (String) test.get("input");
         InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/" + inputFile);
         assertNotNull("unable to find input file: " + test.get("input"), inputStream);
@@ -148,6 +156,7 @@ public class JSONLDProcessorTest {
         }
         Object expect = null;
         String sparql = null;
+        Boolean failure_expected = false;
         String expectFile = (String) test.get("expect");
         String sparqlFile = (String) test.get("sparql");
         if (expectFile != null) {
@@ -181,52 +190,59 @@ public class JSONLDProcessorTest {
             String buffer = null;
             while ((buffer = buf.readLine()) != null)
                 sparql += buffer + "\n";
+        } else if (testType.contains("jdl:NegativeEvaluationTest")) {
+        	// TODO: this is hacky, but works for the limited number of negative evaluation tests that are currently present
+        	failure_expected = true;
         } else {
             assertFalse("Nothing to expect from this test, thus nothing to test if it works", true);
         }
 
         Object result = null;
 
-        List<String> testType = (List<String>) test.get("@type");
-        Options options = new JSONLDProcessor.Options("http://json-ld.org/test-suite/tests/" + test.get("input"));
-        if (testType.contains("jld:NormalizeTest")) {
-            //result = new JSONLDProcessor().normalize(inputJson);
-        } else if (testType.contains("jld:ExpandTest")) {
-            result = JSONLD.expand(input, options);
-        } else if (testType.contains("jld:CompactTest")) {
-            InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
-            Object contextJson = JSONUtils.fromInputStream(contextStream);
-            result = JSONLD.compact(input, (Map<String, Object>) contextJson, options);
-        } else if (testType.contains("jld:FrameTest")) {
-            InputStream frameStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("frame"));
-            Object frameJson = JSONUtils.fromInputStream(frameStream);
-            result = JSONLD.frame(input, frameJson, options);
-        } else if (testType.contains("jld:ToRDFTest")) {
-            // TODO: many of the tests here fail simply because of an ordering issue
-        	NQuadTripleCallback nqtc = new NQuadTripleCallback();
-        	JSONLD.toRDF(input, options, nqtc);
-        	
-            result = nqtc.getResult();
-        } else if (testType.contains("jld:FromRDFTest")) {
-        	result = JSONLD.fromRDF(input, new NQuadJSONLDSerializer());
-        } else if (testType.contains("jld:SimplifyTest")) {
-        	result = JSONLD.simplify(input, options);
-        } else {
-            assertFalse("Unknown test type", true);
-        }
+        Options options = new Options("http://json-ld.org/test-suite/tests/" + test.get("input"));
+        try {
+	        if (testType.contains("jld:NormalizeTest")) {
+	            //result = new JSONLDProcessor().normalize(inputJson);
+	        } else if (testType.contains("jld:ExpandTest")) {
+	        	result = JSONLD.expand(input, options);
+	        } else if (testType.contains("jld:CompactTest")) {
+	            InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
+	            Object contextJson = JSONUtils.fromInputStream(contextStream);
+	            result = JSONLD.compact(input, (Map<String, Object>) contextJson, options);
+	        } else if (testType.contains("jld:FrameTest")) {
+	            InputStream frameStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("frame"));
+	            Object frameJson = JSONUtils.fromInputStream(frameStream);
+	            result = JSONLD.frame(input, frameJson, options);
+	        } else if (testType.contains("jld:ToRDFTest")) {
+	            // TODO: many of the tests here fail simply because of an ordering issue
+	        	NQuadTripleCallback nqtc = new NQuadTripleCallback();
+	        	JSONLD.toRDF(input, options, nqtc);
+	        	
+	            result = nqtc.getResult();
+	        } else if (testType.contains("jld:FromRDFTest")) {
+	        	result = JSONLD.fromRDF(input, new NQuadJSONLDSerializer());
+	        } else if (testType.contains("jld:SimplifyTest")) {
+	        	result = JSONLD.simplify(input, options);
+	        } else {
+	            assertFalse("Unknown test type", true);
+	        }
+        } catch (JSONLDProcessingError e) {
+    		result = e;
+    	}
 
         boolean testpassed = false;
         try {
-            testpassed = JSONUtils.equals(expect, result);
+        	// TODO: for tests that are supposed to fail, a more detailed check that it failed in the right way is needed
+            testpassed = JSONUtils.equals(expect, result) || failure_expected;
             if (testpassed == false) {
-                System.out.println("failed test: " + test.get("input"));
+                System.out.println("failed test!!! details:");
                 jsonDiff("/", expect, result);
                 System.out.println("{\"expected\": " + JSONUtils.toString(expect) + "\n,\"result\": " + JSONUtils.toString(result) + "}");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        assertTrue("\nFailed test: " + this.group + " " + this.test.get("name") + " (" + test.get("input") + "," + test.get("expect") + ")\n" + "expected: "
+        assertTrue("\nFailed test: " + group + test.get("@id") + " " + test.get("name") + " (" + test.get("input") + "," + test.get("expect") + ")\n" + "expected: "
                 + JSONUtils.toString(expect) + "\nresult: " + JSONUtils.toString(result), testpassed);
     }
 

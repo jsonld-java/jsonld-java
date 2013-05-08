@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.JSONLDProcessor;
+import com.github.jsonldjava.core.Options;
 import com.github.jsonldjava.utils.JSONUtils;
 
 import org.openrdf.model.Model;
@@ -81,7 +82,7 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
 
 	    JSONLDMode mode = getWriterConfig().get(JSONLDSettings.JSONLD_MODE);
 
-	    JSONLDProcessor.Options opts = new JSONLDProcessor.Options();
+	    Options opts = new Options();
 	    opts.addBlankNodeIDs = getWriterConfig().get(
 		    BasicParserSettings.PRESERVE_BNODE_IDS);
 	    opts.useRdfType = getWriterConfig()

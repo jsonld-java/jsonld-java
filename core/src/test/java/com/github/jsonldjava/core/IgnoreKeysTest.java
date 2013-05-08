@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.core.JSONLDProcessor.Options;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
 

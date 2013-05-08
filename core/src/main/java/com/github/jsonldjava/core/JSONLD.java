@@ -5,11 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.jsonldjava.core.JSONLDProcessor.ActiveContext;
-import com.github.jsonldjava.core.JSONLDProcessor.Options;
-import com.github.jsonldjava.core.JSONLDProcessor.UniqueNamer;
-
-
 public class JSONLD {
 	
 	   /**
@@ -49,7 +44,7 @@ public class JSONLD {
         Object expanded;
         try {
             
-            expanded = p.expand(p.new ActiveContext(), p.new UniqueNamer("_:t"), null, input);
+            expanded = p.expand(new ActiveContext(), new UniqueNamer("_:t"), null, input);
         } catch (JSONLDProcessingError e) {
         	throw new JSONLDProcessingError("Could not expand input before compaction.")
         		.setType(JSONLDProcessingError.Error.COMPACT_ERROR)
@@ -57,7 +52,7 @@ public class JSONLD {
         }
 
         // process context
-        ActiveContext activeCtx = p.new ActiveContext();
+        ActiveContext activeCtx = new ActiveContext();
         try {
             activeCtx = processContext(activeCtx, ctx, opts);
         } catch (JSONLDProcessingError e) {
@@ -154,8 +149,8 @@ public class JSONLD {
     	
     	// do expansion
     	JSONLDProcessor p = new JSONLDProcessor(opts);
-    	UniqueNamer namer = p.new UniqueNamer("_:t");
-        Object expanded = p.expand(p.new ActiveContext(), namer, null, input);
+    	UniqueNamer namer = new UniqueNamer("_:t");
+        Object expanded = p.expand(new ActiveContext(), namer, null, input);
 
         // optimize away @graph with no other properties
         if (expanded instanceof Map && ((Map) expanded).containsKey("@graph") && ((Map) expanded).size() == 1) {
@@ -211,7 +206,7 @@ public class JSONLD {
     	JSONLDProcessor p = new JSONLDProcessor(opts);
     	
     	// preserve frame context
-    	ActiveContext ctx = p.new ActiveContext();
+    	ActiveContext ctx = new ActiveContext();
     	Map<String, Object> fctx;
     	if (frame instanceof Map && ((Map<String, Object>) frame).containsKey("@context")) {
     		fctx = (Map<String, Object>) ((Map<String, Object>) frame).get("@context");
@@ -241,7 +236,7 @@ public class JSONLD {
     private static ActiveContext processContext(ActiveContext activeCtx, Object localCtx, Options opts) throws JSONLDProcessingError {
     	JSONLDProcessor p = new JSONLDProcessor(opts);
     	if (localCtx == null) {
-    		return p.new ActiveContext();
+    		return new ActiveContext();
     	}
     	localCtx = JSONLDUtils.clone(localCtx);
     	if (localCtx instanceof Map && !((Map)localCtx).containsKey("@context")) {
@@ -304,7 +299,7 @@ public class JSONLD {
     	
     	Object expanded = JSONLD.expand(input, opts);
     	JSONLDProcessor p = new JSONLDProcessor(opts);
-    	UniqueNamer namer = p.new UniqueNamer("_:t");
+    	UniqueNamer namer = new UniqueNamer("_:t");
     	p.toRDF(expanded, namer, null, null, null, callback);
     }
     

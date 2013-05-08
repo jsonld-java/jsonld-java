@@ -2,7 +2,6 @@ package com.github.jsonldjava.core;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -21,105 +20,20 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jsonldjava.impl.NQuadTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
 import com.github.jsonldjava.utils.Obj;
 
+import static com.github.jsonldjava.core.JSONLDConsts.*;
 
 public class JSONLDProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(JSONLDProcessor.class);
-
-    // constants
-	private static final String XSD_BOOLEAN = "http://www.w3.org/2001/XMLSchema#boolean";
-	private static final String XSD_DOUBLE = "http://www.w3.org/2001/XMLSchema#double";
-	private static final String XSD_INTEGER = "http://www.w3.org/2001/XMLSchema#integer";
-	private static final String XSD_STRING = "http://www.w3.org/2001/XMLSchema#string";
-
-	private static final String RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-	private static final String RDF_FIRST = RDF + "first";
-	private static final String RDF_REST = RDF + "rest";
-	private static final String RDF_NIL = RDF + "nil";
-	private static final String RDF_TYPE = RDF + "type";
-	private static final String RDF_PLAIN_LITERAL = RDF + "PlainLiteral";
-	private static final String RDF_XML_LITERAL = RDF + "XMLLiteral";
-	private static final String RDF_OBJECT = RDF + "object";
 	
     private Map<String, Object> edges;
     private Map<String, Object> subjects;
     private Map<String, Object> renamed;
     private Map<String, Object> serializations;
-
-    public static class Options {
-        public Options() {
-            this.base = "";
-            this.strict = true;
-        }
-
-        public Options(String base) {
-            this.base = base;
-            this.strict = true;
-        }
-
-        public Options(String base, Boolean strict) {
-            this.base = base;
-            this.strict = strict;
-        }
-
-        public String base = null;
-        public Boolean strict = null;
-        public Boolean graph = null;
-        public Boolean optimize = null;
-        public Map<String, Object> optimizeCtx = null;
-		public Boolean embed = null;
-		public Boolean explicit = null;
-		public Boolean omitDefault = null;
-		public Boolean collate = null;
-		public Boolean useRdfType = null;
-		public Boolean useNativeTypes = null;
-		
-		private Set<String> ignoredKeys = new HashSet<String>();
-		
-		// custom option to give to expand and compact which will generate @id's for elements that don't
-		// have a specific @id
-		public Boolean addBlankNodeIDs = false;
-
-	    /**
-	     * Tells the processor to skip over the key specified by "key" any time it encounters it. Objects under this key will not be manipulated by any of the
-	     * processor functions and no triples will be created using it.
-	     * 
-	     * @param key
-	     *            The name of the key this processor should ignore.
-	     */
-		public Options ignoreKey(String key) {
-			ignoredKeys.add(key);
-			return this;
-		}
-		
-		public Boolean isIgnored(String key) {
-			return ignoredKeys.contains(key);
-		}
-		
-		public Options clone() {
-			Options rval = new Options(base);
-			rval.strict = strict;
-			rval.graph = graph;
-			rval.optimize = optimize;
-			rval.optimizeCtx = (Map<String, Object>) JSONLDUtils.clone(optimizeCtx);
-			rval.embed = embed;
-			rval.explicit = explicit;
-			rval.omitDefault = omitDefault;
-			rval.collate = collate;
-			rval.useNativeTypes = useNativeTypes;
-			rval.useRdfType = useRdfType;
-			rval.addBlankNodeIDs = addBlankNodeIDs;
-			for (String key: ignoredKeys) {
-				rval.ignoreKey(key);
-			}
-			return rval;
-		}
-    }
-
+    
     Options opts;
 
     public JSONLDProcessor() {
@@ -132,146 +46,6 @@ public class JSONLDProcessor {
         } else {
             this.opts = opts;
         }
-    }
-
-    /**
-     * A helper class which still stores all the values in a map
-     * but gives member variables easily access certain keys 
-     * 
-     * @author tristan
-     *
-     */
-    public class ActiveContext extends HashMap<String, Object> {
-        public ActiveContext() {
-        	super();
-        	init();
-        }
-        
-        public ActiveContext(Map<String,Object> copy) {
-        	super(copy);
-        	init();
-        }
-        
-        private void init() {
-        	if (!this.containsKey("mappings")) {
-        		this.put("mappings", new HashMap<String,Object>());
-        	}
-        	if (!this.containsKey("keywords")) {
-        		this.put("keywords", new HashMap<String, List<String>>() {
-                    {
-                        put("@context", new ArrayList<String>());
-                        put("@container", new ArrayList<String>());
-                        put("@default", new ArrayList<String>());
-                        put("@embed", new ArrayList<String>());
-                        put("@explicit", new ArrayList<String>());
-                        put("@graph", new ArrayList<String>());
-                        put("@id", new ArrayList<String>());
-                        put("@language", new ArrayList<String>());
-                        put("@list", new ArrayList<String>());
-                        put("@omitDefault", new ArrayList<String>());
-                        put("@preserve", new ArrayList<String>());
-                        put("@set", new ArrayList<String>());
-                        put("@type", new ArrayList<String>());
-                        put("@value", new ArrayList<String>());
-                        put("@vocab", new ArrayList<String>());
-                        // add ignored keywords
-                        /*
-                        for (String key : ignoredKeywords) {
-                            put(keyword, new ArrayList<String>());
-                        }
-                        */
-                    }
-        		});
-        	}
-        	mappings = (Map<String, Object>) this.get("mappings");
-        	keywords = (Map<String, List<String>>) this.get("keywords");
-        }
-
-        public Object getContextValue(String key, String type) {
-            if (key == null) {
-                return null;
-            }
-            Object rval = null;
-            if ("@language".equals(type) && this.containsKey(type)) {
-                rval = this.get(type);
-            }
-
-            if (this.mappings.containsKey(key)) {
-                Map<String, Object> entry = (Map<String, Object>) this.mappings.get(key);
-
-                if (type == null) {
-                    rval = entry;
-                } else if (entry.containsKey(type)) {
-                    rval = entry.get(type);
-                }
-            }
-
-            return rval;
-        }
-
-        public Map<String, Object> mappings;
-        public Map<String, List<String>> keywords;
-    }
-
-    public class UniqueNamer {
-    	private String prefix;
-		private int counter;
-		private HashMap<String, String> existing;
-
-		/**
-		 * Creates a new UniqueNamer. A UniqueNamer issues unique names, keeping
-		 * track of any previously issued names.
-		 *
-		 * @param prefix the prefix to use ('<prefix><counter>').
-		 */
-		public UniqueNamer(String prefix) {
-    		this.prefix = prefix;
-    		this.counter = 0;
-    		this.existing = new HashMap<String,String>();
-    	}
-		
-		/**
-		 * Copies this UniqueNamer.
-		 *
-		 * @return a copy of this UniqueNamer.
-		 */
-		public UniqueNamer clone() {
-			UniqueNamer copy = new UniqueNamer(this.prefix);
-			copy.counter = this.counter;
-			copy.existing = (HashMap<String, String>) JSONLDUtils.clone(this.existing);
-			return copy;
-		}
-		
-		/**
-		 * Gets the new name for the given old name, where if no old name is given
-		 * a new name will be generated.
-		 *
-		 * @param [oldName] the old name to get the new name for.
-		 *
-		 * @return the new name.
-		 */
-		public String getName(String oldName) {
-			if (oldName != null && this.existing.containsKey(oldName)) {
-				return this.existing.get(oldName);
-			}
-			
-			String name = this.prefix + this.counter;
-			this.counter++;
-			
-			if (oldName != null) {
-				this.existing.put(oldName, name);
-			}
-			
-			return name;
-		}
-		
-		public String getName() {
-			return getName(null);
-		}
-		
-		public Boolean isNamed(String oldName) {
-			return this.existing.containsKey(oldName);
-		}
     }
     
     /**
@@ -665,7 +439,7 @@ public class JSONLDProcessor {
     public static ActiveContext processContext(ActiveContext activeCtx, Object localCtx, Options opts) throws JSONLDProcessingError {
         JSONLDProcessor p = new JSONLDProcessor(opts);
         if (localCtx == null) {
-            return p.new ActiveContext();
+            return new ActiveContext();
         }
 
         localCtx = JSONLDUtils.clone(localCtx);
@@ -2498,7 +2272,7 @@ public class JSONLDProcessor {
 				for (Map<String,Object> r: results) {
 					// name all bnodes in path namer in key-entry order
 		            // Note: key-order is preserved in javascript
-					for (String key: ((UniqueNamer)r.get("pathNamer")).existing.keySet()) {
+					for (String key: ((UniqueNamer)r.get("pathNamer")).existing().keySet()) {
 						namer.getName(key);
 					}
 				}
