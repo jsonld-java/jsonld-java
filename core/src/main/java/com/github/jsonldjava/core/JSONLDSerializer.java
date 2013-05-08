@@ -91,7 +91,8 @@ public abstract class JSONLDSerializer {
 	}
     
     /**
-     * take input and generate a list of statements from that input
+     * Take input and generate a list of statements from that input.
+     * Must call the respective triple(...) method for each triple in the input.
      * 
      * @param input
      * @throws JSONLDProcessingError
