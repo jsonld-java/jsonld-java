@@ -26,7 +26,7 @@ import com.github.jsonldjava.utils.JSONUtils;
  */
 public class IgnoreKeysTest {
 
-	private static final String TEST_DIR = "testfiles";
+	private static final String TEST_DIR = "custom";
 	
 	@Test
 	public void expandTest() throws JSONLDProcessingError, IOException {

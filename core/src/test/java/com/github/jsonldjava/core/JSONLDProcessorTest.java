@@ -40,7 +40,7 @@ import com.github.jsonldjava.utils.JSONUtils;
 @RunWith(Parameterized.class)
 public class JSONLDProcessorTest {
 
-    private static final String TEST_DIR = "testfiles";
+    private static final String TEST_DIR = "json-ld.org";
 
     @Parameters
     public static Collection<Object[]> data() throws URISyntaxException, IOException {
