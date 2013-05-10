@@ -2,16 +2,11 @@ package com.github.jsonldjava.core;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -30,30 +25,28 @@ public class JSONLDUtils {
      *
      * @return true if the value is a keyword, false if not.
      */
-    public static boolean isKeyword(String key) {
-        // TODO: this doesn't fit with my desire to have this list modifyable at runtime
-        // I may need to make this a method of JSONLDProcessor to support this
-        // which may result in a lot of the utils in this library becoming member functions
-        return "@context".equals(key) || "@container".equals(key) || "@default".equals(key) || "@embed".equals(key) || "@explicit".equals(key)
-                || "@graph".equals(key) || "@id".equals(key) || "@language".equals(key) || "@list".equals(key) || "@omitDefault".equals(key)
-                || "@preserve".equals(key) || "@set".equals(key) || "@type".equals(key) || "@value".equals(key) || "@vocab".equals(key);
-    }
-
-    public static boolean isKeyword(String key, Map<String, Object> ctx) {
-        if (ctx.containsKey("keywords")) {
-            Map<String, List<String>> keywords = (Map<String, List<String>>) ctx.get("keywords");
-            if (keywords.containsKey(key)) {
-                return true;
-            }
-            for (List<String> aliases : keywords.values()) {
-                if (aliases.contains(key)) {
-                    return true;
-                }
-            }
-        } else {
-            throw new RuntimeException("Error: missing keywords map in context!");
+    public static boolean isKeyword(Object key) {
+        if (!isString(key)) {
+        	return false;
         }
-        return false;
+        return  "@base".equals(key) ||
+        		"@context".equals(key) || 
+        		"@container".equals(key) || 
+        		"@default".equals(key) || 
+        		"@embed".equals(key) || 
+        		"@explicit".equals(key) || 
+        		"@graph".equals(key) || 
+        		"@id".equals(key) ||
+        		"@index".equals(key) ||
+        		"@language".equals(key) || 
+        		"@list".equals(key) || 
+        		"@omitDefault".equals(key) ||
+        		"@reverse".equals(key) ||
+        		"@preserve".equals(key) ||
+        		"@set".equals(key) ||
+        		"@type".equals(key) ||
+        		"@value".equals(key) ||
+        		"@vocab".equals(key);
     }
 
     public static boolean isAbsoluteIri(String value) {
@@ -61,9 +54,8 @@ public class JSONLDUtils {
     }
 
     /**
-     * Adds a value to a subject. If the subject already has the value, it will
-     * not be added. If the value is an array, all values in the array will be
-     * added.
+     * Adds a value to a subject. If the value is an array, all values in the
+     *  array will be added.
      *
      * Note: If the value is a subject that already exists as a property of the
      * given subject, this method makes no attempt to deeply merge properties.
@@ -78,7 +70,8 @@ public class JSONLDUtils {
      *          if not (default: false).
      */
     public static void addValue(Map<String, Object> subject, String property, Object value, boolean propertyIsArray, boolean allowDuplicate) {
-        if (value instanceof List) {
+    	
+        if (isArray(value)) {
             if (((List) value).size() == 0 && propertyIsArray && !subject.containsKey(property)) {
                 subject.put(property, new ArrayList<Object>());
             }
@@ -86,16 +79,22 @@ public class JSONLDUtils {
                 addValue(subject, property, val, propertyIsArray, allowDuplicate);
             }
         } else if (subject.containsKey(property)) {
+        	// check if subject already has the value if duplicates not allowed
             boolean hasValue = !allowDuplicate && hasValue(subject, property, value);
-            if (!(subject.get(property) instanceof List) && (!hasValue || propertyIsArray)) {
+            
+            // make property an array if value not present or always an array
+            if (!isArray(subject.get(property)) && (!hasValue || propertyIsArray)) {
                 List<Object> tmp = new ArrayList<Object>();
                 tmp.add(subject.get(property));
                 subject.put(property, tmp);
             }
+            
+            // add new value
             if (!hasValue) {
                 ((List<Object>) subject.get(property)).add(value);
             }
         } else {
+        	// add new value as a set or single value
             Object tmp;
             if (propertyIsArray) {
                 tmp = new ArrayList<Object>();
@@ -340,7 +339,7 @@ public class JSONLDUtils {
     		_cycles.put(url, Boolean.TRUE);
     		
     		try {
-				Map<String,Object> ctx = (Map<String,Object>)JSONUtils.fromString((String)new URL(url).getContent());
+				Map<String,Object> ctx = (Map<String,Object>)JSONUtils.fromString((String)new java.net.URL(url).getContent());
 				if (!ctx.containsKey("@context")) {
 					ctx = new HashMap<String, Object>();
 					ctx.put("@context", new HashMap<String, Object>());
@@ -511,5 +510,56 @@ public class JSONLDUtils {
     		// rval = (v1.equals(v2) ? 0 : 1);
     	}
     	return rval;
+    }
+    
+	/**
+     * Returns true if the given value is a JSON-LD Array
+     * 
+     * @param v the value to check.
+     * @return
+     */
+    public static Boolean isArray(Object v) {
+    	return (v instanceof List);
+    }
+    
+    /**
+     * Returns true if the given value is a JSON-LD List
+     * 
+     * @param v the value to check.
+     * @return
+     */
+    public static Boolean isList(Object v) {
+    	return (v instanceof Map && ((Map<String, Object>) v).containsKey("@list"));
+    }
+    
+    /**
+     * Returns true if the given value is a JSON-LD Object
+     * 
+     * @param v the value to check.
+     * @return 
+     */
+    public static Boolean isObject(Object v) {
+    	return (v instanceof Map);
+    }
+    
+    /**
+     * Returns true if the given value is a JSON-LD value
+     * 
+     * @param v the value to check.
+     * @return 
+     */
+    public static Boolean isValue(Object v) {
+    	return (v instanceof Map && ((Map<String, Object>) v).containsKey("@value"));
+    }
+    
+    /**
+     * Returns true if the given value is a JSON-LD string
+     * 
+     * @param v the value to check.
+     * @return 
+     */
+    public static Boolean isString(Object v) {
+    	// TODO: should this return true for arrays of strings as well?
+    	return (v instanceof String);
     }
 }

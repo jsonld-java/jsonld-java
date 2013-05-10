@@ -5,16 +5,15 @@ import java.util.Map;
 
 public class JSONLDProcessingError extends Exception {
 
-	String message;
 	Map details;
 	
 	public JSONLDProcessingError(String string, Map<String, Object> details) {
-		message = string;
+		super(string);
 		details = details;
 	}
 
 	public JSONLDProcessingError(String string) {
-		message = string;
+		super(string);
 		details = new HashMap();
 	}
 
@@ -25,7 +24,7 @@ public class JSONLDProcessingError extends Exception {
 	}
 
 	public enum Error {
-		SYNTAX_ERROR, PARSE_ERROR, RDF_ERROR, CONTEXT_URL_ERROR, INVALID_URL, COMPACT_ERROR
+		SYNTAX_ERROR, PARSE_ERROR, RDF_ERROR, CONTEXT_URL_ERROR, INVALID_URL, COMPACT_ERROR, CYCLICAL_CONTEXT
 	}
 
 	public JSONLDProcessingError setType(Error error) {

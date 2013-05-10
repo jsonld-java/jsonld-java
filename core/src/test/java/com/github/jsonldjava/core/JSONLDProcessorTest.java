@@ -22,8 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.FailedLoginException;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -31,7 +29,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.core.JSONLDProcessor;
 import com.github.jsonldjava.core.JSONLDUtils;
 import com.github.jsonldjava.impl.NQuadJSONLDSerializer;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
@@ -75,14 +72,14 @@ public class JSONLDProcessorTest {
                 List<String> testType = (List<String>) test.get("@type");
                 if (// test.get("input").equals("normalize-0044-in.jsonld") && (
                 testType.contains("jld:ExpandTest") 
-                || testType.contains("jld:CompactTest") 
-                || testType.contains("jld:NormalizeTest")
+                //|| testType.contains("jld:CompactTest") 
+                //|| testType.contains("jld:NormalizeTest")
                 //|| testType.contains("jld:FrameTest")
                 //|| testType.contains("jld:TriplesTest")
                 //|| testType.contains("jld:SimplifyTest")
                 //|| testType.contains("jld:ToRDFTest")
                 //|| testType.contains("jld:FromRDFTest")
-                //&& test.get("@id").equals("#t0001") // used for running specific tests
+                //&& test.get("@id").equals("#t0060") // used for running specific tests
                 ) {
                     System.out.println("Adding test: " + test.get("name"));
                     rdata.add(new Object[] { manifest.get("name"), test.get("@id"), test });
@@ -161,27 +158,33 @@ public class JSONLDProcessorTest {
         String sparqlFile = (String) test.get("sparql");
         if (expectFile != null) {
             InputStream expectStream = cl.getResourceAsStream(TEST_DIR + "/" + expectFile);
-            assertNotNull("unable to find expect file: " + test.get("expect"), expectStream);
-
-            String expectType = expectFile.substring(expectFile.lastIndexOf(".") + 1);
-            if (expectType.equals("jsonld")) {
-                expect = JSONUtils.fromInputStream(expectStream);
-            } else if (expectType.equals("nt") || expectType.equals("nq")) {
-                List<String> expectLines = new ArrayList<String>();
-                BufferedReader buf = new BufferedReader(new InputStreamReader(expectStream, "UTF-8"));
-                String line;
-                while ((line = buf.readLine()) != null) {
-                    line = line.trim();
-                    if (line.length() == 0 || line.charAt(0) == '#') {
-                        continue;
-                    }
-                    expectLines.add(line);
-                }
-                Collections.sort(expectLines);
-                expect = join(expectLines, "\n");
+            if (expectStream == null && testType.contains("jld:NegativeEvaluationTest")) {
+            	// in the case of negative evaluation tests the expect field can be a description of what should happen
+            	expect = expectFile;
+            	failure_expected = true;
+            } else if (expectStream == null) {
+            	assertFalse("Unable to find expect file: " + expectFile, true);
             } else {
-                expect = "";
-                assertFalse("Unknown expect type: " + expectType, true);
+	            String expectType = expectFile.substring(expectFile.lastIndexOf(".") + 1);
+	            if (expectType.equals("jsonld")) {
+	                expect = JSONUtils.fromInputStream(expectStream);
+	            } else if (expectType.equals("nt") || expectType.equals("nq")) {
+	                List<String> expectLines = new ArrayList<String>();
+	                BufferedReader buf = new BufferedReader(new InputStreamReader(expectStream, "UTF-8"));
+	                String line;
+	                while ((line = buf.readLine()) != null) {
+	                    line = line.trim();
+	                    if (line.length() == 0 || line.charAt(0) == '#') {
+	                        continue;
+	                    }
+	                    expectLines.add(line);
+	                }
+	                Collections.sort(expectLines);
+	                expect = join(expectLines, "\n");
+	            } else {
+	                expect = "";
+	                assertFalse("Unknown expect type: " + expectType, true);
+	            }
             }
         } else if (sparqlFile != null) {
             InputStream sparqlStream = cl.getResourceAsStream(TEST_DIR + "/" + sparqlFile);
@@ -190,7 +193,7 @@ public class JSONLDProcessorTest {
             String buffer = null;
             while ((buffer = buf.readLine()) != null)
                 sparql += buffer + "\n";
-        } else if (testType.contains("jdl:NegativeEvaluationTest")) {
+        } else if (testType.contains("jld:NegativeEvaluationTest")) {
         	// TODO: this is hacky, but works for the limited number of negative evaluation tests that are currently present
         	failure_expected = true;
         } else {

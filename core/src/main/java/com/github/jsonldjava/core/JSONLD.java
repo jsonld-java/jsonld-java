@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.jsonldjava.core.JSONLDUtils.*;
+
 public class JSONLD {
 	
 	   /**
@@ -44,7 +46,7 @@ public class JSONLD {
         Object expanded;
         try {
             
-            expanded = p.expand(new ActiveContext(), new UniqueNamer("_:t"), null, input);
+            expanded = p.expand(new ActiveContext(), null, input, false);
         } catch (JSONLDProcessingError e) {
         	throw new JSONLDProcessingError("Could not expand input before compaction.")
         		.setType(JSONLDProcessingError.Error.COMPACT_ERROR)
@@ -132,15 +134,23 @@ public class JSONLD {
         return compact(input, ctx, new Options("", true));
     }
 	
-	/**
+    /**
      * Performs JSON-LD expansion.
      *
      * @param input the JSON-LD input to expand.
-     * @throws JSONLDProcessingError 
+     * @param [options] the options to use:
+     *          [base] the base IRI to use.
+     *          [keepFreeFloatingNodes] true to keep free-floating nodes,
+     *            false not to, defaults to false.
+     * @return the expanded result as a list
      */
-    public static Object expand(Object input, Options opts) throws JSONLDProcessingError {
+    public static List<Object> expand(Object input, Options opts) throws JSONLDProcessingError {
     	if (opts.base == null) {
     		opts.base = "";
+    	}
+    	
+    	if (opts.keepFreeFloatingNodes == null) {
+    		opts.keepFreeFloatingNodes = false;
     	}
     	
     	// resolve all @context URLs in the input
@@ -149,21 +159,22 @@ public class JSONLD {
     	
     	// do expansion
     	JSONLDProcessor p = new JSONLDProcessor(opts);
-    	UniqueNamer namer = new UniqueNamer("_:t");
-        Object expanded = p.expand(new ActiveContext(), namer, null, input);
+        Object expanded = p.expand(new ActiveContext(opts), null, input, false);
 
         // optimize away @graph with no other properties
-        if (expanded instanceof Map && ((Map) expanded).containsKey("@graph") && ((Map) expanded).size() == 1) {
+        if (isObject(expanded) && ((Map) expanded).containsKey("@graph") && ((Map) expanded).size() == 1) {
             expanded = ((Map<String, Object>) expanded).get("@graph");
+        } else if (expanded == null) {
+        	expanded = new ArrayList<Object>();
         }
 
         // normalize to an array
-        if (!(expanded instanceof List)) {
+        if (!isArray(expanded)) {
             List<Object> tmp = new ArrayList<Object>();
             tmp.add(expanded);
             expanded = tmp;
         }
-        return expanded;
+        return (List<Object>) expanded;
     }
 
     public static Object expand(Object input) throws JSONLDProcessingError {

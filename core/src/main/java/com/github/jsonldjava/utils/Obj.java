@@ -15,6 +15,8 @@ public class Obj {
 	public static Object get(Object map, String... keys) {
 		for (String key: keys) {
 			map = ((Map<String,Object>)map).get(key);
+			// make sure we don't crash if we get a null somewhere down the line
+			if (map == null) return map;
 		}
 		return map;	
 	}

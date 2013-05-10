@@ -37,6 +37,8 @@ public class Options {
 	// custom option to give to expand and compact which will generate @id's for elements that don't
 	// have a specific @id
 	public Boolean addBlankNodeIDs = false;
+	
+	public Boolean keepFreeFloatingNodes = false;
 
     /**
      * Tells the processor to skip over the key specified by "key" any time it encounters it. Objects under this key will not be manipulated by any of the
