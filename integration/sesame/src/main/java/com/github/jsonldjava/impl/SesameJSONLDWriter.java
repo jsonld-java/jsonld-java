@@ -89,7 +89,7 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
 		    .get(JSONLDSettings.USE_RDF_TYPE);
 	    opts.useNativeTypes = getWriterConfig().get(
 		    JSONLDSettings.USE_NATIVE_TYPES);
-	    opts.optimize = getWriterConfig().get(JSONLDSettings.OPTIMIZE);
+	    //opts.optimize = getWriterConfig().get(JSONLDSettings.OPTIMIZE);
 
 	    if (mode == JSONLDMode.EXPAND) {
 		output = JSONLD.expand(output, opts);

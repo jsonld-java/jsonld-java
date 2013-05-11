@@ -23,7 +23,7 @@ public class Options {
     public String base = null;
     public Boolean strict = null;
     public Boolean graph = null;
-    public Boolean optimize = null;
+    //public Boolean optimize = null;
     public Map<String, Object> optimizeCtx = null;
 	public Boolean embed = null;
 	public Boolean explicit = null;
@@ -39,6 +39,8 @@ public class Options {
 	public Boolean addBlankNodeIDs = false;
 	
 	public Boolean keepFreeFloatingNodes = false;
+	public Boolean compactArrays = null;
+	public Boolean skipExpansion = null;
 
     /**
      * Tells the processor to skip over the key specified by "key" any time it encounters it. Objects under this key will not be manipulated by any of the
@@ -60,7 +62,6 @@ public class Options {
 		Options rval = new Options(base);
 		rval.strict = strict;
 		rval.graph = graph;
-		rval.optimize = optimize;
 		rval.optimizeCtx = (Map<String, Object>) JSONLDUtils.clone(optimizeCtx);
 		rval.embed = embed;
 		rval.explicit = explicit;

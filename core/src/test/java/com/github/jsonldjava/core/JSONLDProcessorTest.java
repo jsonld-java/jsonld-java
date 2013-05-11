@@ -13,11 +13,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -70,16 +72,16 @@ public class JSONLDProcessorTest {
 
             for (Map<String, Object> test : (List<Map<String, Object>>) manifest.get("sequence")) {
                 List<String> testType = (List<String>) test.get("@type");
-                if (// test.get("input").equals("normalize-0044-in.jsonld") && (
+                if (
                 testType.contains("jld:ExpandTest") 
-                //|| testType.contains("jld:CompactTest") 
+                || testType.contains("jld:CompactTest") 
                 //|| testType.contains("jld:NormalizeTest")
                 //|| testType.contains("jld:FrameTest")
                 //|| testType.contains("jld:TriplesTest")
                 //|| testType.contains("jld:SimplifyTest")
                 //|| testType.contains("jld:ToRDFTest")
                 //|| testType.contains("jld:FromRDFTest")
-                //&& test.get("@id").equals("#t0060") // used for running specific tests
+                //&& test.get("@id").equals("#t0066") // used for running specific tests
                 ) {
                     System.out.println("Adding test: " + test.get("name"));
                     rdata.add(new Object[] { manifest.get("name"), test.get("@id"), test });
@@ -240,7 +242,11 @@ public class JSONLDProcessorTest {
             if (testpassed == false) {
                 System.out.println("failed test!!! details:");
                 jsonDiff("/", expect, result);
-                System.out.println("{\"expected\": " + JSONUtils.toString(expect) + "\n,\"result\": " + JSONUtils.toString(result) + "}");
+                Map<String,Object> pp = new HashMap<String, Object>();
+                pp.put("expected", expect);
+                pp.put("result", result);
+                //System.out.println("{\"expected\": " + JSONUtils.toString(expect) + "\n,\"result\": " + JSONUtils.toString(result) + "}");
+                JSONUtils.writePrettyPrint(new OutputStreamWriter(System.out), pp);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -251,7 +257,10 @@ public class JSONLDProcessorTest {
 
 	private void jsonDiff(String parent, Object expect, Object result) {
 	    if (expect == null) {
-	        fail("Expected object was null");
+	    	if (result != null) {
+	    		System.out.println(parent + " expected null, got: " + result);
+	    	}
+	        //fail("Expected object was null");
 	    }
 	    else if (expect instanceof Map && result instanceof Map) {
 			Map<String,Object> e = (Map<String,Object>)expect;

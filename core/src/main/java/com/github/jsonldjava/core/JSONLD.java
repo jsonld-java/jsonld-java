@@ -1,6 +1,7 @@
 package com.github.jsonldjava.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,44 +10,60 @@ import static com.github.jsonldjava.core.JSONLDUtils.*;
 
 public class JSONLD {
 	
-	   /**
-     * Performs JSON-LD compaction.
-     *
-     * @param input the JSON-LD input to compact.
-     * @param ctx the context to compact with.
-     * @param [options] options to use:
-     *          [base] the base IRI to use.
-     *          [strict] use strict mode (default: true).
-     *          [optimize] true to optimize the compaction (default: false).
-     *          [graph] true to always output a top-level graph (default: false).
-     *          [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
-     * @param callback(err, compacted, ctx) called once the operation completes.
-     * @throws JSONLDProcessingError 
-     */
+	/**
+	 * Performs JSON-LD compaction.
+	 *
+	 * @param input the JSON-LD input to compact.
+	 * @param ctx the context to compact with.
+	 * @param [options] options to use:
+	 *          [base] the base IRI to use.
+	 *          [strict] use strict mode (default: true).
+	 *          [compactArrays] true to compact arrays to single values when
+	 *            appropriate, false not to (default: true).
+	 *          [graph] true to always output a top-level graph (default: false).
+	 *          [skipExpansion] true to assume the input is expanded and skip
+	 *            expansion, false not to, defaults to false.
+	 *          [loadContext(url, callback(err, url, result))] the context loader.
+	 * @param callback(err, compacted, ctx) called once the operation completes.
+	 */
     public static Object compact(Object input, Object ctx, Options opts) throws JSONLDProcessingError {
     	// nothing to compact
         if (input == null) {
             return null;
         }
+        
+        // NOTE: javascript does this check before input check
+        if (ctx == null) {
+        	throw new JSONLDProcessingError("The compaction context must not be null.")
+    		.setType(JSONLDProcessingError.Error.COMPACT_ERROR);
+        }
+        
+        // set default options
         if (opts.base == null) {
         	opts.base = "";
         }
         if (opts.strict == null) {
             opts.strict = true;
         }
+        if (opts.compactArrays == null) {
+        	opts.compactArrays = true;
+        }
         if (opts.graph == null) {
             opts.graph = false;
         }
-        if (opts.optimize == null) {
-            opts.optimize = false;
+        if (opts.skipExpansion == null) {
+            opts.skipExpansion = false;
         }
-        JSONLDProcessor p = new JSONLDProcessor(opts);
+        //JSONLDProcessor p = new JSONLDProcessor(opts);
 
         // expand input then do compaction
         Object expanded;
         try {
-            
-            expanded = p.expand(new ActiveContext(), null, input, false);
+        	if (opts.skipExpansion) {
+        		expanded = input;
+        	} else {
+        		expanded = JSONLD.expand(input, opts);
+        	}
         } catch (JSONLDProcessingError e) {
         	throw new JSONLDProcessingError("Could not expand input before compaction.")
         		.setType(JSONLDProcessingError.Error.COMPACT_ERROR)
@@ -54,76 +71,80 @@ public class JSONLD {
         }
 
         // process context
-        ActiveContext activeCtx = new ActiveContext();
+        ActiveContext activeCtx = new ActiveContext(opts);
         try {
-            activeCtx = processContext(activeCtx, ctx, opts);
+            activeCtx = JSONLD.processContext(activeCtx, ctx, opts);
         } catch (JSONLDProcessingError e) {
             throw new JSONLDProcessingError("Could not process context before compaction.")
             	.setType(JSONLDProcessingError.Error.COMPACT_ERROR)
         		.setDetail("cause", e);
         }
 
-        if (opts.optimize) {
-            opts.optimizeCtx = new HashMap<String, Object>();
-        }
-
         // do compaction
-        Object compacted = p.compact(activeCtx, null, expanded);
+        Object compacted = new JSONLDProcessor(opts).compact(activeCtx, null, expanded);
 
         // cleanup
-        if (!opts.graph && compacted instanceof List && ((List<Object>) compacted).size() == 1) {
-            compacted = ((List<Object>) compacted).get(0);
-        } else if (opts.graph && compacted instanceof Map) {
+        if (opts.compactArrays && !opts.graph && isArray(compacted)) {
+        	// simplify to a single item
+        	if (((List<Object>)compacted).size() == 1) {
+        		compacted = ((List<Object>) compacted).get(0);
+        	}
+        	// simplify to an empty object
+        	else if (((List<Object>)compacted).size() == 0) {
+        		compacted = new HashMap<String, Object>();
+        	}
+        }
+        // always use array if graph option is on
+        else if (opts.graph && isObject(compacted)) {
             List<Object> tmp = new ArrayList<Object>();
             tmp.add(compacted);
             compacted = tmp;
         }
 
-        if (ctx instanceof Map && ((Map<String, Object>) ctx).containsKey("@context")) {
+        // follow @context key
+        if (isObject(ctx) && ((Map<String, Object>) ctx).containsKey("@context")) {
             ctx = ((Map<String, Object>) ctx).get("@context");
         }
 
+        // build output context
         ctx = JSONLDUtils.clone(ctx);
-        if (!(ctx instanceof List)) {
+        if (!isArray(ctx)) {
             List<Object> lctx = new ArrayList<Object>();
             lctx.add(ctx);
             ctx = lctx;
         }
-        // TODO: i need some cases where ctx is a list!
-
-        if (opts.optimize) {
-            ((List<Object>) ctx).add(opts.optimizeCtx);
-        }
-
+        
+        // remove empty contexts
         List<Object> tmp = (List<Object>) ctx;
         ctx = new ArrayList<Object>();
         for (Object i : tmp) {
-            if (!(i instanceof Map) || ((Map) i).size() > 0) {
+            if (!isObject(i) || ((Map) i).size() > 0) {
                 ((List<Object>) ctx).add(i);
             }
         }
 
+        // remove array if only one context
         boolean hasContext = ((List) ctx).size() > 0;
         if (((List) ctx).size() == 1) {
             ctx = ((List) ctx).get(0);
         }
 
-        if (hasContext || opts.graph) {
-            if (compacted instanceof List) {
-                String kwgraph = JSONLDProcessor.compactIri(activeCtx, "@graph");
-                Object graph = compacted;
-                compacted = new HashMap<String, Object>();
-                if (hasContext) {
-                    ((Map<String, Object>) compacted).put("@context", ctx);
-                }
-                ((Map<String, Object>) compacted).put(kwgraph, graph);
-            } else if (compacted instanceof Map) {
-                Map<String, Object> graph = (Map<String, Object>) compacted;
-                compacted = new HashMap<String, Object>();
-                ((Map) compacted).put("@context", ctx);
-                for (String key : graph.keySet()) {
-                    ((Map<String, Object>) compacted).put(key, graph.get(key));
-                }
+        // add context and/or @graph
+        if (isArray(compacted)) {
+            String kwgraph = compactIri(activeCtx, "@graph");
+            Object graph = compacted;
+            compacted = new HashMap<String, Object>();
+            if (hasContext) {
+                ((Map<String, Object>) compacted).put("@context", ctx);
+            }
+            ((Map<String, Object>) compacted).put(kwgraph, graph);
+        } else if (isObject(compacted) && hasContext) {
+        	// reorder keys so @context is first
+            Map<String, Object> graph = (Map<String, Object>) compacted;
+            compacted = new HashMap<String, Object>();
+            ((Map) compacted).put("@context", ctx);
+            for (String key : graph.keySet()) {
+                ((Map<String, Object>) compacted).put(key, graph.get(key));
             }
         }
 
@@ -203,9 +224,9 @@ public class JSONLD {
     	if (opts.embed == null) {
     		opts.embed  = true;
     	}
-    	if (opts.optimize == null) {
-    		opts.optimize = false;
-    	}
+    	//if (opts.optimize == null) {
+    	//	opts.optimize = false;
+    	//}
     	if (opts.explicit == null) {
     		opts.explicit = false;
     	}
@@ -235,8 +256,8 @@ public class JSONLD {
     	opts.graph = true;
     	
     	Map<String,Object> compacted = (Map<String, Object>) JSONLD.compact(framed, fctx, opts);
-    	String graph = JSONLDProcessor.compactIri(ctx, "@graph");
-    	compacted.put(graph, p.removePreserve(ctx, compacted.get(graph)));
+    	//String graph = JSONLDProcessor.compactIri(ctx, "@graph");
+    	//compacted.put(graph, p.removePreserve(ctx, compacted.get(graph)));
         return compacted;
     }
     
@@ -244,19 +265,38 @@ public class JSONLD {
     	return frame(input, frame, new Options(""));
     }
     
+    /**
+     * Processes a local context, resolving any URLs as necessary, and returns a
+     * new active context in its callback.
+     *
+     * @param activeCtx the current active context.
+     * @param localCtx the local context to process.
+     * @param [options] the options to use:
+     *          [loadContext(url, callback(err, url, result))] the context loader.
+     * @param callback(err, ctx) called once the operation completes.
+     */
     private static ActiveContext processContext(ActiveContext activeCtx, Object localCtx, Options opts) throws JSONLDProcessingError {
-    	JSONLDProcessor p = new JSONLDProcessor(opts);
+    	// set default options
+    	if (opts.base == null) {
+    		opts.base = "";
+    	}
+    	
+    	// return initial context early for null context
     	if (localCtx == null) {
-    		return new ActiveContext();
+    		return new ActiveContext(opts);
     	}
+    	
+    	// retrieve URLs in localCtx
     	localCtx = JSONLDUtils.clone(localCtx);
-    	if (localCtx instanceof Map && !((Map)localCtx).containsKey("@context")) {
-    		Object tmp = localCtx;
-    		localCtx = new HashMap<String, Object>();
-    		((HashMap<String, Object>) localCtx).put("@context", tmp);
+    	if (isString(localCtx) || (isObject(localCtx) && !((HashMap<String, Object>) localCtx).containsKey("@context"))) {
+    		Map<String,Object> tmp = new HashMap<String, Object>();
+    		tmp.put("@context", localCtx);
+    		localCtx = tmp;
     	}
-    	JSONLDUtils.resolveContextUrls(localCtx);
-    	return p.processContext(activeCtx, localCtx);
+    	
+    	resolveContextUrls(localCtx);
+    	
+    	return new JSONLDProcessor(opts).processContext(activeCtx, localCtx);
     }
     
     /**
