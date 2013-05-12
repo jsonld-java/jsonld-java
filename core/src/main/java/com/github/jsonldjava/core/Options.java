@@ -41,6 +41,7 @@ public class Options {
 	public Boolean keepFreeFloatingNodes = false;
 	public Boolean compactArrays = null;
 	public Boolean skipExpansion = null;
+	public ActiveContext compactResultsActiveCtx = null;
 
     /**
      * Tells the processor to skip over the key specified by "key" any time it encounters it. Objects under this key will not be manipulated by any of the
@@ -70,6 +71,10 @@ public class Options {
 		rval.useNativeTypes = useNativeTypes;
 		rval.useRdfType = useRdfType;
 		rval.addBlankNodeIDs = addBlankNodeIDs;
+		rval.keepFreeFloatingNodes = keepFreeFloatingNodes;
+		rval.compactArrays = compactArrays;
+		rval.skipExpansion = skipExpansion;
+		rval.compactResultsActiveCtx = compactResultsActiveCtx != null ? compactResultsActiveCtx.clone() : null;
 		for (String key: ignoredKeys) {
 			rval.ignoreKey(key);
 		}

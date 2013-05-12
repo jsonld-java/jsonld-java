@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -80,7 +81,7 @@ public class IgnoreKeysTest {
 		Object output = JSONUtils.fromInputStream(outputStream);
 		Object frame = JSONUtils.fromInputStream(frameStream);
 		
-		Object result = JSONLD.frame(input, frame, new Options("").ignoreKey("@ignoreMe"));
+		Object result = JSONLD.frame(input, (Map<String, Object>) frame, new Options("").ignoreKey("@ignoreMe"));
 		
 		docheck("frame 1", output, result);
 	}

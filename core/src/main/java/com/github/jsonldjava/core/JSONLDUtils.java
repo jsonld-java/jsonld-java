@@ -901,6 +901,61 @@ public class JSONLDUtils {
 	}
 
 	/**
+	 * Removes the @preserve keywords as the last step of the framing algorithm.
+	 *
+	 * @param ctx the active context used to compact the input.
+	 * @param input the framed, compacted output.
+	 * @param options the compaction options used.
+	 *
+	 * @return the resulting output.
+	 */
+	static Object removePreserve(ActiveContext ctx, Object input, Options opts) {
+		// recurse through arrays
+		if (isArray(input)) {
+			List<Object> output = new ArrayList<Object>();
+			for (Object i : (List<Object>)input) {
+				Object result = removePreserve(ctx, i, opts);
+				// drop nulls from arrays
+				if (result != null) {
+					output.add(result);
+				}
+			}
+			input = output;
+		}
+		else if (isObject(input)) {
+			// remove @preserve
+			if (((Map<String, Object>) input).containsKey("@preserve")) {
+				if ("@null".equals(((Map<String, Object>) input).get("@preserve"))) {
+					return null;
+				}
+				return ((Map<String, Object>) input).get("@preserve");
+			}
+			
+			// skip @values
+			if (isValue(input)) {
+				return input;
+			}
+			
+			// recurse through @lists
+			if (isList(input)) {
+				((Map<String, Object>) input).put("@list", removePreserve(ctx, ((Map<String, Object>) input).get("@list"), opts));
+				return input;
+			}
+			
+			// recurse through properties
+			for (String prop : ((Map<String, Object>) input).keySet()) {
+				Object result = removePreserve(ctx, ((Map<String, Object>) input).get(prop), opts);
+				String container = (String) ctx.getContextValue(prop, "@container");
+				if (opts.compactArrays && isArray(result) && ((List<Object>) result).size() == 1 && container == null) {
+					result = ((List<Object>) result).get(0);
+				}
+				((Map<String, Object>) input).put(prop, result);
+			}
+		}
+		return input;
+	}
+	
+	/**
 	 * replicate javascript .join because i'm too lazy to keep doing it manually
 	 * 
 	 * @param iriSegments

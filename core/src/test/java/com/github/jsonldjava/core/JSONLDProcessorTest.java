@@ -76,13 +76,13 @@ public class JSONLDProcessorTest {
                 testType.contains("jld:ExpandTest") 
                 || testType.contains("jld:CompactTest")
                 || testType.contains("jld:FlattenTest")
+                || testType.contains("jld:FrameTest")
                 //|| testType.contains("jld:NormalizeTest")
-                //|| testType.contains("jld:FrameTest")
                 //|| testType.contains("jld:TriplesTest")
                 //|| testType.contains("jld:SimplifyTest")
                 //|| testType.contains("jld:ToRDFTest")
                 //|| testType.contains("jld:FromRDFTest")
-                //&& test.get("@id").equals("#t0020") // used for running specific tests
+                //&& test.get("@id").equals("#t0001") // used for running specific tests
                 ) {
                     System.out.println("Adding test: " + test.get("name"));
                     rdata.add(new Object[] { manifest.get("name"), test.get("@id"), test });
@@ -225,7 +225,7 @@ public class JSONLDProcessorTest {
 	        	}
 	        } else if (testType.contains("jld:FrameTest")) {
 	            InputStream frameStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("frame"));
-	            Object frameJson = JSONUtils.fromInputStream(frameStream);
+	            Map<String,Object> frameJson = (Map<String, Object>) JSONUtils.fromInputStream(frameStream);
 	            result = JSONLD.frame(input, frameJson, options);
 	        } else if (testType.contains("jld:ToRDFTest")) {
 	            // TODO: many of the tests here fail simply because of an ordering issue

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.jsonldjava.utils.JSONUtils;
+
 import static com.github.jsonldjava.core.JSONLDUtils.*;
 
 public class JSONLD {
@@ -148,6 +150,8 @@ public class JSONLD {
             }
         }
 
+        // frame needs the value of the compaction result's activeCtx 
+        opts.compactResultsActiveCtx = activeCtx;
         return compacted;
     }
 
@@ -242,7 +246,7 @@ public class JSONLD {
     		Object compacted = compact(flattened, ctx, opts);
     		return compacted;
     	} catch (JSONLDProcessingError e) {
-    		throw new JSONLDProcessingError("Could not compact flattened option.")
+    		throw new JSONLDProcessingError("Could not compact flattened output.")
 			.setType(JSONLDProcessingError.Error.FLATTEN_ERROR)
 			.setDetail("cause", e);
     	}
@@ -270,56 +274,72 @@ public class JSONLD {
      *          [embed] default @embed flag (default: true).
      *          [explicit] default @explicit flag (default: false).
      *          [omitDefault] default @omitDefault flag (default: false).
-     *          [optimize] optimize when compacting (default: false).
-     *          [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
+     *          [loadContext(url, callback(err, url, result))] the context loader.
      * @param callback(err, framed) called once the operation completes.
 	 * @throws JSONLDProcessingError 
      */
-    public static Object frame(Object input, Object frame, Options opts) throws JSONLDProcessingError {
-    	if (input == null) {
-            return null;
-        }
+    public static Object frame(Object input, Map<String,Object> frame, Options opts) throws JSONLDProcessingError {
+    	// set default options
+    	if (opts.base == null) {
+    		opts.base = "";
+    	}
     	if (opts.embed == null) {
     		opts.embed  = true;
     	}
-    	//if (opts.optimize == null) {
-    	//	opts.optimize = false;
-    	//}
     	if (opts.explicit == null) {
     		opts.explicit = false;
     	}
     	if (opts.omitDefault == null) {
     		opts.omitDefault = false;
     	}
-    	
-    	
-    	JSONLDProcessor p = new JSONLDProcessor(opts);
-    	
+
+    	// TODO: add sanity checks for input and throw JSONLDProcessingErrors when incorrect input is used
     	// preserve frame context
-    	ActiveContext ctx = new ActiveContext();
-    	Map<String, Object> fctx;
-    	if (frame instanceof Map && ((Map<String, Object>) frame).containsKey("@context")) {
-    		fctx = (Map<String, Object>) ((Map<String, Object>) frame).get("@context");
-    		ctx = JSONLDProcessor.processContext(ctx, fctx, opts);
-    	} else {
-    		fctx = new HashMap<String, Object>();
-    	}
+    	//ActiveContext ctx = frame.containsKey("@context") ? new ActiveContext((Map<String, Object>) frame.get("@context"), opts) : new ActiveContext(opts);
+    	Map<String,Object> ctx = frame.containsKey("@context") ? (Map<String, Object>) frame.get("@context") : new HashMap<String,Object>();
     	
     	// expand input
-    	Object _input = JSONLD.expand(input, opts);
-    	Object _frame = JSONLD.expand(frame, opts);
-    	
-    	Object framed = p.frame(_input, _frame);
-    	
-    	opts.graph = true;
-    	
-    	Map<String,Object> compacted = (Map<String, Object>) JSONLD.compact(framed, fctx, opts);
-    	//String graph = JSONLDProcessor.compactIri(ctx, "@graph");
-    	//compacted.put(graph, p.removePreserve(ctx, compacted.get(graph)));
-        return compacted;
+    	Object expanded;
+    	try {
+    		expanded = JSONLD.expand(input, opts);
+    	} catch (JSONLDProcessingError e) {
+    		throw new JSONLDProcessingError("Could not expand input before framing.")
+			.setType(JSONLDProcessingError.Error.FRAME_ERROR)
+			.setDetail("cause", e);
+    	}
+    	// expand frame
+    	Object expandedFrame;
+    	Options opts2 = opts.clone();
+		opts2.keepFreeFloatingNodes = true;
+    	try {
+    		expandedFrame = JSONLD.expand(frame, opts2);
+		} catch (JSONLDProcessingError e) {
+			throw new JSONLDProcessingError("Could not expand frame before framing.")
+			.setType(JSONLDProcessingError.Error.FRAME_ERROR)
+			.setDetail("cause", e);
+		}
+
+    	// do framing
+    	Object framed = new JSONLDProcessor(opts).frame(expanded, expandedFrame);
+    	// compact results (force @graph option to true, skip expansion)
+    	opts2.graph = true;
+    	opts2.skipExpansion = true;
+    	try {
+    		Object compacted = compact(framed, ctx, opts2);
+    		// get resulting activeCtx
+    		ActiveContext actx = opts2.compactResultsActiveCtx;
+    		// get graph alias
+    		String graph = compactIri(actx, "@graph");
+    		((HashMap<String, Object>) compacted).put(graph, removePreserve(actx, ((Map<String,Object>) compacted).get(graph), opts2));
+    		return compacted;
+    	} catch (JSONLDProcessingError e) {
+    		throw new JSONLDProcessingError("Could not compact framed output.")
+			.setType(JSONLDProcessingError.Error.FRAME_ERROR)
+			.setDetail("cause", e);
+    	}
     }
-    
-    public static Object frame(Object input, Object frame) throws JSONLDProcessingError {
+
+	public static Object frame(Object input, Map<String, Object> frame) throws JSONLDProcessingError {
     	return frame(input, frame, new Options(""));
     }
     

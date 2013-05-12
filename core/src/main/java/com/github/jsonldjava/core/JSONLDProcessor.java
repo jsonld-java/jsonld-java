@@ -1408,20 +1408,17 @@ public class JSONLDProcessor {
     	public Map<String,Object> embeds = null;
     	public Map<String,Object> graphs = null;
     	public Map<String,Object> subjects = null;
-    	public Boolean embed = true;
-    	public Boolean explicit = false;
-    	public Boolean omit = false;
     	public Options options = opts;
     }
     
-    /**
-     * Performs JSON-LD framing.
-     *
-     * @param input the expanded JSON-LD to frame.
-     * @param frame the expanded JSON-LD frame to use.
-     * @param options the framing options.
-     *
-     * @return the framed output.
+	/**
+	 * Performs JSON-LD framing.
+	 *
+	 * @param input the expanded JSON-LD to frame.
+	 * @param frame the expanded JSON-LD frame to use.
+	 * @param options the framing options.
+	 *
+	 * @return the framed output.
      * @throws JSONLDProcessingError 
      */
     public Object frame(Object input, Object frame) throws JSONLDProcessingError {
@@ -1434,16 +1431,16 @@ public class JSONLDProcessor {
     	state.graphs.put("@merged", new HashMap<String, Object>());
     	
     	// produce a map of all graphs and name each bnode
-    	UniqueNamer namer = new UniqueNamer("_:t");
-    	flatten(input, state.graphs, "@default", namer);
-    	namer = new UniqueNamer("_:t");
-    	flatten(input, state.graphs, "@merged", namer);
     	// FIXME: currently uses subjects from @merged graph only
+    	UniqueNamer namer = new UniqueNamer("_:b");
+    	createNodeMap(input, state.graphs, "@merged", namer);
     	state.subjects = (Map<String, Object>) state.graphs.get("@merged");
     	
     	// frame the subjects
-        List framed = new ArrayList();
-        frame(state, state.subjects.keySet(), frame, framed, null);
+        List<Object> framed = new ArrayList<Object>();
+        List<String> sortedKeys = new ArrayList<String>(state.subjects.keySet());
+        Collections.sort(sortedKeys);
+        frame(state, sortedKeys, frame, framed, null);
     	return framed;
     }
 
@@ -1462,7 +1459,7 @@ public class JSONLDProcessor {
 		// validate the frame
     	validateFrame(state, frame);
     	// NOTE: once validated we move to the function where the frame is specifically a map
-    	frame(state, subjects, (Map)((List)frame).get(0), parent, property);
+    	frame(state, subjects, (Map<String,Object>)((List<Object>)frame).get(0), parent, property);
     }
     
     private void frame(FramingContext state, Collection<String> subjects, 
@@ -1476,7 +1473,9 @@ public class JSONLDProcessor {
     	Boolean explicicOn = (frame.containsKey("@explicit")) ? (Boolean)((List)frame.get("@explicit")).get(0) : options.explicit;
     	
     	// add matches to output
-    	for (String id: matches.keySet()) {
+    	List<String> ids = new ArrayList<String>(matches.keySet());
+    	Collections.sort(ids);
+    	for (String id: ids) {
     		
     		// Note: In order to treat each top-level match as a compartmentalized
     	    // result, create an independent copy of the embedded subjects map when the
@@ -1503,15 +1502,16 @@ public class JSONLDProcessor {
     			
     			// existing embed's parent is an array
     			Map<String,Object> existing = (Map<String, Object>) state.embeds.get(id);
-    			if (existing.get("parent") instanceof List) {
-    				for (Object o: (List)existing.get("parent")) {
-    					if (JSONLDUtils.compareValues(output, o)) {
+    			if (isArray(existing.get("parent"))) {
+    				for (Object o: (List<Object>)existing.get("parent")) {
+    					if (compareValues(output, o)) {
     						embedOn = true;
     						break;
     					}
     				}
+    			}
     			// existing embed's parent is an object
-    			} else if (JSONLDUtils.hasValue((Map<String,Object>)existing.get("parent"), (String)existing.get("property"), output)) {
+    			else if (hasValue((Map<String,Object>)existing.get("parent"), (String)existing.get("property"), output)) {
     				embedOn = true;
     			}
     			
@@ -1530,7 +1530,9 @@ public class JSONLDProcessor {
     			
     			// iterate over subject properties
     			Map<String,Object> subject = (Map<String,Object>) matches.get(id);
-    			for (String prop: subject.keySet()) {
+    			List<String> props = new ArrayList<String>(subject.keySet());
+    			Collections.sort(props);
+    			for (String prop: props) {
 
     				// handle ignored keys
     				if (opts.isIgnored(prop)) {
@@ -1539,7 +1541,7 @@ public class JSONLDProcessor {
     				}
     				
     				// copy keywords to output
-    				if (prop instanceof String && JSONLDUtils.isKeyword((String)prop)) {
+    				if (isKeyword(prop)) {
     					output.put((String) prop, JSONLDUtils.clone(subject.get(prop)));
     					continue;
     				}
@@ -1556,12 +1558,12 @@ public class JSONLDProcessor {
     				// add objects
     				Object objects = subject.get(prop); 
     				// TODO: i've done some crazy stuff here because i'm unsure if objects is always a list or if it can
-    				// be a map as well
+    				// be a map as well. I think it's always a map, but i'll get it working like this first
     				for (Object i: objects instanceof List ? (List)objects : ((Map)objects).keySet()) {
     					Object o = objects instanceof List ? i : ((Map)objects).get(i);
     					
     					// recurse into list
-    					if (o instanceof Map && ((Map)o).containsKey("@list")) {
+    					if (isList(o)) {
     						// add empty list
     						Map<String,Object> list = new HashMap<String, Object>();
     						list.put("@list", new ArrayList<Object>());
@@ -1571,7 +1573,7 @@ public class JSONLDProcessor {
     						List src = (List)((Map)o).get("@list");
     						for (Object n: src) {
     							// recurse into subject reference
-    							if (n instanceof Map && ((Map)n).size() == 1 && ((Map) n).containsKey("@id")) {
+    							if (isSubjectReference(o)) {
     								List tmp = new ArrayList();
     								tmp.add(((Map)n).get("@id"));
     								frame(state, tmp, frame.get(prop), list, "@list");
@@ -1584,7 +1586,7 @@ public class JSONLDProcessor {
     					}
     					
     					// recurse into subject reference
-    					if (o instanceof Map && ((Map)o).size() == 1 && ((Map) o).containsKey("@id")) {
+    					if (isSubjectReference(o)) {
     						List tmp = new ArrayList();
 							tmp.add(((Map)o).get("@id"));
 							frame(state, tmp, frame.get(prop), output, prop);
@@ -1596,12 +1598,11 @@ public class JSONLDProcessor {
     			}
     			
     			// handle defaults
-    			List<String> props = new ArrayList<String>();
-    			props.addAll(frame.keySet());
+    			props = new ArrayList<String>(frame.keySet());
     			Collections.sort(props);
     			for (String prop: props) {
     				// skip keywords
-    				if (JSONLDUtils.isKeyword(prop)) {
+    				if (isKeyword(prop)) {
     					continue;
     				}
     				
@@ -1615,9 +1616,16 @@ public class JSONLDProcessor {
     					if (next.containsKey("@default")) {
     						preserve = JSONLDUtils.clone(next.get("@default"));
     					}
-    					Map<String,Object> tmp = new HashMap<String, Object>();
-    					tmp.put("@preserve", preserve);
-    					output.put(prop, tmp);
+    					if (!isArray(preserve)) {
+    						List<Object> tmp = new ArrayList<Object>();
+    						tmp.add(preserve);
+        					preserve = tmp;
+    					}
+    					Map<String,Object> tmp1 = new HashMap<String, Object>();
+    					tmp1.put("@preserve", preserve);
+    					List<Object> tmp2 = new ArrayList<Object>();
+    					tmp2.add(tmp1);
+    					output.put(prop, tmp2);
     				}
     			}
     			
@@ -1641,13 +1649,13 @@ public class JSONLDProcessor {
     	// embed subject properties in output
     	Object objects = subject.get(property);
     	
-    	// NOTE: more crazyness due to lack of knowledge about whether objects should
+    	// TODO: more craziness due to lack of knowledge about whether objects should
     	// be an array or an object
     	for (Object i: objects instanceof List ? (List)objects : ((Map)objects).keySet()) {
 			Object o = objects instanceof List ? i : ((Map)objects).get(i);
 			
 			// recurse into @list
-			if (o instanceof Map && ((Map) o).containsKey("@list")) {
+			if (isList(o)) {
 				Map<String,Object> list = new HashMap<String, Object>();
 				list.put("@list", new ArrayList());
 				addFrameOutput(state, output, property, list);
@@ -1656,7 +1664,7 @@ public class JSONLDProcessor {
 			}
 			
 			// handle subject reference
-			if (o instanceof Map && ((Map) o).size() == 1 && ((Map) o).containsKey("@id")) {
+			if (isSubjectReference(o)) {
 				String id = (String) ((Map<String, Object>) o).get("@id");
 				
 				// embed full subject if isn't already embedded
@@ -1672,7 +1680,7 @@ public class JSONLDProcessor {
 					Map<String,Object> s = (Map<String, Object>) state.subjects.get(id);
 					for (String prop: s.keySet()) {
 						// copy keywords
-						if (JSONLDUtils.isKeyword(prop) || opts.isIgnored(prop)) {
+						if (isKeyword(prop) || opts.isIgnored(prop)) {
 							((Map<String, Object>) o).put(prop, JSONLDUtils.clone(s.get(prop)));
 							continue;
 						}
@@ -1699,37 +1707,44 @@ public class JSONLDProcessor {
      */
     private static void addFrameOutput(FramingContext state, Object parent,
 			String property, Object output) {
-		if (parent instanceof Map) {
-			JSONLDUtils.addValue((Map<String,Object>)parent, property, output, true);
+		if (isObject(parent)) {
+			addValue((Map<String,Object>)parent, property, output, true);
 		} else {
 			((List)parent).add(output);
 		}
 		
 	}
 
+    /**
+     * Removes an existing embed.
+     *
+     * @param state the current framing state.
+     * @param id the @id of the embed to remove.
+     */
 	private static void removeEmbed(FramingContext state, String id) {
 		// get existing embed
 		Map<String, Object> embeds = state.embeds;
-		Object parent = ((Map<String, Object>) embeds.get(id)).get("parent");
-		String property = (String) ((Map<String, Object>) embeds.get(id)).get("property");
+		Map<String,Object> embed = (Map<String, Object>) embeds.get(id);
+		Object parent = embed.get("parent");
+		String property = (String) embed.get("property");
 		
 		// create reference to replace embed
 		Map<String,Object> subject = new HashMap<String, Object>();
 		subject.put("@id", id);
 		
 		// remove existing embed
-		if (parent instanceof List) {
+		if (isArray(parent)) {
 			// replace subject with reference
 			for (int i = 0; i < ((List)parent).size(); i++) {
-				if (JSONLDUtils.compareValues(((List)parent).get(i), subject)) {
+				if (compareValues(((List)parent).get(i), subject)) {
 					((List)parent).set(i, subject);
 					break;
 				}
 			}
 		} else {
 			// replace subject with reference
-			JSONLDUtils.removeValue(((Map<String,Object>)parent), property, subject, ((Map<String, Object>) parent).get(property) instanceof List);
-			JSONLDUtils.addValue(((Map<String,Object>)parent), property, subject, ((Map<String, Object>) parent).get(property) instanceof List);
+			removeValue(((Map<String,Object>)parent), property, subject, ((Map<String, Object>) parent).get(property) instanceof List);
+			addValue(((Map<String,Object>)parent), property, subject, ((Map<String, Object>) parent).get(property) instanceof List);
 		}
 		
 		// recursively remove dependent dangling embeds
@@ -1737,6 +1752,7 @@ public class JSONLDProcessor {
 	}
     
     private static void removeDependents(Map<String,Object> embeds, String id) {
+    	// get embed keys as a separate array to enable deleting keys in map
     	Set<String> ids = embeds.keySet();
     	for (String next: ids) {
     		if (embeds.containsKey(next) && 
@@ -1784,7 +1800,7 @@ public class JSONLDProcessor {
 		// TODO: it seems @type should always be a list
 		if (frame.containsKey("@type") && !(t instanceof List && ((List)t).size() == 1 && ((List)t).get(0) instanceof Map)) {
 			for (Object i: (List)t) {
-				if (JSONLDUtils.hasValue(subject, "@type", i)) {
+				if (hasValue(subject, "@type", i)) {
 					return true;
 				}
 			}
@@ -1793,7 +1809,7 @@ public class JSONLDProcessor {
 		
 		// check ducktype
 		for (String key: frame.keySet()) {
-			if ("@id".equals(key) || !JSONLDUtils.isKeyword(key) && !(subject.containsKey(key))) {
+			if ("@id".equals(key) || !isKeyword(key) && !(subject.containsKey(key))) {
 				return false;
 			}
 		}

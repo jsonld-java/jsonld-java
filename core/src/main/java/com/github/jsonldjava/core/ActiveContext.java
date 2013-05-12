@@ -28,6 +28,16 @@ public class ActiveContext extends HashMap<String, Object> {
     	init(options);
     }
     
+    public ActiveContext(Map<String,Object> map, Options options) {
+    	super(map);
+    	init(options);
+    }
+    
+    public ActiveContext(Map<String,Object> map) {
+    	super(map);
+    	init(new Options());
+    }
+    
     private void init(Options options) {
     	Object base = URL.parse(options.base);
     	
