@@ -1,19 +1,11 @@
 package com.github.jsonldjava.core;
 
-import static com.github.jsonldjava.core.JSONLDUtils.expandIri;
-import static com.github.jsonldjava.core.JSONLDUtils.isAbsoluteIri;
-import static com.github.jsonldjava.core.JSONLDUtils.isArray;
-import static com.github.jsonldjava.core.JSONLDUtils.isKeyword;
-import static com.github.jsonldjava.core.JSONLDUtils.isObject;
-import static com.github.jsonldjava.core.JSONLDUtils.isString;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +15,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.github.jsonldjava.utils.JSONUtils;
 import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.URL;
+
+import static com.github.jsonldjava.core.JSONLDConsts.*;
 
 
 public class JSONLDUtils {

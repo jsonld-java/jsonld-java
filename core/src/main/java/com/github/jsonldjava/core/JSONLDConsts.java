@@ -20,4 +20,5 @@ public class JSONLDConsts {
 	public static final String RDF_PLAIN_LITERAL = RDF_SYNTAX_NS + "PlainLiteral";
 	public static final String RDF_XML_LITERAL = RDF_SYNTAX_NS + "XMLLiteral";
 	public static final String RDF_OBJECT = RDF_SYNTAX_NS + "object";
+	public static final String RDF_LANGSTRING = RDF_SYNTAX_NS + "langString";
 }

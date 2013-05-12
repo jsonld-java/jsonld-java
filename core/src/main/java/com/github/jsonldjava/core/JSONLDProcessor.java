@@ -24,8 +24,8 @@ import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.URL;
 
 import static com.github.jsonldjava.core.JSONLDConsts.*;
-
 import static com.github.jsonldjava.core.JSONLDUtils.*;
+import static com.github.jsonldjava.core.ToRDFUtils.*;
 
 public class JSONLDProcessor {
 
@@ -2418,6 +2418,26 @@ public class JSONLDProcessor {
 		_toRDF(input, new UniqueNamer("_:t"), null, null, null, cb);
 		cb.finalise();
 		return null;
+	}
+	
+	/**
+	 * Adds RDF triples for each graph in the given node map to an RDF dataset.
+	 *
+	 * @param nodeMap the node map.
+	 *
+	 * @return the RDF dataset.
+	 */
+	public Map<String,Object> toRDF(Map<String,Object> nodeMap) {
+		UniqueNamer namer = new UniqueNamer("_:b");
+		Map<String,Object> dataset = new HashMap<String, Object>();
+		for (String graphName : nodeMap.keySet()) {
+			Map<String,Object> graph = (Map<String, Object>) nodeMap.get(graphName);
+			if (graphName.indexOf("_:") == 0) {
+				graphName = namer.getName(graphName);
+			}
+			dataset.put(graphName, graphToRDF(graph, namer));
+		}
+		return dataset;
 	}
 	
 	/**

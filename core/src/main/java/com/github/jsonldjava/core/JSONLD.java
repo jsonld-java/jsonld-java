@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.jsonldjava.impl.NQuadTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
 
 import static com.github.jsonldjava.core.JSONLDUtils.*;
+import static com.github.jsonldjava.core.ToRDFUtils.*;
 
 public class JSONLD {
 	
@@ -378,62 +380,87 @@ public class JSONLD {
     }
     
     /**
-     * Performs RDF normalization on the given JSON-LD input. The output is
-     * a sorted array of RDF statements unless the 'format' option is used.
+     * Performs RDF dataset normalization on the given JSON-LD input. The output
+     * is an RDF dataset unless the 'format' option is used.
      *
      * @param input the JSON-LD input to normalize.
      * @param [options] the options to use:
      *          [base] the base IRI to use.
-     * @param [options] the options to use:
      *          [format] the format if output is a string:
      *            'application/nquads' for N-Quads.
-     *          [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
+     *          [loadContext(url, callback(err, url, result))] the context loader.
      * @param callback(err, normalized) called once the operation completes.
+     * @throws JSONLDProcessingError
      */
-    public static Object normalize(Object input, Options opts) throws JSONLDProcessingError {
-    	if (opts.base == null) {
-    		opts.base = "";
+    public static Object normalize(Object input, Options options) throws JSONLDProcessingError {
+    	if (options.base == null) {
+    		options.base = "";
     	}
     	
-    	Object expanded = JSONLD.expand(input, opts);
-    	return new JSONLDProcessor(opts).normalize(expanded);
+    	Options opts = options.clone();
+    	opts.format = null;
+    	Object dataset;
+    	try {
+    		dataset = toRDF(input, opts);
+    	} catch (JSONLDProcessingError e) {
+    		throw new JSONLDProcessingError("Could not convert input to RDF dataset before normalization.")
+    			.setType(JSONLDProcessingError.Error.NORMALIZE_ERROR)
+    			.setDetail("cause", e);
+    	}
+    	return new JSONLDProcessor(opts).normalize(dataset);
+    }
+    
+    public static Object normalize(Object input) throws JSONLDProcessingError {
+    	return normalize(input, new Options(""));
     }
     
     /**
-     * Outputs the RDF statements found in the given JSON-LD object.
+     * Outputs the RDF dataset found in the given JSON-LD object.
      *
      * @param input the JSON-LD input.
      * @param [options] the options to use:
      *          [base] the base IRI to use.
      *          [format] the format to use to output a string:
      *            'application/nquads' for N-Quads (default).
-     *          [collate] true to output all statements at once (in an array
-     *            or as a formatted string), false to output one statement at
-     *            a time (default).
-     *          [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
-     * @param callback(err, statement) called when a statement is output, with the
-     *          last statement as null.
+     *          [loadContext(url, callback(err, url, result))] the context loader.
+     * @param callback(err, dataset) called once the operation completes.
      */
-    public static void toRDF(Object input, Options opts, JSONLDTripleCallback callback) throws JSONLDProcessingError {
-    	if (opts.base == null) {
-    		opts.base = "";
-    	}
-    	if (opts.collate == null) {
-    		opts.collate = false;
+    public static Object toRDF(Object input, Options options) throws JSONLDProcessingError {
+    	if (options.base == null) {
+    		options.base = "";
     	}
     	
-    	if (opts.collate) {
-    		// TODO:
+    	Object expanded;
+    	try {
+    		expanded = JSONLD.expand(input, options);
+    	} catch (JSONLDProcessingError e) {
+    		throw new JSONLDProcessingError("Could not expand input before conversion to RDF.")
+    			.setType(JSONLDProcessingError.Error.RDF_ERROR)
+    			.setDetail("cause", e);
     	}
     	
-    	Object expanded = JSONLD.expand(input, opts);
-    	JSONLDProcessor p = new JSONLDProcessor(opts);
-    	UniqueNamer namer = new UniqueNamer("_:t");
-    	p.toRDF(expanded, namer, null, null, null, callback);
+    	UniqueNamer namer = new UniqueNamer("_:b");
+    	Map<String,Object> nodeMap = new HashMap<String, Object>() {{
+    		put("@default", new HashMap<String, Object>());
+    	}};
+    	createNodeMap(expanded, nodeMap, "@default", namer);
+    	
+		// output RDF dataset
+		Map<String,Object> dataset = new JSONLDProcessor(options).toRDF(nodeMap);
+		if (options.format != null) {
+			if ("application/nquads".equals(options.format)) {
+				return toNQuads(dataset);
+			} else {
+				throw new JSONLDProcessingError("Unknown output format.")
+					.setType(JSONLDProcessingError.Error.UNKNOWN_FORMAT)
+					.setDetail("format", options.format);
+			}
+		}
+		return dataset;    	
     }
     
-    public static void toRDF(Object input, JSONLDTripleCallback callback) throws JSONLDProcessingError {
-    	toRDF(input, new Options(""), callback);
+    public static void toRDF(Object input) throws JSONLDProcessingError {
+    	toRDF(input, new Options(""));
     }
     
     public static Object fromRDF(Object input, Options opts, JSONLDSerializer serializer) throws JSONLDProcessingError {

@@ -77,10 +77,10 @@ public class JSONLDProcessorTest {
                 || testType.contains("jld:CompactTest")
                 || testType.contains("jld:FlattenTest")
                 || testType.contains("jld:FrameTest")
+                || testType.contains("jld:ToRDFTest")
                 //|| testType.contains("jld:NormalizeTest")
                 //|| testType.contains("jld:TriplesTest")
                 //|| testType.contains("jld:SimplifyTest")
-                //|| testType.contains("jld:ToRDFTest")
                 //|| testType.contains("jld:FromRDFTest")
                 //&& test.get("@id").equals("#t0001") // used for running specific tests
                 ) {
@@ -228,11 +228,9 @@ public class JSONLDProcessorTest {
 	            Map<String,Object> frameJson = (Map<String, Object>) JSONUtils.fromInputStream(frameStream);
 	            result = JSONLD.frame(input, frameJson, options);
 	        } else if (testType.contains("jld:ToRDFTest")) {
-	            // TODO: many of the tests here fail simply because of an ordering issue
-	        	NQuadTripleCallback nqtc = new NQuadTripleCallback();
-	        	JSONLD.toRDF(input, options, nqtc);
-	        	
-	            result = nqtc.getResult();
+	        	options.format = "application/nquads";
+	        	result = JSONLD.toRDF(input, options);
+	        	result = ((String)result).trim();
 	        } else if (testType.contains("jld:FromRDFTest")) {
 	        	result = JSONLD.fromRDF(input, new NQuadJSONLDSerializer());
 	        } else if (testType.contains("jld:SimplifyTest")) {
