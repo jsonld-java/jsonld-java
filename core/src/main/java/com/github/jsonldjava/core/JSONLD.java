@@ -198,8 +198,66 @@ public class JSONLD {
         return (List<Object>) expanded;
     }
 
-    public static Object expand(Object input) throws JSONLDProcessingError {
+    public static List<Object> expand(Object input) throws JSONLDProcessingError {
         return expand(input, new Options(""));
+    }
+    
+    /**
+     * Performs JSON-LD flattening.
+     *
+     * @param input the JSON-LD to flatten.
+     * @param ctx the context to use to compact the flattened output, or null.
+     * @param [options] the options to use:
+     *          [base] the base IRI to use.
+     *          [loadContext(url, callback(err, url, result))] the context loader.
+     * @param callback(err, flattened) called once the operation completes.
+     * @throws JSONLDProcessingError 
+     */
+    public static Object flatten(Object input, Object ctx, Options opts) throws JSONLDProcessingError {
+    	// set default options
+    	if (opts.base == null) {
+    		opts.base = "";
+    	}
+    	
+    	// expand input
+    	List<Object> _input;
+    	try {
+    		_input = expand(input, opts);
+    	} catch (JSONLDProcessingError e) {
+    		throw new JSONLDProcessingError("Could not expand input before flattening.")
+    			.setType(JSONLDProcessingError.Error.FLATTEN_ERROR)
+    			.setDetail("cause", e);
+    	}
+    	
+    	Object flattened = new JSONLDProcessor(opts).flatten(_input);
+    	
+    	if (ctx == null) {
+    		return flattened;
+    	}
+    	
+    	// compact result (force @graph option to true, skip expansion)
+    	opts.graph = true;
+    	opts.skipExpansion = true;
+    	try {
+    		Object compacted = compact(flattened, ctx, opts);
+    		return compacted;
+    	} catch (JSONLDProcessingError e) {
+    		throw new JSONLDProcessingError("Could not compact flattened option.")
+			.setType(JSONLDProcessingError.Error.FLATTEN_ERROR)
+			.setDetail("cause", e);
+    	}
+    }
+    
+    public static Object flatten(Object input, Object ctxOrOptions) throws JSONLDProcessingError {
+    	if (ctxOrOptions instanceof Options) {
+    		return flatten(input, null, (Options)ctxOrOptions);
+    	} else {
+    		return flatten(input, ctxOrOptions, new Options(""));
+    	}
+    }
+
+    public static Object flatten(Object input) throws JSONLDProcessingError {
+    	return flatten(input, null, new Options(""));
     }
     
     /**

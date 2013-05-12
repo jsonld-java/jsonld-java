@@ -939,7 +939,7 @@ public class JSONLDUtils {
 	 * @param language
 	 * @return
 	 */
-	private static boolean _equals(String a, String b) {
+	private static boolean _equals(Object a, Object b) {
 		if (a == null) {
 			return b == null;
 		}
@@ -1116,6 +1116,185 @@ public class JSONLDUtils {
 	}
     
     /**
+     * Recursively flattens the subjects in the given JSON-LD expanded input
+     * into a node map.
+     *
+     * @param input the JSON-LD expanded input.
+     * @param graphs a map of graph name to subject map.
+     * @param graph the name of the current graph.
+     * @param namer the blank node namer.
+     * @param name the name assigned to the current input if it is a bnode.
+     * @param list the list to append to, null for none.
+     * @throws JSONLDProcessingError 
+     */
+    static void createNodeMap(Object input, Map<String, Object> graphs, String graph, UniqueNamer namer, String name, List<Object> list) throws JSONLDProcessingError {
+    	// recurce through array
+    	if (isArray(input)) {
+    		for (Object i : (List<Object>)input) {
+    			createNodeMap(i, graphs, graph, namer, null, list);
+    		}
+    		return;
+    	}
+    	
+    	// add non-object to list
+    	if (!isObject(input)) {
+    		if (list != null) {
+    			list.add(input);
+    		}
+    		return;
+    	}
+    	
+    	// add value to list
+    	if (isValue(input)) {
+    		if (((Map<String, Object>) input).containsKey("@type")) {
+    			String type = (String) ((Map<String, Object>) input).get("@type");
+    			// rename @type blank node
+    			if (type.indexOf("_:") == 0) {
+    				type = namer.getName(type);
+    				((Map<String, Object>) input).put("@type", type);
+    			}
+    			if (!((Map<String, Object>) graphs.get(graph)).containsKey(type)) {
+    				Map<String,Object> tmp = new HashMap<String, Object>();
+    				tmp.put("@id", type);
+    				((Map<String, Object>) graphs.get(graph)).put(type, tmp);
+    			}
+    		}
+    		if (list != null) {
+    			list.add(input);
+    		}
+    		return;
+    	}
+    	
+    	// NOTE: At this point, input must be a subject.
+    	
+    	// get name for subject
+    	if (name == null) {
+    		name = isBlankNode(input) ? namer.getName((String)((Map<String, Object>) input).get("@id")) : (String)((Map<String, Object>) input).get("@id");
+    	}
+    	
+    	// add subject reference to list
+    	if (list != null) {
+    		Map<String,Object> tmp = new HashMap<String, Object>();
+			tmp.put("@id", name);
+    		list.add(tmp);
+    	}
+    	
+    	// create new subject or merge into existing one
+    	Map<String,Object> subjects = (Map<String, Object>) graphs.get(graph);
+    	Map<String,Object> subject;
+    	if (subjects.containsKey(name)) {
+    		subject = (Map<String, Object>)subjects.get(name);
+    	} else {
+    		subject = new HashMap<String, Object>();
+    		subjects.put(name, subject);
+    	}
+    	subject.put("@id", name);
+    	List<String> properties = new ArrayList<String>(((Map<String, Object>) input).keySet());
+    	Collections.sort(properties);
+    	for (String property : properties) {
+    		// skip @id
+    		if ("@id".equals(property)) {
+    			continue;
+    		}
+    		
+    		// handle reverse properties
+    		if ("@reverse".equals(property)) {
+    			Map<String,Object> referencedNode = new HashMap<String, Object>();
+    			referencedNode.put("@id", name);
+    			Map<String,Object> reverseMap = (Map<String, Object>) ((Map<String, Object>) input).get("@reverse");
+    			for (String reverseProperty : reverseMap.keySet()) {
+    				for (Object item : (List<Object>)reverseMap.get(reverseProperty)) {
+    					addValue((Map<String, Object>) item, reverseProperty, referencedNode, true, false);
+    					createNodeMap(item, graphs, graph, namer);
+    				}
+    			}
+    			continue;
+    		}
+    		
+    		// recurse into graph
+    		if ("@graph".equals(property)) {
+    			// add graph subjects map entry
+    			if (!graphs.containsKey(name)) {
+    				graphs.put(name, new HashMap<String, Object>());
+    			}
+    			String g = "@merged".equals(graph) ? graph : name;
+    			createNodeMap(((Map<String, Object>) input).get(property), graphs, g, namer);
+    			continue;
+    		}
+    		
+    		// copy non-@type keywords
+    		if (!"@type".equals(property) && isKeyword(property)) {
+    			if ("@index".equals(property) && subjects.containsKey("@index")) {
+    				throw new JSONLDProcessingError("Invalid JSON-LD syntax; conflicting @index property detected.")
+    					.setType(JSONLDProcessingError.Error.SYNTAX_ERROR)
+    					.setDetail("subject", subject);
+    			}
+    			subject.put(property, ((Map<String, Object>) input).get(property));
+    			continue;
+    		}
+    		
+    		// iterate over objects
+    		List<Object> objects = (List<Object>) ((Map<String, Object>) input).get(property);
+    		
+    		// if property is a bnode, assign it a new id
+    		if (property.indexOf("_:") == 0) {
+    			property = namer.getName(property);
+    		}
+    		
+    		// ensure property is added for empty arrays
+    		if (objects.size() == 0) {
+    			addValue(subject, property, new ArrayList<Object>(), true);
+    			continue;
+    		}
+    		
+    		for (Object o : objects) {
+    			if ("@type".equals(property)) {
+    				// rename @type blank nodes
+    				o = (((String) o).indexOf("_:") == 0) ? namer.getName((String) o) : o;
+    				if (!((Map<String, Object>) graphs.get(graph)).containsKey(o)) {
+    					Map<String,Object> tmp = new HashMap<String, Object>();
+    					tmp.put("@id", o);
+    					((Map<String, Object>) graphs.get(graph)).put((String)o, tmp);
+    				}
+    			}
+    			
+    			// handle embedded subject or subject reference
+        		if (isSubject(o) || isSubjectReference(o)) {
+        			// rename blank node @id
+        			String id = isBlankNode(o) ? namer.getName((String)((Map<String, Object>) o).get("@id")) : (String)((Map<String, Object>) o).get("@id");
+        			
+					// add reference and recurse
+        			Map<String,Object> tmp = new HashMap<String, Object>();
+					tmp.put("@id", id);
+					addValue(subject, property, tmp, true, false);
+					createNodeMap(o, graphs, graph, namer, id);
+        		}
+        		// handle @list
+        		else if (isList(o)) {
+        			List<Object> _list = new ArrayList<Object>();
+        			createNodeMap(((Map<String, Object>) o).get("@list"), graphs, graph, namer, name, _list);
+        			o = new HashMap<String, Object>();
+        			((Map<String, Object>) o).put("@list", _list);
+        			addValue(subject, property, o, true, false);
+        		}
+        		// handle @value
+        		else {
+        			createNodeMap(o, graphs, graph, namer, name);
+        			addValue(subject, property, o, true, false);
+        		}
+    		}
+    	}
+	}
+    
+    static void createNodeMap(Object input, Map<String, Object> graphs, String graph, UniqueNamer namer, String name) throws JSONLDProcessingError {
+    	createNodeMap(input, graphs, graph, namer, name, null);
+	}
+    
+    static void createNodeMap(Object input, Map<String, Object> graphs, String graph, UniqueNamer namer) throws JSONLDProcessingError {
+    	createNodeMap(input, graphs, graph, namer, null, null);
+	}
+    
+    /**
      * Determines if the given value is a property of the given subject.
      *
      * @param subject the subject to check.
@@ -1128,7 +1307,7 @@ public class JSONLDUtils {
         boolean rval = false;
         if (hasProperty(subject, property)) {
             Object val = subject.get(property);
-            boolean isList = (val instanceof Map && ((Map<String, Object>) val).containsKey("@list"));
+            boolean isList = isList(val);
             if (isList || val instanceof List) {
                 if (isList) {
                     val = ((Map<String, Object>) val).get("@list");
@@ -1168,15 +1347,16 @@ public class JSONLDUtils {
      *
      * @return true if v1 and v2 are considered equal, false if not.
      */
-    public static boolean compareValues(Object v1, Object v2) {
+    static boolean compareValues(Object v1, Object v2) {
         if (v1.equals(v2)) {
             return true;
         }
 
-        if ((v1 instanceof Map && ((Map<String, Object>) v1).containsKey("@value")) && (v2 instanceof Map && ((Map<String, Object>) v2).containsKey("@value"))
-                && ((Map<String, Object>) v1).get("@value").equals(((Map<String, Object>) v2).get("@value"))
-                && ((Map<String, Object>) v1).get("@type").equals(((Map<String, Object>) v2).get("@type"))
-                && ((Map<String, Object>) v1).get("@language").equals(((Map<String, Object>) v2).get("@language"))) {
+        if (isValue(v1) && isValue(v2) &&
+        		_equals(((Map<String, Object>) v1).get("@value"), ((Map<String, Object>) v2).get("@value")) &&
+        		_equals(((Map<String, Object>) v1).get("@type"), ((Map<String, Object>) v2).get("@type")) &&
+        		_equals(((Map<String, Object>) v1).get("@language"), ((Map<String, Object>) v2).get("@language")) &&
+        		_equals(((Map<String, Object>) v1).get("@index"), ((Map<String, Object>) v2).get("@index"))) {
             return true;
         }
 

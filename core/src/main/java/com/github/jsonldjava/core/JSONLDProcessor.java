@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -2913,8 +2912,60 @@ public class JSONLDProcessor {
             }
         }
     }
-
+    
     /**
+     * Performs JSON-LD flattening.
+     *
+     * @param input the expanded JSON-LD to flatten.
+     *
+     * @return the flattened output.
+     * @throws JSONLDProcessingError 
+     */
+	public List<Object> flatten(List<Object> input) throws JSONLDProcessingError {
+		// produce a map of all subjects and name each bnode
+		UniqueNamer namer = new UniqueNamer("_:b");
+		Map<String,Object> graphs = new HashMap<String, Object>() {{
+			put("@default", new HashMap<String, Object>());
+		}};
+		createNodeMap(input, graphs, "@default", namer);
+		
+		// add all non-default graphs to default graph
+		Map<String,Object> defaultGraph = (Map<String, Object>) graphs.get("@default");
+		List<String> graphNames = new ArrayList<String>(graphs.keySet());
+		Collections.sort(graphNames);
+		for (String graphName : graphNames) {
+			if ("@default".equals(graphName)) {
+				continue;
+			}
+			Map<String,Object> nodeMap = (Map<String, Object>) graphs.get(graphName);
+			Map<String,Object> subject = (Map<String, Object>) defaultGraph.get(graphName);
+			if (subject == null) {
+				subject = new HashMap<String, Object>();
+				subject.put("@id", graphName);
+				subject.put("@graph", new ArrayList<Object>());
+				defaultGraph.put(graphName, subject);
+			}
+			else if (!subject.containsKey("@graph")) {
+				subject.put("@graph", new ArrayList<Object>());
+			}
+			List<Object> graph = (List<Object>) subject.get("@graph");
+			List<String> ids = new ArrayList<String>(nodeMap.keySet());
+			for (String id : ids) {
+				graph.add(nodeMap.get(id));
+			}
+		}
+		
+		// produce flattened output
+		List<Object> flattened = new ArrayList<Object>();
+		List<String> keys = new ArrayList<String>(defaultGraph.keySet());
+		Collections.sort(keys);
+		for (String key : keys) {
+			flattened.add(defaultGraph.get(key));
+		}
+		return flattened;
+	}
+
+	/**
      * Generates the context to be used by simplify.
      * 
      * @param input

@@ -74,14 +74,15 @@ public class JSONLDProcessorTest {
                 List<String> testType = (List<String>) test.get("@type");
                 if (
                 testType.contains("jld:ExpandTest") 
-                || testType.contains("jld:CompactTest") 
+                || testType.contains("jld:CompactTest")
+                || testType.contains("jld:FlattenTest")
                 //|| testType.contains("jld:NormalizeTest")
                 //|| testType.contains("jld:FrameTest")
                 //|| testType.contains("jld:TriplesTest")
                 //|| testType.contains("jld:SimplifyTest")
                 //|| testType.contains("jld:ToRDFTest")
                 //|| testType.contains("jld:FromRDFTest")
-                //&& test.get("@id").equals("#t0066") // used for running specific tests
+                //&& test.get("@id").equals("#t0020") // used for running specific tests
                 ) {
                     System.out.println("Adding test: " + test.get("name"));
                     rdata.add(new Object[] { manifest.get("name"), test.get("@id"), test });
@@ -214,6 +215,14 @@ public class JSONLDProcessorTest {
 	            InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
 	            Object contextJson = JSONUtils.fromInputStream(contextStream);
 	            result = JSONLD.compact(input, (Map<String, Object>) contextJson, options);
+	        } else if (testType.contains("jld:FlattenTest")) {
+	        	if (test.containsKey("context")) {
+	        		InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("context"));
+		            Object contextJson = JSONUtils.fromInputStream(contextStream);
+		            result = JSONLD.flatten(input, contextJson, options);
+	        	} else {
+	        		result = JSONLD.flatten(input, options);
+	        	}
 	        } else if (testType.contains("jld:FrameTest")) {
 	            InputStream frameStream = cl.getResourceAsStream(TEST_DIR + "/" + test.get("frame"));
 	            Object frameJson = JSONUtils.fromInputStream(frameStream);
