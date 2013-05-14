@@ -62,7 +62,7 @@ public class Playground {
                             return;
                         }
                         if (opts.base == null || opts.base.equals("")) {
-                        	opts.base = in.toURI().toASCIIString();
+                            opts.base = in.toURI().toASCIIString();
                         }
                         inobj = JSONUtils.fromInputStream(new FileInputStream(in));
                         if ("--frame".equals(args[i - 2])) {
@@ -118,7 +118,6 @@ public class Playground {
                 System.out.println(JSONUtils.toPrettyString(outobj));
             }
         } catch (Exception e) {
-        	e.printStackTrace();
             System.out.println("ERROR: " + e.getMessage());
             usage();
             return;
