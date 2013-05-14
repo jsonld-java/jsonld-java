@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +25,7 @@ import com.github.jsonldjava.utils.URL;
 
 import static com.github.jsonldjava.core.JSONLDConsts.*;
 import static com.github.jsonldjava.core.JSONLDUtils.*;
-import static com.github.jsonldjava.core.ToRDFUtils.*;
+import static com.github.jsonldjava.core.RDFDatasetUtils.*;
 
 public class JSONLDProcessor {
 
@@ -171,7 +171,7 @@ public class JSONLDProcessor {
             }
 
             // define/redefine key to expanded IRI/keyword
-            Map<String, Object> tmp = new HashMap<String, Object>();
+            Map<String, Object> tmp = new LinkedHashMap<String, Object>();
             tmp.put("@id", value);
             activeCtx.mappings.put(key, tmp);
             defined.put(key, Boolean.TRUE);
@@ -184,7 +184,7 @@ public class JSONLDProcessor {
             	.setDetail("context", ctx);
         }
         // create new mapping
-        Map<String, Object> mapping = new HashMap<String, Object>();
+        Map<String, Object> mapping = new LinkedHashMap<String, Object>();
 
         // helper to make accessing the value as a map easier
         Map<String, Object> val = (Map<String, Object>) value;
@@ -414,7 +414,7 @@ public class JSONLDProcessor {
             }
         	
         	// define context mappings for keys in local context
-            HashMap<String, Boolean> defined = new HashMap<String, Boolean>();
+            Map<String, Boolean> defined = new LinkedHashMap<String, Boolean>();
             
             // helper for access to ctx as a map
             Map<String,Object> ctxm = (Map<String,Object>)ctx;
@@ -520,7 +520,7 @@ public class JSONLDProcessor {
 
         localCtx = JSONLDUtils.clone(localCtx);
         if (localCtx instanceof Map && !((Map) localCtx).containsKey("@context")) {
-            Map<String, Object> tmp = new HashMap<String, Object>();
+            Map<String, Object> tmp = new LinkedHashMap<String, Object>();
             tmp.put("@context", localCtx);
             localCtx = tmp;
         }
@@ -826,7 +826,7 @@ public class JSONLDProcessor {
     		// expand the active property
     		String expandedActiveProperty = expandIri(activeCtx, activeProperty, false, true, null, null); //  {vocab: true}
 
-    		Object rval = new HashMap<String, Object>();
+    		Object rval = new LinkedHashMap<String, Object>();
     		Map<String,Object> mval = (Map<String, Object>) rval; // to make things easier while we know rval is a map
     		List<String> keys = new ArrayList<String>(elem.keySet());
     		Collections.sort(keys);
@@ -921,7 +921,7 @@ public class JSONLDProcessor {
 	    						continue;
 	    					}
 	    					if (reverseMap == null) {
-	    						reverseMap = new HashMap<String, Object>();
+	    						reverseMap = new LinkedHashMap<String, Object>();
 	    						mval.put("@reverse", reverseMap);
 	    					}
 	    					addValue(reverseMap, property, new ArrayList<Object>(), true);
@@ -1000,7 +1000,7 @@ public class JSONLDProcessor {
     			// convert expanded value to @list if container specified it
     			if (!"@list".equals(expandedProperty) && !isList(expandedValue) && "@list".equals(container)) {
     				// ensure expanded value is an array
-    				Map<String,Object> tm = new HashMap<String,Object>();
+    				Map<String,Object> tm = new LinkedHashMap<String,Object>();
     				List<Object> tl;
     				if (isArray(expandedValue)) {
     					tl = (List<Object>) expandedValue;
@@ -1015,7 +1015,7 @@ public class JSONLDProcessor {
     			// FIXME: can this be merged with the code above to simplify?
     			// merge in all reversed properties
     			if (Boolean.TRUE.equals(Obj.get(activeCtx.mappings, key, "reverse"))) {
-    				Map<String,Object> reverseMap = new HashMap<String,Object>();
+    				Map<String,Object> reverseMap = new LinkedHashMap<String,Object>();
     				mval.put("@reverse", reverseMap);
     				if (!isArray(expandedValue)) {
     					List<Object> tmp = new ArrayList<Object>();
@@ -1173,7 +1173,7 @@ public class JSONLDProcessor {
     		return rval;
     	}
     	
-    	rval = new HashMap<String,Object>();
+    	rval = new LinkedHashMap<String,Object>();
     	for (String key: ((Map<String, Object>) value).keySet()) {
 			rval.put(key, handleNestedLanguageContainer(((Map<String,Object>)value).get(key), lang));
 		}
@@ -1231,7 +1231,7 @@ public class JSONLDProcessor {
             // process element keys in order
             List<String> keys = new ArrayList<String>(elem.keySet());
             Collections.sort(keys);
-            Map<String,Object> rval = new HashMap<String, Object>();
+            Map<String,Object> rval = new LinkedHashMap<String, Object>();
             for (String expandedProperty : keys) {
                 Object expandedValue = elem.get(expandedProperty);
                 
@@ -1324,7 +1324,7 @@ public class JSONLDProcessor {
                     boolean isList = isList(expandedItem);
                     Object list = null;
                     if (isList) {
-                    	list = ((HashMap<String, Object>) expandedItem).get("@list");
+                    	list = ((Map<String, Object>) expandedItem).get("@list");
                     }
                     
                     // recursively compact expanded item
@@ -1341,13 +1341,13 @@ public class JSONLDProcessor {
                     	
                     	if (!"@list".equals(container)) {
                     		// wrap using @list alias
-                    		Map<String,Object> wrapper = new HashMap<String, Object>();
+                    		Map<String,Object> wrapper = new LinkedHashMap<String, Object>();
                     		wrapper.put(compactIri(activeCtx, "@list"), compactedItem);
                     		compactedItem = wrapper;
                     		
                     		// include @index from expanded @list, if any
-                    		if (((HashMap<String, Object>) expandedItem).containsKey("@index")) {
-                    			((HashMap<String, Object>) compactedItem).put(compactIri(activeCtx, "@index"), ((HashMap<String, Object>) expandedItem).get("@index"));
+                    		if (((Map<String, Object>) expandedItem).containsKey("@index")) {
+                    			((Map<String, Object>) compactedItem).put(compactIri(activeCtx, "@index"), ((Map<String, Object>) expandedItem).get("@index"));
                     		}
                     	}
                     	// can't use @list container for more than 1 list
@@ -1369,19 +1369,19 @@ public class JSONLDProcessor {
                     		mapObject = (Map<String, Object>) rval.get(itemActiveProperty);
                     	}
                     	else {
-                    		mapObject = new HashMap<String, Object>();
+                    		mapObject = new LinkedHashMap<String, Object>();
                     		rval.put(itemActiveProperty, mapObject);
                     	}
                     	
                     	// if container is a language map, simplify compacted value to
                     	// a simple string
                     	if ("@language".equals(container) && isValue(compactedItem)) {
-                    		compactedItem = ((HashMap<String, Object>) compactedItem).get("@value");
+                    		compactedItem = ((Map<String, Object>) compactedItem).get("@value");
                     	}
                     	
                     	// add compact value to map object using key from expanded value
                     	// based on the container type
-                    	addValue(mapObject, (String)((HashMap<String, Object>) expandedItem).get(container), compactedItem);
+                    	addValue(mapObject, (String)((Map<String, Object>) expandedItem).get(container), compactedItem);
                     }
                     else {
                     	// use an array if: compactArrays flag is false,
@@ -1426,9 +1426,9 @@ public class JSONLDProcessor {
     	FramingContext state = new FramingContext();
     	//Map<String,Object> state = new HashMap<String, Object>();
     	//state.put("options", this.opts);
-    	state.graphs = new HashMap<String, Object>();
-    	state.graphs.put("@default", new HashMap<String, Object>());
-    	state.graphs.put("@merged", new HashMap<String, Object>());
+    	state.graphs = new LinkedHashMap<String, Object>();
+    	state.graphs.put("@default", new LinkedHashMap<String, Object>());
+    	state.graphs.put("@merged", new LinkedHashMap<String, Object>());
     	
     	// produce a map of all graphs and name each bnode
     	// FIXME: currently uses subjects from @merged graph only
@@ -1481,15 +1481,15 @@ public class JSONLDProcessor {
     	    // result, create an independent copy of the embedded subjects map when the
     	    // property is null, which only occurs at the top-level.
     		if (property == null) {
-    			state.embeds = new HashMap<String,Object>();
+    			state.embeds = new LinkedHashMap<String,Object>();
     		}
     		
     		// start output
-    		Map<String,Object> output = new HashMap<String,Object>();
+    		Map<String,Object> output = new LinkedHashMap<String,Object>();
     		output.put("@id", id);
     		
     		// prepare embed meta info
-    		Map<String,Object> embed = new HashMap<String, Object>();
+    		Map<String,Object> embed = new LinkedHashMap<String, Object>();
     		embed.put("parent", parent);
     		embed.put("property", property);
     		
@@ -1565,7 +1565,7 @@ public class JSONLDProcessor {
     					// recurse into list
     					if (isList(o)) {
     						// add empty list
-    						Map<String,Object> list = new HashMap<String, Object>();
+    						Map<String,Object> list = new LinkedHashMap<String, Object>();
     						list.put("@list", new ArrayList<Object>());
     						addFrameOutput(state, output, prop, list);
     						
@@ -1621,7 +1621,7 @@ public class JSONLDProcessor {
     						tmp.add(preserve);
         					preserve = tmp;
     					}
-    					Map<String,Object> tmp1 = new HashMap<String, Object>();
+    					Map<String,Object> tmp1 = new LinkedHashMap<String, Object>();
     					tmp1.put("@preserve", preserve);
     					List<Object> tmp2 = new ArrayList<Object>();
     					tmp2.add(tmp1);
@@ -1656,7 +1656,7 @@ public class JSONLDProcessor {
 			
 			// recurse into @list
 			if (isList(o)) {
-				Map<String,Object> list = new HashMap<String, Object>();
+				Map<String,Object> list = new LinkedHashMap<String, Object>();
 				list.put("@list", new ArrayList());
 				addFrameOutput(state, output, property, list);
 				embedValues(state, (Map<String,Object>)o, "@list", list.get("@list"));
@@ -1670,13 +1670,13 @@ public class JSONLDProcessor {
 				// embed full subject if isn't already embedded
 				if (!state.embeds.containsKey(id)) {
 					// add embed
-					Map<String,Object> embed = new HashMap<String, Object>();
+					Map<String,Object> embed = new LinkedHashMap<String, Object>();
 					embed.put("parent", output);
 					embed.put("property", property);
 					state.embeds.put(id, embed);
 					
 					// recurse into subject
-					o = new HashMap<String,Object>();
+					o = new LinkedHashMap<String,Object>();
 					Map<String,Object> s = (Map<String, Object>) state.subjects.get(id);
 					for (String prop: s.keySet()) {
 						// copy keywords
@@ -1729,7 +1729,7 @@ public class JSONLDProcessor {
 		String property = (String) embed.get("property");
 		
 		// create reference to replace embed
-		Map<String,Object> subject = new HashMap<String, Object>();
+		Map<String,Object> subject = new LinkedHashMap<String, Object>();
 		subject.put("@id", id);
 		
 		// remove existing embed
@@ -1776,7 +1776,7 @@ public class JSONLDProcessor {
     private static Map<String,Object> filterSubjects(FramingContext state,
 			Collection<String> subjects, Map<String,Object> frame) {
     	// filter subjects in @id order
-		Map<String,Object> rval = new HashMap<String,Object>();
+		Map<String,Object> rval = new LinkedHashMap<String,Object>();
 		for (String id: subjects) {
 			Map<String,Object> subject = (Map<String, Object>) state.subjects.get(id);
 			if (filterSubject(subject, frame)) {
@@ -1866,7 +1866,7 @@ public class JSONLDProcessor {
     	
     	// add subject reference to list
     	if (list != null) {
-    		HashMap<String, Object> map = new HashMap<String,Object>();
+    		Map<String, Object> map = new LinkedHashMap<String,Object>();
     		map.put("@id", name);
     		list.add(map);
     	}
@@ -1877,7 +1877,7 @@ public class JSONLDProcessor {
     	if (subjects.containsKey(name)) {
     		subject = (Map<String, Object>) subjects.get(name);
     	} else {
-    		subject = new HashMap<String, Object>();
+    		subject = new LinkedHashMap<String, Object>();
     		subjects.put(name, subject);
     	}
     	subject.put("@id", name);
@@ -1891,7 +1891,7 @@ public class JSONLDProcessor {
     		if ("@graph".equals(prop)) {
     			// add graph subjects map entry
     			if (!graphs.containsKey(name)) {
-    				graphs.put(name, new HashMap<String, Object>());
+    				graphs.put(name, new LinkedHashMap<String, Object>());
     			}
     			String g = "@merged".equals(graph) ? graph : name;
     			flatten(((Map<String, Object>) input).get(prop), graphs, g, namer, null, null);
@@ -1933,7 +1933,7 @@ public class JSONLDProcessor {
     				String id = (JSONLDUtils.isBlankNode(o) ? namer.getName((String) ((Map<String,Object>)o).get("@id")) : (String)((Map<String,Object>)o).get("@id"));
     				
     				// add reference and recurse
-    				Map<String,Object> tmp = new HashMap<String, Object>();
+    				Map<String,Object> tmp = new LinkedHashMap<String, Object>();
     				tmp.put("@id", id);
     				JSONLDUtils.addValue(subject, prop, tmp, true);
     				flatten(o, graphs, graph, namer, id);
@@ -1942,7 +1942,7 @@ public class JSONLDProcessor {
     				if (o instanceof Map && ((Map)o).containsKey("@list")) {
     					List<Object> _list = new ArrayList<Object>();
     					flatten(((Map)o).get("@list"), graphs, graph, namer, name, _list);
-    					o = new HashMap<String, Object>();
+    					o = new LinkedHashMap<String, Object>();
     					((Map<String, Object>) o).put("@list", _list);
     				// special-handle @type IRIs
     				} else if ("@type".equals(prop) && o instanceof String && ((String) o).startsWith("_:")) {
@@ -1967,7 +1967,7 @@ public class JSONLDProcessor {
     private class MapStatements implements JSONLDTripleCallback {
 
     	List<List<String>> statements = new ArrayList<List<String>>();
-    	Map<String,Object> bnodes = new HashMap<String, Object>();
+    	Map<String,Object> bnodes = new LinkedHashMap<String, Object>();
     	UniqueNamer namer = new UniqueNamer("_:t");
     	
 		@Override
@@ -2050,7 +2050,7 @@ public class JSONLDProcessor {
 	private class NormalizeCallback implements CallbackWrapper {
 		
 		List<Map<String,Object>> statements = new ArrayList<Map<String,Object>>();
-		Map<String,Map<String,Object>> bnodes = new HashMap<String, Map<String,Object>>();
+		Map<String,Map<String,Object>> bnodes = new LinkedHashMap<String, Map<String,Object>>();
 		UniqueNamer namer = new UniqueNamer("_:c14n");
 					
 		public void callback(Map<String, Object> statement) {
@@ -2075,7 +2075,7 @@ public class JSONLDProcessor {
 						stmts = (List<Object>) bnodes.get(id).get("statements");
 					} else {
 						stmts = new ArrayList<Object>();
-						Map<String,Object> tmp = new HashMap<String, Object>();
+						Map<String,Object> tmp = new LinkedHashMap<String, Object>();
 						tmp.put("statements", stmts);
 						bnodes.put(id, tmp);
 					}
@@ -2087,8 +2087,8 @@ public class JSONLDProcessor {
 		public void hashBlankNodes(List<String> unnamed) {
 			// generate unique and duplicate hashes for bnodes
 			List<String> nextUnnamed = new ArrayList<String>();
-			Map<String,List<String>> duplicates = new HashMap<String, List<String>>();
-			Map<String,String> unique = new HashMap<String, String>();
+			Map<String,List<String>> duplicates = new LinkedHashMap<String, List<String>>();
+			Map<String,String> unique = new LinkedHashMap<String, String>();
 			
 			for (String bnode: unnamed) {
 
@@ -2156,7 +2156,7 @@ public class JSONLDProcessor {
 							MessageDigest md = MessageDigest.getInstance("SHA-1");
 							
 							// group adjacent bnodes by hash, keep properties and references separate
-							Map<String,List<String>> groups = new HashMap<String, List<String>>();
+							Map<String,List<String>> groups = new LinkedHashMap<String, List<String>>();
 							List<Object> statements = (List<Object>) bnodes.get(bnode).get("statements");
 							
 							for (Object statement: statements) {
@@ -2412,12 +2412,51 @@ public class JSONLDProcessor {
      * @param input the expanded JSON-LD object to normalize.
      * @param options the normalization options.
      * @param callback(err, normalized) called once the operation completes.
+	 * @throws JSONLDProcessingError 
      */
-	public List normalize(Object input) {
-		NormalizeCallback cb = new NormalizeCallback();
-		_toRDF(input, new UniqueNamer("_:t"), null, null, null, cb);
-		cb.finalise();
-		return null;
+	public Object normalize(Map<String,Object> dataset) throws JSONLDProcessingError {
+		// create quads and map bnodes to their associated quads
+		List<Object> quads = new ArrayList<Object>();
+		Map<String,Object> bnodes = new LinkedHashMap<String, Object>();
+		for (String graphName : dataset.keySet()) {
+			List<Map<String,Object>> triples = (List<Map<String,Object>>) dataset.get(graphName);
+			if ("@default".equals(graphName)) {
+				graphName = null;
+			}
+			for (Map<String,Object> quad : triples) {
+				if (graphName != null) {
+					if (graphName.indexOf("_:") == 0) {
+						Map<String,Object> tmp = new LinkedHashMap<String, Object>();
+						tmp.put("type", "blank node");
+						tmp.put("value", graphName);
+						quad.put("name", tmp);
+					} else {
+						Map<String,Object> tmp = new LinkedHashMap<String, Object>();
+						tmp.put("type", "IRI");
+						tmp.put("value", graphName);
+						quad.put("name", tmp);
+					}
+				}
+				quads.add(quad);
+				
+				String[] attrs = new String[] { "subject", "object", "name" };
+				for (String attr : attrs) {
+					if (quad.containsKey(attr) && "blank node".equals(((Map<String, Object>) quad.get(attr)).get("type"))) {
+						String id = (String)((Map<String, Object>) quad.get(attr)).get("value");
+						if (!bnodes.containsKey(id)) {
+							bnodes.put(id, new LinkedHashMap<String, List<Object>>() {{
+								put("quads", new ArrayList<Object>());
+							}});
+						}
+						((List<Object>) ((Map<String, Object>) bnodes.get(id)).get("quads")).add(quad);
+					}
+				}
+			}
+		}
+		
+		// mapping complete, start canonical naming
+		NormalizeUtils normalizeUtils = new NormalizeUtils(quads, bnodes, new UniqueNamer("_:c14n"), opts);
+		return normalizeUtils.hashBlankNodes(bnodes.keySet());
 	}
 	
 	/**
@@ -2429,7 +2468,7 @@ public class JSONLDProcessor {
 	 */
 	public Map<String,Object> toRDF(Map<String,Object> nodeMap) {
 		UniqueNamer namer = new UniqueNamer("_:b");
-		Map<String,Object> dataset = new HashMap<String, Object>();
+		Map<String,Object> dataset = new LinkedHashMap<String, Object>();
 		for (String graphName : nodeMap.keySet()) {
 			Map<String,Object> graph = (Map<String, Object>) nodeMap.get(graphName);
 			if (graphName.indexOf("_:") == 0) {
@@ -2500,10 +2539,10 @@ public class JSONLDProcessor {
 					datatype = XSD_STRING;
 				}
 				
-				Map<String,Object> object = new HashMap<String, Object>();
+				Map<String,Object> object = new LinkedHashMap<String, Object>();
 				object.put("nominalValue", value);
 				object.put("interfaceName", "LiteralNode");
-				Map<String,Object> objdt = new HashMap<String, Object>();
+				Map<String,Object> objdt = new LinkedHashMap<String, Object>();
 				objdt.put("nominalValue", datatype);
 				objdt.put("intergaceName", "IRI");
 				object.put("datatype", objdt);
@@ -2513,7 +2552,7 @@ public class JSONLDProcessor {
 				}
 				
 				// emit literal
-				Map<String,Object> statement = new HashMap<String, Object>();
+				Map<String,Object> statement = new LinkedHashMap<String, Object>();
 				statement.put("subject", JSONLDUtils.clone(subject));
 				statement.put("property", JSONLDUtils.clone(property));
 				statement.put("object", object);
@@ -2531,10 +2570,10 @@ public class JSONLDProcessor {
 				// convert @list array into embedded blank node linked list in reverse
 				List<Object> list = (List<Object>) element.get("@list");
 				int len = list.size();
-				Map<String,Object> tail = new HashMap<String, Object>();
+				Map<String,Object> tail = new LinkedHashMap<String, Object>();
 				tail.put("@id", RDF_NIL);
 				for (int i = len - 1; i >= 0; --i) {
-					Map<String,Object> e = new HashMap<String, Object>();
+					Map<String,Object> e = new LinkedHashMap<String, Object>();
 					List<Object> f = new ArrayList<Object>();
 					f.add(list.get(i));
 					List<Object> r = new ArrayList<Object>();
@@ -2555,12 +2594,12 @@ public class JSONLDProcessor {
 			String id = isBnode ? namer.getName((String) element.get("@id")) : (String)element.get("@id");
 						
 			// create object 
-			Map<String,Object> object = new HashMap<String, Object>();
+			Map<String,Object> object = new LinkedHashMap<String, Object>();
 			object.put("nominalValue", id);
 			object.put("interfaceName", isBnode ? "BlankNode" : "IRI");
 			
 			if (subject != null) {
-				Map<String,Object> statement = new HashMap<String, Object>();
+				Map<String,Object> statement = new LinkedHashMap<String, Object>();
 				statement.put("subject", JSONLDUtils.clone(subject));
 				statement.put("property", JSONLDUtils.clone(property));
 				statement.put("object", object);
@@ -2611,7 +2650,7 @@ public class JSONLDProcessor {
 				}
 				
 				// create new active property
-				property = new HashMap<String, Object>();
+				property = new LinkedHashMap<String, Object>();
 				((Map<String, Object>) property).put("nominalValue", prop);
 				((Map<String, Object>) property).put("interfaceName", "IRI");
 				
@@ -2633,10 +2672,10 @@ public class JSONLDProcessor {
 		// element must be an rdf:type IRI (@values covered above)
 		if (elem instanceof String) {
 			// emit IRI
-			Map<String,Object> object = new HashMap<String, Object>();
+			Map<String,Object> object = new LinkedHashMap<String, Object>();
 			object.put("nominalValue", elem);
 			object.put("interfaceName", "IRI");
-			Map<String,Object> statement = new HashMap<String, Object>();
+			Map<String,Object> statement = new LinkedHashMap<String, Object>();
 			statement.put("subject", JSONLDUtils.clone(subject));
 			statement.put("property", JSONLDUtils.clone(property));
 			statement.put("object", object);
@@ -2659,10 +2698,10 @@ public class JSONLDProcessor {
 	 * @throws JSONLDProcessingError 
 	 */
 	public Object fromRDF(List<Map<String, Object>> statements) throws JSONLDProcessingError {
-		Map<String,Object> defaultGraph = new HashMap<String, Object>();
-		defaultGraph.put("subjects", new HashMap<String, Object>());
-		defaultGraph.put("listMap", new HashMap<String, Object>());
-		Map<String,Map<String,Object>> graphs = new HashMap<String, Map<String,Object>>();
+		Map<String,Object> defaultGraph = new LinkedHashMap<String, Object>();
+		defaultGraph.put("subjects", new LinkedHashMap<String, Object>());
+		defaultGraph.put("listMap", new LinkedHashMap<String, Object>());
+		Map<String,Map<String,Object>> graphs = new LinkedHashMap<String, Map<String,Object>>();
 		graphs.put("", (Map<String,Object>)defaultGraph);
 		
 		for (Map<String,Object> statement: statements) {
@@ -2675,9 +2714,9 @@ public class JSONLDProcessor {
 			// create a graph entry as needed
 			Map<String,Object> graph;
 			if (!graphs.containsKey(name)) {
-				graph = new HashMap<String,Object>();
-				graph.put("subjects", new HashMap<String, Object>());
-				graph.put("listMap", new HashMap<String, Object>());
+				graph = new LinkedHashMap<String,Object>();
+				graph.put("subjects", new LinkedHashMap<String, Object>());
+				graph.put("listMap", new LinkedHashMap<String, Object>());
 				graphs.put(name, graph);
 			} else {
 				graph = graphs.get(name);
@@ -2689,7 +2728,7 @@ public class JSONLDProcessor {
 				Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
 				Map<String,Object> entry;
 				if (!listMap.containsKey(s)) {
-					entry = new HashMap<String, Object>();
+					entry = new LinkedHashMap<String, Object>();
 					listMap.put(s, entry);
 				} else {
 					entry = (Map<String, Object>) listMap.get(s);
@@ -2707,7 +2746,7 @@ public class JSONLDProcessor {
 					Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
 					Map<String,Object> entry;
 					if (!listMap.containsKey(s)) {
-						entry = new HashMap<String, Object>();
+						entry = new LinkedHashMap<String, Object>();
 						listMap.put(s, entry);
 					} else {
 						entry = (Map<String, Object>) listMap.get(s);
@@ -2720,7 +2759,7 @@ public class JSONLDProcessor {
 			
 			// add graph subject to default graph as needed
 			if (!"".equals(name) && !Obj.contains(defaultGraph, "subjects", name)) {
-				Map<String,Object> tmp = new HashMap<String, Object>();
+				Map<String,Object> tmp = new LinkedHashMap<String, Object>();
 				tmp.put("@id", name);
 				Obj.put(defaultGraph, "subjects", name, tmp);
 			}
@@ -2729,7 +2768,7 @@ public class JSONLDProcessor {
 			Map<String,Object> subjects = (Map<String, Object>) graph.get("subjects");
 			Map<String,Object> value;
 			if (!subjects.containsKey(s)) {
-				value = new HashMap<String, Object>();
+				value = new LinkedHashMap<String, Object>();
 				value.put("@id", s);
 				subjects.put(s, value);
 			} else {
@@ -2751,7 +2790,7 @@ public class JSONLDProcessor {
 					Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
 					Map<String,Object> entry;
 					if (!listMap.containsKey(id)) {
-						entry = new HashMap<String, Object>();
+						entry = new LinkedHashMap<String, Object>();
 						listMap.put(id, entry);
 					} else {
 						entry = (Map<String, Object>) listMap.get(id);
@@ -2825,7 +2864,7 @@ public class JSONLDProcessor {
 	 * @return the JSON-LD object.
 	 */
 	private Object rdfToObject(Map<String, Object> o) {
-		Map<String,Object> rval = new HashMap<String, Object>();
+		Map<String,Object> rval = new LinkedHashMap<String, Object>();
 		
 		// convert empty list
 		if ("IRI".equals(o.get("interfaceName")) && RDF_NIL.equals(o.get("nominalValue"))) {
@@ -2903,7 +2942,7 @@ public class JSONLDProcessor {
         }
         String skey = key.substring(idx + 1);
         Object keyval = key;
-        Map entry = new HashMap();
+        Map entry = new LinkedHashMap();
         entry.put("@id", keyval);
         Object v = val;
     	while (true) {
@@ -2960,8 +2999,8 @@ public class JSONLDProcessor {
 	public List<Object> flatten(List<Object> input) throws JSONLDProcessingError {
 		// produce a map of all subjects and name each bnode
 		UniqueNamer namer = new UniqueNamer("_:b");
-		Map<String,Object> graphs = new HashMap<String, Object>() {{
-			put("@default", new HashMap<String, Object>());
+		Map<String,Object> graphs = new LinkedHashMap<String, Object>() {{
+			put("@default", new LinkedHashMap<String, Object>());
 		}};
 		createNodeMap(input, graphs, "@default", namer);
 		
@@ -2976,7 +3015,7 @@ public class JSONLDProcessor {
 			Map<String,Object> nodeMap = (Map<String, Object>) graphs.get(graphName);
 			Map<String,Object> subject = (Map<String, Object>) defaultGraph.get(graphName);
 			if (subject == null) {
-				subject = new HashMap<String, Object>();
+				subject = new LinkedHashMap<String, Object>();
 				subject.put("@id", graphName);
 				subject.put("@graph", new ArrayList<Object>());
 				defaultGraph.put(graphName, subject);
@@ -3028,7 +3067,7 @@ public class JSONLDProcessor {
                     }
                     for (Object t : (List<Object>) val) {
                         if (t instanceof String) {
-                            processKeyVal(ctx, (String) t, new HashMap<String,Object>() {{
+                            processKeyVal(ctx, (String) t, new LinkedHashMap<String,Object>() {{
                             	put("@id", "");
                             }});
                         } else {
@@ -3055,11 +3094,11 @@ public class JSONLDProcessor {
     public Object simplify(Object input) throws JSONLDProcessingError {
 
         Object expanded = JSONLD.expand(input, opts);
-        Map<String, Object> ctx = new HashMap<String,Object>();
+        Map<String, Object> ctx = new LinkedHashMap<String,Object>();
         
         generateSimplifyContext(expanded, ctx);
 
-        Map<String,Object> tmp = new HashMap<String, Object>();
+        Map<String,Object> tmp = new LinkedHashMap<String, Object>();
         tmp.put("@context", ctx);
         
         // add optimize flag to opts (clone the opts so we don't change the flag for the base processor)

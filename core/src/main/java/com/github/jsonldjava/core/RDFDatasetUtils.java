@@ -6,13 +6,13 @@ import static com.github.jsonldjava.core.JSONLDUtils.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import com.github.jsonldjava.impl.NQuadTripleCallback;
-
-class ToRDFUtils {
+class RDFDatasetUtils {
 	
 	private static String LITERAL = "literal";
 	private static String BLANK_NODE = "blank node";
@@ -28,10 +28,11 @@ class ToRDFUtils {
 	 */
 	static List<Object> graphToRDF(Map<String,Object> graph, UniqueNamer namer) {
 		List<Object> rval = new ArrayList<Object>();
-		
 		for (String id : graph.keySet()) {
 			Map<String,Object> node = (Map<String, Object>) graph.get(id);
-			for (String property : node.keySet()) {
+			List<String> properties = new ArrayList<String>(node.keySet());
+			Collections.sort(properties);
+			for (String property : properties) {
 				Object items = node.get(property);
 				if ("@type".equals(property)) {
 					property = RDF_TYPE;
@@ -41,7 +42,7 @@ class ToRDFUtils {
 				
 				for (Object item : (List<Object>) items) {
 					// RDF subjects
-					Map<String,Object> subject = new HashMap<String,Object>();
+					Map<String,Object> subject = new LinkedHashMap<String,Object>();
 					if (id.indexOf("_:") == 0) {
 						subject.put("type", BLANK_NODE);
 						subject.put("value", namer.getName(id));
@@ -51,7 +52,7 @@ class ToRDFUtils {
 					}
 					
 					// RDF predicates
-					Map<String,Object> predicate = new HashMap<String,Object>();
+					Map<String,Object> predicate = new LinkedHashMap<String,Object>();
 					predicate.put("type", IRI);
 					predicate.put("value", property);
 					
@@ -62,7 +63,7 @@ class ToRDFUtils {
 					// convert value or node object to triple
 					else {
 						Object object = objectToRDF(item, namer);
-						Map<String,Object> tmp = new HashMap<String, Object>();
+						Map<String,Object> tmp = new LinkedHashMap<String, Object>();
 						tmp.put("subject", subject);
 						tmp.put("predicate", predicate);
 						tmp.put("object", object);
@@ -88,23 +89,23 @@ class ToRDFUtils {
 	private static void listToRDF(List<Object> list, UniqueNamer namer,
 			Map<String, Object> subject, Map<String, Object> predicate,
 			List<Object> triples) {
-		Map<String,Object> first = new HashMap<String, Object>();
+		Map<String,Object> first = new LinkedHashMap<String, Object>();
 		first.put("type", IRI);
 		first.put("value", RDF_FIRST);
-		Map<String,Object> rest = new HashMap<String, Object>();
+		Map<String,Object> rest = new LinkedHashMap<String, Object>();
 		rest.put("type", IRI);
 		rest.put("value", RDF_REST);
-		Map<String,Object> nil = new HashMap<String, Object>();
+		Map<String,Object> nil = new LinkedHashMap<String, Object>();
 		nil.put("type", IRI);
 		nil.put("value", RDF_NIL);
 		
 		for (Object item : list) {
-			Map<String,Object> blankNode = new HashMap<String, Object>();
+			Map<String,Object> blankNode = new LinkedHashMap<String, Object>();
 			blankNode.put("type", BLANK_NODE);
 			blankNode.put("value", namer.getName());
 			
 			{
-				Map<String,Object> tmp = new HashMap<String, Object>();
+				Map<String,Object> tmp = new LinkedHashMap<String, Object>();
 				tmp.put("subject", subject);
 				tmp.put("predicate", predicate);
 				tmp.put("object", blankNode);
@@ -116,7 +117,7 @@ class ToRDFUtils {
 			Object object = objectToRDF(item, namer);
 			
 			{
-				Map<String,Object> tmp = new HashMap<String, Object>();
+				Map<String,Object> tmp = new LinkedHashMap<String, Object>();
 				tmp.put("subject", subject);
 				tmp.put("predicate", predicate);
 				tmp.put("object", object);
@@ -125,7 +126,7 @@ class ToRDFUtils {
 			
 			predicate = rest;
 		}
-		Map<String,Object> tmp = new HashMap<String, Object>();
+		Map<String,Object> tmp = new LinkedHashMap<String, Object>();
 		tmp.put("subject", subject);
 		tmp.put("predicate", predicate);
 		tmp.put("object", nil);
@@ -142,7 +143,7 @@ class ToRDFUtils {
 	 * @return the RDF literal or RDF resource.
 	 */
 	private static Object objectToRDF(Object item, UniqueNamer namer) {
-		Map<String,Object> object = new HashMap<String, Object>();
+		Map<String,Object> object = new LinkedHashMap<String, Object>();
 		
 		// convert value object to RDF
 		if (isValue(item)) {
@@ -280,7 +281,191 @@ class ToRDFUtils {
 		return quad;
 	}
 	
-	private static String toNQuad(Map<String, Object> triple, String graphName) {
+	static String toNQuad(Map<String, Object> triple, String graphName) {
 		return toNQuad(triple, graphName, null);
+	}
+	
+	// define partial regexes
+	final private static Pattern re_iri = Pattern.compile("(?:<([^:]+:[^>]*)>)");
+	final private static Pattern re_bnode = Pattern.compile("(_:(?:[A-Za-z][A-Za-z0-9]*))");
+	final private static Pattern re_plain = Pattern.compile("\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"");
+	final private static Pattern re_datatype = Pattern.compile("(?:\\^\\^" + re_iri + ")");
+	final private static Pattern re_language = Pattern.compile("(?:@([a-z]+(?:-[a-z0-9]+)*))");
+	final private static Pattern re_literal = Pattern.compile("(?:" + re_plain + "(?:" + re_datatype + "|" + re_language + ")?)");
+	final private static Pattern re_ws = Pattern.compile("[ \\t]+");
+	final private static Pattern re_wso = Pattern.compile("[ \\t]*");
+	final private static Pattern re_eoln = Pattern.compile("(?:\r\n)|(?:\n)|(?:\r)");
+	final private static Pattern re_empty = Pattern.compile("^" + re_wso + "$");
+	
+	// define quad part regexes
+	final private static Pattern re_subject = Pattern.compile("(?:" + re_iri + "|" + re_bnode + ")" + re_ws);
+	final private static Pattern re_property = Pattern.compile(re_iri.pattern() + re_ws.pattern());
+	final private static Pattern re_object = Pattern.compile("(?:" + re_iri + "|" + re_bnode + "|" + re_literal + ")" + re_wso);
+	final private static Pattern re_graph = Pattern.compile("(?:\\.|(?:(?:" + re_iri + "|" + re_bnode + ")" + re_wso + "\\.))");
+	
+	// full quad regex
+	final private static Pattern re_quad = Pattern.compile("^" + re_wso + re_subject + re_property + re_object + re_graph + re_wso + "$");
+	
+	/**
+	 * Parses RDF in the form of N-Quads.
+	 *
+	 * @param input the N-Quads input to parse.
+	 *
+	 * @return an RDF dataset.
+	 */
+	static Map<String,Object> parseNQuads(String input) throws JSONLDProcessingError {
+		// build RDF dataset
+		Map<String,Object> dataset = new LinkedHashMap<String, Object>();
+		
+		// split N-Quad input into lines
+		String[] lines = re_eoln.split(input);
+		int lineNumber = 0;
+		for (String line : lines) {
+			lineNumber++;
+			
+			// skip empty lines
+			if (re_empty.matcher(line).matches()) {
+				continue;
+			}
+			
+			// parse quad
+			Matcher match = re_quad.matcher(line);
+			if (!match.matches()) {
+				throw new JSONLDProcessingError("Error while parsing N-Quads; invalid quad.")
+					.setType(JSONLDProcessingError.Error.PARSE_ERROR)
+					.setDetail("line", lineNumber);
+			}
+			
+			// create RDF triple
+			Map<String,Object> triple = new LinkedHashMap<String, Object>();
+			
+			// get subject
+			if (match.group(1) != null) {
+				final String value = match.group(1);
+				triple.put("subject", new LinkedHashMap<String, Object>() {{
+					put("type", "IRI");
+					put("value", value);
+				}});
+			} else {
+				final String value = match.group(2);
+				triple.put("subject", new LinkedHashMap<String, Object>() {{
+					put("type", "blank node");
+					put("value", value);
+				}});
+			}
+			
+			// get predicate
+			final String predval = match.group(3);
+			triple.put("predicate", new LinkedHashMap<String, Object>() {{
+				put("type", "IRI");
+				put("value", predval);
+			}});
+			
+			// get object
+			if (match.group(4) != null) {
+				final String value = match.group(4);
+				triple.put("object", new LinkedHashMap<String, Object>() {{
+					put("type", "IRI");
+					put("value", value);
+				}});
+			} else if (match.group(5) != null) {
+				final String value = match.group(5);
+				triple.put("object", new LinkedHashMap<String, Object>() {{
+					put("type", "IRI");
+					put("value", value);
+				}});
+			} else {
+				final String language = match.group(8);
+				final String datatype = match.group(7) != null ? match.group(7) : match.group(8) != null ? RDF_LANGSTRING : XSD_STRING;
+				final String unescaped = match.group(6)
+						.replaceAll("\\\\\\\\", "\\\\")
+						.replaceAll("\\\\t", "\\t")
+						.replaceAll("\\\\n", "\\n")
+						.replaceAll("\\\\r", "\\r")
+						.replaceAll("\\\\\"", "\\\"");
+				triple.put("object", new LinkedHashMap<String, Object>() {{
+					put("type", "literal");
+					put("datatype", datatype);
+					if (language != null) {
+						put("language", language);
+					}
+					put("value", unescaped);
+				}});
+			}
+			
+			// get graph name ('@default' is used for the default graph)
+			String name = "@default";
+			if (match.group(9) != null) {
+				name = match.group(9);
+			} else if (match.group(10) != null) {
+				name = match.group(10);
+			}
+			
+			// initialise graph in dataset
+			if (!dataset.containsKey(name)) {
+				List<Object> tmp = new ArrayList<Object>();
+				tmp.add(triple);
+				dataset.put(name, tmp);
+			}
+			// add triple if unique to its graph
+			else {
+				Boolean unique = true;
+				List<Map<String,Object>> triples = (List<Map<String, Object>>) dataset.get(name);
+				for (int ti = 0; unique && ti < triples.size(); ++ti) {
+					if (compareRDFTriples(triples.get(ti), triple)) {
+						unique = false;
+					}
+				}
+				if (unique) {
+					triples.add(triple);
+				}
+			}
+		}
+		
+		return dataset;
+	}
+
+	/**
+	 * Compares two RDF triples for equality.
+	 *
+	 * @param t1 the first triple.
+	 * @param t2 the second triple.
+	 *
+	 * @return true if the triples are the same, false if not.
+	 */
+	private static boolean compareRDFTriples(Map<String, Object> t1,
+			Map<String, Object> t2) {
+		for (String attr : new String[] { "subject", "predicate", "object" }) {
+			Map<String,Object> t1a = (Map<String, Object>) t1.get(attr);
+			Map<String,Object> t2a = (Map<String, Object>) t2.get(attr);
+			if (!_equals(t1a.get("type"), t2a.get("type")) || !_equals(t1a.get("value"), t2a.get("value"))) {
+				return false;
+			}
+		}
+		Map<String,Object> t1o = (Map<String, Object>) t1.get("object");
+		Map<String,Object> t2o = (Map<String, Object>) t2.get("object");
+		if (t1o.containsKey("language")) {
+			if (t2o.containsKey("language")) {
+				if (!_equals(t1o.get("language"), t2o.get("language"))) {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} else if (t2o.containsKey("language")) {
+			return false;
+		}
+		if (t1o.containsKey("datatype")) {
+			if (t2o.containsKey("datatype")) {
+				if (!_equals(t1o.get("datatype"), t2o.get("datatype"))) {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} else if (t2o.containsKey("datatype")) {
+			return false;
+		}
+		return true;
 	}
 }

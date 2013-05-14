@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -170,7 +170,7 @@ public class JSONLDUtils {
 		
 		// convert short-hand value to object w/@id
 		if (isString(value)) {
-			Map<String,Object> tmp = new HashMap<String, Object>();
+			Map<String,Object> tmp = new LinkedHashMap<String, Object>();
 			tmp.put("@id", value);
 			value = tmp;
 		}
@@ -185,7 +185,7 @@ public class JSONLDUtils {
 		Map<String,Object> val = (Map<String,Object>)value;
 		
 		// create new mapping
-		Map<String, Object> mapping = new HashMap<String, Object>();
+		Map<String, Object> mapping = new LinkedHashMap<String, Object>();
 		activeCtx.mappings.put(term, mapping);
 		mapping.put("reverse", false);
 		
@@ -518,7 +518,7 @@ public class JSONLDUtils {
 						.setDetail("languageMap", languageMap)
 						.setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
 				}
-				Map<String,Object> tmp = new HashMap<String, Object>();
+				Map<String,Object> tmp = new LinkedHashMap<String, Object>();
 				tmp.put("@value", item);
 				tmp.put("@language", key.toLowerCase());
 				rval.add(tmp);
@@ -559,14 +559,14 @@ public class JSONLDUtils {
 
         // do @id expansion (automatic for @graph)
         if ("@id".equals(type) || ("@graph".equals(expandedProperty) && isString(value))) {
-            Map<String, Object> tmp = new HashMap<String, Object>();
+            Map<String, Object> tmp = new LinkedHashMap<String, Object>();
             tmp.put("@id", expandIri(activeCtx, (String) value, true, false, null, null));
             return tmp;
         } 
         
         // do @id expansion w/vocab
         if ("@vocab".equals(type)) {
-        	Map<String, Object> tmp = new HashMap<String, Object>();
+        	Map<String, Object> tmp = new LinkedHashMap<String, Object>();
             tmp.put("@id", expandIri(activeCtx, (String) value, true, true, null, null));
             return tmp;
         }
@@ -576,7 +576,7 @@ public class JSONLDUtils {
         	return value;
         }
         
-        Map<String, Object> rval = new HashMap<String, Object>();
+        Map<String, Object> rval = new LinkedHashMap<String, Object>();
             
         // other type
         if (type != null) {
@@ -988,7 +988,7 @@ public class JSONLDUtils {
 	 * @param language
 	 * @return
 	 */
-	private static boolean _equals(Object a, Object b) {
+	static boolean _equals(Object a, Object b) {
 		if (a == null) {
 			return b == null;
 		}
@@ -1128,7 +1128,7 @@ public class JSONLDUtils {
     			return ((Map<String, Object>) value).get("@value");
     		}
     		
-    		Map<String,Object> rval = new HashMap<String, Object>();
+    		Map<String,Object> rval = new LinkedHashMap<String, Object>();
     		
     		// preserve @index
     		if (preserveIndex) {
@@ -1159,7 +1159,7 @@ public class JSONLDUtils {
     		return compacted;
     	}
     	
-    	Map<String,Object> rval = new HashMap<String, Object>();
+    	Map<String,Object> rval = new LinkedHashMap<String, Object>();
     	rval.put(compactIri(activeCtx, "@id"), compacted);
 		return rval;
 	}
@@ -1203,7 +1203,7 @@ public class JSONLDUtils {
     				((Map<String, Object>) input).put("@type", type);
     			}
     			if (!((Map<String, Object>) graphs.get(graph)).containsKey(type)) {
-    				Map<String,Object> tmp = new HashMap<String, Object>();
+    				Map<String,Object> tmp = new LinkedHashMap<String, Object>();
     				tmp.put("@id", type);
     				((Map<String, Object>) graphs.get(graph)).put(type, tmp);
     			}
@@ -1223,7 +1223,7 @@ public class JSONLDUtils {
     	
     	// add subject reference to list
     	if (list != null) {
-    		Map<String,Object> tmp = new HashMap<String, Object>();
+    		Map<String,Object> tmp = new LinkedHashMap<String, Object>();
 			tmp.put("@id", name);
     		list.add(tmp);
     	}
@@ -1234,7 +1234,7 @@ public class JSONLDUtils {
     	if (subjects.containsKey(name)) {
     		subject = (Map<String, Object>)subjects.get(name);
     	} else {
-    		subject = new HashMap<String, Object>();
+    		subject = new LinkedHashMap<String, Object>();
     		subjects.put(name, subject);
     	}
     	subject.put("@id", name);
@@ -1248,7 +1248,7 @@ public class JSONLDUtils {
     		
     		// handle reverse properties
     		if ("@reverse".equals(property)) {
-    			Map<String,Object> referencedNode = new HashMap<String, Object>();
+    			Map<String,Object> referencedNode = new LinkedHashMap<String, Object>();
     			referencedNode.put("@id", name);
     			Map<String,Object> reverseMap = (Map<String, Object>) ((Map<String, Object>) input).get("@reverse");
     			for (String reverseProperty : reverseMap.keySet()) {
@@ -1264,7 +1264,7 @@ public class JSONLDUtils {
     		if ("@graph".equals(property)) {
     			// add graph subjects map entry
     			if (!graphs.containsKey(name)) {
-    				graphs.put(name, new HashMap<String, Object>());
+    				graphs.put(name, new LinkedHashMap<String, Object>());
     			}
     			String g = "@merged".equals(graph) ? graph : name;
     			createNodeMap(((Map<String, Object>) input).get(property), graphs, g, namer);
@@ -1301,7 +1301,7 @@ public class JSONLDUtils {
     				// rename @type blank nodes
     				o = (((String) o).indexOf("_:") == 0) ? namer.getName((String) o) : o;
     				if (!((Map<String, Object>) graphs.get(graph)).containsKey(o)) {
-    					Map<String,Object> tmp = new HashMap<String, Object>();
+    					Map<String,Object> tmp = new LinkedHashMap<String, Object>();
     					tmp.put("@id", o);
     					((Map<String, Object>) graphs.get(graph)).put((String)o, tmp);
     				}
@@ -1313,7 +1313,7 @@ public class JSONLDUtils {
         			String id = isBlankNode(o) ? namer.getName((String)((Map<String, Object>) o).get("@id")) : (String)((Map<String, Object>) o).get("@id");
         			
 					// add reference and recurse
-        			Map<String,Object> tmp = new HashMap<String, Object>();
+        			Map<String,Object> tmp = new LinkedHashMap<String, Object>();
 					tmp.put("@id", id);
 					addValue(subject, property, tmp, true, false);
 					createNodeMap(o, graphs, graph, namer, id);
@@ -1322,7 +1322,7 @@ public class JSONLDUtils {
         		else if (isList(o)) {
         			List<Object> _list = new ArrayList<Object>();
         			createNodeMap(((Map<String, Object>) o).get("@list"), graphs, graph, namer, name, _list);
-        			o = new HashMap<String, Object>();
+        			o = new LinkedHashMap<String, Object>();
         			((Map<String, Object>) o).put("@list", _list);
         			addValue(subject, property, o, true, false);
         		}
@@ -1521,7 +1521,7 @@ public class JSONLDUtils {
      * @throws JSONLDProcessingError 
      */
     static void resolveContextUrls(Object input) throws JSONLDProcessingError {
-    	resolve(input, new HashMap<String, Object>());
+    	resolve(input, new LinkedHashMap<String, Object>());
 	}
     
     private static void resolve(Object input, Map<String, Object> cycles) throws JSONLDProcessingError {
@@ -1534,7 +1534,7 @@ public class JSONLDUtils {
     	}
     	
     	// for tracking the URLs to resolve
-    	Map<String,Object> urls = new HashMap<String, Object>();
+    	Map<String,Object> urls = new LinkedHashMap<String, Object>();
     	
     	// find all URLs in the given input
     	if (!findContextUrls(input, urls, false)) {
@@ -1571,8 +1571,8 @@ public class JSONLDUtils {
     		try {
 				Map<String,Object> ctx = (Map<String,Object>)JSONUtils.fromString((String)new java.net.URL(url).getContent());
 				if (!ctx.containsKey("@context")) {
-					ctx = new HashMap<String, Object>();
-					ctx.put("@context", new HashMap<String, Object>());
+					ctx = new LinkedHashMap<String, Object>();
+					ctx.put("@context", new LinkedHashMap<String, Object>());
 				}
 				resolve(ctx, _cycles);
 				urls.put(url, ctx.get("@context"));

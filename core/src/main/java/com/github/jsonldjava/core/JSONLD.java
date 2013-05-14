@@ -2,7 +2,7 @@ package com.github.jsonldjava.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +10,7 @@ import com.github.jsonldjava.impl.NQuadTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
 
 import static com.github.jsonldjava.core.JSONLDUtils.*;
-import static com.github.jsonldjava.core.ToRDFUtils.*;
+import static com.github.jsonldjava.core.RDFDatasetUtils.*;
 
 public class JSONLD {
 	
@@ -95,7 +95,7 @@ public class JSONLD {
         	}
         	// simplify to an empty object
         	else if (((List<Object>)compacted).size() == 0) {
-        		compacted = new HashMap<String, Object>();
+        		compacted = new LinkedHashMap<String, Object>();
         	}
         }
         // always use array if graph option is on
@@ -137,7 +137,7 @@ public class JSONLD {
         if (isArray(compacted)) {
             String kwgraph = compactIri(activeCtx, "@graph");
             Object graph = compacted;
-            compacted = new HashMap<String, Object>();
+            compacted = new LinkedHashMap<String, Object>();
             if (hasContext) {
                 ((Map<String, Object>) compacted).put("@context", ctx);
             }
@@ -145,7 +145,7 @@ public class JSONLD {
         } else if (isObject(compacted) && hasContext) {
         	// reorder keys so @context is first
             Map<String, Object> graph = (Map<String, Object>) compacted;
-            compacted = new HashMap<String, Object>();
+            compacted = new LinkedHashMap<String, Object>();
             ((Map) compacted).put("@context", ctx);
             for (String key : graph.keySet()) {
                 ((Map<String, Object>) compacted).put(key, graph.get(key));
@@ -298,7 +298,7 @@ public class JSONLD {
     	// TODO: add sanity checks for input and throw JSONLDProcessingErrors when incorrect input is used
     	// preserve frame context
     	//ActiveContext ctx = frame.containsKey("@context") ? new ActiveContext((Map<String, Object>) frame.get("@context"), opts) : new ActiveContext(opts);
-    	Map<String,Object> ctx = frame.containsKey("@context") ? (Map<String, Object>) frame.get("@context") : new HashMap<String,Object>();
+    	Map<String,Object> ctx = frame.containsKey("@context") ? (Map<String, Object>) frame.get("@context") : new LinkedHashMap<String,Object>();
     	
     	// expand input
     	Object expanded;
@@ -332,7 +332,7 @@ public class JSONLD {
     		ActiveContext actx = opts2.compactResultsActiveCtx;
     		// get graph alias
     		String graph = compactIri(actx, "@graph");
-    		((HashMap<String, Object>) compacted).put(graph, removePreserve(actx, ((Map<String,Object>) compacted).get(graph), opts2));
+    		((Map<String, Object>) compacted).put(graph, removePreserve(actx, ((Map<String,Object>) compacted).get(graph), opts2));
     		return compacted;
     	} catch (JSONLDProcessingError e) {
     		throw new JSONLDProcessingError("Could not compact framed output.")
@@ -368,8 +368,8 @@ public class JSONLD {
     	
     	// retrieve URLs in localCtx
     	localCtx = JSONLDUtils.clone(localCtx);
-    	if (isString(localCtx) || (isObject(localCtx) && !((HashMap<String, Object>) localCtx).containsKey("@context"))) {
-    		Map<String,Object> tmp = new HashMap<String, Object>();
+    	if (isString(localCtx) || (isObject(localCtx) && !((Map<String, Object>) localCtx).containsKey("@context"))) {
+    		Map<String,Object> tmp = new LinkedHashMap<String, Object>();
     		tmp.put("@context", localCtx);
     		localCtx = tmp;
     	}
@@ -399,15 +399,15 @@ public class JSONLD {
     	
     	Options opts = options.clone();
     	opts.format = null;
-    	Object dataset;
+    	Map<String,Object> dataset;
     	try {
-    		dataset = toRDF(input, opts);
+    		dataset = (Map<String, Object>) toRDF(input, opts);
     	} catch (JSONLDProcessingError e) {
     		throw new JSONLDProcessingError("Could not convert input to RDF dataset before normalization.")
     			.setType(JSONLDProcessingError.Error.NORMALIZE_ERROR)
     			.setDetail("cause", e);
     	}
-    	return new JSONLDProcessor(opts).normalize(dataset);
+    	return new JSONLDProcessor(options).normalize(dataset);
     }
     
     public static Object normalize(Object input) throws JSONLDProcessingError {
@@ -440,8 +440,8 @@ public class JSONLD {
     	}
     	
     	UniqueNamer namer = new UniqueNamer("_:b");
-    	Map<String,Object> nodeMap = new HashMap<String, Object>() {{
-    		put("@default", new HashMap<String, Object>());
+    	Map<String,Object> nodeMap = new LinkedHashMap<String, Object>() {{
+    		put("@default", new LinkedHashMap<String, Object>());
     	}};
     	createNodeMap(expanded, nodeMap, "@default", namer);
     	

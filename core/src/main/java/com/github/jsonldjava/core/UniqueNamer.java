@@ -1,12 +1,14 @@
 package com.github.jsonldjava.core;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UniqueNamer {
 	private String prefix;
 	private int counter;
-	private HashMap<String, String> existing;
+	private Map<String, String> existing;
 
 	/**
 	 * Creates a new UniqueNamer. A UniqueNamer issues unique names, keeping
@@ -17,7 +19,7 @@ public class UniqueNamer {
 	public UniqueNamer(String prefix) {
 		this.prefix = prefix;
 		this.counter = 0;
-		this.existing = new HashMap<String,String>();
+		this.existing = new LinkedHashMap<String,String>();
 	}
 	
 	/**
@@ -28,7 +30,7 @@ public class UniqueNamer {
 	public UniqueNamer clone() {
 		UniqueNamer copy = new UniqueNamer(this.prefix);
 		copy.counter = this.counter;
-		copy.existing = (HashMap<String, String>) JSONLDUtils.clone(this.existing);
+		copy.existing = (Map<String, String>) JSONLDUtils.clone(this.existing);
 		return copy;
 	}
 	

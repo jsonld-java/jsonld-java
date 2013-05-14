@@ -3,7 +3,7 @@ package com.github.jsonldjava.core;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +18,7 @@ import static com.github.jsonldjava.core.JSONLDUtils.*;
  * @author tristan
  *
  */
-public class ActiveContext extends HashMap<String, Object> {
+public class ActiveContext extends LinkedHashMap<String, Object> {
     public ActiveContext() {
     	this(new Options());
     }
@@ -41,7 +41,7 @@ public class ActiveContext extends HashMap<String, Object> {
     private void init(Options options) {
     	Object base = URL.parse(options.base);
     	
-    	this.put("mappings", new HashMap<String,Object>());
+    	this.put("mappings", new LinkedHashMap<String,Object>());
     	
     	this.put("@base", base);
     	mappings = (Map<String, Object>) this.get("mappings");
@@ -99,7 +99,7 @@ public class ActiveContext extends HashMap<String, Object> {
 			return inverse;
 		}
 		
-		inverse = new HashMap<String, Object>();
+		inverse = new LinkedHashMap<String, Object>();
 		
 		// handle default language
 		String defaultLanguage = (String) this.get("@language");
@@ -140,15 +140,15 @@ public class ActiveContext extends HashMap<String, Object> {
 				
 				// initialize entry
 				if (entry == null) {
-					entry = new HashMap<String, Object>();
+					entry = new LinkedHashMap<String, Object>();
 					inverse.put(iri, entry);
 				}
 				
 				// add new entry
 				if (!entry.containsKey(container) || entry.get(container) == null) {
-					entry.put(container, new HashMap<String, Object>() {{
-						put("@language", new HashMap<String, Object>());
-						put("@type", new HashMap<String, Object>());
+					entry.put(container, new LinkedHashMap<String, Object>() {{
+						put("@language", new LinkedHashMap<String, Object>());
+						put("@type", new LinkedHashMap<String, Object>());
 					}});
 				}
 				entry = (Map<String, Object>) entry.get(container);
@@ -196,8 +196,8 @@ public class ActiveContext extends HashMap<String, Object> {
 	 */
 	private void addPreferredTerm(Map<String, Object> mapping, String term,
 			Object entry, Object typeOrLanguageValue) {
-		if (!((HashMap<String, Object>) entry).containsKey(typeOrLanguageValue)) {
-			((HashMap<String, Object>) entry).put((String) typeOrLanguageValue, term);
+		if (!((Map<String, Object>) entry).containsKey(typeOrLanguageValue)) {
+			((Map<String, Object>) entry).put((String) typeOrLanguageValue, term);
 		}
 	}
 }

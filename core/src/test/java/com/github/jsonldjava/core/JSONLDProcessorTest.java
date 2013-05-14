@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -78,11 +78,11 @@ public class JSONLDProcessorTest {
                 || testType.contains("jld:FlattenTest")
                 || testType.contains("jld:FrameTest")
                 || testType.contains("jld:ToRDFTest")
-                //|| testType.contains("jld:NormalizeTest")
+                || testType.contains("jld:NormalizeTest")
                 //|| testType.contains("jld:TriplesTest")
                 //|| testType.contains("jld:SimplifyTest")
                 //|| testType.contains("jld:FromRDFTest")
-                //&& test.get("@id").equals("#t0001") // used for running specific tests
+                //&& test.get("@id").equals("#t0044") // used for running specific tests
                 ) {
                     System.out.println("Adding test: " + test.get("name"));
                     rdata.add(new Object[] { manifest.get("name"), test.get("@id"), test });
@@ -208,7 +208,9 @@ public class JSONLDProcessorTest {
         Options options = new Options("http://json-ld.org/test-suite/tests/" + test.get("input"));
         try {
 	        if (testType.contains("jld:NormalizeTest")) {
-	            //result = new JSONLDProcessor().normalize(inputJson);
+	        	options.format = "application/nquads";
+	            result = JSONLD.normalize(input, options);
+	            result = ((String)result).trim();
 	        } else if (testType.contains("jld:ExpandTest")) {
 	        	result = JSONLD.expand(input, options);
 	        } else if (testType.contains("jld:CompactTest")) {
@@ -249,7 +251,7 @@ public class JSONLDProcessorTest {
             if (testpassed == false) {
                 System.out.println("failed test!!! details:");
                 jsonDiff("/", expect, result);
-                Map<String,Object> pp = new HashMap<String, Object>();
+                Map<String,Object> pp = new LinkedHashMap<String, Object>();
                 pp.put("expected", expect);
                 pp.put("result", result);
                 //System.out.println("{\"expected\": " + JSONUtils.toString(expect) + "\n,\"result\": " + JSONUtils.toString(result) + "}");
