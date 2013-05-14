@@ -14,7 +14,7 @@ import com.github.jsonldjava.utils.JSONUtils;
 public class Playground {
 
     static boolean validOption(String opt) {
-        return "--ignorekeys".equals(opt) || "--expand".equals(opt) || "--compact".equals(opt) || "--frame".equals(opt) || "--normalize".equals(opt)
+        return "--ignorekeys".equals(opt) || "--base".equals(opt) || "--expand".equals(opt) || "--compact".equals(opt) || "--frame".equals(opt) || "--normalize".equals(opt)
                 || "--simplify".equals(opt);
     }
 
@@ -37,6 +37,11 @@ public class Playground {
                         while (i < args.length && !validOption(args[i])) {
                             opts.ignoreKey(args[i++]);
                         }
+                    } else if ("--base".equals(args[i])) {
+                            i++;
+                            while (i < args.length && !validOption(args[i])) {
+                                opts.base = args[i++];
+                            }
                     } else if (validOption(args[i])) {
                         if (opt != null) {
                             System.out.println("Error: can only do one operation on the input at a time");
@@ -55,6 +60,9 @@ public class Playground {
                             System.out.println("Error: file \"" + args[i - 1] + "\" doesn't exist");
                             usage();
                             return;
+                        }
+                        if (opts.base == null || opts.base.equals("")) {
+                            opts.base = in.toURI().toASCIIString();
                         }
                         inobj = JSONUtils.fromInputStream(new FileInputStream(in));
                         if ("--frame".equals(args[i - 2])) {
@@ -121,6 +129,7 @@ public class Playground {
         System.out.println("\tinput: a filename or URL to the rdf input (in rdfxml or n3)");
         System.out.println("\toptions:");
         System.out.println("\t\t--ignorekeys <keys to ignore> : a (space separated) list of keys to ignore (e.g. @geojson)");
+        System.out.println("\t\t--base <uri>: base URI");
         System.out.println("\t\t--expand <input>: expand the input jsonld");
         System.out.println("\t\t--compact <input> : compact the input jsonld");
         System.out.println("\t\t--normalize <input> : normalize the input jsonld");
