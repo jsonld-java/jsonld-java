@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.JSONLDProcessor;
 import com.github.jsonldjava.core.JSONLDProcessor.Options;
 import com.github.jsonldjava.utils.JSONUtils;
 
@@ -14,8 +13,8 @@ import com.github.jsonldjava.utils.JSONUtils;
 public class Playground {
 
     static boolean validOption(String opt) {
-        return "--ignorekeys".equals(opt) || "--expand".equals(opt) || "--compact".equals(opt) || "--frame".equals(opt) || "--normalize".equals(opt)
-                || "--simplify".equals(opt);
+        return "--ignorekeys".equals(opt) || "--ignorekeys".equals(opt) || "--expand".equals(opt) || "--compact".equals(opt) || "--frame".equals(opt) || "--normalize".equals(opt)
+                || "--simplify".equals(opt) || "--debug".equals(opt);
     }
 
     /**
