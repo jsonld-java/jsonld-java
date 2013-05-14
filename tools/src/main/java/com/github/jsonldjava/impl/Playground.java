@@ -22,6 +22,7 @@ public class Playground {
      * @param args
      */
     public static void main(String[] args) {
+        boolean debug = false;
         try {
             if (args.length < 2 || !args[0].startsWith("--")) {
                 usage();
@@ -32,7 +33,10 @@ public class Playground {
                 Object frobj = null;
                 String opt = null;
                 for (int i = 0; i < args.length;) {
-                    if ("--ignorekeys".equals(args[i])) {
+                    if ("--debug".equals(args[i])) {
+                        i++;
+                        debug = true;
+                    } else if ("--ignorekeys".equals(args[i])) {
                         i++;
                         while (i < args.length && !validOption(args[i])) {
                             opts.ignoreKey(args[i++]);
@@ -111,6 +115,9 @@ public class Playground {
             }
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
+            if (debug) {
+                e.printStackTrace();
+            }
             usage();
             return;
         }
