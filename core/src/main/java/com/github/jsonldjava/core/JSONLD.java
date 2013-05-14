@@ -190,7 +190,8 @@ public class JSONLD {
      * @param callback(err, framed) called once the operation completes.
 	 * @throws JSONLDProcessingError 
      */
-    public static Object frame(Object input, Object frame, Options opts) throws JSONLDProcessingError {
+    @SuppressWarnings("unchecked")
+	public static Object frame(Object input, Object frame, Options opts) throws JSONLDProcessingError {
     	if (input == null) {
             return null;
         }
@@ -212,9 +213,9 @@ public class JSONLD {
     	
     	// preserve frame context
     	ActiveContext ctx = p.new ActiveContext();
-    	Map<String, Object> fctx;
+    	Object fctx;
     	if (frame instanceof Map && ((Map<String, Object>) frame).containsKey("@context")) {
-    		fctx = (Map<String, Object>) ((Map<String, Object>) frame).get("@context");
+    		fctx = ((Map<String, Object>) frame).get("@context");
     		ctx = JSONLDProcessor.processContext(ctx, fctx, opts);
     	} else {
     		fctx = new HashMap<String, Object>();
