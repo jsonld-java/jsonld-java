@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.JSONLDProcessor;
 import com.github.jsonldjava.core.JSONLDProcessor.Options;
 import com.github.jsonldjava.utils.JSONUtils;
 
@@ -14,14 +13,15 @@ import com.github.jsonldjava.utils.JSONUtils;
 public class Playground {
 
     static boolean validOption(String opt) {
-        return "--ignorekeys".equals(opt) || "--expand".equals(opt) || "--compact".equals(opt) || "--frame".equals(opt) || "--normalize".equals(opt)
-                || "--simplify".equals(opt);
+        return "--ignorekeys".equals(opt) || "--ignorekeys".equals(opt) || "--expand".equals(opt) || "--compact".equals(opt) || "--frame".equals(opt) || "--normalize".equals(opt)
+                || "--simplify".equals(opt) || "--debug".equals(opt);
     }
 
     /**
      * @param args
      */
     public static void main(String[] args) {
+        boolean debug = false;
         try {
             if (args.length < 2 || !args[0].startsWith("--")) {
                 usage();
@@ -32,7 +32,10 @@ public class Playground {
                 Object frobj = null;
                 String opt = null;
                 for (int i = 0; i < args.length;) {
-                    if ("--ignorekeys".equals(args[i])) {
+                    if ("--debug".equals(args[i])) {
+                        i++;
+                        debug = true;
+                    } else if ("--ignorekeys".equals(args[i])) {
                         i++;
                         while (i < args.length && !validOption(args[i])) {
                             opts.ignoreKey(args[i++]);
@@ -111,6 +114,9 @@ public class Playground {
             }
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
+            if (debug) {
+                e.printStackTrace();
+            }
             usage();
             return;
         }
