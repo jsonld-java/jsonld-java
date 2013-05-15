@@ -1,10 +1,12 @@
 package com.github.jsonldjava.impl;
 
-import java.util.regex.Matcher;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.JSONLDSerializer;
+
+import static com.github.jsonldjava.core.RDFDatasetUtils.parseNQuads;
 
 
 public class NQuadJSONLDSerializer extends JSONLDSerializer {
@@ -28,66 +30,17 @@ public class NQuadJSONLDSerializer extends JSONLDSerializer {
 	final Pattern quad = Pattern.compile("^" + wso + subject + property + object + graph + wso + "$");
 	
 	private void parse(String input) throws JSONLDProcessingError {
-		int lineNumber = 0;
-		for (String line: input.split(eoln.pattern())) {
-			lineNumber++;
-			
-			// skip empty lines
-			if (empty.matcher(line).matches()) {
-				continue;
-			}
-			
-			// parse quad
-			Matcher match = quad.matcher(line);
-			if (!match.matches()) {
-				throw new JSONLDProcessingError("Error while parsing N-Quads; invalid quad.")
-					.setType(JSONLDProcessingError.Error.PARSE_ERROR)
-					.setDetail("line", lineNumber);						
-			}
-			
-			// get subject
-			String subject;
-			if (match.group(1) != null) {
-				subject = match.group(1);
-			} else {
-				subject = match.group(2);
-			}
-			
-			// get property
-			String property = match.group(3);
-			
-			// get object
-			String object = null;
-			String value = null;
-			String datatype = null;
-			String language = null;
-			if (match.group(4) != null) {
-				object = match.group(4);
-			} else if (match.group(5) != null) {
-				object = match.group(5);
-			} else {
-				value = match.group(6)
-						.replaceAll("\\\\", "\\\\\\\\")
-						.replaceAll("\\t", "\\\\t")
-						.replaceAll("\\n", "\\\\n")
-						.replaceAll("\\r", "\\\\r")
-						.replaceAll("\\\"", "\\\\\"");
-				datatype = match.group(7);
-				language = match.group(8);
-			}
-			
-			// get graph
-			String graph = match.group(9);
-			if (graph == null) {
-				graph = match.group(10);
-			}
-			
-			// add statement
-			if (object != null) {
-				triple(subject, property, object, graph);
-			} else {
-				triple(subject, property, value, datatype, language, graph);
-			}
+		
+	}
+	
+	@Override
+	public Map<String,Object> parse1(Object dataset) throws JSONLDProcessingError {
+		if (dataset instanceof String) {
+			return parseNQuads((String)dataset);
+		} else {
+			throw new JSONLDProcessingError("NQuad Parser expected string input.")
+				.setType(JSONLDProcessingError.Error.INVALID_INPUT)
+				.setDetail("input", dataset);
 		}
 	}
 	

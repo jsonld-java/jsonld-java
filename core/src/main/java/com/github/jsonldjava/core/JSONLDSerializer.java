@@ -225,4 +225,9 @@ public abstract class JSONLDSerializer {
     protected void triple(String s, String p, String value, String datatype, String language) {
         triple(s, p, value, datatype, language, null);
     }
+
+	public Map<String,Object> parse1(Object dataset) throws JSONLDProcessingError {
+		// TODO This is here temporarily so that the other serialization method still exists until i can figure out what to do with it
+		return null;
+	}
 }

@@ -2697,51 +2697,35 @@ public class JSONLDProcessor {
 	 * @param callback(err, output) called once the operation completes.
 	 * @throws JSONLDProcessingError 
 	 */
-	public Object fromRDF(List<Map<String, Object>> statements) throws JSONLDProcessingError {
-		Map<String,Object> defaultGraph = new LinkedHashMap<String, Object>();
-		defaultGraph.put("subjects", new LinkedHashMap<String, Object>());
-		defaultGraph.put("listMap", new LinkedHashMap<String, Object>());
+	public List<Object> fromRDF(Map<String, Object> dataset) throws JSONLDProcessingError {
+		Map<String,Object> defaultGraph = new LinkedHashMap<String, Object>() {{
+			put("subjects", new LinkedHashMap<String, Object>());
+			put("listMap", new LinkedHashMap<String, Object>());
+		}};
 		Map<String,Map<String,Object>> graphs = new LinkedHashMap<String, Map<String,Object>>();
-		graphs.put("", (Map<String,Object>)defaultGraph);
+		graphs.put("@default", defaultGraph);
 		
-		for (Map<String,Object> statement: statements) {
-			// get subject, property, object, and graph name (default to '')
-			String s = (String)Obj.get(statement, "subject", "nominalValue");
-			String p = (String)Obj.get(statement, "property", "nominalValue");
-			Map<String,Object> o = (Map<String, Object>) statement.get("object");
-			String name = statement.containsKey("name") ? (String)Obj.get(statement, "name", "nominalValue") : "";
-			
-			// create a graph entry as needed
-			Map<String,Object> graph;
-			if (!graphs.containsKey(name)) {
-				graph = new LinkedHashMap<String,Object>();
-				graph.put("subjects", new LinkedHashMap<String, Object>());
-				graph.put("listMap", new LinkedHashMap<String, Object>());
-				graphs.put(name, graph);
-			} else {
-				graph = graphs.get(name);
-			}
-			
-			// handle element in @list
-			if (RDF_FIRST.equals(p)) {
-				// create list entry as needed
-				Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
-				Map<String,Object> entry;
-				if (!listMap.containsKey(s)) {
-					entry = new LinkedHashMap<String, Object>();
-					listMap.put(s, entry);
+		for (String graphName : dataset.keySet()) {
+			for (Map<String,Object> triple: (List<Map<String,Object>>)dataset.get(graphName)) {
+				// get subject, property, object, and graph name (default to '')
+				String s = (String)Obj.get(triple, "subject", "value");
+				String p = (String)Obj.get(triple, "predicate", "value");
+				Map<String,Object> o = (Map<String, Object>) triple.get("object");
+				
+				// create a graph entry as needed
+				Map<String,Object> graph;
+				if (!graphs.containsKey(graphName)) {
+					graph = new LinkedHashMap<String,Object>() {{
+						put("subjects", new LinkedHashMap<String, Object>());
+						put("listMap", new LinkedHashMap<String, Object>());
+					}};
+					graphs.put(graphName, graph);
 				} else {
-					entry = (Map<String, Object>) listMap.get(s);
+					graph = graphs.get(graphName);
 				}
-				// set object value
-				entry.put("first", rdfToObject(o));
-				continue;
-			}
-			
-			// handle other element in @list
-			if (RDF_REST.equals(p)) {
-				// set next in list
-				if ("BlankNode".equals(o.get("interfaceName"))) {
+				
+				// handle element in @list
+				if (RDF_FIRST.equals(p)) {
 					// create list entry as needed
 					Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
 					Map<String,Object> entry;
@@ -2752,57 +2736,78 @@ public class JSONLDProcessor {
 						entry = (Map<String, Object>) listMap.get(s);
 					}
 					// set object value
-					entry.put("rest", o.get("nominalValue"));
+					entry.put("first", RDFToObject(o, opts.useNativeTypes));
+					continue;
 				}
-				continue;
-			}
 			
-			// add graph subject to default graph as needed
-			if (!"".equals(name) && !Obj.contains(defaultGraph, "subjects", name)) {
-				Map<String,Object> tmp = new LinkedHashMap<String, Object>();
-				tmp.put("@id", name);
-				Obj.put(defaultGraph, "subjects", name, tmp);
-			}
-			
-			// add subject to graph as needed
-			Map<String,Object> subjects = (Map<String, Object>) graph.get("subjects");
-			Map<String,Object> value;
-			if (!subjects.containsKey(s)) {
-				value = new LinkedHashMap<String, Object>();
-				value.put("@id", s);
-				subjects.put(s, value);
-			} else {
-				value = (Map<String, Object>) subjects.get(s);
-			}
-			
-			// convert to @type unless options indicate to treat rdf:type as a property
-			if (RDF_TYPE.equals(p) && !opts.useRdfType) {
-				// add value of object as @type
-				JSONLDUtils.addValue(value, "@type", o.get("nominalValue"), true);
-			} else {
-				// add property to value as needed
-				Object object = rdfToObject(o);
-				JSONLDUtils.addValue(value, p, object, true);
-				
-				// a bnode might be the beginning of a list, so add it to the list map
-				if ("BlankNode".equals(o.get("interfaceName"))) {
-					String id = (String) Obj.get(object, "@id");
-					Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
-					Map<String,Object> entry;
-					if (!listMap.containsKey(id)) {
-						entry = new LinkedHashMap<String, Object>();
-						listMap.put(id, entry);
-					} else {
-						entry = (Map<String, Object>) listMap.get(id);
+				// handle other element in @list
+				if (RDF_REST.equals(p)) {
+					// set next in list
+					if ("blank node".equals(o.get("type"))) {
+						// create list entry as needed
+						Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
+						Map<String,Object> entry;
+						if (!listMap.containsKey(s)) {
+							entry = new LinkedHashMap<String, Object>();
+							listMap.put(s, entry);
+						} else {
+							entry = (Map<String, Object>) listMap.get(s);
+						}
+						// set object value
+						entry.put("rest", o.get("value"));
 					}
-					entry.put("head", object);
+					continue;
+				}
+			
+				// add graph subject to default graph as needed
+				if (!"@default".equals(graphName) && !Obj.contains(defaultGraph, "subjects", graphName)) {
+					Map<String,Object> tmp = new LinkedHashMap<String, Object>();
+					tmp.put("@id", graphName);
+					Obj.put(defaultGraph, "subjects", graphName, tmp);
+				}
+				
+				// add subject to graph as needed
+				Map<String,Object> subjects = (Map<String, Object>) graph.get("subjects");
+				Map<String,Object> value;
+				if (!subjects.containsKey(s)) {
+					value = new LinkedHashMap<String, Object>();
+					value.put("@id", s);
+					subjects.put(s, value);
+				}
+				// use existing subject value
+				else {
+					value = (Map<String, Object>) subjects.get(s);
+				}
+				
+				// convert to @type unless options indicate to treat rdf:type as a property
+				if (RDF_TYPE.equals(p) && !opts.useRdfType) {
+					// add value of object as @type
+					addValue(value, "@type", o.get("value"), true);
+				} else {
+					// add property to value as needed
+					Object object = RDFToObject(o, opts.useNativeTypes);
+					addValue(value, p, object, true);
+					
+					// a bnode might be the beginning of a list, so add it to the list map
+					if ("blank node".equals(o.get("type"))) {
+						String id = (String) Obj.get(object, "@id");
+						Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
+						Map<String,Object> entry;
+						if (!listMap.containsKey(id)) {
+							entry = new LinkedHashMap<String, Object>();
+							listMap.put(id, entry);
+						} else {
+							entry = (Map<String, Object>) listMap.get(id);
+						}
+						entry.put("head", object);
+					}
 				}
 			}
 		}
 		
 		// build @lists
-		for (String name: graphs.keySet()) {
-			Map<String,Object> graph = graphs.get(name);
+		for (String graphName: graphs.keySet()) {
+			Map<String,Object> graph = graphs.get(graphName);
 			
 			// find list head
 			Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
@@ -2844,88 +2849,16 @@ public class JSONLDProcessor {
 			if (graphs.containsKey(id)) {
 				List<Object> graph = new ArrayList<Object>();
 				subject.put("@graph", graph);
-				Map<String,Object> _subjects = (Map<String, Object>) Obj.get(graphs, id, "subjects");
-				List<String> _ids = new ArrayList<String>(_subjects.keySet());
-				for (String _id: _ids) {
-					graph.add(_subjects.get(_id));
+				Map<String,Object> subjects_ = (Map<String, Object>) Obj.get(graphs, id, "subjects");
+				List<String> ids_ = new ArrayList<String>(subjects_.keySet());
+				Collections.sort(ids_);
+				for (String id_: ids_) {
+					graph.add(subjects_.get(id_));
 				}
 			}
 		}
 		
 		return output;
-	}
-	
-	/**
-	 * Converts an RDF statement object to a JSON-LD object.
-	 *
-	 * @param o the RDF statement object to convert.
-	 * @param useNativeTypes true to output native types, false not to.
-	 *
-	 * @return the JSON-LD object.
-	 */
-	private Object rdfToObject(Map<String, Object> o) {
-		Map<String,Object> rval = new LinkedHashMap<String, Object>();
-		
-		// convert empty list
-		if ("IRI".equals(o.get("interfaceName")) && RDF_NIL.equals(o.get("nominalValue"))) {
-			rval.put("@list", new ArrayList<Object>());
-			return rval;
-		}
-		
-		// convert IRI/BlankNode object to JSON-LD
-		if ("IRI".equals(o.get("interfaceName")) || "BlankNode".equals(o.get("interfaceName"))) {
-			rval.put("@id", o.get("nominalValue"));
-			return rval;
-		}
-		
-		// convert literal object to JSON-LD
-		rval.put("@value", o.get("nominalValue"));
-		
-		// add datatype
-		if (o.containsKey("datatype")) {
-			String type = (String) Obj.get(o, "datatype", "nominalValue");
-			if (opts.useNativeTypes) {
-				// use native datatypes for certain xsd types
-				if (XSD_BOOLEAN.equals(type)) {
-					if ("true".equals(rval.get("@value"))) {
-						rval.put("@value", Boolean.TRUE);
-					} else if ("false".equals(rval.get("@value"))) {
-						rval.put("@value", Boolean.FALSE);
-					}
-				} else if (Pattern.matches("^[+-]?[0-9]+((?:\\.?[0-9]+((?:E?[+-]?[0-9]+)|)|))$", (String)rval.get("@value"))){
-					try {
-						Double d = Double.parseDouble((String)rval.get("@value"));
-						if (!Double.isNaN(d) && !Double.isInfinite(d)) {
-							if (XSD_INTEGER.equals(type)) {
-								Integer i = d.intValue();
-								if (i.toString().equals(rval.get("@value"))) {
-									rval.put("@value", i);
-								}
-							} else if (XSD_DOUBLE.equals(type)) {
-								rval.put("@value", d);
-							} else {
-								// we don't know the type, so we should add it to the JSON-LD
-								rval.put("@type", type);
-							}
-						}
-					} catch (NumberFormatException e) {
-						// TODO: This should never happen since we match the value with regex!
-					}
-				}
-				// do not add xsd:string type
-				else if (!XSD_STRING.equals(type)) {
-					rval.put("@type", type);
-				}
-			} else {
-				rval.put("@type", type);
-			}
-		}
-		// add language
-		if (o.containsKey("language")) {
-			rval.put("@language", o.get("language"));
-		}
-		
-		return rval;
 	}
 
 	/**

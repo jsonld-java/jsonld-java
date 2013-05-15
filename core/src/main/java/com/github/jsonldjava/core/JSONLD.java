@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.jsonldjava.impl.NQuadJSONLDSerializer;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
 
@@ -280,19 +281,19 @@ public class JSONLD {
      * @param callback(err, framed) called once the operation completes.
 	 * @throws JSONLDProcessingError 
      */
-    public static Object frame(Object input, Map<String,Object> frame, Options opts) throws JSONLDProcessingError {
+    public static Object frame(Object input, Map<String,Object> frame, Options options) throws JSONLDProcessingError {
     	// set default options
-    	if (opts.base == null) {
-    		opts.base = "";
+    	if (options.base == null) {
+    		options.base = "";
     	}
-    	if (opts.embed == null) {
-    		opts.embed  = true;
+    	if (options.embed == null) {
+    		options.embed  = true;
     	}
-    	if (opts.explicit == null) {
-    		opts.explicit = false;
+    	if (options.explicit == null) {
+    		options.explicit = false;
     	}
-    	if (opts.omitDefault == null) {
-    		opts.omitDefault = false;
+    	if (options.omitDefault == null) {
+    		options.omitDefault = false;
     	}
 
     	// TODO: add sanity checks for input and throw JSONLDProcessingErrors when incorrect input is used
@@ -303,7 +304,7 @@ public class JSONLD {
     	// expand input
     	Object expanded;
     	try {
-    		expanded = JSONLD.expand(input, opts);
+    		expanded = JSONLD.expand(input, options);
     	} catch (JSONLDProcessingError e) {
     		throw new JSONLDProcessingError("Could not expand input before framing.")
 			.setType(JSONLDProcessingError.Error.FRAME_ERROR)
@@ -311,10 +312,10 @@ public class JSONLD {
     	}
     	// expand frame
     	Object expandedFrame;
-    	Options opts2 = opts.clone();
-		opts2.keepFreeFloatingNodes = true;
+    	Options opts = options.clone();
+		opts.keepFreeFloatingNodes = true;
     	try {
-    		expandedFrame = JSONLD.expand(frame, opts2);
+    		expandedFrame = JSONLD.expand(frame, opts);
 		} catch (JSONLDProcessingError e) {
 			throw new JSONLDProcessingError("Could not expand frame before framing.")
 			.setType(JSONLDProcessingError.Error.FRAME_ERROR)
@@ -324,15 +325,15 @@ public class JSONLD {
     	// do framing
     	Object framed = new JSONLDProcessor(opts).frame(expanded, expandedFrame);
     	// compact results (force @graph option to true, skip expansion)
-    	opts2.graph = true;
-    	opts2.skipExpansion = true;
+    	opts.graph = true;
+    	opts.skipExpansion = true;
     	try {
-    		Object compacted = compact(framed, ctx, opts2);
+    		Object compacted = compact(framed, ctx, opts);
     		// get resulting activeCtx
-    		ActiveContext actx = opts2.compactResultsActiveCtx;
+    		ActiveContext actx = opts.compactResultsActiveCtx;
     		// get graph alias
     		String graph = compactIri(actx, "@graph");
-    		((Map<String, Object>) compacted).put(graph, removePreserve(actx, ((Map<String,Object>) compacted).get(graph), opts2));
+    		((Map<String, Object>) compacted).put(graph, removePreserve(actx, ((Map<String,Object>) compacted).get(graph), opts));
     		return compacted;
     	} catch (JSONLDProcessingError e) {
     		throw new JSONLDProcessingError("Could not compact framed output.")
@@ -463,7 +464,58 @@ public class JSONLD {
     	toRDF(input, new Options(""));
     }
     
-    public static Object fromRDF(Object input, Options opts, JSONLDSerializer serializer) throws JSONLDProcessingError {
+    /**
+     * Converts an RDF dataset to JSON-LD.
+     *
+     * @param dataset a serialized string of RDF in a format specified by the
+     *          format option or an RDF dataset to convert.
+     * @param [options] the options to use:
+     *          [format] the format if input is not an array:
+     *            'application/nquads' for N-Quads (default).
+     *          [useRdfType] true to use rdf:type, false to use @type
+     *            (default: false).
+     *          [useNativeTypes] true to convert XSD types into native types
+     *            (boolean, integer, double), false not to (default: true).
+     *
+     * @param callback(err, output) called once the operation completes.
+     */
+    public static Object fromRDF(Object dataset, Options options) throws JSONLDProcessingError {
+    	if (options.useRdfType == null) {
+    		options.useRdfType = false;
+    	}
+    	if (options.useNativeTypes == null) {
+    		options.useNativeTypes = true;
+    	}
+    	
+    	if (options.format == null && isString(dataset)) {
+    		// set default format to nquads
+    		options.format = "application/nquads";
+    	}
+    	
+    	// handle special format
+    	if (options.format != null) {
+    		// supported formats
+    		if (rdfParsers.containsKey(options.format)) {
+    			JSONLDSerializer parser = rdfParsers.get(options.format); 
+    			
+    			dataset = parser.parse1(dataset);
+    		} else {
+    			throw new JSONLDProcessingError("Unknown input format.")
+    				.setType(JSONLDProcessingError.Error.UNKNOWN_FORMAT)
+    				.setDetail("format", options.format);
+    		}
+    	}
+    	
+    	// convert from RDF
+    	return new JSONLDProcessor(options).fromRDF((Map<String,Object>)dataset);
+    }
+    
+    private static Map<String, JSONLDSerializer> rdfParsers = new LinkedHashMap<String, JSONLDSerializer>() {{
+    	// automatically register nquad serializer
+    	put("application/nquads", new NQuadJSONLDSerializer());
+    }};
+    
+    public static Object fromRDF1(Object input, Options opts, JSONLDSerializer serializer) throws JSONLDProcessingError {
     	if (opts.useRdfType == null) {
     		opts.useRdfType = false;
     	}
@@ -471,13 +523,14 @@ public class JSONLD {
     		opts.useNativeTypes = true;
     	}
     	serializer.parse(input);
-    	Object rval = new JSONLDProcessor(opts).fromRDF(serializer.getStatements());
-    	rval = serializer.finalize(rval);
-    	return rval;
+    	//Object rval = new JSONLDProcessor(opts).fromRDF(serializer.getStatements());
+    	//rval = serializer.finalize(rval);
+    	//return rval;
+    	return null;
     }
     
-    public static Object fromRDF(Object input, JSONLDSerializer serializer) throws JSONLDProcessingError {
-    	return fromRDF(input, new Options(""), serializer);
+    public static Object fromRDF1(Object input, JSONLDSerializer serializer) throws JSONLDProcessingError {
+    	return fromRDF1(input, new Options(""), serializer);
     }
 
 	public static Object simplify(Object input, Options opts) throws JSONLDProcessingError {

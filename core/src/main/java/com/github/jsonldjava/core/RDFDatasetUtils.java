@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class RDFDatasetUtils {
+public class RDFDatasetUtils {
 	
 	private static String LITERAL = "literal";
 	private static String BLANK_NODE = "blank node";
@@ -191,6 +191,83 @@ class RDFDatasetUtils {
 		
 		return object;
 	}
+	
+	/**
+	 * Converts an RDF triple object to a JSON-LD object.
+	 *
+	 * @param o the RDF triple object to convert.
+	 * @param useNativeTypes true to output native types, false not to.
+	 *
+	 * @return the JSON-LD object.
+	 */
+	static Object RDFToObject(final Map<String, Object> o, Boolean useNativeTypes) {
+		// convert empty list
+		if ("IRI".equals(o.get("type")) && RDF_NIL.equals(o.get("value"))) {
+			return new LinkedHashMap<String, Object>() {{
+				put("@list", new ArrayList<Object>());
+			}};
+		}
+		
+		// convert IRI/BlankNode object to JSON-LD
+		if ("IRI".equals(o.get("type")) || "blank node".equals(o.get("type"))) {
+			return new LinkedHashMap<String, Object>() {{
+				put("@id", o.get("value"));
+			}};
+		};
+		
+		
+		// convert literal object to JSON-LD
+		Map<String,Object> rval = new LinkedHashMap<String, Object>() {{
+			put("@value", o.get("value"));
+		}};
+		
+		// add language
+		if (o.containsKey("language")) {
+			rval.put("@language", o.get("language"));
+		}
+		// add datatype
+		else {
+			String type = (String) o.get("datatype");
+			if (useNativeTypes) {
+				// use native datatypes for certain xsd types
+				if (XSD_BOOLEAN.equals(type)) {
+					if ("true".equals(rval.get("@value"))) {
+						rval.put("@value", Boolean.TRUE);
+					} else if ("false".equals(rval.get("@value"))) {
+						rval.put("@value", Boolean.FALSE);
+					}
+				} else if (Pattern.matches("^[+-]?[0-9]+((?:\\.?[0-9]+((?:E?[+-]?[0-9]+)|)|))$", (String)rval.get("@value"))){
+					try {
+						Double d = Double.parseDouble((String)rval.get("@value"));
+						if (!Double.isNaN(d) && !Double.isInfinite(d)) {
+							if (XSD_INTEGER.equals(type)) {
+								Integer i = d.intValue();
+								if (i.toString().equals(rval.get("@value"))) {
+									rval.put("@value", i);
+								}
+							} else if (XSD_DOUBLE.equals(type)) {
+								rval.put("@value", d);
+							} else {
+								// we don't know the type, so we should add it to the JSON-LD
+								rval.put("@type", type);
+							}
+						}
+					} catch (NumberFormatException e) {
+						// TODO: This should never happen since we match the value with regex!
+						throw new RuntimeException(e);
+					}
+				}
+				// do not add xsd:string type
+				else if (!XSD_STRING.equals(type)) {
+					rval.put("@type", type);
+				}
+			} else {
+				rval.put("@type", type);
+			}
+		}
+		
+		return rval;
+	}
 
 	static String toNQuads(Map<String,Object> dataset) {
 		//JSONLDTripleCallback callback = new NQuadTripleCallback();
@@ -313,7 +390,7 @@ class RDFDatasetUtils {
 	 *
 	 * @return an RDF dataset.
 	 */
-	static Map<String,Object> parseNQuads(String input) throws JSONLDProcessingError {
+	public static Map<String,Object> parseNQuads(String input) throws JSONLDProcessingError {
 		// build RDF dataset
 		Map<String,Object> dataset = new LinkedHashMap<String, Object>();
 		
