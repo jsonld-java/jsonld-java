@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -2697,168 +2698,193 @@ public class JSONLDProcessor {
 	 * @param callback(err, output) called once the operation completes.
 	 * @throws JSONLDProcessingError 
 	 */
-	public List<Object> fromRDF(Map<String, Object> dataset) throws JSONLDProcessingError {
-		Map<String,Object> defaultGraph = new LinkedHashMap<String, Object>() {{
-			put("subjects", new LinkedHashMap<String, Object>());
-			put("listMap", new LinkedHashMap<String, Object>());
+	public List<Object> fromRDF(final Map<String, Object> dataset) throws JSONLDProcessingError {
+		final Map<String,Object> defaultGraph = new LinkedHashMap<String, Object>();
+		final Map<String,Map<String,Object>> graphMap = new LinkedHashMap<String, Map<String,Object>>() {{
+			put("@default", defaultGraph);
 		}};
-		Map<String,Map<String,Object>> graphs = new LinkedHashMap<String, Map<String,Object>>();
-		graphs.put("@default", defaultGraph);
 		
-		for (String graphName : dataset.keySet()) {
-			for (Map<String,Object> triple: (List<Map<String,Object>>)dataset.get(graphName)) {
-				// get subject, property, object, and graph name (default to '')
-				String s = (String)Obj.get(triple, "subject", "value");
-				String p = (String)Obj.get(triple, "predicate", "value");
-				Map<String,Object> o = (Map<String, Object>) triple.get("object");
+		// For each graph in RDF dataset
+		for (final String name : dataset.keySet()) {
+			
+			final List<Map<String,Object>> graph = (List<Map<String,Object>>)dataset.get(name);
+			
+			// If graph map has no name member, create one and set its value to an empty JSON object.
+			Map<String,Object> nodeMap;
+			if (!graphMap.containsKey(name)) {
+				nodeMap = new LinkedHashMap<String,Object>();
+				graphMap.put(name, nodeMap);
+			} else {
+				nodeMap = graphMap.get(name);
+			}
+			
+			// If graph is not the default graph and default graph does not have a name member, create such 
+			// a member and initialize its value to a new JSON object with a single member @id whose value is name.
+			if (!"@default".equals(name) && !Obj.contains(defaultGraph, name)) {
+				Obj.put(defaultGraph, name, new LinkedHashMap<String,Object>() {{
+					put("@id", name);
+				}});
+			}
+			
+			// For each RDF triple in graph consisting of subject, predicate, and object
+			for (Map<String,Object> triple: graph) {
+				final String subject = (String)Obj.get(triple, "subject", "value");
+				final String predicate = (String)Obj.get(triple, "predicate", "value");
+				final Map<String,Object> object = (Map<String, Object>) triple.get("object");
 				
-				// create a graph entry as needed
-				Map<String,Object> graph;
-				if (!graphs.containsKey(graphName)) {
-					graph = new LinkedHashMap<String,Object>() {{
-						put("subjects", new LinkedHashMap<String, Object>());
-						put("listMap", new LinkedHashMap<String, Object>());
+				// If node map does not have a subject member, create one and initialize its value to a new JSON object 
+				// consisting of a single member @id whose value is set to subject.
+				Map<String,Object> node;
+				if (!nodeMap.containsKey(subject)) {
+					node = new LinkedHashMap<String, Object>() {{
+						put("@id", subject);
 					}};
-					graphs.put(graphName, graph);
+					nodeMap.put(subject, node);
 				} else {
-					graph = graphs.get(graphName);
+					node = (Map<String, Object>) nodeMap.get(subject);
 				}
 				
-				// handle element in @list
-				if (RDF_FIRST.equals(p)) {
-					// create list entry as needed
-					Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
-					Map<String,Object> entry;
-					if (!listMap.containsKey(s)) {
-						entry = new LinkedHashMap<String, Object>();
-						listMap.put(s, entry);
-					} else {
-						entry = (Map<String, Object>) listMap.get(s);
-					}
-					// set object value
-					entry.put("first", RDFToObject(o, opts.useNativeTypes));
-					continue;
-				}
-			
-				// handle other element in @list
-				if (RDF_REST.equals(p)) {
-					// set next in list
-					if ("blank node".equals(o.get("type"))) {
-						// create list entry as needed
-						Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
-						Map<String,Object> entry;
-						if (!listMap.containsKey(s)) {
-							entry = new LinkedHashMap<String, Object>();
-							listMap.put(s, entry);
-						} else {
-							entry = (Map<String, Object>) listMap.get(s);
-						}
-						// set object value
-						entry.put("rest", o.get("value"));
-					}
-					continue;
-				}
-			
-				// add graph subject to default graph as needed
-				if (!"@default".equals(graphName) && !Obj.contains(defaultGraph, "subjects", graphName)) {
-					Map<String,Object> tmp = new LinkedHashMap<String, Object>();
-					tmp.put("@id", graphName);
-					Obj.put(defaultGraph, "subjects", graphName, tmp);
+				// If object is an IRI or blank node identifier, does not equal rdf:nil, and node map does not have an object member, 
+				// create one and initialize its value to a new JSON object consisting of a single member @id whose value is set to object.
+				if (("IRI".equals(object.get("type")) || ((String)object.get("value")).startsWith("_:")) 
+						&& !RDF_NIL.equals(object.get("value")) && !nodeMap.containsKey(object.get("value"))) {
+					nodeMap.put((String)object.get("value"), new LinkedHashMap<String, Object>() {{ 
+						put("@id", object.get("value"));
+					}});
 				}
 				
-				// add subject to graph as needed
-				Map<String,Object> subjects = (Map<String, Object>) graph.get("subjects");
+				// If predicate equals rdf:type, and object is an IRI or blank node identifier, append object to the value of the
+				// @type member of node. If no such member exists, create one and initialize it to an array whose only item is object. 
+				// Finally, continue to the next RDF triple
+				if (RDF_TYPE.equals(predicate) && ("IRI".equals(object.get("type")) || ((String)object.get("value")).startsWith("_:"))) {
+					addValue(node, "@type", object.get("value"), true);
+					continue;
+				}
+				
+				// If object equals rdf:nil and predicate does not equal rdf:rest, set value to a new JSON object 
+				// consisting of a single member @list whose value is set to an empty array.
 				Map<String,Object> value;
-				if (!subjects.containsKey(s)) {
-					value = new LinkedHashMap<String, Object>();
-					value.put("@id", s);
-					subjects.put(s, value);
-				}
-				// use existing subject value
-				else {
-					value = (Map<String, Object>) subjects.get(s);
+				if (RDF_NIL.equals(object.get("value")) && !RDF_REST.equals(predicate)) {
+					value = new LinkedHashMap<String, Object>() {{
+						put("@list", new ArrayList<Object>());
+					}};
+				} else {
+					// Otherwise, set value to the result of using the RDF to Object Conversion algorithm, passing object and use native types.
+					value = RDFToObject(object, opts.useNativeTypes);
 				}
 				
-				// convert to @type unless options indicate to treat rdf:type as a property
-				if (RDF_TYPE.equals(p) && !opts.useRdfType) {
-					// add value of object as @type
-					addValue(value, "@type", o.get("value"), true);
-				} else {
-					// add property to value as needed
-					Object object = RDFToObject(o, opts.useNativeTypes);
-					addValue(value, p, object, true);
-					
-					// a bnode might be the beginning of a list, so add it to the list map
-					if ("blank node".equals(o.get("type"))) {
-						String id = (String) Obj.get(object, "@id");
-						Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
-						Map<String,Object> entry;
-						if (!listMap.containsKey(id)) {
-							entry = new LinkedHashMap<String, Object>();
-							listMap.put(id, entry);
-						} else {
-							entry = (Map<String, Object>) listMap.get(id);
-						}
-						entry.put("head", object);
-					}
+				// If node does not have an predicate member, create one and initialize its value to an empty array.
+				// Add a reference to value to the to the array associated with the predicate member of node.
+				addValue(node, predicate, value, true);
+				
+				// If object is a blank node identifier and predicate equals neither rdf:first nor rdf:rest, it might represent the head of a RDF list
+				if ("blank node".equals(object.get("type")) && !RDF_FIRST.equals(predicate) && !RDF_REST.equals(predicate)) {
+					// If the object member of node map has an usages member, add a reference to value to it; 
+					// otherwise create such a member and set its value to an array whose only item is a reference to value.
+					addValue((Map<String, Object>)nodeMap.get(object.get("value")), "usages", value, true);
 				}
 			}
 		}
 		
 		// build @lists
-		for (String graphName: graphs.keySet()) {
-			Map<String,Object> graph = graphs.get(graphName);
+		for (String name: graphMap.keySet()) {
+			Map<String,Object> graph = graphMap.get(name);
 			
-			// find list head
-			Map<String,Object> listMap = (Map<String, Object>) graph.get("listMap");
-			for (String subject: listMap.keySet()) {
-				Map<String,Object> entry = (Map<String, Object>) listMap.get(subject);
+			List<String> subjects = new ArrayList<String>(graph.keySet());
+			
+			for (String subj: subjects) {
+				// If graph object does not have a subj member, it has been removed as it was part of a list. Continue with the next subj.
+				if (!graph.containsKey(subj)) {
+					continue;
+				}
 				
-				// head found, build lists
-				if (entry.containsKey("head") && entry.containsKey("first")) {
-					// replace bnode @id with @list
-					Obj.remove(entry, "head", "@id");
-					List<Object> list = new ArrayList<Object>();
-					list.add(entry.get("first"));
-					Obj.put(entry, "head", "@list", list);
-					while (entry.containsKey("rest")) {
-						String rest = (String) entry.get("rest");
-						entry = (Map<String, Object>) listMap.get(rest);
-						if (!entry.containsKey("first")) {
-							throw new JSONLDProcessingError("Invalid RDF list entry.)")
-									.setType(JSONLDProcessingError.Error.RDF_ERROR)
-									.setDetail("bnode", rest);
+				// If node has no usages member or its value is not an array consisting of one item, continue with the next subj.
+				Map<String,Object> node = (Map<String, Object>) graph.get(subj);
+				if (!node.containsKey("usages") || !(node.get("usages") instanceof List) || ((List<Object>)node.get("usages")).size() != 1) {
+					continue;
+				}
+				Map<String,Object> value = (Map<String, Object>) ((List<Object>)node.get("usages")).get(0);
+				List<Object> list = new ArrayList<Object>();
+				List<String> listNodes = new ArrayList<String>();
+				String subject = subj;
+				
+				while (!RDF_NIL.equals(subject) && list != null) {
+					// If node is null; the value of its @id member does not begin with _: ...
+					boolean test = node == null || ((String)node.get("@id")).indexOf("_:") != 0;
+					if (!test) {
+						int cnt = 0;
+						for (String i : new String[] { "@id", "usages", RDF_FIRST, RDF_REST }) {
+							if (node.containsKey(i)) {
+								cnt++;
+							}
 						}
-						list.add(entry.get("first"));
+						// it has members other than @id, usages, rdf:first, and rdf:rest ...
+						test = (node.keySet().size() > cnt);
+						if (!test) {
+							// the value of its rdf:first member is not an array consisting of a single item ...
+							test = !(node.get(RDF_FIRST) instanceof List) || ((List<Object>)node.get(RDF_FIRST)).size() != 1;
+							if (!test) {
+								// or the value of its rdf:rest member is not an array containing a single item which is a JSON object that has an @id member ...
+								test = !(node.get(RDF_REST) instanceof List) || ((List<Object>)node.get(RDF_REST)).size() != 1;
+								if (!test) {
+									Object o = ((List<Object>)node.get(RDF_REST)).get(0);
+									test = (!(o instanceof Map && ((Map<String, Object>) o).containsKey("@id")));
+								}
+							}
+						}
+					}
+					if (test) {
+						// it is not a valid list node. Set list to null
+						list = null;
+					} else {
+						list.add(((List<Object>) node.get(RDF_FIRST)).get(0));
+						listNodes.add((String) node.get("@id"));
+						subject = (String) ((Map<String,Object>) ((List<Object>) node.get(RDF_REST)).get(0)).get("@id");
+						node = (Map<String, Object>) graph.get(subject);
+						if (listNodes.contains(subject)) {
+							list = null;
+						}
 					}
 				}
+				
+				// If list is null, continue with the next subj.
+				if (list == null) {
+					continue;
+				}
+				
+				// Remove the @id member from value.
+				value.remove("@id");
+				
+				// Add an @list member to value and initialize it to list.
+				value.put("@list", list);
+				
+				for (String subject_ : listNodes) {
+					graph.remove(subject_);
+				}
+				
 			}
 		}
 		
-		// build default graph in subject @id order
-		List<Object> output = new ArrayList<Object>();
-		Map<String,Object> subjects = (Map<String, Object>) defaultGraph.get("subjects");
-		List<String> ids = new ArrayList<String>(subjects.keySet());
+		List<Object> result = new ArrayList<Object>();
+		List<String> ids = new ArrayList<String>(defaultGraph.keySet());
 		Collections.sort(ids);
-		for (String id: ids) {
-			// add subject to default graph
-			Map<String,Object> subject = (Map<String, Object>) subjects.get(id);
-			output.add(subject);
-			
-			// output named graph in subject @id order
-			if (graphs.containsKey(id)) {
-				List<Object> graph = new ArrayList<Object>();
-				subject.put("@graph", graph);
-				Map<String,Object> subjects_ = (Map<String, Object>) Obj.get(graphs, id, "subjects");
-				List<String> ids_ = new ArrayList<String>(subjects_.keySet());
-				Collections.sort(ids_);
-				for (String id_: ids_) {
-					graph.add(subjects_.get(id_));
+		for (String subject : ids) {
+			Map<String,Object> node = (Map<String, Object>) defaultGraph.get(subject);
+			if (graphMap.containsKey(subject)) {
+				node.put("@graph", new ArrayList<Object>());
+				List<String> keys = new ArrayList<String>(graphMap.get(subject).keySet());
+				Collections.sort(keys);
+				for (String s : keys) {
+					Map<String,Object> n = (Map<String, Object>) graphMap.get(subject).get(s);
+					n.remove("usages");
+					((List<Object>) node.get("@graph")).add(n);
 				}
 			}
+			node.remove("usages");
+			result.add(node);
 		}
 		
-		return output;
+		return result;
 	}
 
 	/**

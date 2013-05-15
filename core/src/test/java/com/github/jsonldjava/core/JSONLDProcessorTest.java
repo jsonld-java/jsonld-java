@@ -73,16 +73,16 @@ public class JSONLDProcessorTest {
             for (Map<String, Object> test : (List<Map<String, Object>>) manifest.get("sequence")) {
                 List<String> testType = (List<String>) test.get("@type");
                 if (
-                //testType.contains("jld:ExpandTest") 
-                //|| testType.contains("jld:CompactTest")
-                //|| testType.contains("jld:FlattenTest")
-                //|| testType.contains("jld:FrameTest")
-                //|| testType.contains("jld:ToRDFTest")
-                //|| testType.contains("jld:NormalizeTest")
-                testType.contains("jld:FromRDFTest")
+                testType.contains("jld:ExpandTest") 
+                || testType.contains("jld:CompactTest")
+                || testType.contains("jld:FlattenTest")
+                || testType.contains("jld:FrameTest")
+                || testType.contains("jld:ToRDFTest")
+                || testType.contains("jld:NormalizeTest")
+                || testType.contains("jld:FromRDFTest")
                 //|| testType.contains("jld:TriplesTest")
                 //|| testType.contains("jld:SimplifyTest")
-                && test.get("@id").equals("#t0015") // used for running specific tests
+                //&& test.get("@id").equals("#t0004") // used for running specific tests
                 ) {
                     System.out.println("Adding test: " + test.get("name"));
                     rdata.add(new Object[] { manifest.get("name"), test.get("@id"), test });

@@ -200,34 +200,27 @@ public class RDFDatasetUtils {
 	 *
 	 * @return the JSON-LD object.
 	 */
-	static Object RDFToObject(final Map<String, Object> o, Boolean useNativeTypes) {
-		// convert empty list
-		if ("IRI".equals(o.get("type")) && RDF_NIL.equals(o.get("value"))) {
+	static Map<String,Object> RDFToObject(final Map<String, Object> value, Boolean useNativeTypes) {
+		// If value is an an IRI or a blank node identifier, return a new JSON object consisting 
+		// of a single member @id whose value is set to value.
+		if ("IRI".equals(value.get("type")) || "blank node".equals(value.get("type"))) {
 			return new LinkedHashMap<String, Object>() {{
-				put("@list", new ArrayList<Object>());
-			}};
-		}
-		
-		// convert IRI/BlankNode object to JSON-LD
-		if ("IRI".equals(o.get("type")) || "blank node".equals(o.get("type"))) {
-			return new LinkedHashMap<String, Object>() {{
-				put("@id", o.get("value"));
+				put("@id", value.get("value"));
 			}};
 		};
 		
-		
 		// convert literal object to JSON-LD
 		Map<String,Object> rval = new LinkedHashMap<String, Object>() {{
-			put("@value", o.get("value"));
+			put("@value", value.get("value"));
 		}};
 		
 		// add language
-		if (o.containsKey("language")) {
-			rval.put("@language", o.get("language"));
+		if (value.containsKey("language")) {
+			rval.put("@language", value.get("language"));
 		}
 		// add datatype
 		else {
-			String type = (String) o.get("datatype");
+			String type = (String) value.get("datatype");
 			if (useNativeTypes) {
 				// use native datatypes for certain xsd types
 				if (XSD_BOOLEAN.equals(type)) {
@@ -448,7 +441,7 @@ public class RDFDatasetUtils {
 			} else if (match.group(5) != null) {
 				final String value = match.group(5);
 				triple.put("object", new LinkedHashMap<String, Object>() {{
-					put("type", "IRI");
+					put("type", "blank node");
 					put("value", value);
 				}});
 			} else {
