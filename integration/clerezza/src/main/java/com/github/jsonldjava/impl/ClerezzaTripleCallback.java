@@ -2,6 +2,7 @@ package com.github.jsonldjava.impl;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.clerezza.rdf.core.*;
@@ -11,6 +12,7 @@ import org.apache.clerezza.rdf.core.impl.TripleImpl;
 import org.apache.clerezza.rdf.core.impl.TypedLiteralImpl;
 
 import com.github.jsonldjava.core.JSONLDTripleCallback;
+import com.github.jsonldjava.utils.Obj;
 
 public class ClerezzaTripleCallback implements JSONLDTripleCallback {
 
@@ -26,8 +28,7 @@ public class ClerezzaTripleCallback implements JSONLDTripleCallback {
         return mGraph;
     }
 
-    @Override
-    public void triple(String s, String p, String o, String graph) {
+    private void triple(String s, String p, String o, String graph) {
         if (s == null || p == null || o == null) {
             // TODO: i don't know what to do here!!!!
             return;
@@ -39,8 +40,7 @@ public class ClerezzaTripleCallback implements JSONLDTripleCallback {
 		mGraph.add(new TripleImpl(subject, predicate, object));
     }
 
-    @Override
-    public void triple(String s, String p, String value, String datatype, String language, String graph) {
+    private void triple(String s, String p, String value, String datatype, String language, String graph) {
         NonLiteral subject = getNonLiteral(s);
 		UriRef predicate = new UriRef(p);
 		Resource object;
@@ -76,20 +76,23 @@ public class ClerezzaTripleCallback implements JSONLDTripleCallback {
 	}
 
 	@Override
-	public void triple(String s, String p, String o) {
-		triple(s, p, o, null);
-	}
+	public Object call(Map<String, Object> dataset) {
+		for (String graphName : dataset.keySet()) {
+			List<Map<String,Object>> triples = (List<Map<String, Object>>) dataset.get(graphName);
+			if ("@default".equals(graphName)) {
+				graphName = null;
+			}
+			for (Map<String,Object> triple : triples) {
+				if ("literal".equals(Obj.get(triple, "object", "type"))) {
+					triple((String)Obj.get(triple, "subject", "value"), (String)Obj.get(triple, "predicate", "value"), 
+							(String)Obj.get(triple, "object", "value"), (String)Obj.get(triple, "object", "datatype"), (String)Obj.get(triple, "object", "language"), graphName);
+				} else {
+					triple((String)Obj.get(triple, "subject", "value"), (String)Obj.get(triple, "predicate", "value"), (String)Obj.get(triple, "object", "value"), graphName);
+				}
+			}
+		}
 
-	@Override
-	public void triple(String s, String p, String value, String datatype,
-			String language) {
-		triple(s, p, value, datatype, language, null);
-	}
-
-	@Override
-	public void processIgnored(Object parent, String parentId, String key,
-			Object value) {
-		// nothing to process
+		return getMGraph();
 	}
 
 }

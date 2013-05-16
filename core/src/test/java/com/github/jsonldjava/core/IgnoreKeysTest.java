@@ -23,12 +23,13 @@ import com.github.jsonldjava.utils.JSONUtils;
  * Test to make sure the ignoreKeys are behaving as expected
  * @author tristan
  *
+ * NOTE: all these tests are currently disabled as the functionality has been removed from the core code
  */
 public class IgnoreKeysTest {
 
 	private static final String TEST_DIR = "custom";
 	
-	@Test
+	//@Test
 	public void expandTest() throws JSONLDProcessingError, IOException {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/ignore-0001-in.jsonld");
@@ -41,7 +42,7 @@ public class IgnoreKeysTest {
 		docheck("expand", output, result);
 	}
 	
-	@Test
+	//@Test
 	public void compactTest1() throws JSONLDProcessingError, IOException {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/ignore-0002-in.jsonld");
@@ -56,7 +57,7 @@ public class IgnoreKeysTest {
 		docheck("compact 1", output, result);
 	}
 	
-	@Test
+	//@Test
 	public void compactTest2() throws JSONLDProcessingError, IOException {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/ignore-0003-in.jsonld");
@@ -71,7 +72,7 @@ public class IgnoreKeysTest {
 		docheck("compact 2", output, result);
 	}
 	
-	@Test
+	//@Test
 	public void frameTest1() throws JSONLDProcessingError, IOException {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/ignore-0004-in.jsonld");
@@ -86,7 +87,7 @@ public class IgnoreKeysTest {
 		docheck("frame 1", output, result);
 	}
 	
-	@Test
+	//@Test
 	public void toRDFTest() throws JSONLDProcessingError, IOException {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/ignore-0005-in.jsonld");
@@ -108,7 +109,7 @@ public class IgnoreKeysTest {
 		//JSONLD.toRDF(input, new Options("").ignoreKey("@ignoreMe"), callback);
         // TODO: FIXME!
 		
-		docheck("toRDF", expect, callback.getResult());
+		//docheck("toRDF", expect, callback.getResult());
 	}
 
 	

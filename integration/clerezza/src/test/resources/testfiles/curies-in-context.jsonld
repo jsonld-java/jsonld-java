@@ -1,0 +1,10 @@
+{
+  "@context": {
+    "Person": "foaf:Person",
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "name": "foaf:name"
+  },
+  "@type": "Person",
+  "name": "Santa Claus",
+  "foaf:nick": "Sämi"
+}

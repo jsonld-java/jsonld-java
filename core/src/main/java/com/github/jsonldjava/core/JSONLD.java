@@ -419,6 +419,7 @@ public class JSONLD {
      * Outputs the RDF dataset found in the given JSON-LD object.
      *
      * @param input the JSON-LD input.
+     * @param callback A callback that is called when the input has been converted to Quads (null to use options.format instead).
      * @param [options] the options to use:
      *          [base] the base IRI to use.
      *          [format] the format to use to output a string:
@@ -426,7 +427,7 @@ public class JSONLD {
      *          [loadContext(url, callback(err, url, result))] the context loader.
      * @param callback(err, dataset) called once the operation completes.
      */
-    public static Object toRDF(Object input, Options options) throws JSONLDProcessingError {
+    public static Object toRDF(Object input, JSONLDTripleCallback callback, Options options) throws JSONLDProcessingError {
     	if (options.base == null) {
     		options.base = "";
     	}
@@ -448,6 +449,10 @@ public class JSONLD {
     	
 		// output RDF dataset
 		Map<String,Object> dataset = new JSONLDProcessor(options).toRDF(nodeMap);
+		if (callback != null) {
+			callback.call(dataset);
+		}
+		
 		if (options.format != null) {
 			if ("application/nquads".equals(options.format)) {
 				return toNQuads(dataset);
@@ -458,6 +463,14 @@ public class JSONLD {
 			}
 		}
 		return dataset;    	
+    }
+    
+    public static Object toRDF(Object input, Options options) throws JSONLDProcessingError {
+    	return toRDF(input, null, options);
+    }
+    
+    public static Object toRDF(Object input, JSONLDTripleCallback callback) throws JSONLDProcessingError {
+    	return toRDF(input, callback, new Options(""));
     }
     
     public static void toRDF(Object input) throws JSONLDProcessingError {

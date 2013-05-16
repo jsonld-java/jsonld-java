@@ -1,50 +1,22 @@
 package com.github.jsonldjava.core;
 
+import java.util.Map;
+
+/**
+ * 
+ * @author Tristan
+ *
+ * TODO: in the JSONLD RDF API the callback we're representing here is QuadCallback which takes
+ * a list of quads (subject, predicat, object, graph). for the moment i'm just going to use
+ * the dataset provided by toRDF but this should probably change in the future
+ */
 public interface JSONLDTripleCallback {
-    /**
-     * Construct a triple with three URIs.
-     * 
-     * @param s
-     *            The Subject URI
-     * @param p
-     *            The Predicate URI
-     * @param o
-     *            The Object URI
-     * @param graph
-     * 			  The graph URI associated with this triple (null if none)
-     * @return The generated triple, or null to force triple generation to stop
-     */
-    void triple(String s, String p, String o);
-    void triple(String s, String p, String o, String graph);
-
-    /**
-     * Constructs a triple with a Literal object, which may or may not contain a
-     * language and/or a datatype.
-     * 
-     * @param s
-     *            The Subject URI
-     * @param p
-     *            The Predicate URI
-     * @param value
-     *            The literal value
-     * @param datatype
-     *            The literal datatype
-     * @param language
-     *            The literal language (NOTE: may be null if not specified!)
-     * @param graph
-     * 			  The graph URI associated with this triple (null if none)
-     * @return The generated triple, or null to force triple generation to stop
-     */
-    void triple(String s, String p, String value, String datatype, String language);
-	void triple(String s, String p, String value, String datatype,
-			String language, String graph);
-
+	
 	/**
-	 * Implement this to trigger special processing for ignored keywords
+	 * Construct output based on internal RDF dataset format
+	 * @param dataset
 	 * 
-	 * @param parent the parent object which contains the ignored keyword
-	 * @param key
-	 * @param value
+	 * @return the resulting RDF object in the desired format
 	 */
-	public void processIgnored(Object parent, String parentId, String key, Object value);
+	public Object call(Map<String, Object> dataset);
 }

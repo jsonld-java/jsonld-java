@@ -268,7 +268,7 @@ public class RDFDatasetUtils {
 		return rval;
 	}
 
-	static String toNQuads(Map<String,Object> dataset) {
+	public static String toNQuads(Map<String,Object> dataset) {
 		//JSONLDTripleCallback callback = new NQuadTripleCallback();
 		List<String> quads = new ArrayList<String>();
 		for (String graphName : dataset.keySet()) {
