@@ -298,8 +298,7 @@ public class JSONLD {
 
     	// TODO: add sanity checks for input and throw JSONLDProcessingErrors when incorrect input is used
     	// preserve frame context
-    	//ActiveContext ctx = frame.containsKey("@context") ? new ActiveContext((Map<String, Object>) frame.get("@context"), opts) : new ActiveContext(opts);
-    	Map<String,Object> ctx = frame.containsKey("@context") ? (Map<String, Object>) frame.get("@context") : new LinkedHashMap<String,Object>();
+    	Object ctx = frame.containsKey("@context") ? frame.get("@context") : new LinkedHashMap<String,Object>();
     	
     	// expand input
     	Object expanded;
