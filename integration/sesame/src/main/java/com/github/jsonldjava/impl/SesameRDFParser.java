@@ -16,6 +16,8 @@ import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
+import org.openrdf.model.vocabulary.RDF;
+import org.openrdf.model.vocabulary.XMLSchema;
 
 import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.RDFDatasetUtils;
@@ -65,6 +67,16 @@ com.github.jsonldjava.core.RDFParser {
 			String language = literal.getLanguage();
 
 			String datatype = getResourceValue(literal.getDatatype());
+			
+			// In RDF-1.1, Language Literals internally have the datatype rdf:langString
+			if(language != null && datatype == null) {
+			    datatype = RDF.LANGSTRING.stringValue();
+			}
+			
+			// In RDF-1.1, RDF-1.0 Plain Literals are now Typed Literals with type xsd:String
+			if(language == null && datatype == null) {
+			    datatype = XMLSchema.STRING.stringValue();
+			}
 			
 			RDFDatasetUtils.addTripleToRDFDatasetResult(result, graphName, 
 					RDFDatasetUtils.generateTriple(subject, predicate, value, datatype, language));
