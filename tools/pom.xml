@@ -60,11 +60,7 @@
 				<configuration>
 					<programs>
 						<program>
-							<mainClass>de.dfki.km.json.jsonld.tools.RDF2JSONLD</mainClass>
-							<name>rdf2jsonld</name>
-						</program>
-						<program>
-							<mainClass>de.dfki.km.json.jsonld.tools.Playground</mainClass>
+							<mainClass>com.github.jsonldjava.impl.Playground</mainClass>
 							<name>jsonldplayground</name>
 						</program>
 					</programs>

@@ -42,7 +42,7 @@ public class Options {
 	public Boolean compactArrays = null;
 	public Boolean skipExpansion = null;
 	public ActiveContext compactResultsActiveCtx = null;
-	public Object format = null;
+	public String format = null;
 
     /**
      * Tells the processor to skip over the key specified by "key" any time it encounters it. Objects under this key will not be manipulated by any of the
