@@ -5,10 +5,13 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openrdf.model.BNode;
 import org.openrdf.model.Graph;
 import org.openrdf.model.Literal;
+import org.openrdf.model.Model;
+import org.openrdf.model.Namespace;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -21,9 +24,22 @@ import com.github.jsonldjava.core.RDFDatasetUtils;
 public class SesameRDFParser implements
 com.github.jsonldjava.core.RDFParser {
 
+	public void setPrefix(String fullUri, String prefix) {
+		// TODO: graphs?
+		//_context.put(prefix, fullUri);
+	}
+
 	@SuppressWarnings("deprecation")
 	public void importGraph(Graph model, Resource... contexts) {
 		Map<String,Object> result = RDFDatasetUtils.getInitialRDFDatasetResult();
+		
+		if(model instanceof Model) {
+        	        Set<Namespace> namespaces = ((Model) model).getNamespaces();
+        	        for (Namespace nextNs : namespaces) {
+        	            setPrefix(nextNs.getName(), nextNs.getPrefix());
+        	        }
+		}
+		
 		Iterator<Statement> statements = model
 				.match(null, null, null, contexts);
 		while (statements.hasNext()) {
