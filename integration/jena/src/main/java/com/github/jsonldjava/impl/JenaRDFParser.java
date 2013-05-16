@@ -1,8 +1,11 @@
 package com.github.jsonldjava.impl;
 
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.github.jsonldjava.core.JSONLDProcessingError;
+import com.github.jsonldjava.core.RDFDatasetUtils;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -13,10 +16,39 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 
-public class JenaJSONLDSerializer extends com.github.jsonldjava.core.JSONLDSerializer {
+public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
 
-    // private static final Logger LOG = LoggerFactory.getLogger(
-    // JenaJSONLDSerializer.class );
+	// name generator
+    Iterator<String> _ng = new Iterator<String>() {
+		int i = 0;
+		@Override
+		public void remove() {
+			i++;
+		}
+		
+		@Override
+		public String next() {
+			return "_:t" + i++;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return true;
+		}
+	};
+    Map<String, String> _bns = new LinkedHashMap<String, String>();
+    
+    protected String getNameForBlankNode(String node) {
+        if (!_bns.containsKey(node)) {
+            _bns.put(node, _ng.next());
+        }
+        return _bns.get(node);
+    }
+   
+    public void setPrefix(String fullUri, String prefix) {
+    	// TODO: graphs?
+    	//_context.put(prefix, fullUri);
+    }
 
     public String getID(Resource r) {
         String rval = null;
@@ -28,8 +60,9 @@ public class JenaJSONLDSerializer extends com.github.jsonldjava.core.JSONLDSeria
         return rval;
     }
 
-    public void importModel(Model model) {
+    public void importModel(Map<String,Object> result, Model model) {
 
+    	// TODO: figure out what to do with this, as setPrefix itself currently does nothing
         // add the prefixes to the context
         Map<String, String> nsPrefixMap = model.getNsPrefixMap();
         for (String prefix : nsPrefixMap.keySet()) {
@@ -41,11 +74,11 @@ public class JenaJSONLDSerializer extends com.github.jsonldjava.core.JSONLDSeria
         ResIterator subjects = model.listSubjects();
         while (subjects.hasNext()) {
             Resource subject = subjects.next();
-            importResource(subject);
+            importResource(result, subject);
         }
     }
 
-    public void importResource(Resource subject) {
+    public void importResource(Map<String,Object> result, Resource subject) {
         String subj = getID(subject);
         StmtIterator statements = subject.getModel().listStatements(subject, (Property) null, (RDFNode) null);
         while (statements.hasNext()) {
@@ -62,28 +95,32 @@ public class JenaJSONLDSerializer extends com.github.jsonldjava.core.JSONLDSeria
                 	language = null;
                 }
 
-                triple(subj, predicate.getURI(), value, datatypeURI, language, null);
+                RDFDatasetUtils.addTripleToRDFDatasetResult(result, null,
+                		RDFDatasetUtils.generateTriple(subj, predicate.getURI(), value, datatypeURI, language));
             } else {
                 Resource resource = object.asResource();
                 String res = getID(resource);
-
-                triple(subj, predicate.getURI(), res, null);
+                
+                RDFDatasetUtils.addTripleToRDFDatasetResult(result, null,
+                		RDFDatasetUtils.generateTriple(subj, predicate.getURI(), res));
             }
         }
     }
 
 	@Override
-	public void parse(Object input) throws JSONLDProcessingError {
+	public Map<String,Object> parse(Object input) throws JSONLDProcessingError {
+		Map<String,Object> result = RDFDatasetUtils.getInitialRDFDatasetResult();
 		// allow null input so we can use importModel and importResource before calling fromRDF
 		if (input == null) {
-			return;
+			return result;
 		}
 		if (input instanceof Resource) {
-			importResource((Resource) input);
+			importResource(result, (Resource) input);
 		} else if (input instanceof Model) {
-			importModel((Model)input);
+			importModel(result, (Model)input);
 		} else {
 			throw new JSONLDProcessingError("Jena Serializer expects Model or resource input");
 		}
+		return result;
 	}
 }

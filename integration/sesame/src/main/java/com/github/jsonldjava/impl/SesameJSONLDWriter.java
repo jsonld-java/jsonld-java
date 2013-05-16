@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -76,7 +77,7 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
 
     @Override
     public void endRDF() throws RDFHandlerException {
-	SesameJSONLDSerializer serialiser = new SesameJSONLDSerializer();
+	SesameRDFParser serialiser = new SesameRDFParser();
 	try {
 	    Object output = JSONLD.fromRDF(model, serialiser);
 
@@ -97,7 +98,7 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
 	    // TODO: Implement inframe in JSONLDSettings
 	    Object inframe = null;
 	    if (mode == JSONLDMode.FLATTEN) {
-		output = JSONLD.frame(output, inframe, opts);
+		output = JSONLD.frame(output, (Map<String, Object>) inframe, opts);
 	    }
 	    if (mode == JSONLDMode.COMPACT) {
 		output = JSONLD.simplify(output, opts);

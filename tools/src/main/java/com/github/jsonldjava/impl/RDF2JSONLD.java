@@ -9,7 +9,7 @@ import java.util.Map;
 import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.JSONLDProcessor;
-import com.github.jsonldjava.impl.JenaJSONLDSerializer;
+import com.github.jsonldjava.impl.JenaRDFParser;
 import com.github.jsonldjava.utils.JSONUtils;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.util.FileManager;
@@ -64,7 +64,7 @@ public class RDF2JSONLD {
             }
 
             Model model = FileManager.get().loadModel(input);
-            JenaJSONLDSerializer serializer = new JenaJSONLDSerializer();
+            JenaRDFParser serializer = new JenaRDFParser();
             
             Object output = JSONLD.fromRDF(model, serializer);
 

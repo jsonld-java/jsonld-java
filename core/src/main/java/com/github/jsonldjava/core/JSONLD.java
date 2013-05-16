@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.jsonldjava.impl.NQuadJSONLDSerializer;
+import com.github.jsonldjava.impl.NQuadRDFParser;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
 
@@ -465,6 +465,23 @@ public class JSONLD {
     }
     
     /**
+     * a registry for RDF Parsers (in this case, JSONLDSerializers) used by
+     * fromRDF if no specific serializer is specified and options.format is set.
+     */
+    private static Map<String, RDFParser> rdfParsers = new LinkedHashMap<String, RDFParser>() {{
+    	// automatically register nquad serializer
+    	put("application/nquads", new NQuadRDFParser());
+    }};
+    
+    public static void registerRDFParser(String format, RDFParser parser) {
+    	rdfParsers.put(format, parser);
+    }
+    
+    public static void removeRDFParser(String format) {
+    	rdfParsers.remove(format);
+    }
+    
+    /**
      * Converts an RDF dataset to JSON-LD.
      *
      * @param dataset a serialized string of RDF in a format specified by the
@@ -480,6 +497,37 @@ public class JSONLD {
      * @param callback(err, output) called once the operation completes.
      */
     public static Object fromRDF(Object dataset, Options options) throws JSONLDProcessingError {
+    	// handle non specified serializer case
+    	
+    	RDFParser parser = null;
+
+    	if (options.format == null && dataset instanceof String) {
+    		// attempt to parse the input as nquads
+    		options.format = "application/nquads";
+    	}
+    	
+		if (rdfParsers.containsKey(options.format)) {
+			parser = rdfParsers.get(options.format); 
+		} else {
+			throw new JSONLDProcessingError("Unknown input format.")
+				.setType(JSONLDProcessingError.Error.UNKNOWN_FORMAT)
+				.setDetail("format", options.format);
+		}
+    	 
+    	
+    	// convert from RDF
+    	return fromRDF(dataset, options, parser);
+    }
+    
+    public static Object fromRDF(Object dataset) throws JSONLDProcessingError {
+    	return fromRDF(dataset, new Options(""));
+    }
+    
+    /**
+     * Uses a specific serializer.
+     * 
+     */
+    public static Object fromRDF(Object input, Options options, RDFParser parser) throws JSONLDProcessingError {
     	if (options.useRdfType == null) {
     		options.useRdfType = false;
     	}
@@ -487,50 +535,14 @@ public class JSONLD {
     		options.useNativeTypes = true;
     	}
     	
-    	if (options.format == null && isString(dataset)) {
-    		// set default format to nquads
-    		options.format = "application/nquads";
-    	}
-    	
-    	// handle special format
-    	if (options.format != null) {
-    		// supported formats
-    		if (rdfParsers.containsKey(options.format)) {
-    			JSONLDSerializer parser = rdfParsers.get(options.format); 
-    			
-    			dataset = parser.parse1(dataset);
-    		} else {
-    			throw new JSONLDProcessingError("Unknown input format.")
-    				.setType(JSONLDProcessingError.Error.UNKNOWN_FORMAT)
-    				.setDetail("format", options.format);
-    		}
-    	}
-    	
+    	Map<String,Object> dataset = parser.parse(input);
+    	    	
     	// convert from RDF
     	return new JSONLDProcessor(options).fromRDF((Map<String,Object>)dataset);
     }
     
-    private static Map<String, JSONLDSerializer> rdfParsers = new LinkedHashMap<String, JSONLDSerializer>() {{
-    	// automatically register nquad serializer
-    	put("application/nquads", new NQuadJSONLDSerializer());
-    }};
-    
-    public static Object fromRDF1(Object input, Options opts, JSONLDSerializer serializer) throws JSONLDProcessingError {
-    	if (opts.useRdfType == null) {
-    		opts.useRdfType = false;
-    	}
-    	if (opts.useNativeTypes == null) {
-    		opts.useNativeTypes = true;
-    	}
-    	serializer.parse(input);
-    	//Object rval = new JSONLDProcessor(opts).fromRDF(serializer.getStatements());
-    	//rval = serializer.finalize(rval);
-    	//return rval;
-    	return null;
-    }
-    
-    public static Object fromRDF1(Object input, JSONLDSerializer serializer) throws JSONLDProcessingError {
-    	return fromRDF1(input, new Options(""), serializer);
+    public static Object fromRDF(Object input, RDFParser parser) throws JSONLDProcessingError {
+    	return fromRDF(input, new Options(""), parser);
     }
 
 	public static Object simplify(Object input, Options opts) throws JSONLDProcessingError {

@@ -220,7 +220,13 @@ public class RDFDatasetUtils {
 		}
 		// add datatype
 		else {
-			String type = (String) value.get("datatype");
+			String type;
+			if (value.containsKey("datatype")) {
+				type = (String) value.get("datatype");
+			} else {
+				// default datatype to string in the case that it hasn't been set
+				type = XSD_STRING;
+			}
 			if (useNativeTypes) {
 				// use native datatypes for certain xsd types
 				if (XSD_BOOLEAN.equals(type)) {
@@ -537,5 +543,95 @@ public class RDFDatasetUtils {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Returns the triple in the internal RDF dataset format
+	 * 
+	 * @param s the subject IRI or blank node id
+	 * @param p the predicate IRI
+	 * @param o the object IRI or blank node id
+	 * @return the resulting triple
+	 */
+	public static Map<String,Object> generateTriple(final String s, final String p, final String o) {
+		return new LinkedHashMap<String, Object>() {{
+			put("subject", new LinkedHashMap<String, Object>() {{ 
+				put("value", s);
+				put("type", s.startsWith("_:") ? "blank node" : "IRI");
+			}});
+			put("predicate", new LinkedHashMap<String, Object>() {{ 
+				put("value", p);
+				put("type", "IRI");
+			}});
+			put("object", new LinkedHashMap<String, Object>() {{ 
+				put("value", o);
+				put("type", o.startsWith("_:") ? "blank node" : "IRI");
+			}});
+		}};
+	}
+	
+	/**
+	 * Returns the triple in the internal RDF dataset format
+	 * 
+	 * @param s the subject IRI or blank node id
+	 * @param p the predicate IRI
+	 * @param value the value of the literal object
+	 * @param datatype the datatype of the literal object (defaults to XSD_STRING if null)
+	 * @param language the language of the literal object (or null if no language specified)
+	 * @return the resulting triple
+	 */
+	public static Map<String,Object> generateTriple(final String s, final String p, final String value, final String datatype, final String language) {
+		return new LinkedHashMap<String, Object>() {{
+			put("subject", new LinkedHashMap<String, Object>() {{ 
+				put("value", s);
+				put("type", s.startsWith("_:") ? "blank node" : "IRI");
+			}});
+			put("predicate", new LinkedHashMap<String, Object>() {{ 
+				put("value", p);
+				put("type", "IRI");
+			}});
+			put("object", new LinkedHashMap<String, Object>() {{ 
+				put("value", value);
+				put("type", "literal");
+				if (language != null) {
+					put("language", language);
+				} else {
+					put("datatype", datatype);
+				}
+			}});
+		}};
+	}
+	
+	/**
+	 * Returns the basic structure of the internal RDF Dataset format for parsing RDF to JSONLD using fromRDF
+	 * 
+	 * @return
+	 */
+	public static Map<String,Object> getInitialRDFDatasetResult() {
+		return new LinkedHashMap<String, Object>(){{
+			put("@default", new ArrayList<Object>());
+		}};
+	}
+	
+	/**
+	 * Adds the specified triple to the result dataset
+	 * 
+	 * @param result the result dataset to add the triple to
+	 * @param graphName the graph to add the triple to (uses "@default" if set to null)
+	 * @param triple the triple
+	 */
+	public static void addTripleToRDFDatasetResult(Map<String,Object> result, String graphName, Map<String,Object> triple) {
+		List<Object> graph;
+		if (graphName == null) {
+			graph = (List<Object>) result.get("@default");
+		} else {
+			if (result.containsKey(graphName)) {
+				graph = (List<Object>) result.get(graphName);
+			} else {
+				graph = new ArrayList<Object>();
+				result.put(graphName, graph);
+			}
+		}
+		graph.add(triple);
 	}
 }

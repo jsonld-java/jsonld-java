@@ -32,7 +32,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.JSONLDUtils;
-import com.github.jsonldjava.impl.NQuadJSONLDSerializer;
+import com.github.jsonldjava.impl.NQuadRDFParser;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
 
