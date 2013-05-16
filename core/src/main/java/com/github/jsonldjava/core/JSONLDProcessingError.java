@@ -19,7 +19,7 @@ public class JSONLDProcessingError extends Exception {
 
 	public JSONLDProcessingError setDetail(String string, Object val) {
 		details.put(string, val);
-		System.out.println("ERROR DETAIL: " + string + ": " + val.toString());
+		//System.out.println("ERROR DETAIL: " + string + ": " + val.toString());
 		return this;
 	}
 

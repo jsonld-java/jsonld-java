@@ -601,6 +601,10 @@ public class JSONLDUtils {
      * @throws JSONLDProcessingError 
      */
     static boolean validateTypeValue(Object v) throws JSONLDProcessingError {
+	if (v == null) {
+	   throw new NullPointerException("\"@type\" value cannot be null"); 
+	}
+	
     	// must be a string, subject reference, or empty object
         if (v instanceof String || (v instanceof Map && (((Map<String, Object>) v).containsKey("@id") || ((Map<String, Object>) v).size() == 0))) {
             return true;
