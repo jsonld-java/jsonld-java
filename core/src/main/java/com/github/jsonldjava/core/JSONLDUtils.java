@@ -1427,11 +1427,11 @@ public class JSONLDUtils {
      *          [propertyIsArray] true if the property is always an array, false
      *            if not (default: false).
      */
-    public static void removeValue(Map<String, Object> subject, String property,
+    static void removeValue(Map<String, Object> subject, String property,
 			Map<String, Object> value) {
 		removeValue(subject, property, value, false);
 	}
-    public static void removeValue(Map<String, Object> subject, String property,
+    static void removeValue(Map<String, Object> subject, String property,
 			Map<String, Object> value, boolean propertyIsArray) {
 		// filter out value
     	List<Object> values = new ArrayList<Object>();
@@ -1667,9 +1667,7 @@ public class JSONLDUtils {
 		}
 		return false;
 	}
-
-	// END OF NEW CODE
-
+	
     static Object clone(Object value) {// throws
     	// CloneNotSupportedException {
     	Object rval = null;
@@ -1696,52 +1694,7 @@ public class JSONLDUtils {
     	}
     	return rval;
     }
-
-    public static int compare(Object v1, Object v2) {
-    	int rval = 0;
-
-    	if (v1 instanceof List && v2 instanceof List) {
-    		if (((List) v1).size() != ((List) v2).size()) {
-    			rval = 1;
-    		} else {
-    			// TODO: should the order of things in the list matter?
-    			for (int i = 0; i < ((List<Object>) v1).size() && rval == 0; i++) {
-    				rval = compare(((List<Object>) v1).get(i), ((List<Object>) v2).get(i));
-    			}
-    		}
-    	} else if (v1 instanceof Number && v2 instanceof Number) {
-    		// TODO: this is VERY sketchy
-    		double n1 = ((Number) v1).doubleValue();
-    		double n2 = ((Number) v2).doubleValue();
-
-    		rval = (n1 < n2 ? -1 : (n1 > n2 ? 1 : 0));
-    	} else if (v1 instanceof String && v2 instanceof String) {
-    		rval = ((String) v1).compareTo((String) v2);
-    		if (rval > 1)
-    			rval = 1;
-    		else if (rval < -1)
-    			rval = -1;
-    	} else if (v1 instanceof Map && v2 instanceof Map) {
-    		throw new RuntimeException("I don't know how I should handle this case yet!");
-    		/*
-    		 * TODO: not sure what to do here exactly...
-    		 * 
-    		 * python can compare objects using the < and > operators. js pretends it can (i.e. it doesn't throw an error) but always returns false. thus the js
-    		 * code and the py code are inconsistant.
-    		 * 
-    		 * // TODO: this assumes the order of keys doesn't matter if (((Map) v1).size() != ((Map) v2).size() ) { rval = 1; } else { if (((Map) v1).size() !=
-    		 * ((Map) v2).size()) { rval = 1; } else { for (Object k1: ((Map) v1).keySet()) { rval = ((Map) v2).containsKey(k1) ? compare(((Map) v1).get(k1),
-    		 * ((Map) v2).get(k1)) : 1; if (rval != 0) { break; } } } } } else if (v1 instanceof Boolean && v2 instanceof Boolean) { //rval = (v1 == v2 ? 0 :
-    		 * 1);
-    		 */
-    	} else {
-    		// TODO: this is probably something I don't want to allow either
-    		throw new RuntimeException("compare unspecified for these objects");
-    		// rval = (v1.equals(v2) ? 0 : 1);
-    	}
-    	return rval;
-    }
-    
+   
 	/**
      * Returns true if the given value is a JSON-LD Array
      * 
