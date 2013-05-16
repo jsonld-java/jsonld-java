@@ -472,8 +472,8 @@ public class JSONLD {
     	return toRDF(input, callback, new Options(""));
     }
     
-    public static void toRDF(Object input) throws JSONLDProcessingError {
-    	toRDF(input, new Options(""));
+    public static Object toRDF(Object input) throws JSONLDProcessingError {
+    	return toRDF(input, new Options(""));
     }
     
     /**

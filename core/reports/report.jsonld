@@ -1,0 +1,5199 @@
+{
+  "@context" : {
+    "@vocab" : "http://www.w3.org/ns/earl#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "earl" : "http://www.w3.org/ns/earl#",
+    "doap" : "http://usefulinc.com/ns/doap#",
+    "dc" : "http://purl.org/dc/terms/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "foaf:homepage" : {
+      "@type" : "@id"
+    },
+    "doap:homepage" : {
+      "@type" : "@id"
+    },
+    "dc:date" : {
+      "@type" : "xsd:date"
+    }
+  },
+  "@graph" : [ {
+    "@id" : "http://tristan.github.com/foaf#me",
+    "@type" : [ "foaf:Person", "earl:Assertor" ],
+    "foaf:name" : "Tristan King",
+    "foaf:title" : "Implementor",
+    "foaf:homepage" : "http://tristan.github.com"
+  }, {
+    "@id" : "http://github.com/jsonld-java/jsonld-java",
+    "@type" : [ "doap:Project", "earl:TestSubject", "earl:Software" ],
+    "doap:name" : "JSONLD-Java",
+    "doap:homepage" : "http://github.com/jsonld-java/jsonld-java",
+    "doap:description" : {
+      "@value" : "An Implementation of the JSON-LD Specification for Java",
+      "@language" : "en"
+    },
+    "doap:programming-language" : "Java",
+    "doap:developer" : [ {
+      "@id" : "http://tristan.github.com/foaf#me"
+    }, {
+      "@id" : "https://github.com/ansell/foaf#me",
+      "foaf:name" : "Peter Ansell",
+      "foaf:title" : "Contributor"
+    } ],
+    "doap:title" : "JSONLD-Java",
+    "dc:date" : "2013-05-16",
+    "dc:creator" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    }
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0001"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:44+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0002"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:44+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0003"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:44+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0004"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:44+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0005"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:44+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0006"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:44+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0007"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0008"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0009"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0010"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0011"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0012"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0013"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0014"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0015"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0016"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0017"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0018"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0019"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0020"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0021"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0022"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0023"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0024"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0025"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0026"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0027"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0028"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0029"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0030"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0031"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0032"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0033"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0034"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0035"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0036"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0037"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0038"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0039"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0040"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0041"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0042"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0043"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0044"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0045"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0046"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0047"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0048"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0049"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0051"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0052"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0053"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0054"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0055"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0056"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0057"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0058"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0059"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0060"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0061"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0062"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0063"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0064"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0065"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0066"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0067"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/error-expand-manifest.jsonld#t0001"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:semiAuto"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0001"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0002"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0003"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0004"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0005"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:45+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0006"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0007"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0008"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0009"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0010"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0011"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0012"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0013"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0014"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0015"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0016"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0017"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0018"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0019"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0020"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0021"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0022"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0023"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0024"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0025"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0026"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0027"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0028"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0029"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0030"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0031"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0032"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0033"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0034"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0035"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0036"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0037"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0038"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0039"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0040"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0041"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0042"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0043"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0044"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0045"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0046"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0047"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0048"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0049"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0050"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0051"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0052"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0053"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0054"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0055"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0056"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0057"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0058"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0059"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0060"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0061"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0062"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0063"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0064"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0065"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0066"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0067"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0069"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0070"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0071"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0072"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0001"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0002"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0003"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0004"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0005"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0006"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0007"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0008"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0009"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0010"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0011"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0012"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0013"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0014"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0015"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0016"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0017"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0018"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0019"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0020"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0021"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0022"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0023"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0024"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0025"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0026"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0027"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0028"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0029"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0030"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0031"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0032"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0033"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0034"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0035"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0036"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0037"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0038"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0039"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0040"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0041"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0042"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0001"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0002"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0003"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0004"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0005"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0006"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0007"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0008"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0009"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0010"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0011"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0012"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0013"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0014"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0015"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0015"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0016"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0017"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0018"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0019"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0020"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0001"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0002"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0003"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0004"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0005"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0006"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0007"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:46+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0008"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0009"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0010"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0011"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0012"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0013"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0014"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0015"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0001"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0002"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0003"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0004"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0005"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0006"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0007"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0008"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0009"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0010"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0011"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0012"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0013"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0014"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0015"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0016"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0017"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0018"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0019"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0020"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0021"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0022"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0023"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0024"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0025"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0026"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0027"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0028"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0029"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0030"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0031"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0032"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0033"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0034"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0035"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0036"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0037"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0038"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0039"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0040"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0041"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0042"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0043"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0044"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:47+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0045"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0046"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0047"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0048"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0049"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0050"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0051"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0052"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0053"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0054"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0055"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0056"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0057"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0001"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0002"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0003"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0004"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0005"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0006"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0007"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0008"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0009"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0010"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0011"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0012"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0013"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0014"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0015"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0016"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0017"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0018"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0019"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0020"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0021"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0022"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0023"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0024"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0025"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0026"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0027"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0028"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0029"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  }, {
+    "@type" : "earl:Assertion",
+    "earl:assertedBy" : {
+      "@id" : "http://tristan.github.com/foaf#me"
+    },
+    "earl:subject" : {
+      "@id" : "http://github.com/jsonld-java/jsonld-java"
+    },
+    "earl:test" : {
+      "@id" : "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0030"
+    },
+    "earl:result" : {
+      "@type" : "earl:TestResult",
+      "earl:outcome" : "earl:passed",
+      "dc:date" : "2013-05-16T09:58:48+0200"
+    },
+    "earl:mode" : "earl:automatic"
+  } ]
+}
