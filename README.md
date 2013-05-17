@@ -24,7 +24,7 @@ run `mvn install -DskipTests=true` to install the jar into your local maven repo
 ### in your project (maven specific)
 
     <dependency>
-        <groupId>com.github.jsonldjava</groupId>
+        <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
         <version>0.1-SNAPSHOT</version>
     </dependency>
