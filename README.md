@@ -49,7 +49,7 @@ Implementation Reports conforming to the [JSON-LD Implementation Report](http://
 
     mvn test -pl core -Dtest=JSONLDProcessorTest -Dreport.format=<format>
 
-Current possible values for `<format> include JSON-LD (`application/ld+json` or `jsonld`), NQuads (`text/plain`, `nquads`, `ntriples`, `nq` or `nt`) and Turtle (`text/turtle`, `turtle` or `ttl`). `*` can be used to generate reports in all available formats.
+Current possible values for `<format>` include JSON-LD (`application/ld+json` or `jsonld`), NQuads (`text/plain`, `nquads`, `ntriples`, `nq` or `nt`) and Turtle (`text/turtle`, `turtle` or `ttl`). `*` can be used to generate reports in all available formats.
 
 ### code example
 
@@ -82,21 +82,6 @@ This is a simple function which takes an input file in rdfxml or n3 and outputs 
 run the following to get usage details:
 
     ./tools/target/appassembler/bin/jsonldplayground
-
-NOTES
-=====
-
-compact-0018 still fails (it doesn't pass in the javascript version either)
-fixing this requires fixing the term rank algorithm
-This test is currently ignored in the test suite.
-
-TODO
-====
-
-*   Make sure Jena Implementation is correct (i.e. write some real tests)
-*   Tests for the serializations
-*   Implement normalization.
-*   As the code is almost a direct translation from the javascript and python implementation, there is probably a lot of optimization work to do.
 
 CHANGELOG
 =========
