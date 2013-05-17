@@ -131,7 +131,10 @@ public class JSONLDProcessorTest {
     public static void writeReport() throws JsonGenerationException, JsonMappingException, IOException, JSONLDProcessingError {
     	
     	// Only write reports if "-Dreport.format=..." is set
-    	String reportFormat = System.getProperty("report.format").toLowerCase();
+    	String reportFormat = System.getProperty("report.format");
+    	if (reportFormat != null) {
+    		reportFormat = reportFormat.toLowerCase();
+    	}
     	
     	if ("application/ld+json".equals(reportFormat) || "jsonld".equals(reportFormat) || "*".equals(reportFormat)) {
     		System.out.println("Generating JSON-LD Report");
