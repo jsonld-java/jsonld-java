@@ -14,6 +14,28 @@
 	<description>Json-LD Java Parent POM</description>
 	<packaging>pom</packaging>	
 	
+	<url>http://github.com/jsonld-java/jsonld-java/</url>
+	<licenses>
+		<license>
+			<name>Revised BSD License</name>
+			<url>https://raw.github.com/jsonld-java/jsonld-java/master/LICENCE</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url>git@github.com:jsonld-java/jsonld-java.git</url>
+		<connection>scm:git:git@github.com:jsonld-java/jsonld-java.git</connection>
+		<developerConnection>scm:git:git@github.com:jsonld-java/jsonld-java.git</developerConnection>
+	</scm>
+	<developers>
+		<developer>
+			<name>Tristan King</name>
+		</developer>
+		<developer>
+			<name>Peter Ansell</name>
+		</developer>
+	</developers>
+	
 	<modules>
 		<module>core</module>
 		<module>integration</module>

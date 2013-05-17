@@ -12,6 +12,18 @@
 	<description>JSON-LD Java integration module for Clerezza</description>
 	<packaging>jar</packaging>		
 
+	<developers>
+		<developer>
+			<name>Reto Bachmann-Gmür</name>
+		</developer>
+		<developer>
+			<name>Tristan King</name>
+		</developer>
+		<developer>
+			<name>Peter Ansell</name>
+		</developer>
+	</developers>
+
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
