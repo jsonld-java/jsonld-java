@@ -134,6 +134,8 @@ public class JSONLDProcessorTest {
     	String reportFormat = System.getProperty("report.format");
     	if (reportFormat != null) {
     		reportFormat = reportFormat.toLowerCase();
+    	} else {
+    		return; // nothing to do
     	}
     	
     	if ("application/ld+json".equals(reportFormat) || "jsonld".equals(reportFormat) || "*".equals(reportFormat)) {
