@@ -43,6 +43,14 @@ or
 
 to run only core package tests
 
+### Generating Implementation Report
+
+Implementation Reports conforming to the [JSON-LD Implementation Report](http://json-ld.org/test-suite/reports/#instructions-for-submitting-implementation-reports) document can be generated using the following command:
+
+    mvn test -pl core -Dtest=JSONLDProcessorTest -Dreport.format=<format>
+
+Current possible values for `<format> include JSON-LD (`application/ld+json` or `jsonld`), NQuads (`text/plain`, `nquads`, `ntriples`, `nq` or `nt`) and Turtle (`text/turtle`, `turtle` or `ttl`). `*` can be used to generate reports in all available formats.
+
 ### code example
 
     // Open a valid json(-ld) input file

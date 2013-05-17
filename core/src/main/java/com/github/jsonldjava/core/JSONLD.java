@@ -449,7 +449,7 @@ public class JSONLD {
 		// output RDF dataset
 		Map<String,Object> dataset = new JSONLDProcessor(options).toRDF(nodeMap);
 		if (callback != null) {
-			callback.call(dataset);
+			return callback.call(dataset);
 		}
 		
 		if (options.format != null) {

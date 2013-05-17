@@ -42,6 +42,7 @@ import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.JSONLDUtils;
 import com.github.jsonldjava.impl.NQuadRDFParser;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
+import com.github.jsonldjava.impl.TurtleTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
 
 
@@ -129,13 +130,33 @@ public class JSONLDProcessorTest {
     @AfterClass
     public static void writeReport() throws JsonGenerationException, JsonMappingException, IOException, JSONLDProcessingError {
     	
-    	JSONUtils.writePrettyPrint(new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".jsonld")), REPORT);
-    	Options options = new Options("");
-    	options.format = "application/nquads";
-    	Object rdf = JSONLD.toRDF(REPORT, options);
-    	OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".nq"));
-    	writer.write((String)rdf);
-    	writer.close();
+    	// Only write reports if "-Dreport.format=..." is set
+    	String reportFormat = System.getProperty("report.format").toLowerCase();
+    	
+    	if ("application/ld+json".equals(reportFormat) || "jsonld".equals(reportFormat) || "*".equals(reportFormat)) {
+    		System.out.println("Generating JSON-LD Report");
+    		JSONUtils.writePrettyPrint(new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".jsonld")), REPORT);
+    	}
+    	if ("text/plain".equals(reportFormat) || "nquads".equals(reportFormat) || "nq".equals(reportFormat) || "nt".equals(reportFormat) || "ntriples".equals(reportFormat) || "*".equals(reportFormat)) {
+    		System.out.println("Generating Nquads Report");
+    		Options options = new Options("") {{
+    			this.format = "application/nquads";
+    		}};
+	    	String rdf = (String)JSONLD.toRDF(REPORT, options);
+	    	OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".nq"));
+	    	writer.write(rdf);
+	    	writer.close();
+    	}
+    	if ("text/turtle".equals(reportFormat) || "turtle".equals(reportFormat) || "ttl".equals(reportFormat) || "*".equals(reportFormat)) { // write turtle
+    		System.out.println("Generating Turtle Report");
+	    	Options options = new Options("") {{
+	    		this.format = "text/turtle";
+	    	}};
+	    	String rdf = (String) JSONLD.toRDF(REPORT, new TurtleTripleCallback((Map<String, Object>) REPORT.get("@context")), options);
+	    	OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".ttl"));
+	    	writer.write((String)rdf);
+	    	writer.close();
+    	}
     }
 
     @Parameters(name="{0}{1}")
