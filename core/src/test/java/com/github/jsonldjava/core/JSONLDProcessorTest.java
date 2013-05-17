@@ -72,9 +72,6 @@ public class JSONLDProcessorTest {
 	    		put("doap:homepage", new LinkedHashMap<String, Object>() {{ 
 	    			put("@type", "@id");
 	    		}});
-	    		put("dc:date", new LinkedHashMap<String,Object>() {{ 
-	    			put("@type", "xsd:date");
-	    		}});
 	    	}});
 	    	put("@graph", new ArrayList<Object>() {{
 	    		// asserter
@@ -115,7 +112,10 @@ public class JSONLDProcessorTest {
 	    				}});
 	    			}});
 	    			put("doap:title", "JSONLD-Java");
-	    			put("dc:date", "2013-05-16");
+	    			put("dc:date", new LinkedHashMap<String,Object>() {{ 
+		    			put("@type", "xsd:date");
+		    			put("@value", "2013-05-16");
+		    		}});
 	    			put("dc:creator", new LinkedHashMap<String, Object>() {{
 						put("@id", "http://tristan.github.com/foaf#me");
 					}});
@@ -376,7 +376,11 @@ public class JSONLDProcessorTest {
         // write details to report
         final String manifest = this.group;
         final String id = (String) this.test.get("@id");
-        final String date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date());
+        Date d = new Date();
+        String dateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(d);
+        String zone = new SimpleDateFormat("Z").format(d);
+        zone = zone.substring(0, 3) + ":" + zone.substring(3);
+        final String dateTimeZone = dateTime + zone;
         final Boolean passed = testpassed;
         REPORT_GRAPH.add(new LinkedHashMap<String, Object>() {{
         	put("@type", "earl:Assertion");
@@ -392,7 +396,10 @@ public class JSONLDProcessorTest {
         	put("earl:result", new LinkedHashMap<String, Object>() {{
         		put("@type", "earl:TestResult");
 	        	put("earl:outcome", passed ? "earl:passed" : "earl:failed");
-	        	put("dc:date", date);
+	        	put("dc:date", new LinkedHashMap<String, Object>() {{
+	        		put("@value", dateTimeZone);
+	        		put("@type", "xsd:dateTime");
+	        	}});
         	}});
         	// for error expand the correct error is thrown, but the test suite doesn't yet automatically figure that out.
         	put("earl:mode", "http://json-ld.org/test-suite/tests/error-expand-manifest.jsonld".equals(manifest) ? "earl:semiAuto" : "earl:automatic");

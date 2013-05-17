@@ -11,9 +11,6 @@
     },
     "doap:homepage" : {
       "@type" : "@id"
-    },
-    "dc:date" : {
-      "@type" : "xsd:date"
     }
   },
   "@graph" : [ {
@@ -40,7 +37,10 @@
       "foaf:title" : "Contributor"
     } ],
     "doap:title" : "JSONLD-Java",
-    "dc:date" : "2013-05-16",
+    "dc:date" : {
+      "@type" : "xsd:date",
+      "@value" : "2013-05-16"
+    },
     "dc:creator" : {
       "@id" : "http://tristan.github.com/foaf#me"
     }
@@ -58,7 +58,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:44+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -75,7 +78,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:44+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -92,7 +98,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:44+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -109,7 +118,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:44+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -126,7 +138,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:44+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -143,7 +158,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:44+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -160,7 +178,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -177,7 +198,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -194,7 +218,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -211,7 +238,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -228,7 +258,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -245,7 +278,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -262,7 +298,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -279,7 +318,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -296,7 +338,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -313,7 +358,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -330,7 +378,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -347,7 +398,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -364,7 +418,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -381,7 +438,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -398,7 +458,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -415,7 +478,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -432,7 +498,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -449,7 +518,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -466,7 +538,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -483,7 +558,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -500,7 +578,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -517,7 +598,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -534,7 +618,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -551,7 +638,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -568,7 +658,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -585,7 +678,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -602,7 +698,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -619,7 +718,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -636,7 +738,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -653,7 +758,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -670,7 +778,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -687,7 +798,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -704,7 +818,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -721,7 +838,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -738,7 +858,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -755,7 +878,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -772,7 +898,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -789,7 +918,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:06+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -806,7 +938,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -823,7 +958,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -840,7 +978,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -857,7 +998,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -874,7 +1018,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -891,7 +1038,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -908,7 +1058,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -925,7 +1078,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -942,7 +1098,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -959,7 +1118,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -976,7 +1138,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -993,7 +1158,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1010,7 +1178,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1027,7 +1198,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1044,7 +1218,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1061,7 +1238,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1078,7 +1258,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1095,7 +1278,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1112,7 +1298,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1129,7 +1318,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1146,7 +1338,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1163,7 +1358,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1180,7 +1378,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:semiAuto"
   }, {
@@ -1197,7 +1398,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1214,7 +1418,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1231,7 +1438,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1248,7 +1458,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1265,7 +1478,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:45+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1282,7 +1498,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1299,7 +1518,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1316,7 +1538,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1333,7 +1558,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1350,7 +1578,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1367,7 +1598,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1384,7 +1618,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1401,7 +1638,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1418,7 +1658,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1435,7 +1678,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1452,7 +1698,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1469,7 +1718,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1486,7 +1738,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1503,7 +1758,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1520,7 +1778,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1537,7 +1798,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1554,7 +1818,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1571,7 +1838,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1588,7 +1858,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1605,7 +1878,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1622,7 +1898,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1639,7 +1918,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1656,7 +1938,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1673,7 +1958,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1690,7 +1978,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1707,7 +1998,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1724,7 +2018,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1741,7 +2038,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1758,7 +2058,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1775,7 +2078,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1792,7 +2098,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1809,7 +2118,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1826,7 +2138,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1843,7 +2158,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1860,7 +2178,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1877,7 +2198,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1894,7 +2218,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1911,7 +2238,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1928,7 +2258,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1945,7 +2278,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1962,7 +2298,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1979,7 +2318,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -1996,7 +2338,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2013,7 +2358,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2030,7 +2378,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2047,7 +2398,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2064,7 +2418,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2081,7 +2438,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2098,7 +2458,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2115,7 +2478,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2132,7 +2498,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2149,7 +2518,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2166,7 +2538,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2183,7 +2558,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2200,7 +2578,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2217,7 +2598,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2234,7 +2618,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2251,7 +2638,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2268,7 +2658,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2285,7 +2678,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2302,7 +2698,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2319,7 +2718,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2336,7 +2738,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2353,7 +2758,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2370,7 +2778,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2387,7 +2798,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2404,7 +2818,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2421,7 +2838,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2438,7 +2858,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2455,7 +2878,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2472,7 +2898,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2489,7 +2918,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2506,7 +2938,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2523,7 +2958,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2540,7 +2978,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2557,7 +2998,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2574,7 +3018,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2591,7 +3038,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2608,7 +3058,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2625,7 +3078,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2642,7 +3098,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2659,7 +3118,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2676,7 +3138,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2693,7 +3158,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2710,7 +3178,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2727,7 +3198,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2744,7 +3218,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2761,7 +3238,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2778,7 +3258,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2795,7 +3278,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2812,7 +3298,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2829,7 +3318,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2846,7 +3338,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2863,7 +3358,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2880,7 +3378,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2897,7 +3398,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2914,7 +3418,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2931,7 +3438,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2948,7 +3458,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2965,7 +3478,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2982,7 +3498,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -2999,7 +3518,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3016,7 +3538,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3033,7 +3558,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3050,7 +3578,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3067,7 +3598,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3084,7 +3618,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3101,7 +3638,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3118,7 +3658,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3135,7 +3678,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3152,7 +3698,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3169,7 +3718,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3186,7 +3738,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3203,7 +3758,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3220,7 +3778,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3237,7 +3798,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3254,7 +3818,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3271,7 +3838,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3288,7 +3858,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3305,7 +3878,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3322,7 +3898,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3339,7 +3918,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3356,7 +3938,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3373,7 +3958,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3390,7 +3978,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3407,7 +3998,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3424,7 +4018,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3441,7 +4038,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3458,7 +4058,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3475,7 +4078,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3492,7 +4098,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3509,7 +4118,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3526,7 +4138,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3543,7 +4158,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3560,7 +4178,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3577,7 +4198,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:46+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3594,7 +4218,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3611,7 +4238,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3628,7 +4258,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:07+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3645,7 +4278,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3662,7 +4298,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3679,7 +4318,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3696,7 +4338,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3713,7 +4358,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3730,7 +4378,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3747,7 +4398,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3764,7 +4418,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3781,7 +4438,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3798,7 +4458,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3815,7 +4478,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3832,7 +4498,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3849,7 +4518,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3866,7 +4538,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3883,7 +4558,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3900,7 +4578,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3917,7 +4598,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3934,7 +4618,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3951,7 +4638,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3968,7 +4658,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -3985,7 +4678,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4002,7 +4698,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4019,7 +4718,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4036,7 +4738,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4053,7 +4758,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4070,7 +4778,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4087,7 +4798,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4104,7 +4818,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4121,7 +4838,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4138,7 +4858,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4155,7 +4878,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4172,7 +4898,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4189,7 +4918,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4206,7 +4938,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4223,7 +4958,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4240,7 +4978,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4257,7 +4998,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4274,7 +5018,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4291,7 +5038,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4308,7 +5058,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4325,7 +5078,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4342,7 +5098,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4359,7 +5118,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4376,7 +5138,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4393,7 +5158,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4410,7 +5178,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4427,7 +5198,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4444,7 +5218,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4461,7 +5238,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:47+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:08+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4478,7 +5258,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4495,7 +5278,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4512,7 +5298,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4529,7 +5318,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4546,7 +5338,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4563,7 +5358,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4580,7 +5378,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4597,7 +5398,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4614,7 +5418,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4631,7 +5438,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4648,7 +5458,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4665,7 +5478,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4682,7 +5498,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4699,7 +5518,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4716,7 +5538,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4733,7 +5558,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4750,7 +5578,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4767,7 +5598,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4784,7 +5618,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4801,7 +5638,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4818,7 +5658,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4835,7 +5678,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4852,7 +5698,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4869,7 +5718,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4886,7 +5738,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4903,7 +5758,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4920,7 +5778,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4937,7 +5798,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4954,7 +5818,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4971,7 +5838,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -4988,7 +5858,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -5005,7 +5878,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -5022,7 +5898,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -5039,7 +5918,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -5056,7 +5938,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -5073,7 +5958,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -5090,7 +5978,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -5107,7 +5998,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -5124,7 +6018,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -5141,7 +6038,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -5158,7 +6058,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -5175,7 +6078,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   }, {
@@ -5192,7 +6098,10 @@
     "earl:result" : {
       "@type" : "earl:TestResult",
       "earl:outcome" : "earl:passed",
-      "dc:date" : "2013-05-16T09:58:48+0200"
+      "dc:date" : {
+        "@value" : "2013-05-17T02:35:09+02:00",
+        "@type" : "xsd:dateTime"
+      }
     },
     "earl:mode" : "earl:automatic"
   } ]

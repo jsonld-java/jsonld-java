@@ -131,7 +131,7 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
 					} else {
 						// TODO: not sure if turtle is fussy about not writing string datatypes
 						if (datatype != null && !XSD_STRING.equals(datatype)) {
-							literal += "^^" + datatype;
+							literal += "^^" + getURI(datatype);
 						}
 					}
 					thisPredicate.add(literal);
