@@ -18,7 +18,7 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
 	private static final int MAX_LINE_LENGTH = 160;
 	private static final int TAB_SPACES = 4;
 	final Map<String,String> availableNamespaces = new LinkedHashMap<String, String>() {{
-		// fill with default namespaces
+		// TODO: fill with default namespaces
 	}};
 	Set<String> usedNamespaces;
 	
@@ -29,6 +29,9 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
 	
 	private void processJSONLDContext(Map<String,Object> context) {
 		// TODO: this is overly simple and will most likely fail with complicated examples
+		if (context == null) {
+			return;
+		}
 		for (String key: context.keySet()) {
 			Object value = context.get(key);
 			if (value instanceof String) {

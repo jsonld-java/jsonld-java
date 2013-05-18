@@ -8,6 +8,8 @@ import java.util.Map;
 
 import com.github.jsonldjava.impl.NQuadRDFParser;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
+import com.github.jsonldjava.impl.TurtleRDFParser;
+import com.github.jsonldjava.impl.TurtleTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
 
 import static com.github.jsonldjava.core.JSONLDUtils.*;
@@ -455,6 +457,8 @@ public class JSONLD {
 		if (options.format != null) {
 			if ("application/nquads".equals(options.format)) {
 				return toNQuads(dataset);
+			} else if ("text/turtle".equals(options.format)) {
+				return new TurtleTripleCallback().call(dataset);
 			} else {
 				throw new JSONLDProcessingError("Unknown output format.")
 					.setType(JSONLDProcessingError.Error.UNKNOWN_FORMAT)
@@ -483,6 +487,7 @@ public class JSONLD {
     private static Map<String, RDFParser> rdfParsers = new LinkedHashMap<String, RDFParser>() {{
     	// automatically register nquad serializer
     	put("application/nquads", new NQuadRDFParser());
+    	put("text/turtle", new TurtleRDFParser());
     }};
     
     public static void registerRDFParser(String format, RDFParser parser) {

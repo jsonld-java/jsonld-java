@@ -5,7 +5,8 @@ import java.util.Map;
 
 public class JSONLDProcessingError extends Exception {
 
-	Map details;
+	Map<String,Object> details;
+	private Error type;
 	
 	public JSONLDProcessingError(String string, Map<String, Object> details) {
 		super(string);
@@ -28,8 +29,16 @@ public class JSONLDProcessingError extends Exception {
 	}
 
 	public JSONLDProcessingError setType(Error error) {
-		// TODO Auto-generated method stub
+		this.type = error;
 		return this;
 	};
+	
+	public Error getType() {
+		return type;
+	}
+	
+	public Map<String,Object> getDetails() {
+		return details;
+	}
 	
 }

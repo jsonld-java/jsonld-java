@@ -363,26 +363,39 @@ public class RDFDatasetUtils {
 		return toNQuad(triple, graphName, null);
 	}
 	
-	// define partial regexes
-	final private static Pattern re_iri = Pattern.compile("(?:<([^:]+:[^>]*)>)");
-	final private static Pattern re_bnode = Pattern.compile("(_:(?:[A-Za-z][A-Za-z0-9]*))");
-	final private static Pattern re_plain = Pattern.compile("\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"");
-	final private static Pattern re_datatype = Pattern.compile("(?:\\^\\^" + re_iri + ")");
-	final private static Pattern re_language = Pattern.compile("(?:@([a-z]+(?:-[a-z0-9]+)*))");
-	final private static Pattern re_literal = Pattern.compile("(?:" + re_plain + "(?:" + re_datatype + "|" + re_language + ")?)");
-	final private static Pattern re_ws = Pattern.compile("[ \\t]+");
-	final private static Pattern re_wso = Pattern.compile("[ \\t]*");
-	final private static Pattern re_eoln = Pattern.compile("(?:\r\n)|(?:\n)|(?:\r)");
-	final private static Pattern re_empty = Pattern.compile("^" + re_wso + "$");
-	
-	// define quad part regexes
-	final private static Pattern re_subject = Pattern.compile("(?:" + re_iri + "|" + re_bnode + ")" + re_ws);
-	final private static Pattern re_property = Pattern.compile(re_iri.pattern() + re_ws.pattern());
-	final private static Pattern re_object = Pattern.compile("(?:" + re_iri + "|" + re_bnode + "|" + re_literal + ")" + re_wso);
-	final private static Pattern re_graph = Pattern.compile("(?:\\.|(?:(?:" + re_iri + "|" + re_bnode + ")" + re_wso + "\\.))");
-	
-	// full quad regex
-	final private static Pattern re_quad = Pattern.compile("^" + re_wso + re_subject + re_property + re_object + re_graph + re_wso + "$");
+	public static class Regex {
+		// define partial regexes
+		final public static Pattern IRI = Pattern.compile("(?:<([^:]+:[^>]*)>)");
+		final public static Pattern BNODE = Pattern.compile("(_:(?:[A-Za-z][A-Za-z0-9]*))");
+		final public static Pattern PLAIN = Pattern.compile("\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"");
+		final public static Pattern DATATYPE = Pattern.compile("(?:\\^\\^" + IRI + ")");
+		final public static Pattern LANGUAGE = Pattern.compile("(?:@([a-z]+(?:-[a-z0-9]+)*))");
+		final public static Pattern LITERAL = Pattern.compile("(?:" + PLAIN + "(?:" + DATATYPE + "|" + LANGUAGE + ")?)");
+		final public static Pattern WS = Pattern.compile("[ \\t]+");
+		final public static Pattern WSO = Pattern.compile("[ \\t]*");
+		final public static Pattern EOLN = Pattern.compile("(?:\r\n)|(?:\n)|(?:\r)");
+		final public static Pattern EMPTY = Pattern.compile("^" + WSO + "$");
+		
+		// define quad part regexes
+		final public static Pattern SUBJECT = Pattern.compile("(?:" + IRI + "|" + BNODE + ")" + WS);
+		final public static Pattern PROPERTY = Pattern.compile(IRI.pattern() + WS.pattern());
+		final public static Pattern OBJECT = Pattern.compile("(?:" + IRI + "|" + BNODE + "|" + LITERAL + ")" + WSO);
+		final public static Pattern GRAPH = Pattern.compile("(?:\\.|(?:(?:" + IRI + "|" + BNODE + ")" + WSO + "\\.))");
+		
+		// full quad regex
+		final public static Pattern QUAD = Pattern.compile("^" + WSO + SUBJECT + PROPERTY + OBJECT + GRAPH + WSO + "$");
+		
+		// turtle prefix line
+		final public static Pattern TTL_PREFIX_NS = Pattern.compile("(?:([a-zA-Z0-9\\.]*):)"); // TODO: chars can be more
+		final public static Pattern TTL_PREFIX_ID = Pattern.compile("^@prefix" + WS + TTL_PREFIX_NS + WS + IRI + WSO + "\\." + WSO + "$");
+		
+		final public static Pattern IWSO = Pattern.compile("^" + WSO);
+		final public static Pattern TTL_SUBJECT = Pattern.compile("^(?:" + TTL_PREFIX_NS + "([^ \\t]+)|" + BNODE + "|" + IRI + ")" + WS);
+		final public static Pattern TTL_PREDICATE = Pattern.compile("^(?:" + TTL_PREFIX_NS + "([^ \\t]+)|" + IRI + ")"  + WS);
+		final public static Pattern TTL_DATATYPE = Pattern.compile("(?:\\^\\^" + TTL_PREFIX_NS + "([^ \\t]+)|" + IRI + ")");
+		final public static Pattern TTL_LITERAL = Pattern.compile("(?:" + PLAIN + "(?:" + TTL_DATATYPE + "|" + LANGUAGE + ")?)");
+		final public static Pattern TTL_OBJECT = Pattern.compile("^(?:" + TTL_PREFIX_NS + "([^,; \\t]+)([,;\\.]?)|" + IRI + "|" + BNODE + "|" + TTL_LITERAL + ")" + WSO);
+	}
 	
 	/**
 	 * Parses RDF in the form of N-Quads.
@@ -396,18 +409,18 @@ public class RDFDatasetUtils {
 		Map<String,Object> dataset = new LinkedHashMap<String, Object>();
 		
 		// split N-Quad input into lines
-		String[] lines = re_eoln.split(input);
+		String[] lines = Regex.EOLN.split(input);
 		int lineNumber = 0;
 		for (String line : lines) {
 			lineNumber++;
 			
 			// skip empty lines
-			if (re_empty.matcher(line).matches()) {
+			if (Regex.EMPTY.matcher(line).matches()) {
 				continue;
 			}
 			
 			// parse quad
-			Matcher match = re_quad.matcher(line);
+			Matcher match = Regex.QUAD.matcher(line);
 			if (!match.matches()) {
 				throw new JSONLDProcessingError("Error while parsing N-Quads; invalid quad.")
 					.setType(JSONLDProcessingError.Error.PARSE_ERROR)
