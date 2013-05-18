@@ -103,7 +103,11 @@ public class SesameJSONLDWriterTest extends RDFWriterTest {
 		rdfParser.parse(in, "foo:bar");
 
 		assertEquals("Unexpected number of statements", 6, model.size());
-		// assertTrue(statements.contains(st1));
+		Model bnodeModel = model.filter(null, uri1,
+				vf.createLiteral(plainLit.getLabel(), XMLSchema.STRING));
+		assertEquals("Blank node was not round-tripped", 1, bnodeModel.size());
+		assertTrue("Blank node was not round-tripped as a blank node",
+				bnodeModel.subjects().iterator().next() instanceof BNode);
 		if (rdfParser.getRDFFormat().supportsContexts()) {
 			assertTrue(model.contains(st2));
 		} else {
