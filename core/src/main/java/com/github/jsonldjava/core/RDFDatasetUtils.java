@@ -229,7 +229,9 @@ public class RDFDatasetUtils {
 			}
 			if (useNativeTypes) {
 				// use native datatypes for certain xsd types
-				if (XSD_BOOLEAN.equals(type)) {
+				if (XSD_STRING.equals(type)) {
+					// don't add xsd:string 
+				} else if (XSD_BOOLEAN.equals(type)) {
 					if ("true".equals(rval.get("@value"))) {
 						rval.put("@value", Boolean.TRUE);
 					} else if ("false".equals(rval.get("@value"))) {
@@ -257,7 +259,7 @@ public class RDFDatasetUtils {
 					}
 				}
 				// do not add xsd:string type
-				else if (!XSD_STRING.equals(type)) {
+				else {
 					rval.put("@type", type);
 				}
 			} else {
@@ -595,6 +597,9 @@ public class RDFDatasetUtils {
 				put("type", "literal");
 				if (language != null) {
 					put("language", language);
+				} else if (datatype == null) {
+					// datatype should never be null in the internal format
+					put("datatype", XSD_STRING);
 				} else {
 					put("datatype", datatype);
 				}
