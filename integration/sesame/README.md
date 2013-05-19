@@ -36,8 +36,6 @@ To parse a JSON-LD document into a RepositoryConnection:
         repositoryConnection.close();
     }
 
-If necessary, you can replace "Rio.createParser" with "new com.github.jsonldjava.impl.SesameJSONLDParserFactory().createParser"
-
 Writing JSON-LD using Sesame
 ----------------------------
 
