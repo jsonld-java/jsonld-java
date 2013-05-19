@@ -57,6 +57,8 @@ To export statements from a Repository to a JSON-LD document:
         // Optionally define what JSON-LD profile is to be used
         // The Expand mode is used by default
         writer.getWriterConfig().set(JSONLDSettings.JSONLD_MODE, JSONLDMode.EXPAND);
+        // Switch from the default JSON pretty-print to a white-space reduced JSON representation
+        writer.getWriterConfig().set(BasicWriterSettings.PRETTY_PRINT, false);
         repositoryConnection.export(writer, contextToExport);
     } finally {
         repositoryConnection.close();
