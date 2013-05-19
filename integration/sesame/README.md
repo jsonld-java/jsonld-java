@@ -54,6 +54,9 @@ To export statements from a Repository to a JSON-LD document:
     org.openrdf.repository.RepositoryConnection repositoryConnection = myRepository.getConnection();
     try {
         org.openrdf.rio.RDFWriter writer = Rio.createWriter(RDFFormat.JSONLD, outputStream);
+        // Optionally define what JSON-LD profile is to be used
+        // The Expand mode is used by default
+        writer.getWriterConfig().set(JSONLDSettings.JSONLD_MODE, JSONLDMode.EXPAND);
         repositoryConnection.export(writer, contextToExport);
     } finally {
         repositoryConnection.close();
