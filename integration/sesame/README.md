@@ -13,12 +13,50 @@ From Maven
         <version>0.1</version>
     </dependency>
 
-SesameRDFParser
--------------
+Parsing JSON-LD using Sesame
+----------------------------
+    
+To parse a JSON-LD document to a Model:
 
-TODO
+    InputStream inputStream = ...;
+    String baseURI = "http://example.org/baseuri/";
+    org.openrdf.model.Model statements = Rio.parse(inputStream, baseURI, RDFFormat.JSONLD);
 
-JenaTripleCallback
-------------------
+To parse a JSON-LD document into a RepositoryConnection:
 
-TODO
+    org.openrdf.repository.Repository myRepository = ...;
+    InputStream inputStream = ...;
+    String baseURI = "http://example.org/baseuri/";
+    org.openrdf.model.Resource contextToInsertTo = ...;
+    
+    org.openrdf.repository.RepositoryConnection repositoryConnection = myRepository.getConnection();
+    try {
+        repositoryConnection.add(inputStream, baseURI, RDFFormat.JSONLD, contextToInsertTo);
+    } finally {
+        repositoryConnection.close();
+    }
+
+If necessary, you can replace "Rio.createParser" with "new com.github.jsonldjava.impl.SesameJSONLDParserFactory().createParser"
+
+Writing JSON-LD using Sesame
+----------------------------
+
+To write a Java Iterable<Statement> to a JSON-LD document:
+
+    Iterable<Statement> statements = ...;
+    OutputStream outputStream = ...;
+    Rio.write(statements, outputStream, RDFFormat.JSONLD);
+
+To export statements from a Repository to a JSON-LD document:
+
+    org.openrdf.repository.Repository myRepository = ...;
+    org.openrdf.model.Resource contextToExport = ...;
+    OutputStream outputStream = ...;
+    
+    org.openrdf.repository.RepositoryConnection repositoryConnection = myRepository.getConnection();
+    try {
+        org.openrdf.rio.RDFWriter writer = Rio.createWriter(RDFFormat.JSONLD, outputStream);
+        repositoryConnection.export(writer, contextToExport);
+    } finally {
+        repositoryConnection.close();
+    }
