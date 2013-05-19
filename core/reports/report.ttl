@@ -26,7 +26,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0001> ] .
@@ -35,7 +35,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0002> ] .
@@ -44,7 +44,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0003> ] .
@@ -53,7 +53,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0004> ] .
@@ -62,7 +62,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0005> ] .
@@ -71,7 +71,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0006> ] .
@@ -80,7 +80,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0007> ] .
@@ -89,7 +89,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0008> ] .
@@ -98,7 +98,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0009> ] .
@@ -107,7 +107,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0010> ] .
@@ -116,7 +116,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0011> ] .
@@ -125,7 +125,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0012> ] .
@@ -134,7 +134,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0013> ] .
@@ -143,7 +143,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0014> ] .
@@ -152,7 +152,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0015> ] .
@@ -161,7 +161,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0016> ] .
@@ -170,7 +170,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0017> ] .
@@ -179,7 +179,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0018> ] .
@@ -188,7 +188,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0019> ] .
@@ -197,7 +197,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0020> ] .
@@ -206,7 +206,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0021> ] .
@@ -215,7 +215,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0022> ] .
@@ -224,7 +224,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0023> ] .
@@ -233,7 +233,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0024> ] .
@@ -242,7 +242,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0025> ] .
@@ -251,7 +251,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0026> ] .
@@ -260,7 +260,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0027> ] .
@@ -269,7 +269,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0028> ] .
@@ -278,7 +278,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0029> ] .
@@ -287,7 +287,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0030> ] .
@@ -296,7 +296,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0031> ] .
@@ -305,7 +305,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0032> ] .
@@ -314,7 +314,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0033> ] .
@@ -323,7 +323,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0034> ] .
@@ -332,7 +332,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0035> ] .
@@ -341,7 +341,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0036> ] .
@@ -350,7 +350,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0037> ] .
@@ -359,7 +359,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0038> ] .
@@ -368,7 +368,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0039> ] .
@@ -377,7 +377,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0040> ] .
@@ -386,7 +386,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0041> ] .
@@ -395,7 +395,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0042> ] .
@@ -404,7 +404,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0043> ] .
@@ -413,7 +413,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:06+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0044> ] .
@@ -422,7 +422,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0045> ] .
@@ -431,7 +431,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0046> ] .
@@ -440,7 +440,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0047> ] .
@@ -449,7 +449,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0048> ] .
@@ -458,7 +458,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0049> ] .
@@ -467,7 +467,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0051> ] .
@@ -476,7 +476,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0052> ] .
@@ -485,7 +485,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0053> ] .
@@ -494,7 +494,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0054> ] .
@@ -503,7 +503,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0055> ] .
@@ -512,7 +512,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0056> ] .
@@ -521,7 +521,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0057> ] .
@@ -530,7 +530,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0058> ] .
@@ -539,7 +539,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0059> ] .
@@ -548,7 +548,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0060> ] .
@@ -557,7 +557,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0061> ] .
@@ -566,7 +566,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0062> ] .
@@ -575,7 +575,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0063> ] .
@@ -584,7 +584,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0064> ] .
@@ -593,7 +593,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0065> ] .
@@ -602,7 +602,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0066> ] .
@@ -611,7 +611,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0067> ] .
@@ -620,7 +620,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:semiAuto" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:04+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/error-expand-manifest.jsonld#t0001> ] .
@@ -629,7 +629,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0001> ] .
@@ -638,7 +638,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0002> ] .
@@ -647,7 +647,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0003> ] .
@@ -656,7 +656,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0004> ] .
@@ -665,7 +665,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0005> ] .
@@ -674,7 +674,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0006> ] .
@@ -683,7 +683,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0007> ] .
@@ -692,7 +692,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0008> ] .
@@ -701,7 +701,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0009> ] .
@@ -710,7 +710,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0010> ] .
@@ -719,7 +719,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0011> ] .
@@ -728,7 +728,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0012> ] .
@@ -737,7 +737,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0013> ] .
@@ -746,7 +746,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0014> ] .
@@ -755,7 +755,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0015> ] .
@@ -764,7 +764,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0016> ] .
@@ -773,7 +773,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0017> ] .
@@ -782,7 +782,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0018> ] .
@@ -791,7 +791,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0019> ] .
@@ -800,7 +800,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0020> ] .
@@ -809,7 +809,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0021> ] .
@@ -818,7 +818,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0022> ] .
@@ -827,7 +827,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0023> ] .
@@ -836,7 +836,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0024> ] .
@@ -845,7 +845,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0025> ] .
@@ -854,7 +854,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0026> ] .
@@ -863,7 +863,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0027> ] .
@@ -872,7 +872,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0028> ] .
@@ -881,7 +881,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0029> ] .
@@ -890,7 +890,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0030> ] .
@@ -899,7 +899,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0031> ] .
@@ -908,7 +908,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0032> ] .
@@ -917,7 +917,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0033> ] .
@@ -926,7 +926,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0034> ] .
@@ -935,7 +935,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0035> ] .
@@ -944,7 +944,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0036> ] .
@@ -953,7 +953,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0037> ] .
@@ -962,7 +962,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0038> ] .
@@ -971,7 +971,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0039> ] .
@@ -980,7 +980,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0040> ] .
@@ -989,7 +989,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0041> ] .
@@ -998,7 +998,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0042> ] .
@@ -1007,7 +1007,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0043> ] .
@@ -1016,7 +1016,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0044> ] .
@@ -1025,7 +1025,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0045> ] .
@@ -1034,7 +1034,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0046> ] .
@@ -1043,7 +1043,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0047> ] .
@@ -1052,7 +1052,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0048> ] .
@@ -1061,7 +1061,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0049> ] .
@@ -1070,7 +1070,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0050> ] .
@@ -1079,7 +1079,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0051> ] .
@@ -1088,7 +1088,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0052> ] .
@@ -1097,7 +1097,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0053> ] .
@@ -1106,7 +1106,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0054> ] .
@@ -1115,7 +1115,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0055> ] .
@@ -1124,7 +1124,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0056> ] .
@@ -1133,7 +1133,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0057> ] .
@@ -1142,7 +1142,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0058> ] .
@@ -1151,7 +1151,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0059> ] .
@@ -1160,7 +1160,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0060> ] .
@@ -1169,7 +1169,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0061> ] .
@@ -1178,7 +1178,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0062> ] .
@@ -1187,7 +1187,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0063> ] .
@@ -1196,7 +1196,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0064> ] .
@@ -1205,7 +1205,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0065> ] .
@@ -1214,7 +1214,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0066> ] .
@@ -1223,7 +1223,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0067> ] .
@@ -1232,7 +1232,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0069> ] .
@@ -1241,7 +1241,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0070> ] .
@@ -1250,7 +1250,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0071> ] .
@@ -1259,7 +1259,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0072> ] .
@@ -1268,7 +1268,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0001> ] .
@@ -1277,7 +1277,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0002> ] .
@@ -1286,7 +1286,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0003> ] .
@@ -1295,7 +1295,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0004> ] .
@@ -1304,7 +1304,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0005> ] .
@@ -1313,7 +1313,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0006> ] .
@@ -1322,7 +1322,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0007> ] .
@@ -1331,7 +1331,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0008> ] .
@@ -1340,7 +1340,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0009> ] .
@@ -1349,7 +1349,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0010> ] .
@@ -1358,7 +1358,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0011> ] .
@@ -1367,7 +1367,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0012> ] .
@@ -1376,7 +1376,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0013> ] .
@@ -1385,7 +1385,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0014> ] .
@@ -1394,7 +1394,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0015> ] .
@@ -1403,7 +1403,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0016> ] .
@@ -1412,7 +1412,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0017> ] .
@@ -1421,7 +1421,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0018> ] .
@@ -1430,7 +1430,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0019> ] .
@@ -1439,7 +1439,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0020> ] .
@@ -1448,7 +1448,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0021> ] .
@@ -1457,7 +1457,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0022> ] .
@@ -1466,7 +1466,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0023> ] .
@@ -1475,7 +1475,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0024> ] .
@@ -1484,7 +1484,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0025> ] .
@@ -1493,7 +1493,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0026> ] .
@@ -1502,7 +1502,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0027> ] .
@@ -1511,7 +1511,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0028> ] .
@@ -1520,7 +1520,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0029> ] .
@@ -1529,7 +1529,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0030> ] .
@@ -1538,7 +1538,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0031> ] .
@@ -1547,7 +1547,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0032> ] .
@@ -1556,7 +1556,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0033> ] .
@@ -1565,7 +1565,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0034> ] .
@@ -1574,7 +1574,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0035> ] .
@@ -1583,7 +1583,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0036> ] .
@@ -1592,7 +1592,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0037> ] .
@@ -1601,7 +1601,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0038> ] .
@@ -1610,7 +1610,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0039> ] .
@@ -1619,7 +1619,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0040> ] .
@@ -1628,7 +1628,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0041> ] .
@@ -1637,7 +1637,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0042> ] .
@@ -1646,7 +1646,16 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
+        earl:outcome "earl:passed" ] ;
+    earl:subject <http://github.com/jsonld-java/jsonld-java> ;
+    earl:test <http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0043> ] .
+
+[ a earl:Assertion ;
+    earl:assertedBy <http://tristan.github.com/foaf#me> ;
+    earl:mode "earl:automatic" ;
+    earl:result [ a earl:TestResult ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0001> ] .
@@ -1655,7 +1664,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0002> ] .
@@ -1664,7 +1673,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0003> ] .
@@ -1673,7 +1682,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0004> ] .
@@ -1682,7 +1691,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0005> ] .
@@ -1691,7 +1700,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0006> ] .
@@ -1700,7 +1709,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0007> ] .
@@ -1709,7 +1718,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0008> ] .
@@ -1718,7 +1727,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0009> ] .
@@ -1727,7 +1736,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0010> ] .
@@ -1736,7 +1745,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0011> ] .
@@ -1745,7 +1754,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0012> ] .
@@ -1754,7 +1763,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0013> ] .
@@ -1763,7 +1772,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0014> ] .
@@ -1772,7 +1781,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0015> ] .
@@ -1781,7 +1790,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0015> ] .
@@ -1790,7 +1799,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0016> ] .
@@ -1799,7 +1808,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0017> ] .
@@ -1808,7 +1817,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0018> ] .
@@ -1817,7 +1826,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0019> ] .
@@ -1826,7 +1835,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0020> ] .
@@ -1835,7 +1844,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0001> ] .
@@ -1844,7 +1853,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0002> ] .
@@ -1853,7 +1862,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0003> ] .
@@ -1862,7 +1871,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0004> ] .
@@ -1871,7 +1880,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0005> ] .
@@ -1880,7 +1889,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0006> ] .
@@ -1889,7 +1898,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0007> ] .
@@ -1898,7 +1907,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0008> ] .
@@ -1907,7 +1916,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0009> ] .
@@ -1916,7 +1925,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:07+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0010> ] .
@@ -1925,7 +1934,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0011> ] .
@@ -1934,7 +1943,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0012> ] .
@@ -1943,7 +1952,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0013> ] .
@@ -1952,7 +1961,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0014> ] .
@@ -1961,7 +1970,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0015> ] .
@@ -1970,7 +1979,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0001> ] .
@@ -1979,7 +1988,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0002> ] .
@@ -1988,7 +1997,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0003> ] .
@@ -1997,7 +2006,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0004> ] .
@@ -2006,7 +2015,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0005> ] .
@@ -2015,7 +2024,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0006> ] .
@@ -2024,7 +2033,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0007> ] .
@@ -2033,7 +2042,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:05+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0008> ] .
@@ -2042,7 +2051,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0009> ] .
@@ -2051,7 +2060,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0010> ] .
@@ -2060,7 +2069,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0011> ] .
@@ -2069,7 +2078,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0012> ] .
@@ -2078,7 +2087,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0013> ] .
@@ -2087,7 +2096,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0014> ] .
@@ -2096,7 +2105,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0015> ] .
@@ -2105,7 +2114,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0016> ] .
@@ -2114,7 +2123,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0017> ] .
@@ -2123,7 +2132,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0018> ] .
@@ -2132,7 +2141,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0019> ] .
@@ -2141,7 +2150,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0020> ] .
@@ -2150,7 +2159,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0021> ] .
@@ -2159,7 +2168,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0022> ] .
@@ -2168,7 +2177,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0023> ] .
@@ -2177,7 +2186,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0024> ] .
@@ -2186,7 +2195,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0025> ] .
@@ -2195,7 +2204,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0026> ] .
@@ -2204,7 +2213,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0027> ] .
@@ -2213,7 +2222,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0028> ] .
@@ -2222,7 +2231,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0029> ] .
@@ -2231,7 +2240,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0030> ] .
@@ -2240,7 +2249,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0031> ] .
@@ -2249,7 +2258,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0032> ] .
@@ -2258,7 +2267,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0033> ] .
@@ -2267,7 +2276,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0034> ] .
@@ -2276,7 +2285,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0035> ] .
@@ -2285,7 +2294,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0036> ] .
@@ -2294,7 +2303,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0037> ] .
@@ -2303,7 +2312,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0038> ] .
@@ -2312,7 +2321,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0039> ] .
@@ -2321,7 +2330,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0040> ] .
@@ -2330,7 +2339,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0041> ] .
@@ -2339,7 +2348,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0042> ] .
@@ -2348,7 +2357,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0043> ] .
@@ -2357,7 +2366,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:08+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:06+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0044> ] .
@@ -2366,7 +2375,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0045> ] .
@@ -2375,7 +2384,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0046> ] .
@@ -2384,7 +2393,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0047> ] .
@@ -2393,7 +2402,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0048> ] .
@@ -2402,7 +2411,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0049> ] .
@@ -2411,7 +2420,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0050> ] .
@@ -2420,7 +2429,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0051> ] .
@@ -2429,7 +2438,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0052> ] .
@@ -2438,7 +2447,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0053> ] .
@@ -2447,7 +2456,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0054> ] .
@@ -2456,7 +2465,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0055> ] .
@@ -2465,7 +2474,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0056> ] .
@@ -2474,7 +2483,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0057> ] .
@@ -2483,7 +2492,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0001> ] .
@@ -2492,7 +2501,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0002> ] .
@@ -2501,7 +2510,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0003> ] .
@@ -2510,7 +2519,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0004> ] .
@@ -2519,7 +2528,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0005> ] .
@@ -2528,7 +2537,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0006> ] .
@@ -2537,7 +2546,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0007> ] .
@@ -2546,7 +2555,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0008> ] .
@@ -2555,7 +2564,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0009> ] .
@@ -2564,7 +2573,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0010> ] .
@@ -2573,7 +2582,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0011> ] .
@@ -2582,7 +2591,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0012> ] .
@@ -2591,7 +2600,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0013> ] .
@@ -2600,7 +2609,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0014> ] .
@@ -2609,7 +2618,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0015> ] .
@@ -2618,7 +2627,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0016> ] .
@@ -2627,7 +2636,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0017> ] .
@@ -2636,7 +2645,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0018> ] .
@@ -2645,7 +2654,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0019> ] .
@@ -2654,7 +2663,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0020> ] .
@@ -2663,7 +2672,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0021> ] .
@@ -2672,7 +2681,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0022> ] .
@@ -2681,7 +2690,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0023> ] .
@@ -2690,7 +2699,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0024> ] .
@@ -2699,7 +2708,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0025> ] .
@@ -2708,7 +2717,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0026> ] .
@@ -2717,7 +2726,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0027> ] .
@@ -2726,7 +2735,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0028> ] .
@@ -2735,7 +2744,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0029> ] .
@@ -2744,7 +2753,7 @@
     earl:assertedBy <http://tristan.github.com/foaf#me> ;
     earl:mode "earl:automatic" ;
     earl:result [ a earl:TestResult ;
-        dc:date "2013-05-17T02:35:09+02:00"^^xsd:dateTime ;
+        dc:date "2013-05-19T03:12:07+02:00"^^xsd:dateTime ;
         earl:outcome "earl:passed" ] ;
     earl:subject <http://github.com/jsonld-java/jsonld-java> ;
     earl:test <http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0030> ] .
