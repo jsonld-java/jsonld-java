@@ -45,7 +45,7 @@ public interface RDFParser {
 	 *  triple = generateTriple(s,p,value,datatype,language);
 	 *  addTripleToRDFDatasetResult(result, graphName, triple);
 	 *   
-	 * @param dataset
+	 * @param dataset The RDF library specific input to parse
 	 * @return input in internal RDF Dataset format
 	 * @throws JSONLDProcessingError
 	 */

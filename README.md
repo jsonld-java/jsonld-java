@@ -31,7 +31,7 @@ run `mvn install -DskipTests=true` to install the jar into your local maven repo
 
 ### RDF implementation specific code
 
-All code specific to various RDF implementations (e.g. jena, sesame, etc) are stored in the [integration modules](./tree/master/integration). Readmes for how to use these modules should be present in their respective folders.
+All code specific to various RDF implementations (e.g. jena, sesame, etc) are stored in the [integration modules](./integration). Readmes for how to use these modules should be present in their respective folders.
 
 ### running tests
 
