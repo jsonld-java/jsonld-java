@@ -58,26 +58,20 @@ public class SesameTripleCallback implements JSONLDTripleCallback {
 			return;
 		}
 
+		Statement result;
 		// This method is always called with three Resources as subject predicate and
 		// object
 		if (graph == null) {
-			Statement result = vf.createStatement(createResource(s),
-					vf.createURI(p), createResource(o));
-			try {
-				handler.handleStatement(result);
-			} catch (RDFHandlerException e) {
-				throw new RuntimeException(e);
-			}
+			result = vf.createStatement(createResource(s), vf.createURI(p), createResource(o));
 		} else {
-			Statement result = vf.createStatement(createResource(s),
-					vf.createURI(p), createResource(o), createResource(graph));
-			try {
-				handler.handleStatement(result);
-			} catch (RDFHandlerException e) {
-				throw new RuntimeException(e);
-			}
+			result = vf.createStatement(createResource(s), vf.createURI(p), createResource(o), createResource(graph));
 		}
 
+		try {
+			handler.handleStatement(result);
+		} catch (RDFHandlerException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private Resource createResource(String resource) {
