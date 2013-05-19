@@ -84,6 +84,12 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
 CHANGELOG
 =========
 
+### 19.05.2013
+
+* Added Turtle RDFParser and TripleCallback
+* Changed Maven groupIds to `com.github.jsonld-java` to match github domain.
+* Released version 0.1
+
 ### 16.05.2013
 
 * Updated core code to match [JSON-LD 1.0 Processing Algorithms and API / W3C Editor's Draft 14 May 2013](http://json-ld.org/spec/latest/json-ld-api/)
