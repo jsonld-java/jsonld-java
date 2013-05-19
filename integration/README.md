@@ -118,12 +118,12 @@ For Example: Follow the first few steps in the section above to import the whole
 Create RDFParser Implementation
 -------------------------------
 
-The interface `com.github.jsonldjava.core.RDFParser` is used to parse RDF from the library into the JSONLD-Java internal RDF format. See the documentation in `jsonld-java/core/src/main/java/com/github/jsonldjava/core/RDFParser.java` for details on how to implement this interface.
+The interface `com.github.jsonldjava.core.RDFParser` is used to parse RDF from the library into the JSONLD-Java internal RDF format. See the documentation in [`RDFParser.java`](../core/src/main/java/com/github/jsonldjava/core/RDFParser.java) for details on how to implement this interface.
 
 Create TripleCallback Implementation
 ------------------------------------
 
-The interface `com.github.jsonldjava.core.JSONLDTripleCallback` is used to generate a representation of the JSON-LD input in the RDF library. See the documentation in `jsonld-java/core/src/main/java/com/github/jsonldjava/core/JSONLDTripleCallback.java` for details on how to implement this interface.
+The interface `com.github.jsonldjava.core.JSONLDTripleCallback` is used to generate a representation of the JSON-LD input in the RDF library. See the documentation in [`JSONLDTripleCallback.java`](../core/src/main/java/com/github/jsonldjava/core/JSONLDTripleCallback.java) for details on how to implement this interface.
 
 Using your Implementations
 --------------------------

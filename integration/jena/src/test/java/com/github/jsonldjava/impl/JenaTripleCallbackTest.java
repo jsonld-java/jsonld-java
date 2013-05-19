@@ -15,7 +15,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.core.JSONLDProcessor;
 import com.github.jsonldjava.core.JSONLDTripleCallback;
 import com.github.jsonldjava.impl.JenaTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;

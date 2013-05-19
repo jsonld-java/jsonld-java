@@ -3,55 +3,20 @@ JSONLD-JAVA
 
 This is a Java implementation of the JSON-LD specification (http://json-ld.org/).
 
-The code is mostly based off the jsonld.js implementation found on the json-ld homepage.
-
 USAGE
 =====
 
-In Java
--------
-
-### compiling
-
-jsonld-java uses maven to compile
-
-    mvn compile
-
-### packaging
-
-run `mvn install -DskipTests=true` to install the jar into your local maven repository.
-
-### in your project (maven specific)
+From Maven
+----------
 
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.1</version>
     </dependency>
 
-### RDF implementation specific code
-
-All code specific to various RDF implementations (e.g. jena, sesame, etc) are stored in the [integration modules](./integration). Readmes for how to use these modules should be present in their respective folders.
-
-### running tests
-
-    mvn test
-
-or
-
-    mvn test -pl core
-
-to run only core package tests
-
-### Generating Implementation Report
-
-Implementation Reports conforming to the [JSON-LD Implementation Report](http://json-ld.org/test-suite/reports/#instructions-for-submitting-implementation-reports) document can be generated using the following command:
-
-    mvn test -pl core -Dtest=JSONLDProcessorTest -Dreport.format=<format>
-
-Current possible values for `<format>` include JSON-LD (`application/ld+json` or `jsonld`), NQuads (`text/plain`, `nquads`, `ntriples`, `nq` or `nt`) and Turtle (`text/turtle`, `turtle` or `ttl`). `*` can be used to generate reports in all available formats.
-
-### code example
+Code example
+------------
 
     // Open a valid json(-ld) input file
     InputStream inputStream = new FileInputStream("input.json");
@@ -63,14 +28,20 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
     // Print out the result (or don't, it's your call!)
     System.out.println(JSONUtils.toString(normalized));
 
-### Processor options
+Processor options
+-----------------
 
 The Options specified by the [JSON-LD API Specification](http://json-ld.org/spec/latest/json-ld-api/#jsonldoptions) are accessible via the `com.github.jsonldjava.core.Options` class, and each `JSONLD.*` function has an optional input to take an instance of this class.
+
+RDF implementation specific code
+--------------------------------
+
+All code specific to various RDF implementations (e.g. jena, sesame, etc) are stored in the [integration modules](./integration). Readmes for how to use these modules should be present in their respective folders.
 
 PLAYGROUND
 ----------
 
-This is a simple function which takes an input file in rdfxml or n3 and outputs it in JSON-LD
+This is a simple application which provides command line access to JSON-LD functions
 
 ### initial setup
 
@@ -82,6 +53,33 @@ This is a simple function which takes an input file in rdfxml or n3 and outputs 
 run the following to get usage details:
 
     ./tools/target/appassembler/bin/jsonldplayground
+
+For Developers
+--------------
+
+### Compiling & Packaging
+
+`jsonld-java` uses maven to compile. From the base `jsonld-java` module run `mvn install -DskipTests=true` to install the jar into your local maven repository.
+
+
+### Running tests
+
+    mvn test
+
+or
+
+    mvn test -pl core
+
+to run only core package tests
+
+
+### Generating Implementation Report
+
+Implementation Reports conforming to the [JSON-LD Implementation Report](http://json-ld.org/test-suite/reports/#instructions-for-submitting-implementation-reports) document can be generated using the following command:
+
+    mvn test -pl core -Dtest=JSONLDProcessorTest -Dreport.format=<format>
+
+Current possible values for `<format>` include JSON-LD (`application/ld+json` or `jsonld`), NQuads (`text/plain`, `nquads`, `ntriples`, `nq` or `nt`) and Turtle (`text/turtle`, `turtle` or `ttl`). `*` can be used to generate reports in all available formats.
 
 CHANGELOG
 =========

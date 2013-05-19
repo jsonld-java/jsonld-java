@@ -26,8 +26,7 @@ public class ClerezzaTripleCallbackTest {
 		
 		ClerezzaTripleCallback callback = new ClerezzaTripleCallback();
 
-		JSONLD.toRDF(input, callback);
-		MGraph graph = callback.getMGraph();
+		MGraph graph = (MGraph)JSONLD.toRDF(input, callback);
 
 		for (Triple t : graph) {
 			System.out.println(t);
@@ -43,8 +42,7 @@ public class ClerezzaTripleCallbackTest {
 		
 		ClerezzaTripleCallback callback = new ClerezzaTripleCallback();
 
-		JSONLD.toRDF(input, callback);
-		MGraph graph = callback.getMGraph();
+		MGraph graph = (MGraph)JSONLD.toRDF(input, callback);
 
 		for (Triple t : graph) {
 			System.out.println(t);
