@@ -31,26 +31,6 @@ com.github.jsonldjava.core.RDFParser {
 		//_context.put(prefix, fullUri);
 	}
 
-	@SuppressWarnings("deprecation")
-	public void importGraph(Graph model, Resource... contexts) {
-		Map<String,Object> result = RDFDatasetUtils.getInitialRDFDatasetResult();
-		
-		if(model instanceof Model) {
-        	        Set<Namespace> namespaces = ((Model) model).getNamespaces();
-        	        for (Namespace nextNs : namespaces) {
-        	            setPrefix(nextNs.getName(), nextNs.getPrefix());
-        	        }
-		}
-		
-		Iterator<Statement> statements = model
-				.match(null, null, null, contexts);
-		while (statements.hasNext()) {
-			handleStatement(result, statements.next());
-		}
-		
-		// TODO: return something? i'm leaving this to Ansell to fix up to match his requirements
-	}
-
 	public void handleStatement(Map<String,Object> result, Statement nextStatement) {
 		// TODO: from a basic look at the code it seems some of these could be null
 		// null values for IRIs will probably break things further down the line
@@ -106,6 +86,13 @@ com.github.jsonldjava.core.RDFParser {
 		if (input instanceof Statement) {
 			handleStatement(result, (Statement) input);
 		} else if (input instanceof Graph) {
+			if(input instanceof Model) {
+    	        Set<Namespace> namespaces = ((Model) input).getNamespaces();
+    	        for (Namespace nextNs : namespaces) {
+    	            setPrefix(nextNs.getName(), nextNs.getPrefix());
+    	        }
+			}
+	
 			for (Statement nextStatement : (Graph) input) {
 				handleStatement(result, nextStatement);
 			}
