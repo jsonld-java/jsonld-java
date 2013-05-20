@@ -572,7 +572,7 @@ public class JSONLD {
     	RDFDataset dataset = parser.parse(input);
     	    	
     	// convert from RDF
-    	Object rval = new JSONLDProcessor(options).fromRDF((Map<String,Object>)dataset);
+    	Object rval = new JSONLDProcessor(options).fromRDF(dataset);
 
     	// re-process using the generated context if outputForm is set
 		if (options.outputForm != null) {

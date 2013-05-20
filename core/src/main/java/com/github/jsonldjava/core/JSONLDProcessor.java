@@ -1288,16 +1288,16 @@ public class JSONLDProcessor {
 	 * @param callback(err, output) called once the operation completes.
 	 * @throws JSONLDProcessingError 
 	 */
-	public List<Object> fromRDF(final Map<String, Object> dataset) throws JSONLDProcessingError {
+	public List<Object> fromRDF(final RDFDataset dataset) throws JSONLDProcessingError {
 		final Map<String,Object> defaultGraph = new LinkedHashMap<String, Object>();
 		final Map<String,Map<String,Object>> graphMap = new LinkedHashMap<String, Map<String,Object>>() {{
 			put("@default", defaultGraph);
 		}};
 		
 		// For each graph in RDF dataset
-		for (final String name : dataset.keySet()) {
+		for (final String name : dataset.graphNames()) {
 			
-			final List<Map<String,Object>> graph = (List<Map<String,Object>>)dataset.get(name);
+			final List<RDFDataset.Quad> graph = dataset.getQuads(name);
 			
 			// If graph map has no name member, create one and set its value to an empty JSON object.
 			Map<String,Object> nodeMap;
@@ -1317,10 +1317,10 @@ public class JSONLDProcessor {
 			}
 			
 			// For each RDF triple in graph consisting of subject, predicate, and object
-			for (Map<String,Object> triple: graph) {
-				final String subject = (String)Obj.get(triple, "subject", "value");
-				final String predicate = (String)Obj.get(triple, "predicate", "value");
-				final Map<String,Object> object = (Map<String, Object>) triple.get("object");
+			for (RDFDataset.Quad triple: graph) {
+				final String subject = triple.getSubject().getValue();
+				final String predicate = triple.getPredicate().getValue();
+				final RDFDataset.Node object = triple.getObject();
 				
 				// If node map does not have a subject member, create one and initialize its value to a new JSON object 
 				// consisting of a single member @id whose value is set to subject.
@@ -1336,31 +1336,31 @@ public class JSONLDProcessor {
 				
 				// If object is an IRI or blank node identifier, does not equal rdf:nil, and node map does not have an object member, 
 				// create one and initialize its value to a new JSON object consisting of a single member @id whose value is set to object.
-				if (("IRI".equals(object.get("type")) || ((String)object.get("value")).startsWith("_:")) 
-						&& !RDF_NIL.equals(object.get("value")) && !nodeMap.containsKey(object.get("value"))) {
-					nodeMap.put((String)object.get("value"), new LinkedHashMap<String, Object>() {{ 
-						put("@id", object.get("value"));
+				if ((object.isIRI() || object.isBlankNode())
+						&& !RDF_NIL.equals(object.getValue()) && !nodeMap.containsKey(object.getValue())) {
+					nodeMap.put(object.getValue(), new LinkedHashMap<String, Object>() {{
+						put("@id", object.getValue());
 					}});
 				}
 				
 				// If predicate equals rdf:type, and object is an IRI or blank node identifier, append object to the value of the
 				// @type member of node. If no such member exists, create one and initialize it to an array whose only item is object. 
 				// Finally, continue to the next RDF triple
-				if (RDF_TYPE.equals(predicate) && ("IRI".equals(object.get("type")) || ((String)object.get("value")).startsWith("_:"))) {
-					addValue(node, "@type", object.get("value"), true);
+				if (RDF_TYPE.equals(predicate) && (object.isIRI() || object.isBlankNode())) {
+					addValue(node, "@type", object.getValue(), true);
 					continue;
 				}
 				
 				// If object equals rdf:nil and predicate does not equal rdf:rest, set value to a new JSON object 
 				// consisting of a single member @list whose value is set to an empty array.
 				Map<String,Object> value;
-				if (RDF_NIL.equals(object.get("value")) && !RDF_REST.equals(predicate)) {
+				if (RDF_NIL.equals(object.getValue()) && !RDF_REST.equals(predicate)) {
 					value = new LinkedHashMap<String, Object>() {{
 						put("@list", new ArrayList<Object>());
 					}};
 				} else {
 					// Otherwise, set value to the result of using the RDF to Object Conversion algorithm, passing object and use native types.
-					value = RDFToObject(object, opts.useNativeTypes);
+					value = object.toObject(opts.useNativeTypes);
 				}
 				
 				// If node does not have an predicate member, create one and initialize its value to an empty array.
@@ -1368,10 +1368,10 @@ public class JSONLDProcessor {
 				addValue(node, predicate, value, true);
 				
 				// If object is a blank node identifier and predicate equals neither rdf:first nor rdf:rest, it might represent the head of a RDF list
-				if ("blank node".equals(object.get("type")) && !RDF_FIRST.equals(predicate) && !RDF_REST.equals(predicate)) {
+				if (object.isBlankNode() && !RDF_FIRST.equals(predicate) && !RDF_REST.equals(predicate)) {
 					// If the object member of node map has an usages member, add a reference to value to it; 
 					// otherwise create such a member and set its value to an array whose only item is a reference to value.
-					addValue((Map<String, Object>)nodeMap.get(object.get("value")), "usages", value, true);
+					addValue((Map<String, Object>)nodeMap.get(object.getValue()), "usages", value, true);
 				}
 			}
 		}

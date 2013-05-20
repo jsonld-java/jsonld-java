@@ -94,7 +94,7 @@ class NormalizeUtils {
 										}
 									}
 								}
-								normalized.add(toNQuad(quad, quad.containsKey("name") && quad.get("name") != null ? (String)((Map<String, Object>) quad.get("name")).get("value") : null));
+								normalized.add(toNQuad((RDFDataset.Quad)quad, quad.containsKey("name") && quad.get("name") != null ? (String)((Map<String, Object>) quad.get("name")).get("value") : null));
 							}
 							
 							// sort normalized output
@@ -400,7 +400,7 @@ class NormalizeUtils {
 		List<Map<String,Object>> quads = (List<Map<String,Object>>) ((Map<String, Object>) bnodes.get(id)).get("quads");
 		List<String> nquads = new ArrayList<String>();
 		for (int i = 0; i < quads.size(); ++i) {
-			nquads.add(toNQuad(quads.get(i), quads.get(i).get("name") != null ? (String)((Map<String, Object>) quads.get(i).get("name")).get("value") : null, id));
+			nquads.add(toNQuad((RDFDataset.Quad)quads.get(i), quads.get(i).get("name") != null ? (String)((Map<String, Object>) quads.get(i).get("name")).get("value") : null, id));
 		}
 		// sort serialized quads
 		Collections.sort(nquads);

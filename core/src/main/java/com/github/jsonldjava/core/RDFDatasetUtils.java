@@ -190,95 +190,15 @@ public class RDFDatasetUtils {
 		
 		return object;
 	}
-	
-	/**
-	 * Converts an RDF triple object to a JSON-LD object.
-	 *
-	 * @param o the RDF triple object to convert.
-	 * @param useNativeTypes true to output native types, false not to.
-	 *
-	 * @return the JSON-LD object.
-	 */
-	@Deprecated // use Node.toObject(useNativeTypes)
-	static Map<String,Object> RDFToObject(final Map<String, Object> value, Boolean useNativeTypes) {
-		// If value is an an IRI or a blank node identifier, return a new JSON object consisting 
-		// of a single member @id whose value is set to value.
-		if ("IRI".equals(value.get("type")) || "blank node".equals(value.get("type"))) {
-			return new LinkedHashMap<String, Object>() {{
-				put("@id", value.get("value"));
-			}};
-		};
-		
-		// convert literal object to JSON-LD
-		Map<String,Object> rval = new LinkedHashMap<String, Object>() {{
-			put("@value", value.get("value"));
-		}};
-		
-		// add language
-		if (value.containsKey("language")) {
-			rval.put("@language", value.get("language"));
-		}
-		// add datatype
-		else {
-			String type;
-			if (value.containsKey("datatype")) {
-				type = (String) value.get("datatype");
-			} else {
-				// default datatype to string in the case that it hasn't been set
-				type = XSD_STRING;
-			}
-			if (useNativeTypes) {
-				// use native datatypes for certain xsd types
-				if (XSD_STRING.equals(type)) {
-					// don't add xsd:string 
-				} else if (XSD_BOOLEAN.equals(type)) {
-					if ("true".equals(rval.get("@value"))) {
-						rval.put("@value", Boolean.TRUE);
-					} else if ("false".equals(rval.get("@value"))) {
-						rval.put("@value", Boolean.FALSE);
-					}
-				} else if (Pattern.matches("^[+-]?[0-9]+((?:\\.?[0-9]+((?:E?[+-]?[0-9]+)|)|))$", (String)rval.get("@value"))){
-					try {
-						Double d = Double.parseDouble((String)rval.get("@value"));
-						if (!Double.isNaN(d) && !Double.isInfinite(d)) {
-							if (XSD_INTEGER.equals(type)) {
-								Integer i = d.intValue();
-								if (i.toString().equals(rval.get("@value"))) {
-									rval.put("@value", i);
-								}
-							} else if (XSD_DOUBLE.equals(type)) {
-								rval.put("@value", d);
-							} else {
-								// we don't know the type, so we should add it to the JSON-LD
-								rval.put("@type", type);
-							}
-						}
-					} catch (NumberFormatException e) {
-						// TODO: This should never happen since we match the value with regex!
-						throw new RuntimeException(e);
-					}
-				}
-				// do not add xsd:string type
-				else {
-					rval.put("@type", type);
-				}
-			} else {
-				rval.put("@type", type);
-			}
-		}
-		
-		return rval;
-	}
 
-	public static String toNQuads(Map<String,Object> dataset) {
-		//JSONLDTripleCallback callback = new NQuadTripleCallback();
+	public static String toNQuads(RDFDataset dataset) {
 		List<String> quads = new ArrayList<String>();
-		for (String graphName : dataset.keySet()) {
-			List<Map<String, Object>> triples = (List<Map<String,Object>>) dataset.get(graphName);
-			for (Map<String,Object> triple : triples) {
-				if ("@default".equals(graphName)) {
-					graphName = null;
-				}
+		for (String graphName : dataset.graphNames()) {
+			List<RDFDataset.Quad> triples = dataset.getQuads(graphName);
+			if ("@default".equals(graphName)) {
+				graphName = null;
+			}
+			for (RDFDataset.Quad triple : triples) {
 				quads.add(toNQuad(triple, graphName));
 			}
 		}
@@ -290,55 +210,55 @@ public class RDFDatasetUtils {
 		return rval;
 	}
 
-	static String toNQuad(Map<String, Object> triple, String graphName, String bnode) {
-		Map<String,Object> s = (Map<String, Object>) triple.get("subject");
-		Map<String,Object> p = (Map<String, Object>) triple.get("predicate");
-		Map<String,Object> o = (Map<String, Object>) triple.get("object");
+	static String toNQuad(RDFDataset.Quad triple, String graphName, String bnode) {
+		RDFDataset.Node s = triple.getSubject();
+		RDFDataset.Node p = triple.getPredicate();
+		RDFDataset.Node o = triple.getObject();
 		
 		String quad = "";
 		
 		// subject is an IRI or bnode
-		if ("IRI".equals(s.get("type"))) {
-			quad += "<" + s.get("value") + ">";
+		if (s.isIRI()) {
+			quad += "<" + s.getValue() + ">";
 		}
 		// normalization mode
 		else if (bnode != null) {
-			quad += bnode.equals(s.get("value")) ? "_:a" : "_:z";
+			quad += bnode.equals(s.getValue()) ? "_:a" : "_:z";
 		}
 		// normal mode
 		else {
-			quad += s.get("value");
+			quad += s.getValue();
 		}
 		
 		// predicate is always an IRI
-		quad += " <" + p.get("value") + "> ";
+		quad += " <" + p.getValue() + "> ";
 		
 		// object is IRI, bnode or literal
-		if ("IRI".equals(o.get("type"))) {
-			quad += "<" + o.get("value") + ">";
+		if (o.isIRI()) {
+			quad += "<" + o.getValue() + ">";
 		}
-		else if ("blank node".equals(o.get("type"))) {
+		else if (o.isBlankNode()) {
 			// normalization mode
 			if (bnode != null) {
-				quad += bnode.equals(o.get("value")) ? "_:a" : "_:z";
+				quad += bnode.equals(o.getValue()) ? "_:a" : "_:z";
 			}
 			// normal mode
 			else {
-				quad += o.get("value");
+				quad += o.getValue();
 			}
 		}
 		else {
-			String escaped = ((String)o.get("value"))
+			String escaped = o.getValue()
 					.replaceAll("\\\\", "\\\\\\\\")
 					.replaceAll("\\t", "\\\\t")
 					.replaceAll("\\n", "\\\\n")
 					.replaceAll("\\r", "\\\\r")
 					.replaceAll("\\\"", "\\\\\"");
 			quad += "\"" + escaped + "\"";
-			if (RDF_LANGSTRING.equals(o.get("datatype"))) {
-				quad += "@" + o.get("language");
-			} else if (!XSD_STRING.equals(o.get("datatype"))) {
-				quad += "^^<" + o.get("datatype") + ">";
+			if (RDF_LANGSTRING.equals(o.getDatatype())) {
+				quad += "@" + o.getLanguage();
+			} else if (!XSD_STRING.equals(o.getDatatype())) {
+				quad += "^^<" + o.getDatatype() + ">";
 			}
 		}
 		
@@ -359,7 +279,7 @@ public class RDFDatasetUtils {
 		return quad;
 	}
 	
-	static String toNQuad(Map<String, Object> triple, String graphName) {
+	static String toNQuad(RDFDataset.Quad triple, String graphName) {
 		return toNQuad(triple, graphName, null);
 	}
 	
@@ -427,44 +347,23 @@ public class RDFDatasetUtils {
 					.setDetail("line", lineNumber);
 			}
 			
-			// create RDF triple
-			Map<String,Object> triple = new LinkedHashMap<String, Object>();
-			
 			// get subject
+			RDFDataset.Node subject;
 			if (match.group(1) != null) {
-				final String value = match.group(1);
-				triple.put("subject", new LinkedHashMap<String, Object>() {{
-					put("type", "IRI");
-					put("value", value);
-				}});
+				subject = new RDFDataset.IRI(match.group(1));
 			} else {
-				final String value = match.group(2);
-				triple.put("subject", new LinkedHashMap<String, Object>() {{
-					put("type", "blank node");
-					put("value", value);
-				}});
+				subject = new RDFDataset.BlankNode(match.group(2));
 			}
 			
 			// get predicate
-			final String predval = match.group(3);
-			triple.put("predicate", new LinkedHashMap<String, Object>() {{
-				put("type", "IRI");
-				put("value", predval);
-			}});
+			RDFDataset.Node predicate = new RDFDataset.IRI(match.group(3));
 			
 			// get object
+			RDFDataset.Node object;
 			if (match.group(4) != null) {
-				final String value = match.group(4);
-				triple.put("object", new LinkedHashMap<String, Object>() {{
-					put("type", "IRI");
-					put("value", value);
-				}});
+				object = new RDFDataset.IRI(match.group(4));
 			} else if (match.group(5) != null) {
-				final String value = match.group(5);
-				triple.put("object", new LinkedHashMap<String, Object>() {{
-					put("type", "blank node");
-					put("value", value);
-				}});
+				object = new RDFDataset.BlankNode(match.group(5));
 			} else {
 				final String language = match.group(8);
 				final String datatype = match.group(7) != null ? match.group(7) : match.group(8) != null ? RDF_LANGSTRING : XSD_STRING;
@@ -474,14 +373,7 @@ public class RDFDatasetUtils {
 						.replaceAll("\\\\n", "\\n")
 						.replaceAll("\\\\r", "\\r")
 						.replaceAll("\\\\\"", "\\\"");
-				triple.put("object", new LinkedHashMap<String, Object>() {{
-					put("type", "literal");
-					put("datatype", datatype);
-					if (language != null) {
-						put("language", language);
-					}
-					put("value", unescaped);
-				}});
+				object = new RDFDataset.Literal(unescaped, datatype, language);
 			}
 			
 			// get graph name ('@default' is used for the default graph)
@@ -492,15 +384,17 @@ public class RDFDatasetUtils {
 				name = match.group(10);
 			}
 			
+			RDFDataset.Quad triple = new RDFDataset.Quad(subject, predicate, object, name);
+
 			// initialise graph in dataset
 			if (!dataset.containsKey(name)) {
-				List<Object> tmp = new ArrayList<Object>();
+				List<RDFDataset.Quad> tmp = new ArrayList<RDFDataset.Quad>();
 				tmp.add(triple);
 				dataset.put(name, tmp);
 			}
 			// add triple if unique to its graph
 			else {
-				List<Map<String,Object>> triples = (List<Map<String, Object>>) dataset.get(name);
+				List<RDFDataset.Quad> triples = (List<RDFDataset.Quad>) dataset.get(name);
 				if (!triples.contains(triple)) {
 					triples.add(triple);
 				}
