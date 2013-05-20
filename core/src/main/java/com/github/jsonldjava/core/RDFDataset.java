@@ -279,6 +279,62 @@ public class RDFDataset extends LinkedHashMap<String,Object> {
 		this();
 		this.namer = namer;
 	}
+	
+	public void setNamespace(String ns, String prefix) {
+		context.put(ns, prefix);
+	}
+	
+	public void getNamespace(String ns) {
+		context.get(ns);
+	}
+	
+	public Map<String, String> getNamespaces() {
+		return context;
+	}
+	
+	/**
+	 * Returns a valid @context containing any namespaces set
+	 * 
+	 * @return
+	 */
+	public Map<String,Object> getContext() {
+		Map<String,Object> rval = new LinkedHashMap<String,Object>();
+		rval.putAll(context);
+		// replace "" with "@vocab"
+		if (rval.containsKey("")) {
+			rval.put("@vocab", rval.remove(""));
+		}
+		return rval;
+	}
+	
+	/**
+	 * parses a @context object and sets any namespaces found within it
+	 * 
+	 * @param context
+	 */
+	public void parseContext(Map<String,Object> context) {
+		for (String key : context.keySet()) {
+			Object val = context.get(key);
+			if ("@vocab".equals(key)) {
+				if (val == null || isString(val)) {
+					setNamespace("", (String)val);
+				} else {
+					// TODO: the context is actually invalid, should we throw an exception?
+				}
+			} else if ("@context".equals(key)) {
+				// go deeper!
+				parseContext((Map<String, Object>) context.get("@context"));
+			} else if (!isKeyword(key)) {
+				// TODO: should we make sure val is a valid URI prefix (i.e. it ends with /# or ?)
+				// or is it ok that full URIs for terms are used?
+				if (val instanceof String) {
+					setNamespace(key, (String)context.get(key));
+				} else if (isObject(val) && ((HashMap<String, Object>) val).containsKey("@id")) {
+					setNamespace(key, (String)((HashMap<String, Object>) val).get("@id"));
+				}
+			}
+		}
+	}
 
 	/**
 	 * Adds a triple to the @default graph of this dataset

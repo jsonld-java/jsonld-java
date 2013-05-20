@@ -43,6 +43,8 @@ public class Options {
 	public Boolean skipExpansion = null;
 	public ActiveContext compactResultsActiveCtx = null;
 	public String format = null;
+	public String outputForm = null;
+	public Boolean useNamespaces = false;
 
     /**
      * Tells the processor to skip over the key specified by "key" any time it encounters it. Objects under this key will not be manipulated by any of the
@@ -77,6 +79,8 @@ public class Options {
 		rval.skipExpansion = skipExpansion;
 		rval.compactResultsActiveCtx = compactResultsActiveCtx != null ? compactResultsActiveCtx.clone() : null;
 		rval.format = format;
+		rval.outputForm = outputForm;
+		rval.useNamespaces = useNamespaces;
 		for (String key: ignoredKeys) {
 			rval.ignoreKey(key);
 		}

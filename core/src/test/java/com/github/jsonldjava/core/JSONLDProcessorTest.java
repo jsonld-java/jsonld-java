@@ -155,9 +155,10 @@ public class JSONLDProcessorTest {
     	if ("text/turtle".equals(reportFormat) || "turtle".equals(reportFormat) || "ttl".equals(reportFormat) || "*".equals(reportFormat)) { // write turtle
     		System.out.println("Generating Turtle Report");
 	    	Options options = new Options("") {{
-	    		this.format = "text/turtle";
+	    		format = "text/turtle";
+	    		useNamespaces = true;
 	    	}};
-	    	String rdf = (String) JSONLD.toRDF(REPORT, new TurtleTripleCallback((Map<String, Object>) REPORT.get("@context")), options);
+	    	String rdf = (String) JSONLD.toRDF(REPORT, new TurtleTripleCallback(), options);
 	    	OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".ttl"));
 	    	writer.write((String)rdf);
 	    	writer.close();

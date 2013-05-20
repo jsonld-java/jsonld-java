@@ -19,7 +19,7 @@ public class Playground {
     static boolean validOption(String opt) {
         return "--ignorekeys".equals(opt) || "--expand".equals(opt) || "--compact".equals(opt) || "--frame".equals(opt) || "--normalize".equals(opt)
                 || "--simplify".equals(opt) || "--debug".equals(opt) || "--base".equals(opt) || "--flatten".equals(opt) || "--fromRDF".equals(opt)
-                || "--toRDF".equals(opt);
+                || "--toRDF".equals(opt) || "--outputForm".equals(opt);
     }
 
     static boolean hasContext(String opt) {
@@ -50,7 +50,11 @@ public class Playground {
                             opts.ignoreKey(args[i++]);
                         }
                     } else if ("--base".equals(args[i])) {
+                    	i++;
                     	opts.base = args[i++];
+                    } else if ("--outputForm".equals(args[i])) {
+                    	i++;
+                    	opts.outputForm = args[i++];
                     } else if (validOption(args[i])) {
                         if (opt != null) {
                             System.out.println("Error: can only do one operation on the input at a time");
@@ -155,6 +159,7 @@ public class Playground {
                 } else if ("--flatten".equals(opt)) {
                 	outobj = JSONLD.flatten(inobj, ctxobj, opts);
                 } else if ("--toRDF".equals(opt)) {
+                	opts.useNamespaces = true;
                 	outobj = JSONLD.toRDF(inobj, opts);
                 } else if ("--fromRDF".equals(opt)) {
                 	outobj = JSONLD.fromRDF(inobj, opts);
@@ -201,6 +206,7 @@ public class Playground {
         System.out.println("\t\t--flatten <input> <context> : flatten the input JSON-LD applying the optional context file");
         System.out.println("\t\t--fromRDF <input> <format> : generate JSON-LD from the input rdf (format defaults to nquads)");
         System.out.println("\t\t--toRDF <input> <format> : generate RDF from the input JSON-LD (format defaults to nquads)");
+        System.out.println("\t\t--outputForm [compacted|expanded|flattened] : the way to output the results from fromRDF (defaults to expanded)");
         System.out.println("\t\t--simplify : simplify the input JSON-LD");
         System.exit(1);
     }

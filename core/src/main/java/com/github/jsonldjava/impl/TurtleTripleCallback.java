@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.github.jsonldjava.core.JSONLDTripleCallback;
@@ -24,34 +25,18 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
 	Set<String> usedNamespaces;
 	
 	public TurtleTripleCallback() {}
-	public TurtleTripleCallback(Map<String,Object> context) {
-		processJSONLDContext(context);
-	}
-	
-	private void processJSONLDContext(Map<String,Object> context) {
-		// TODO: this is overly simple and will most likely fail with complicated examples
-		if (context == null) {
-			return;
-		}
-		for (String key: context.keySet()) {
-			Object value = context.get(key);
-			if (value instanceof String) {
-				availableNamespaces.put((String)value, key);
-			} else if (value instanceof Map && ((Map<String, String>) value).containsKey("@id")) {
-				availableNamespaces.put((String)((Map<String, String>) value).get("@id"), key);
-			}
-		}
-	}
 	
 	@Override
 	public Object call(RDFDataset dataset) {
+		for (Entry<String,String> e : dataset.getNamespaces().entrySet()) {
+			availableNamespaces.put(e.getValue(), e.getKey());
+		}
 		usedNamespaces = new LinkedHashSet<String>();
 		
 		int tabs = 0;
 		
 		Map<String,List<Object>> refs = new LinkedHashMap<String, List<Object>>();
 		Map<String,Map<String,List<Object>>> ttl = new LinkedHashMap<String,Map<String,List<Object>>>();
-		
 		
 		for (String graphName : dataset.keySet()) {
 			List<Map<String,Object>> triples = (List<Map<String, Object>>) dataset.get(graphName);

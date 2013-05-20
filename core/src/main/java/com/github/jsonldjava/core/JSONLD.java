@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.jsonldjava.core.JSONLDProcessingError.Error;
 import com.github.jsonldjava.impl.NQuadRDFParser;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
 import com.github.jsonldjava.impl.TurtleRDFParser;
@@ -450,6 +451,23 @@ public class JSONLD {
     	
 		// output RDF dataset
 		RDFDataset dataset = (RDFDataset)new JSONLDProcessor(options).toRDF(nodeMap);
+
+		// generate namespaces from context
+		if (options.useNamespaces) {
+			List<Map<String,Object>> _input;
+			if (isArray(input)) {
+				_input = (List<Map<String, Object>>) input;
+			} else {
+				_input = new ArrayList<Map<String,Object>>();
+				_input.add((Map<String, Object>) input);
+			}
+			for (Map<String,Object> e : _input) {
+				if (e.containsKey("@context")) {
+					dataset.parseContext((Map<String, Object>) e.get("@context"));
+				}
+			}
+		}
+
 		if (callback != null) {
 			return callback.call(dataset);
 		}
@@ -531,7 +549,6 @@ public class JSONLD {
 				.setDetail("format", options.format);
 		}
     	 
-    	
     	// convert from RDF
     	return fromRDF(dataset, options, parser);
     }
@@ -552,10 +569,26 @@ public class JSONLD {
     		options.useNativeTypes = true;
     	}
     	
-    	Map<String,Object> dataset = parser.parse(input);
+    	RDFDataset dataset = parser.parse(input);
     	    	
     	// convert from RDF
-    	return new JSONLDProcessor(options).fromRDF((Map<String,Object>)dataset);
+    	Object rval = new JSONLDProcessor(options).fromRDF((Map<String,Object>)dataset);
+
+    	// re-process using the generated context if outputForm is set
+		if (options.outputForm != null) {
+			if ("expanded".equals(options.outputForm)) {
+				return rval;
+			} else if ("compacted".equals(options.outputForm)) {
+				return compact(rval, dataset.getContext(), options);
+			} else if ("flattened".equals(options.outputForm)) {
+				return flatten(rval, dataset.getContext(), options);
+			} else {
+				throw new JSONLDProcessingError("Unknown value for output form")
+					.setType(Error.INVALID_INPUT)
+					.setDetail("outputForm", options.outputForm);
+			}
+		}
+    	return rval;
     }
     
     public static Object fromRDF(Object input, RDFParser parser) throws JSONLDProcessingError {

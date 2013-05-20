@@ -22,7 +22,7 @@ public class RDFDatasetUtils {
 	 *
 	 * @return the array of RDF triples for the given graph.
 	 */
-	@Deprecated // use RDFDataset.toRDF
+	@Deprecated // use RDFDataset.graphToRDF
 	static List<Object> graphToRDF(Map<String,Object> graph, UniqueNamer namer) {
 		List<Object> rval = new ArrayList<Object>();
 		for (String id : graph.keySet()) {

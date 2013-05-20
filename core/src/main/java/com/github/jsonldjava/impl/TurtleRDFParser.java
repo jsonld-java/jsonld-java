@@ -136,6 +136,7 @@ public class TurtleRDFParser implements RDFParser {
 					String ns = match.group(1);
 					String iri = match.group(2);
 					state.namespaces.put(ns, iri);
+					result.setNamespace(ns, iri);
 					state.advanceLinePosition(match.group(0).length());
 					continue;
 				} else {

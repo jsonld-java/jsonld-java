@@ -67,7 +67,7 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
         // add the prefixes to the context
         Map<String, String> nsPrefixMap = model.getNsPrefixMap();
         for (String prefix : nsPrefixMap.keySet()) {
-            setPrefix(nsPrefixMap.get(prefix), prefix);
+            result.setNamespace(prefix, nsPrefixMap.get(prefix));
         }
 
         // iterate over the list of subjects and add the edges to the json-ld
