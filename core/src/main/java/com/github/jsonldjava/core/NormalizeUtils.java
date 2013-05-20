@@ -11,6 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.jsonldjava.utils.JSONUtils;
+
 import static com.github.jsonldjava.core.JSONLDUtils.*;
 import static com.github.jsonldjava.core.RDFDatasetUtils.*;
 
@@ -449,7 +451,7 @@ class NormalizeUtils {
 	 * @return the adjacent blank node name or null if none was found.
 	 */
 	private static String getAdjacentBlankNodeName(Map<String, Object> node, String id) {
-		return "blank node".equals(node.get("type")) && (!node.containsKey("value") || !_equals(node.get("value"), id)) ? (String)node.get("value") : null;
+		return "blank node".equals(node.get("type")) && (!node.containsKey("value") || !JSONUtils.equals(node.get("value"), id)) ? (String)node.get("value") : null;
 	}
 
 	private static class Permutator {

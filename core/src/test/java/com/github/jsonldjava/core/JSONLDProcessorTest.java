@@ -427,7 +427,6 @@ public class JSONLDProcessorTest {
 	    	if (result != null) {
 	    		System.out.println(parent + " expected null, got: " + result);
 	    	}
-	        //fail("Expected object was null");
 	    }
 	    else if (expect instanceof Map && result instanceof Map) {
 			Map<String,Object> e = (Map<String,Object>)expect;

@@ -72,7 +72,7 @@ public class TurtleRDFParserTest {
 								}}, 
 								new TurtleRDFParser()
 								);
-		
+
 		assertTrue(JSONUtils.equals(expected, json));
 	}
 }

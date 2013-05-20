@@ -984,20 +984,6 @@ public class JSONLDUtils {
 		}
 		return rval;
 	}
-	
-	/**
-	 * equals that allows both values to be null
-	 * 
-	 * @param object
-	 * @param language
-	 * @return
-	 */
-	static boolean _equals(Object a, Object b) {
-		if (a == null) {
-			return b == null;
-		}
-		return a.equals(b);
-	}
 
 	/**
      * Compares two strings first based on length and then lexicographically.
@@ -1111,8 +1097,8 @@ public class JSONLDUtils {
     		// if there's no @index to preserve ...
     		if (!preserveIndex) {
     			// matching @type or @language specified in context, compact value
-    			if ((((Map<String, Object>) value).containsKey("@type") && _equals((String)((Map<String, Object>) value).get("@type"), type)) || 
-    				(((Map<String, Object>) value).containsKey("@language") && _equals((String)((Map<String, Object>) value).get("@language"), language))) {
+    			if ((((Map<String, Object>) value).containsKey("@type") && JSONUtils.equals((String)((Map<String, Object>) value).get("@type"), type)) || 
+    				(((Map<String, Object>) value).containsKey("@language") && JSONUtils.equals((String)((Map<String, Object>) value).get("@language"), language))) {
     				// NOTE: have to check containsKey here as javascript version relies on undefined !== null
     				return ((Map<String, Object>) value).get("@value");
     			}
@@ -1406,10 +1392,10 @@ public class JSONLDUtils {
         }
 
         if (isValue(v1) && isValue(v2) &&
-        		_equals(((Map<String, Object>) v1).get("@value"), ((Map<String, Object>) v2).get("@value")) &&
-        		_equals(((Map<String, Object>) v1).get("@type"), ((Map<String, Object>) v2).get("@type")) &&
-        		_equals(((Map<String, Object>) v1).get("@language"), ((Map<String, Object>) v2).get("@language")) &&
-        		_equals(((Map<String, Object>) v1).get("@index"), ((Map<String, Object>) v2).get("@index"))) {
+        		JSONUtils.equals(((Map<String, Object>) v1).get("@value"), ((Map<String, Object>) v2).get("@value")) &&
+        		JSONUtils.equals(((Map<String, Object>) v1).get("@type"), ((Map<String, Object>) v2).get("@type")) &&
+        		JSONUtils.equals(((Map<String, Object>) v1).get("@language"), ((Map<String, Object>) v2).get("@language")) &&
+        		JSONUtils.equals(((Map<String, Object>) v1).get("@index"), ((Map<String, Object>) v2).get("@index"))) {
             return true;
         }
 

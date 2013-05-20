@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.github.jsonldjava.utils.JSONUtils;
+
 public class RDFDatasetUtils {
 	
 	/**
@@ -498,64 +500,13 @@ public class RDFDatasetUtils {
 			}
 			// add triple if unique to its graph
 			else {
-				Boolean unique = true;
 				List<Map<String,Object>> triples = (List<Map<String, Object>>) dataset.get(name);
-				for (int ti = 0; unique && ti < triples.size(); ++ti) {
-					if (compareRDFTriples(triples.get(ti), triple)) {
-						unique = false;
-					}
-				}
-				if (unique) {
+				if (!triples.contains(triple)) {
 					triples.add(triple);
 				}
 			}
 		}
 		
 		return dataset;
-	}
-
-	/**
-	 * Compares two RDF triples for equality.
-	 *
-	 * @param t1 the first triple.
-	 * @param t2 the second triple.
-	 *
-	 * @return true if the triples are the same, false if not.
-	 */
-	@Deprecated // use Quad.compareTo instead
-	private static boolean compareRDFTriples(Map<String, Object> t1,
-			Map<String, Object> t2) {
-		for (String attr : new String[] { "subject", "predicate", "object" }) {
-			Map<String,Object> t1a = (Map<String, Object>) t1.get(attr);
-			Map<String,Object> t2a = (Map<String, Object>) t2.get(attr);
-			if (!_equals(t1a.get("type"), t2a.get("type")) || !_equals(t1a.get("value"), t2a.get("value"))) {
-				return false;
-			}
-		}
-		Map<String,Object> t1o = (Map<String, Object>) t1.get("object");
-		Map<String,Object> t2o = (Map<String, Object>) t2.get("object");
-		if (t1o.containsKey("language")) {
-			if (t2o.containsKey("language")) {
-				if (!_equals(t1o.get("language"), t2o.get("language"))) {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		} else if (t2o.containsKey("language")) {
-			return false;
-		}
-		if (t1o.containsKey("datatype")) {
-			if (t2o.containsKey("datatype")) {
-				if (!_equals(t1o.get("datatype"), t2o.get("datatype"))) {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		} else if (t2o.containsKey("datatype")) {
-			return false;
-		}
-		return true;
 	}
 }

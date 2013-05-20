@@ -1514,6 +1514,7 @@ public class JSONLDProcessor {
 			}
 			List<Object> graph = (List<Object>) subject.get("@graph");
 			List<String> ids = new ArrayList<String>(nodeMap.keySet());
+			Collections.sort(ids);
 			for (String id : ids) {
 				graph.add(nodeMap.get(id));
 			}

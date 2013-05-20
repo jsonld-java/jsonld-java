@@ -165,55 +165,6 @@ public class JSONUtils {
     }
 
     public static boolean equals(Object v1, Object v2) {
-        boolean rval = true;
-        // TODO Auto-generated method stub
-        if (v1 instanceof List && v2 instanceof List) {
-            if (((List) v1).size() != ((List) v2).size()) {
-                rval = false;
-            } else {
-                // TODO: should the order of things in the list matter?
-            	// I think not, but if it is decided so, then use this code instead
-            	// of the code below it
-            	/*
-                for (int i = 0; i < ((List<Object>) v1).size() && rval == true; i++) {
-                    rval = equals(((List<Object>) v1).get(i), ((List<Object>) v2).get(i));
-                }
-                */
-            	for (int i = 0; i < ((List<Object>) v1).size() && rval == true; i++) {
-            		boolean found = false;
-            		for (int j = 0; j < ((List<Object>) v2).size() && found == false; j++) {
-            			found = equals(((List<Object>) v1).get(i), ((List<Object>) v2).get(j));
-            		}
-            		rval = found;
-                }
-            }
-        } else if (v1 instanceof Number && v2 instanceof Number) {
-            // TODO: this is VERY sketchy
-            double n1 = ((Number) v1).doubleValue();
-            double n2 = ((Number) v2).doubleValue();
-
-            rval = n1 == n2;
-        } else if (v1 instanceof String && v2 instanceof String) {
-            rval = ((String) v1).equals((String) v2);
-        } else if (v1 instanceof Map && v2 instanceof Map) {
-            if (((Map) v1).size() != ((Map) v2).size()) {
-                rval = false;
-            } else {
-                for (Object k1 : ((Map) v1).keySet()) {
-                    rval = ((Map) v2).containsKey(k1) ? equals(((Map) v1).get(k1), ((Map) v2).get(k1)) : false;
-                    if (rval != true) {
-                        break;
-                    }
-                }
-            }
-        } else if (v1 instanceof Boolean && v2 instanceof Boolean) {
-            rval = v1 == v2;
-        } else if (v1 != null && v2 != null) {
-            rval = v1.equals(v2);
-        } else {
-            rval = v1 == v2;
-        }
-
-        return rval;
+    	return v1 == null ? v2 == null : v1.equals(v2);
     }
 }
