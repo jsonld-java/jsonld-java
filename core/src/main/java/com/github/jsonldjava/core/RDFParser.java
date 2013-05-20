@@ -49,5 +49,5 @@ public interface RDFParser {
 	 * @return input in internal RDF Dataset format
 	 * @throws JSONLDProcessingError
 	 */
-	public Map<String,Object> parse(Object dataset) throws JSONLDProcessingError;
+	public RDFDataset parse(Object input) throws JSONLDProcessingError;
 }

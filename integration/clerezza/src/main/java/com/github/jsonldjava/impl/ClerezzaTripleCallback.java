@@ -12,6 +12,7 @@ import org.apache.clerezza.rdf.core.impl.TripleImpl;
 import org.apache.clerezza.rdf.core.impl.TypedLiteralImpl;
 
 import com.github.jsonldjava.core.JSONLDTripleCallback;
+import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.utils.Obj;
 
 public class ClerezzaTripleCallback implements JSONLDTripleCallback {
@@ -76,18 +77,21 @@ public class ClerezzaTripleCallback implements JSONLDTripleCallback {
 	}
 
 	@Override
-	public Object call(Map<String, Object> dataset) {
-		for (String graphName : dataset.keySet()) {
-			List<Map<String,Object>> triples = (List<Map<String, Object>>) dataset.get(graphName);
+	public Object call(RDFDataset dataset) {
+		for (String graphName : dataset.graphNames()) {
+			List<RDFDataset.Quad> quads = dataset.getQuads(graphName);
 			if ("@default".equals(graphName)) {
 				graphName = null;
 			}
-			for (Map<String,Object> triple : triples) {
-				if ("literal".equals(Obj.get(triple, "object", "type"))) {
-					triple((String)Obj.get(triple, "subject", "value"), (String)Obj.get(triple, "predicate", "value"), 
-							(String)Obj.get(triple, "object", "value"), (String)Obj.get(triple, "object", "datatype"), (String)Obj.get(triple, "object", "language"), graphName);
+			for (RDFDataset.Quad quad : quads) {
+				if (quad.getObject().isLiteral()) {
+					triple(quad.getSubject().getValue(), quad.getPredicate().getValue(), 
+						   quad.getObject().getValue(), quad.getObject().getDatatype(), quad.getObject().getLanguage(), 
+						   graphName);
 				} else {
-					triple((String)Obj.get(triple, "subject", "value"), (String)Obj.get(triple, "predicate", "value"), (String)Obj.get(triple, "object", "value"), graphName);
+					triple(quad.getSubject().getValue(), quad.getPredicate().getValue(), 
+						   quad.getObject().getValue(), 
+						   graphName);
 				}
 			}
 		}

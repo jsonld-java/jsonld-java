@@ -45,5 +45,5 @@ public interface JSONLDTripleCallback {
 	 *   
 	 * @return the resulting RDF object in the desired format
 	 */
-	public Object call(Map<String, Object> dataset);
+	public Object call(RDFDataset dataset);
 }

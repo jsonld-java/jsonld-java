@@ -20,6 +20,7 @@ import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.model.vocabulary.XMLSchema;
 
 import com.github.jsonldjava.core.JSONLDProcessingError;
+import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.core.RDFDatasetUtils;
 
 
@@ -31,7 +32,7 @@ com.github.jsonldjava.core.RDFParser {
 		//_context.put(prefix, fullUri);
 	}
 
-	public void handleStatement(Map<String,Object> result, Statement nextStatement) {
+	public void handleStatement(RDFDataset result, Statement nextStatement) {
 		// TODO: from a basic look at the code it seems some of these could be null
 		// null values for IRIs will probably break things further down the line
 		// and i'm not sure yet if this should be something handled later on, or
@@ -58,12 +59,10 @@ com.github.jsonldjava.core.RDFParser {
 			    datatype = XMLSchema.STRING.stringValue();
 			}
 			
-			RDFDatasetUtils.addTripleToRDFDatasetResult(result, graphName, 
-					RDFDatasetUtils.generateTriple(subject, predicate, value, datatype, language));
+			result.addQuad(subject, predicate, value, datatype, language, graphName);
 			
 		} else {
-			RDFDatasetUtils.addTripleToRDFDatasetResult(result, graphName, 
-					RDFDatasetUtils.generateTriple(subject, predicate, getResourceValue((Resource)object)));			
+			result.addQuad(subject, predicate, getResourceValue((Resource)object), graphName);			
 		}
 	}
 
@@ -81,8 +80,8 @@ com.github.jsonldjava.core.RDFParser {
 	}
 
 	@Override
-	public Map<String,Object> parse(Object input) throws JSONLDProcessingError {
-		Map<String,Object> result = RDFDatasetUtils.getInitialRDFDatasetResult();
+	public RDFDataset parse(Object input) throws JSONLDProcessingError {
+		RDFDataset result = new RDFDataset();
 		if (input instanceof Statement) {
 			handleStatement(result, (Statement) input);
 		} else if (input instanceof Graph) {

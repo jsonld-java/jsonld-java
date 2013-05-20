@@ -14,10 +14,6 @@ import java.util.regex.Pattern;
 
 public class RDFDatasetUtils {
 	
-	private static String LITERAL = "literal";
-	private static String BLANK_NODE = "blank node";
-	private static String IRI = "IRI";
-	
 	/**
 	 * Creates an array of RDF triples for the given graph.
 	 *
@@ -26,6 +22,7 @@ public class RDFDatasetUtils {
 	 *
 	 * @return the array of RDF triples for the given graph.
 	 */
+	@Deprecated // use RDFDataset.toRDF
 	static List<Object> graphToRDF(Map<String,Object> graph, UniqueNamer namer) {
 		List<Object> rval = new ArrayList<Object>();
 		for (String id : graph.keySet()) {
@@ -44,16 +41,16 @@ public class RDFDatasetUtils {
 					// RDF subjects
 					Map<String,Object> subject = new LinkedHashMap<String,Object>();
 					if (id.indexOf("_:") == 0) {
-						subject.put("type", BLANK_NODE);
+						subject.put("type", "blank node");
 						subject.put("value", namer.getName(id));
 					} else {
-						subject.put("type", IRI);
+						subject.put("type", "IRI");
 						subject.put("value", id);
 					}
 					
 					// RDF predicates
 					Map<String,Object> predicate = new LinkedHashMap<String,Object>();
-					predicate.put("type", IRI);
+					predicate.put("type", "IRI");
 					predicate.put("value", property);
 					
 					// convert @list to triples
@@ -90,18 +87,18 @@ public class RDFDatasetUtils {
 			Map<String, Object> subject, Map<String, Object> predicate,
 			List<Object> triples) {
 		Map<String,Object> first = new LinkedHashMap<String, Object>();
-		first.put("type", IRI);
+		first.put("type", "IRI");
 		first.put("value", RDF_FIRST);
 		Map<String,Object> rest = new LinkedHashMap<String, Object>();
-		rest.put("type", IRI);
+		rest.put("type", "IRI");
 		rest.put("value", RDF_REST);
 		Map<String,Object> nil = new LinkedHashMap<String, Object>();
-		nil.put("type", IRI);
+		nil.put("type", "IRI");
 		nil.put("value", RDF_NIL);
 		
 		for (Object item : list) {
 			Map<String,Object> blankNode = new LinkedHashMap<String, Object>();
-			blankNode.put("type", BLANK_NODE);
+			blankNode.put("type", "blank node");
 			blankNode.put("value", namer.getName());
 			
 			{
@@ -147,7 +144,7 @@ public class RDFDatasetUtils {
 		
 		// convert value object to RDF
 		if (isValue(item)) {
-			object.put("type", LITERAL);
+			object.put("type", "literal");
 			Object value = ((Map<String, Object>) item).get("@value");
 			Object datatype = ((Map<String, Object>) item).get("@type");
 			
@@ -180,11 +177,11 @@ public class RDFDatasetUtils {
 		else {
 			String id = isObject(item) ? (String)((Map<String, Object>) item).get("@id") : (String)item;
 			if (id.indexOf("_:") == 0) {
-				object.put("type", BLANK_NODE);
+				object.put("type", "blank node");
 				object.put("value", namer.getName(id));
 			}
 			else {
-				object.put("type", IRI);
+				object.put("type", "IRI");
 				object.put("value", id);
 			}
 		}
@@ -200,6 +197,7 @@ public class RDFDatasetUtils {
 	 *
 	 * @return the JSON-LD object.
 	 */
+	@Deprecated // use Node.toObject(useNativeTypes)
 	static Map<String,Object> RDFToObject(final Map<String, Object> value, Boolean useNativeTypes) {
 		// If value is an an IRI or a blank node identifier, return a new JSON object consisting 
 		// of a single member @id whose value is set to value.
@@ -298,7 +296,7 @@ public class RDFDatasetUtils {
 		String quad = "";
 		
 		// subject is an IRI or bnode
-		if (IRI.equals(s.get("type"))) {
+		if ("IRI".equals(s.get("type"))) {
 			quad += "<" + s.get("value") + ">";
 		}
 		// normalization mode
@@ -314,10 +312,10 @@ public class RDFDatasetUtils {
 		quad += " <" + p.get("value") + "> ";
 		
 		// object is IRI, bnode or literal
-		if (IRI.equals(o.get("type"))) {
+		if ("IRI".equals(o.get("type"))) {
 			quad += "<" + o.get("value") + ">";
 		}
-		else if (BLANK_NODE.equals(o.get("type"))) {
+		else if ("blank node".equals(o.get("type"))) {
 			// normalization mode
 			if (bnode != null) {
 				quad += bnode.equals(o.get("value")) ? "_:a" : "_:z";
@@ -404,9 +402,9 @@ public class RDFDatasetUtils {
 	 *
 	 * @return an RDF dataset.
 	 */
-	public static Map<String,Object> parseNQuads(String input) throws JSONLDProcessingError {
+	public static RDFDataset parseNQuads(String input) throws JSONLDProcessingError {
 		// build RDF dataset
-		Map<String,Object> dataset = new LinkedHashMap<String, Object>();
+		RDFDataset dataset = new RDFDataset();
 		
 		// split N-Quad input into lines
 		String[] lines = Regex.EOLN.split(input);
@@ -524,6 +522,7 @@ public class RDFDatasetUtils {
 	 *
 	 * @return true if the triples are the same, false if not.
 	 */
+	@Deprecated // use Quad.compareTo instead
 	private static boolean compareRDFTriples(Map<String, Object> t1,
 			Map<String, Object> t2) {
 		for (String attr : new String[] { "subject", "predicate", "object" }) {
@@ -558,98 +557,5 @@ public class RDFDatasetUtils {
 			return false;
 		}
 		return true;
-	}
-	
-	/**
-	 * Returns the triple in the internal RDF dataset format
-	 * 
-	 * @param s the subject IRI or blank node id
-	 * @param p the predicate IRI
-	 * @param o the object IRI or blank node id
-	 * @return the resulting triple
-	 */
-	public static Map<String,Object> generateTriple(final String s, final String p, final String o) {
-		return new LinkedHashMap<String, Object>() {{
-			put("subject", new LinkedHashMap<String, Object>() {{ 
-				put("value", s);
-				put("type", s.startsWith("_:") ? "blank node" : "IRI");
-			}});
-			put("predicate", new LinkedHashMap<String, Object>() {{ 
-				put("value", p);
-				put("type", "IRI");
-			}});
-			put("object", new LinkedHashMap<String, Object>() {{ 
-				put("value", o);
-				put("type", o.startsWith("_:") ? "blank node" : "IRI");
-			}});
-		}};
-	}
-	
-	/**
-	 * Returns the triple in the internal RDF dataset format
-	 * 
-	 * @param s the subject IRI or blank node id
-	 * @param p the predicate IRI
-	 * @param value the value of the literal object
-	 * @param datatype the datatype of the literal object (defaults to XSD_STRING if null)
-	 * @param language the language of the literal object (or null if no language specified)
-	 * @return the resulting triple
-	 */
-	public static Map<String,Object> generateTriple(final String s, final String p, final String value, final String datatype, final String language) {
-		return new LinkedHashMap<String, Object>() {{
-			put("subject", new LinkedHashMap<String, Object>() {{ 
-				put("value", s);
-				put("type", s.startsWith("_:") ? "blank node" : "IRI");
-			}});
-			put("predicate", new LinkedHashMap<String, Object>() {{ 
-				put("value", p);
-				put("type", "IRI");
-			}});
-			put("object", new LinkedHashMap<String, Object>() {{ 
-				put("value", value);
-				put("type", "literal");
-				if (language != null) {
-					put("language", language);
-				} else if (datatype == null) {
-					// datatype should never be null in the internal format
-					put("datatype", XSD_STRING);
-				} else {
-					put("datatype", datatype);
-				}
-			}});
-		}};
-	}
-	
-	/**
-	 * Returns the basic structure of the internal RDF Dataset format for parsing RDF to JSONLD using fromRDF
-	 * 
-	 * @return
-	 */
-	public static Map<String,Object> getInitialRDFDatasetResult() {
-		return new LinkedHashMap<String, Object>(){{
-			put("@default", new ArrayList<Object>());
-		}};
-	}
-	
-	/**
-	 * Adds the specified triple to the result dataset
-	 * 
-	 * @param result the result dataset to add the triple to
-	 * @param graphName the graph to add the triple to (uses "@default" if set to null)
-	 * @param triple the triple
-	 */
-	public static void addTripleToRDFDatasetResult(Map<String,Object> result, String graphName, Map<String,Object> triple) {
-		List<Object> graph;
-		if (graphName == null) {
-			graph = (List<Object>) result.get("@default");
-		} else {
-			if (result.containsKey(graphName)) {
-				graph = (List<Object>) result.get(graphName);
-			} else {
-				graph = new ArrayList<Object>();
-				result.put(graphName, graph);
-			}
-		}
-		graph.add(triple);
 	}
 }

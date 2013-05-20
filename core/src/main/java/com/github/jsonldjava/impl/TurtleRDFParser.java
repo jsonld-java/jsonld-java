@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.github.jsonldjava.core.JSONLDProcessingError;
+import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.core.RDFDatasetUtils;
 import com.github.jsonldjava.core.RDFParser;
 
@@ -116,16 +117,15 @@ public class TurtleRDFParser implements RDFParser {
 	}
 	
 	@Override
-	public Map<String, Object> parse(Object dataset)
+	public RDFDataset parse(Object input)
 			throws JSONLDProcessingError {
-		if (!(dataset instanceof String)) {
+		if (!(input instanceof String)) {
 			throw new JSONLDProcessingError("Invalid input; Triple RDF Parser requires a string input");
 		}
-		String input = (String)dataset;
-		final Map<String,Object> result = RDFDatasetUtils.getInitialRDFDatasetResult();
-		final String graphName = "@default"; // TODO: not sure if turtle supports graphs
+		final RDFDataset result = new RDFDataset();
+		final String graphName = "@default";
 		boolean donewithprefixes = false;
-		State state = new State(input);
+		State state = new State((String)input);
 		
 		while (state.line != null) {
 			
@@ -212,8 +212,7 @@ public class TurtleRDFParser implements RDFParser {
 			// match BNODE values
 			if (state.line.startsWith("[")) {
 				String bnode = "_:b" + (++state.bnodes);
-				RDFDatasetUtils.addTripleToRDFDatasetResult(result, graphName, 
-						RDFDatasetUtils.generateTriple(state.curSubject, state.curPredicate, bnode));
+				result.addTriple(state.curSubject, state.curPredicate, bnode);
 				state.advanceLinePosition(1);
 				state.push();
 				state.curSubject = bnode;
@@ -239,15 +238,13 @@ public class TurtleRDFParser implements RDFParser {
 				}
 				if (iri != null) {
 					// we have a object
-					RDFDatasetUtils.addTripleToRDFDatasetResult(result, graphName, 
-							RDFDatasetUtils.generateTriple(state.curSubject, state.curPredicate, iri));
+					result.addTriple(state.curSubject, state.curPredicate, iri);
 				} else {
 					// we have a literal
-					RDFDatasetUtils.addTripleToRDFDatasetResult(result, graphName, 
-							RDFDatasetUtils.generateTriple(state.curSubject, state.curPredicate, 
+					result.addTriple(state.curSubject, state.curPredicate, 
 									match.group(6), 
 									match.group(7) != null ? state.expandIRI(match.group(7), match.group(8)) : match.group(9), 
-									match.group(10)));
+									match.group(10));
 				}
 				state.advanceLinePosition(match.group(0).length());
 				// some hacky stuff for the case where there is no whitespace between ns:name elements and the delimiters

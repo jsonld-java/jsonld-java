@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.github.jsonldjava.core.JSONLDProcessingError;
+import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.core.RDFDatasetUtils;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -60,7 +61,7 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
         return rval;
     }
 
-    public void importModel(Map<String,Object> result, Model model) {
+    public void importModel(RDFDataset result, Model model) {
 
     	// TODO: figure out what to do with this, as setPrefix itself currently does nothing
         // add the prefixes to the context
@@ -78,7 +79,7 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
         }
     }
 
-    public void importResource(Map<String,Object> result, Resource subject) {
+    public void importResource(RDFDataset result, Resource subject) {
         String subj = getID(subject);
         StmtIterator statements = subject.getModel().listStatements(subject, (Property) null, (RDFNode) null);
         while (statements.hasNext()) {
@@ -95,21 +96,19 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
                 	language = null;
                 }
 
-                RDFDatasetUtils.addTripleToRDFDatasetResult(result, null,
-                		RDFDatasetUtils.generateTriple(subj, predicate.getURI(), value, datatypeURI, language));
+                result.addTriple(subj, predicate.getURI(), value, datatypeURI, language);
             } else {
                 Resource resource = object.asResource();
                 String res = getID(resource);
                 
-                RDFDatasetUtils.addTripleToRDFDatasetResult(result, null,
-                		RDFDatasetUtils.generateTriple(subj, predicate.getURI(), res));
+                result.addTriple(subj, predicate.getURI(), res);
             }
         }
     }
 
 	@Override
-	public Map<String,Object> parse(Object input) throws JSONLDProcessingError {
-		Map<String,Object> result = RDFDatasetUtils.getInitialRDFDatasetResult();
+	public RDFDataset parse(Object input) throws JSONLDProcessingError {
+		RDFDataset result = new RDFDataset();
 		// allow null input so we can use importModel and importResource before calling fromRDF
 		if (input == null) {
 			return result;

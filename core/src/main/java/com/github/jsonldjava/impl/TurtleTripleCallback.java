@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.jsonldjava.core.JSONLDTripleCallback;
+import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.utils.Obj;
 
 import static com.github.jsonldjava.core.JSONLDConsts.*;
@@ -43,7 +44,7 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
 	}
 	
 	@Override
-	public Object call(Map<String, Object> dataset) {
+	public Object call(RDFDataset dataset) {
 		usedNamespaces = new LinkedHashSet<String>();
 		
 		int tabs = 0;

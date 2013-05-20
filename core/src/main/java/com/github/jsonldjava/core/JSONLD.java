@@ -401,9 +401,9 @@ public class JSONLD {
     	
     	Options opts = options.clone();
     	opts.format = null;
-    	Map<String,Object> dataset;
+    	RDFDataset dataset;
     	try {
-    		dataset = (Map<String, Object>) toRDF(input, opts);
+    		dataset = (RDFDataset)toRDF(input, opts);
     	} catch (JSONLDProcessingError e) {
     		throw new JSONLDProcessingError("Could not convert input to RDF dataset before normalization.")
     			.setType(JSONLDProcessingError.Error.NORMALIZE_ERROR)
@@ -449,14 +449,14 @@ public class JSONLD {
     	createNodeMap(expanded, nodeMap, "@default", namer);
     	
 		// output RDF dataset
-		Map<String,Object> dataset = new JSONLDProcessor(options).toRDF(nodeMap);
+		RDFDataset dataset = (RDFDataset)new JSONLDProcessor(options).toRDF(nodeMap);
 		if (callback != null) {
 			return callback.call(dataset);
 		}
 		
 		if (options.format != null) {
 			if ("application/nquads".equals(options.format)) {
-				return toNQuads(dataset);
+				return new NQuadTripleCallback().call(dataset);
 			} else if ("text/turtle".equals(options.format)) {
 				return new TurtleTripleCallback().call(dataset);
 			} else {

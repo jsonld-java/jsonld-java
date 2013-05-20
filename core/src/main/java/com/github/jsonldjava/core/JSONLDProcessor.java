@@ -1267,15 +1267,15 @@ public class JSONLDProcessor {
 	 *
 	 * @return the RDF dataset.
 	 */
-	public Map<String,Object> toRDF(Map<String,Object> nodeMap) {
+	public RDFDataset toRDF(Map<String,Object> nodeMap) {
 		UniqueNamer namer = new UniqueNamer("_:b");
-		Map<String,Object> dataset = new LinkedHashMap<String, Object>();
+		RDFDataset dataset = new RDFDataset(namer);
 		for (String graphName : nodeMap.keySet()) {
 			Map<String,Object> graph = (Map<String, Object>) nodeMap.get(graphName);
 			if (graphName.indexOf("_:") == 0) {
 				graphName = namer.getName(graphName);
 			}
-			dataset.put(graphName, graphToRDF(graph, namer));
+			dataset.graphToRDF(graphName, graph);
 		}
 		return dataset;
 	}
