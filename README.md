@@ -45,14 +45,13 @@ This is a simple application which provides command line access to JSON-LD funct
 
 ### initial setup
 
-    mvn package -pl tools
-    chmod +x ./tools/target/appassembler/bin/jsonldplayground
+    chmod +x ./jsonldplayground
 
 ### usage
 
 run the following to get usage details:
 
-    ./tools/target/appassembler/bin/jsonldplayground
+    ./jsonldplayground
 
 For Developers
 --------------
