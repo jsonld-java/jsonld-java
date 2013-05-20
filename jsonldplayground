@@ -1,0 +1,14 @@
+#!/bin/bash
+# This script runs the JSONLDPlayground code.
+# Before running this script for the first time 
+# you may need to run:
+#     chmod +x jsonldplayground
+#
+# run ./jsonldplayground for the usage
+
+if [ ! -d "tools/target/appassembler/bin" ]; then
+    mvn -quiet clean install
+    chmod +x tools/target/appassembler/bin/*
+fi
+
+tools/target/appassembler/bin/jsonldplayground
