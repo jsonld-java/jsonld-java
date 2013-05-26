@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -28,6 +29,7 @@ import com.github.jsonldjava.utils.JSONUtils;
 import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.EarlTestSuite;
 
+@Ignore
 @RunWith(Parameterized.class)
 public class TurtleRDFParserTest {
 
