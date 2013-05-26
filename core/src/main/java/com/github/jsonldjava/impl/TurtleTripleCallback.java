@@ -1,6 +1,7 @@
 package com.github.jsonldjava.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.JSONLDTripleCallback;
 import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.utils.Obj;
@@ -19,6 +21,7 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
 
 	private static final int MAX_LINE_LENGTH = 160;
 	private static final int TAB_SPACES = 4;
+	private static final String COLS_KEY = "..cols.."; // this shouldn't be a valid iri/bnode i hope!
 	final Map<String,String> availableNamespaces = new LinkedHashMap<String, String>() {{
 		// TODO: fill with default namespaces
 	}};
@@ -39,7 +42,7 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
 		Map<String,Map<String,List<Object>>> ttl = new LinkedHashMap<String,Map<String,List<Object>>>();
 		
 		for (String graphName : dataset.keySet()) {
-			List<Map<String,Object>> triples = (List<Map<String, Object>>) dataset.get(graphName);
+			List<RDFDataset.Quad> triples = dataset.getQuads(graphName);
 			if ("@default".equals(graphName)) {
 				graphName = null;
 			}
@@ -61,71 +64,46 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
 			Map<String,List<Object>> thisSubject = null;
 			List<Object> thisPredicate = null;
 			
-			for (Map<String,Object> triple : triples) {
-				String subject = (String)Obj.get(triple, "subject", "value");
-				String predicate = (String)Obj.get(triple, "predicate", "value");
+			for (RDFDataset.Quad triple : triples) {
+				String subject = triple.getSubject().getValue();
+				String predicate = triple.getPredicate().getValue();
 				
 				if (prevSubject.equals(subject)) {
 					if (prevPredicate.equals(predicate)) {
 						// nothing to do
 					} else {
 						// new predicate
-						String p;
-						if (RDF_TYPE.equals(predicate)) {
-							p = "a";
-						} else {
-							p = getURI(predicate);
-						}
-						if (thisSubject.containsKey(p)) {
-							thisPredicate = thisSubject.get(p);
+						if (thisSubject.containsKey(predicate)) {
+							thisPredicate = thisSubject.get(predicate);
 						} else {
 							thisPredicate = new ArrayList<Object>();
-							thisSubject.put(p, thisPredicate);
+							thisSubject.put(predicate, thisPredicate);
 						}
 						prevPredicate = predicate;
 					}
 				} else {
 					// new subject
-					String s = getURI(subject);
-					String p;
-					if (RDF_TYPE.equals(predicate)) {
-						p = "a";
-					} else {
-						p = getURI(predicate);
-					}
-					
-					if (ttl.containsKey(s)) {
-						thisSubject = ttl.get(s);
+					if (ttl.containsKey(subject)) {
+						thisSubject = ttl.get(subject);
 					} else {
 						thisSubject = new LinkedHashMap<String, List<Object>>();
-						ttl.put(s, thisSubject);
+						ttl.put(subject, thisSubject);
 					}
-					if (thisSubject.containsKey(p)) {
-						thisPredicate = thisSubject.get(p);
+					if (thisSubject.containsKey(predicate)) {
+						thisPredicate = (List<Object>) thisSubject.get(predicate);
 					} else {
 						thisPredicate = new ArrayList<Object>();
-						thisSubject.put(p, thisPredicate);
+						thisSubject.put(predicate, thisPredicate);
 					}
 					
 					prevSubject = subject;
 					prevPredicate = predicate;
 				}
 				
-				if ("literal".equals(Obj.get(triple, "object", "type"))) {
-					String literal = "\"" + (String)Obj.get(triple, "object", "value") + "\"";
-					String language = (String)Obj.get(triple, "object", "language");
-					String datatype = (String)Obj.get(triple, "object", "datatype");
-					if (language != null) {
-						literal += "@" + language;
-					} else {
-						// TODO: not sure if turtle is fussy about not writing string datatypes
-						if (datatype != null && !XSD_STRING.equals(datatype)) {
-							literal += "^^" + getURI(datatype);
-						}
-					}
-					thisPredicate.add(literal);
+				if (triple.getObject().isLiteral()) {
+					thisPredicate.add(triple.getObject());
 				} else {
-					String o = getURI((String)Obj.get(triple, "object", "value"));
+					String o = triple.getObject().getValue();
 					if (o.startsWith("_:")) {
 						// add ref to o
 						if (!refs.containsKey(o)) {
@@ -138,6 +116,40 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
 			}
 		}
 		
+		Map<String,List<Object>> collections = new LinkedHashMap<String, List<Object>>();
+
+		List<String> subjects = new ArrayList<String>(ttl.keySet());
+		// find collections
+		for (String subj : subjects) {
+			Map<String, List<Object>> preds = ttl.get(subj);
+			if (preds != null && preds.containsKey(RDF_FIRST)) {
+				List<Object> col = new ArrayList<Object>();
+				collections.put(subj, col);
+				while (true) {
+					List<Object> first = preds.remove(RDF_FIRST);
+					Object o = first.get(0);
+					col.add(o);
+					// refs
+					if (refs.containsKey(o)) {
+						refs.get(o).remove(first);
+						refs.get(o).add(col);
+					}
+					String next = (String) preds.remove(RDF_REST).get(0);
+					if (RDF_NIL.equals(next)) {
+						// end of this list
+						break;
+					}
+					// if collections already contains a value for "next", add it to this col and break out
+					if (collections.containsKey(next)) {
+						col.addAll(collections.remove(next));
+						break;
+					}
+					preds = ttl.remove(next);
+					refs.remove(next);
+				}
+			}
+		}
+
 		// process refs (nesting referenced bnodes if only one reference to them in the whole graph)
 		for (String id : refs.keySet()) {
 			// skip items if there is more than one reference to them in the graph
@@ -146,12 +158,27 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
 			}
 			
 			// otherwise embed them into the referenced location
-			Map<String, List<Object>> object = ttl.remove(id);
+			Object object = ttl.remove(id);
+			if (collections.containsKey(id)) {
+				object = new LinkedHashMap<String, List<Object>>();
+				List<Object> tmp = new ArrayList<Object>();
+				tmp.add(collections.remove(id));
+				((HashMap<String, Object>) object).put(COLS_KEY, tmp);
+			}
 			List<Object> predicate = (List<Object>) refs.get(id).get(0);
 			// replace the one bnode ref with the object
 			predicate.set(predicate.lastIndexOf(id), object);
 		}
 		
+		// replace the rest of the collections
+		for (String id : collections.keySet()) {
+			Map<String,List<Object>> subj = ttl.get(id);
+			if (!subj.containsKey(COLS_KEY)) {
+				subj.put(COLS_KEY, new ArrayList<Object>());
+			}
+			subj.get(COLS_KEY).add(collections.get(id));
+		}
+
 		// build turtle output
 		String output = generateTurtle(ttl, 0, 0, false);
 		
@@ -164,65 +191,126 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
 		return ("".equals(prefixes) ? "" : prefixes + "\n") + output;
 	}
 	
-	private String generateTurtle(Map<String, Map<String, List<Object>>> ttl, int indentation, int lineLength, boolean isObject) {
+	private String generateObject(Object object, String sep, boolean hasNext, int indentation, int lineLength) {
 		String rval = "";
-		for (String subject : ttl.keySet()) {
-			//rval += tabs(indentation);
-			boolean isBlankNode = subject.startsWith("_:");
-			if (isBlankNode) {
-				rval += "[ ";
-				lineLength += 2;
+		String obj;
+		if (object instanceof String) {
+			obj = getURI((String)object);
+		} else if (object instanceof RDFDataset.Literal) {
+			obj = ((RDFDataset.Literal)object).getValue();
+			String dt = ((RDFDataset.Literal)object).getDatatype();
+			if (dt != null) {
+				// TODO: this probably isn't an exclusive list of all the datatype literals that can be represented as native types
+				if (!(XSD_DOUBLE.equals(dt) || XSD_INTEGER.equals(dt) || XSD_FLOAT.equals(dt) || XSD_BOOLEAN.equals(dt))) {
+					obj = "\"" + obj + "\"";
+					if (!XSD_STRING.equals(dt)) {
+						obj += "^^" + getURI(dt);
+					}
+				}
 			} else {
-				rval += subject + " ";
+				obj = "\"" + obj + "\"";
+				String lang = ((RDFDataset.Literal)object).getLanguage();
+				if (lang != null) {
+					obj += "@" + lang;
+				}
+			}
+		} else {
+			// must be an object
+			Map<String,Map<String,List<Object>>> tmp = new LinkedHashMap<String,Map<String,List<Object>>>();
+			tmp.put("_:x",  (Map<String, List<Object>>) object);
+			obj = generateTurtle(tmp, indentation+1, lineLength, true);
+		}
+
+		int idxofcr = obj.indexOf("\n");
+		// check if output will fix in the max line length (factor in comma if not the last item, current line length and length to the next CR)
+		if ((hasNext ? 1 : 0) + lineLength + (idxofcr != -1 ? idxofcr : obj.length()) > MAX_LINE_LENGTH) {
+			rval += "\n" + tabs(indentation+1);
+			lineLength = (indentation+1) * TAB_SPACES;
+		}
+		rval += obj;
+		if (idxofcr != -1) {
+			lineLength += (obj.length() - obj.lastIndexOf("\n"));
+		} else {
+			lineLength += obj.length();
+		}
+		if (hasNext) {
+			rval += sep;
+			lineLength += sep.length();
+			if (lineLength < MAX_LINE_LENGTH) {
+				rval += " ";
+				lineLength++;
+			} else {
+				rval += "\n";
+			}
+		}
+		return rval;
+	}
+
+	private String generateTurtle(Map<String,Map<String,List<Object>>> ttl, int indentation, int lineLength, boolean isObject) {
+		String rval = "";
+		Iterator<String> subjIter = ttl.keySet().iterator();
+		while (subjIter.hasNext()) {
+			String subject = subjIter.next();
+			Map<String, List<Object>> subjval = ttl.get(subject);
+			//boolean isBlankNode = subject.startsWith("_:");
+			boolean hasOpenBnodeBracket = false;
+			if (subject.startsWith("_:")) {
+				// only open blank node bracket the node doesn't contain any collections
+				if (!subjval.containsKey(COLS_KEY)) {
+					rval += "[ ";
+					lineLength += 2;
+					hasOpenBnodeBracket = true;
+				}
+
+				// TODO: according to http://www.rdfabout.com/demo/validator/
+				// 1) collections as objects cannot contain any predicates other than rdf:first and rdf:rest
+				// 2) collections cannot be surrounded with [ ]
+
+				// check for collection
+				if (subjval.containsKey(COLS_KEY)) {
+					List<Object> collections = subjval.remove(COLS_KEY);
+					for (Object collection : collections) {
+						rval += "( ";
+						lineLength += 2;
+						Iterator<Object> objIter = ((List<Object>)collection).iterator();
+						while (objIter.hasNext()) {
+							Object object = objIter.next();
+							rval += generateObject(object, "", objIter.hasNext(), indentation, lineLength);
+							lineLength = rval.length() - rval.lastIndexOf("\n");
+						}
+						rval += " ) ";
+						lineLength += 3;
+					}
+				}
+			// check for blank node
+			} else {
+				rval += getURI(subject) + " ";
 				lineLength += subject.length() + 1;
 			}
 			Iterator<String> predIter = ttl.get(subject).keySet().iterator();
 			while (predIter.hasNext()) {
 				String predicate = predIter.next();
-				rval += predicate + " ";
+				rval += getURI(predicate) + " ";
 				lineLength += predicate.length() + 1;
 				Iterator<Object> objIter = ttl.get(subject).get(predicate).iterator();
 				while (objIter.hasNext()) {
 					Object object = objIter.next();
-					String obj;
-					if (object instanceof String) {
-						obj = (String)object;
-					} else {
-						Map<String, Map<String, List<Object>>> tmp = new LinkedHashMap<String, Map<String,List<Object>>>();
-						tmp.put("_:x",  (Map<String, List<Object>>) object);
-						obj = generateTurtle(tmp, indentation+1, lineLength, true);
-					}
-					int idxofcr = obj.indexOf("\n");
-					// check if output will fix in the max line length (factor in comma if not the last item, current line length and length to the next CR) 
-					if ((objIter.hasNext() ? 1 : 0) + lineLength + (idxofcr != -1 ? idxofcr : obj.length()) > MAX_LINE_LENGTH) {
-						rval += "\n" + tabs(indentation+1);
-						lineLength = (indentation+1) * TAB_SPACES;
-					}
-					rval += obj;
-					if (idxofcr != -1) {
-						lineLength += (obj.length() - obj.lastIndexOf("\n"));
-					} else {
-						lineLength += obj.length();
-					}
-					if (objIter.hasNext()) {
-						rval += ",";
-						lineLength++;
-						if (lineLength < MAX_LINE_LENGTH) {
-							rval += " ";
-							lineLength++;
-						}
-					}
+					rval += generateObject(object, ",", objIter.hasNext(), indentation, lineLength);
+					lineLength = rval.length() - rval.lastIndexOf("\n");
 				}
 				if (predIter.hasNext()) {
 					rval += " ;\n" + tabs(indentation+1);
 					lineLength = (indentation+1) * TAB_SPACES;
 				}
 			}
-			if (isBlankNode) {
+			if (hasOpenBnodeBracket) {
 				rval += " ]"; 
 			}
 			if (!isObject) {
-				rval += " .\n\n";
+				rval += " .\n";
+				if (subjIter.hasNext()) { // add blank space if we have another object below this
+					rval += "\n";
+				}
 			}
 		}
 		return rval;

@@ -1,7 +1,5 @@
 package com.github.jsonldjava.core;
 
-import java.util.Map;
-
 /**
  * 
  * @author Tristan

@@ -10,6 +10,8 @@ public class JSONLDConsts {
     public static final String XSD_BOOLEAN = XSD_NS + "boolean";
     public static final String XSD_DOUBLE = XSD_NS + "double";
     public static final String XSD_INTEGER = XSD_NS + "integer";
+    public static final String XSD_FLOAT = XSD_NS + "float";
+    public static final String XSD_DECIMAL = XSD_NS + "decimal";
     public static final String XSD_ANYURI = XSD_NS + "anyURI";
     public static final String XSD_STRING = XSD_NS + "string";
 

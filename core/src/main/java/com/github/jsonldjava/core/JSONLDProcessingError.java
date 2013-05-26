@@ -41,4 +41,12 @@ public class JSONLDProcessingError extends Exception {
 		return details;
 	}
 	
+	@Override
+	public String getMessage() {
+		String msg = super.getMessage();
+		for (String key: details.keySet()) {
+			msg += " {" + key + ":" + details.get(key) + "}";
+		}
+		return msg;
+	}
 }

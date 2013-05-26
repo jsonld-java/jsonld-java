@@ -2,10 +2,13 @@ package com.github.jsonldjava.core;
 
 import static com.github.jsonldjava.core.JSONLDConsts.*;
 import static com.github.jsonldjava.core.JSONLDUtils.*;
+import static com.github.jsonldjava.core.Regex.HEX;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.IllegalFormatConversionException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -219,7 +222,7 @@ public class RDFDatasetUtils {
 		
 		// subject is an IRI or bnode
 		if (s.isIRI()) {
-			quad += "<" + s.getValue() + ">";
+			quad += "<" + escape(s.getValue()) + ">";
 		}
 		// normalization mode
 		else if (bnode != null) {
@@ -231,11 +234,11 @@ public class RDFDatasetUtils {
 		}
 		
 		// predicate is always an IRI
-		quad += " <" + p.getValue() + "> ";
+		quad += " <" + escape(p.getValue()) + "> ";
 		
 		// object is IRI, bnode or literal
 		if (o.isIRI()) {
-			quad += "<" + o.getValue() + ">";
+			quad += "<" + escape(o.getValue()) + ">";
 		}
 		else if (o.isBlankNode()) {
 			// normalization mode
@@ -248,24 +251,19 @@ public class RDFDatasetUtils {
 			}
 		}
 		else {
-			String escaped = o.getValue()
-					.replaceAll("\\\\", "\\\\\\\\")
-					.replaceAll("\\t", "\\\\t")
-					.replaceAll("\\n", "\\\\n")
-					.replaceAll("\\r", "\\\\r")
-					.replaceAll("\\\"", "\\\\\"");
+			String escaped = escape(o.getValue());
 			quad += "\"" + escaped + "\"";
 			if (RDF_LANGSTRING.equals(o.getDatatype())) {
 				quad += "@" + o.getLanguage();
 			} else if (!XSD_STRING.equals(o.getDatatype())) {
-				quad += "^^<" + o.getDatatype() + ">";
+				quad += "^^<" + escape(o.getDatatype()) + ">";
 			}
 		}
 		
 		// graph
 		if (graphName != null) {
 			if (graphName.indexOf("_:") != 0) {
-				quad += " <" + graphName + ">";
+				quad += " <" + escape(graphName) + ">";
 			}
 			else if (bnode != null) {
 				quad += " _:g";
@@ -282,14 +280,136 @@ public class RDFDatasetUtils {
 	static String toNQuad(RDFDataset.Quad triple, String graphName) {
 		return toNQuad(triple, graphName, null);
 	}
-	
-	public static class Regex {
+
+	final private static Pattern UCHAR_MATCHED = Pattern.compile("\\u005C(?:([tbnrf\\\"'])|(?:u(" + HEX + "{4}))|(?:U(" + HEX + "{8})))");
+
+	public static String unescape(String str) {
+		String rval = str;
+		if (str != null) {
+			Matcher m = UCHAR_MATCHED.matcher(str);
+			while (m.find()) {
+				String uni = m.group(0);
+				if (m.group(1) == null) {
+					String hex = m.group(2) != null ? m.group(2) : m.group(3);
+					int v = Integer.parseInt(hex, 16);//hex = hex.replaceAll("^(?:00)+", "");
+					if (v > 0xFFFF) {
+						// deal with UTF-32
+						//Integer v = Integer.parseInt(hex, 16);
+						int vt = v - 0x10000;
+						int vh = vt >> 10;
+						int v1 = vt & 0x3FF;
+						int w1 = 0xD800 + vh;
+						int w2 = 0xDC00 + v1;
+
+						StringBuffer b = new StringBuffer();
+						b.appendCodePoint(w1);
+						b.appendCodePoint(w2);
+						uni = b.toString();
+					} else {
+						uni = Character.toString((char)v);
+					}
+				} else {
+					char c = m.group(1).charAt(0);
+					switch (c) {
+					case 'b':
+						uni = "\b";
+						break;
+					case 'n':
+						uni = "\n";
+						break;
+					case 't':
+						uni = "\t";
+						break;
+					case 'f':
+						uni = "\f";
+						break;
+					case 'r':
+						uni = "\r";
+						break;
+					case '\'':
+						uni = "'";
+						break;
+					case '\"':
+						uni = "\"";
+						break;
+					case '\\':
+						uni = "\\";
+						break;
+					default:
+						// do nothing
+						continue;
+					}
+				}
+				String pat = Pattern.quote(m.group(0));
+				String x = Integer.toHexString((int)uni.charAt(0));
+				rval = rval.replaceAll(pat, uni);
+			}
+		}
+		return rval;
+	}
+
+	public static String escape(String str) {
+		String rval = "";
+		for (int i = 0 ; i < str.length() ; i++) {
+			char hi = str.charAt(i);
+			if (hi <= 0x8 || hi == 0xB || hi == 0xC || (hi >= 0xE && hi <= 0x1F) ||
+				(hi >= 0x7F && hi <= 0xA0) || // 0xA0 is end of non-printable latin-1 supplement characters
+				((hi >= 0x24F // 0x24F is the end of latin extensions
+				&& !Character.isHighSurrogate(hi))
+				// TODO: there's probably a lot of other characters that shouldn't be escaped that
+				// fall outside these ranges, this is one example from the json-ld tests
+				)) {
+				rval += String.format("\\u%04x", (int)hi);
+			}
+			else if (Character.isHighSurrogate(hi)) {
+				char lo = str.charAt(++i);
+				int c = (hi << 10) + lo + (0x10000 - (0xD800 << 10) - 0xDC00);
+				rval += String.format("\\U%08x", c);
+			} else {
+				switch (hi) {
+				case '\b':
+					rval += "\\b";
+					break;
+				case '\n':
+					rval += "\\n";
+					break;
+				case '\t':
+					rval += "\\t";
+					break;
+				case '\f':
+					rval += "\\f";
+					break;
+				case '\r':
+					rval += "\\r";
+					break;
+				//case '\'':
+				//	rval += "\\'";
+				//	break;
+				case '\"':
+					rval += "\\\"";
+					//rval += "\\u0022";
+					break;
+				case '\\':
+					rval += "\\\\";
+					break;
+				default:
+					// just put the char as is
+					rval += hi;
+					break;
+				}
+			}
+		}
+		return rval;
+	}
+
+	private static class Regex {
 		// define partial regexes
-		final public static Pattern IRI = Pattern.compile("(?:<([^:]+:[^>]*)>)");
+		//final public static Pattern IRI = Pattern.compile("(?:<([^:]+:[^>]*)>)");
+		final public static Pattern IRI = Pattern.compile("(?:<([^>]*)>)");
 		final public static Pattern BNODE = Pattern.compile("(_:(?:[A-Za-z][A-Za-z0-9]*))");
 		final public static Pattern PLAIN = Pattern.compile("\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"");
 		final public static Pattern DATATYPE = Pattern.compile("(?:\\^\\^" + IRI + ")");
-		final public static Pattern LANGUAGE = Pattern.compile("(?:@([a-z]+(?:-[a-z0-9]+)*))");
+		final public static Pattern LANGUAGE = Pattern.compile("(?:@([a-z]+(?:-[a-zA-Z0-9]+)*))");
 		final public static Pattern LITERAL = Pattern.compile("(?:" + PLAIN + "(?:" + DATATYPE + "|" + LANGUAGE + ")?)");
 		final public static Pattern WS = Pattern.compile("[ \\t]+");
 		final public static Pattern WSO = Pattern.compile("[ \\t]*");
@@ -304,17 +424,6 @@ public class RDFDatasetUtils {
 		
 		// full quad regex
 		final public static Pattern QUAD = Pattern.compile("^" + WSO + SUBJECT + PROPERTY + OBJECT + GRAPH + WSO + "$");
-		
-		// turtle prefix line
-		final public static Pattern TTL_PREFIX_NS = Pattern.compile("(?:([a-zA-Z0-9\\.]*):)"); // TODO: chars can be more
-		final public static Pattern TTL_PREFIX_ID = Pattern.compile("^@prefix" + WS + TTL_PREFIX_NS + WS + IRI + WSO + "\\." + WSO + "$");
-		
-		final public static Pattern IWSO = Pattern.compile("^" + WSO);
-		final public static Pattern TTL_SUBJECT = Pattern.compile("^(?:" + TTL_PREFIX_NS + "([^ \\t]+)|" + BNODE + "|" + IRI + ")" + WS);
-		final public static Pattern TTL_PREDICATE = Pattern.compile("^(?:" + TTL_PREFIX_NS + "([^ \\t]+)|" + IRI + ")"  + WS);
-		final public static Pattern TTL_DATATYPE = Pattern.compile("(?:\\^\\^" + TTL_PREFIX_NS + "([^ \\t]+)|" + IRI + ")");
-		final public static Pattern TTL_LITERAL = Pattern.compile("(?:" + PLAIN + "(?:" + TTL_DATATYPE + "|" + LANGUAGE + ")?)");
-		final public static Pattern TTL_OBJECT = Pattern.compile("^(?:" + TTL_PREFIX_NS + "([^,; \\t]+)([,;\\.]?)|" + IRI + "|" + BNODE + "|" + TTL_LITERAL + ")" + WSO);
 	}
 	
 	/**
@@ -350,38 +459,33 @@ public class RDFDatasetUtils {
 			// get subject
 			RDFDataset.Node subject;
 			if (match.group(1) != null) {
-				subject = new RDFDataset.IRI(match.group(1));
+				subject = new RDFDataset.IRI(unescape(match.group(1)));
 			} else {
-				subject = new RDFDataset.BlankNode(match.group(2));
+				subject = new RDFDataset.BlankNode(unescape(match.group(2)));
 			}
 			
 			// get predicate
-			RDFDataset.Node predicate = new RDFDataset.IRI(match.group(3));
+			RDFDataset.Node predicate = new RDFDataset.IRI(unescape(match.group(3)));
 			
 			// get object
 			RDFDataset.Node object;
 			if (match.group(4) != null) {
-				object = new RDFDataset.IRI(match.group(4));
+				object = new RDFDataset.IRI(unescape(match.group(4)));
 			} else if (match.group(5) != null) {
-				object = new RDFDataset.BlankNode(match.group(5));
+				object = new RDFDataset.BlankNode(unescape(match.group(5)));
 			} else {
-				final String language = match.group(8);
-				final String datatype = match.group(7) != null ? match.group(7) : match.group(8) != null ? RDF_LANGSTRING : XSD_STRING;
-				final String unescaped = match.group(6)
-						.replaceAll("\\\\\\\\", "\\\\")
-						.replaceAll("\\\\t", "\\t")
-						.replaceAll("\\\\n", "\\n")
-						.replaceAll("\\\\r", "\\r")
-						.replaceAll("\\\\\"", "\\\"");
+				final String language = unescape(match.group(8));
+				final String datatype = match.group(7) != null ? unescape(match.group(7)) : match.group(8) != null ? RDF_LANGSTRING : XSD_STRING;
+				final String unescaped = unescape(match.group(6));
 				object = new RDFDataset.Literal(unescaped, datatype, language);
 			}
 			
 			// get graph name ('@default' is used for the default graph)
 			String name = "@default";
 			if (match.group(9) != null) {
-				name = match.group(9);
+				name = unescape(match.group(9));
 			} else if (match.group(10) != null) {
-				name = match.group(10);
+				name = unescape(match.group(10));
 			}
 			
 			RDFDataset.Quad triple = new RDFDataset.Quad(subject, predicate, object, name);

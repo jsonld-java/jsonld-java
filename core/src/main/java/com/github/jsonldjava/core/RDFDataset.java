@@ -288,6 +288,13 @@ public class RDFDataset extends LinkedHashMap<String,Object> {
 		context.get(ns);
 	}
 	
+	/**
+	 *  clears all the namespaces in this dataset
+	 */
+	public void clearNamespaces() {
+		context.clear();
+	}
+
 	public Map<String, String> getNamespaces() {
 		return context;
 	}
@@ -421,18 +428,21 @@ public class RDFDataset extends LinkedHashMap<String,Object> {
 					continue;
 				}
 				
+				// RDF subjects
+				Node subject;
+				if (id == null) {
+					// TODO: this is a hack to handle the node generator not handling blank nodes that have a "@list" property alongside other properties
+					subject = new BlankNode(namer.getName("undefined"));
+				} else if (id.indexOf("_:") == 0) {
+					subject = new BlankNode(namer.getName(id));
+				} else {
+					subject = new IRI(id);
+				}
+
+				// RDF predicates
+				Node predicate = new IRI(property);
+
 				for (Object item : (List<Object>) items) {
-					// RDF subjects
-					Node subject;
-					if (id.indexOf("_:") == 0) {
-						subject = new BlankNode(namer.getName(id));
-					} else {
-						subject = new IRI(id);
-					}
-					
-					// RDF predicates
-					Node predicate = new IRI(property);
-					
 					// convert @list to triples
 					if (isList(item)) {
 						//listToRDF((List<Object>) ((Map<String, Object>) item).get("@list"), namer, subject, predicate, rval);
