@@ -1,0 +1,13 @@
+[
+    {
+      "@context": {
+        "ex": "http://example.org/",
+        "term1": {"@id": "ex:term1", "@type": "ex:datatype"}
+      }
+    },
+    {
+      "@context": {
+        "term2": {"@id": "ex:term2", "@type": "@id"}
+      }
+    }
+]
