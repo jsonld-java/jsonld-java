@@ -1,6 +1,9 @@
 package com.github.jsonldjava.core;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,8 +18,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.github.jsonldjava.utils.JSONUtils;
 import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.URL;
-
-import static com.github.jsonldjava.core.JSONLDConsts.*;
 
 
 public class JSONLDUtils {
@@ -1559,7 +1560,7 @@ public class JSONLDUtils {
     		_cycles.put(url, Boolean.TRUE);
     		
     		try {
-				Map<String,Object> ctx = (Map<String,Object>)JSONUtils.fromString((String)new java.net.URL(url).getContent());
+                Map<String,Object> ctx = (Map<String,Object>)JSONUtils.fromURL(new java.net.URL(url));
 				if (!ctx.containsKey("@context")) {
 					ctx = new LinkedHashMap<String, Object>();
 					ctx.put("@context", new LinkedHashMap<String, Object>());
@@ -1586,6 +1587,7 @@ public class JSONLDUtils {
     	}
 		
 	}
+
 
 	/**
      * Finds all @context URLs in the given JSON-LD input.
