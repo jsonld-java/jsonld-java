@@ -1,7 +1,6 @@
 package com.github.jsonldjava.utils;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,9 +11,6 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.text.html.HTMLEditorKit.Parser;
-
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonLocation;
@@ -178,7 +174,6 @@ public class JSONUtils {
 
     public static Object fromURL(java.net.URL url) throws JsonParseException,
             IOException {
-        new MappingJsonFactory();
         MappingJsonFactory jsonFactory = new MappingJsonFactory();
         URLConnection conn = url.openConnection();
         // For content negotiation
