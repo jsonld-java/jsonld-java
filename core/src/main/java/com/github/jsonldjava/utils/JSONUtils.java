@@ -7,10 +7,15 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.HttpURLConnection;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.SystemDefaultHttpClient;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -177,26 +182,12 @@ public class JSONUtils {
 
     public static Object fromURL(java.net.URL url) throws JsonParseException,
             IOException {
+
+        
         
         MappingJsonFactory jsonFactory = new MappingJsonFactory();
-        URLConnection conn = url.openConnection();
-        
-        // For content negotiation
-        conn.addRequestProperty(
-                "Accept",
-                "application/ld+json, application/json;q=0.9, "
-                        + "application/javascript;q=0.5, text/javascript;q=0.5, "
-                        + "text/plain;q=0.2, */*;q=0.1");
-        
-        InputStream in = conn.getInputStream();
-        if (conn instanceof HttpURLConnection) {
-            HttpURLConnection httpURLConnection = (HttpURLConnection) conn;
-            int status = httpURLConnection.getResponseCode();
-            if (status != 200) {
-                throw new IOException("Can't read " + url + ", status code: " + status);
-            }
-        }
-        
+
+        InputStream in = openStreamFromURL(url);
         try {
             JsonParser parser = jsonFactory.createParser(in);
             JsonToken token = parser.nextToken();
@@ -216,5 +207,24 @@ public class JSONUtils {
         } finally {
             in.close();
         }
+    }
+
+    private static InputStream openStreamFromURL(java.net.URL url) throws IOException,
+            ClientProtocolException {
+        String protocol = url.getProtocol();
+        if (! protocol.equalsIgnoreCase("http") && ! protocol.equalsIgnoreCase("https")) {
+            return url.openStream();
+        }
+        // Uses Apache SystemDefaultHttpClient rather than
+        // DefaultHttpClient, thus the normal proxy settings for the JVM
+        // will be used
+        DefaultHttpClient httpClient = new SystemDefaultHttpClient();
+        HttpUriRequest request = new HttpGet(url.toExternalForm());
+        HttpResponse response = httpClient.execute(request);
+        int status = response.getStatusLine().getStatusCode();
+        if (status != 200 && status != 203) {
+            throw new IOException("Can't retrieve " + url + ", status code: " + status);
+        }
+        return  response.getEntity().getContent();
     }
 }

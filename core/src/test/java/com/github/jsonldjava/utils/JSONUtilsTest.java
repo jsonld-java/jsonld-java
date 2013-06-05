@@ -91,14 +91,17 @@ public class JSONUtilsTest {
     
     @Ignore("Integration test")
     @Test
-    public void fromHTTPS() throws Exception {
+    public void fromHTTPStoHTTP() throws Exception {
         URL url = new URL("https://w3id.org/bundle/context");
         Object context = JSONUtils.fromURL(url);
+        // Might fail because of http://stackoverflow.com/questions/1884230/java-doesnt-follow-redirect-in-urlconnection
+        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4620571
         assertTrue(context instanceof Map);
     }
     
     @Test
     public void fromURLAcceptHeaders() throws Exception {
+        
         final Map<String, List<String>> requestProperties = new HashMap<String, List<String>>();
         URLStreamHandler handler = new URLStreamHandler() {            
             @Override
