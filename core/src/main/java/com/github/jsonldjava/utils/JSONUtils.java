@@ -11,9 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.RequestAcceptEncoding;
+import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.SystemDefaultHttpClient;
 
@@ -35,6 +36,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * 
  */
 public class JSONUtils {
+    private static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
+
     public static Object fromString(String jsonString) throws JsonParseException, JsonMappingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Object rval = null;
@@ -182,11 +185,8 @@ public class JSONUtils {
 
     public static Object fromURL(java.net.URL url) throws JsonParseException,
             IOException {
-
-        
         
         MappingJsonFactory jsonFactory = new MappingJsonFactory();
-
         InputStream in = openStreamFromURL(url);
         try {
             JsonParser parser = jsonFactory.createParser(in);
@@ -209,17 +209,28 @@ public class JSONUtils {
         }
     }
 
-    private static InputStream openStreamFromURL(java.net.URL url) throws IOException,
-            ClientProtocolException {
+    public static InputStream openStreamFromURL(java.net.URL url) throws IOException {
         String protocol = url.getProtocol();
         if (! protocol.equalsIgnoreCase("http") && ! protocol.equalsIgnoreCase("https")) {
+            // Can't use the HTTP client for those!
+            // Fallback to Java's built-in URL handler. No need for
+            // Accept headers as it's likely to be file: or jar:
             return url.openStream();
         }
         // Uses Apache SystemDefaultHttpClient rather than
         // DefaultHttpClient, thus the normal proxy settings for the JVM
         // will be used
         DefaultHttpClient httpClient = new SystemDefaultHttpClient();
+        // Support compressed data
+        // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
+        httpClient.addRequestInterceptor(new RequestAcceptEncoding());
+        httpClient.addResponseInterceptor(new ResponseContentEncoding());
+
         HttpUriRequest request = new HttpGet(url.toExternalForm());
+        // We prefer application/ld+json, but fallback to application/json
+        // or whatever is available
+        request.addHeader("Accept", ACCEPT_HEADER);
+
         HttpResponse response = httpClient.execute(request);
         int status = response.getStatusLine().getStatusCode();
         if (status != 200 && status != 203) {
