@@ -1,20 +1,27 @@
 package com.github.jsonldjava.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
 
-import com.github.jsonldjava.utils.JSONUtils;
-
 
 public class JSONUtilsTest {
 	
-	@Test
+	@SuppressWarnings("unchecked")
+    @Test
 	public void fromStringTest() {
 		String testString = "{\"seq\":3,\"id\":\"e48dfa735d9fad88db6b7cd696002df7\",\"changes\":[{\"rev\":\"2-6aebf275bc3f29b67695c727d448df8e\"}]}";
 		String testFailure = "{{{{{{{{{{{";
@@ -79,5 +86,40 @@ public class JSONUtilsTest {
         assertEquals(1, cont2.size());
         Map<String, Object> term2 = (Map<String, Object>) cont2.get("term2");
         assertEquals("ex:term2", term2.get("@id"));
+    }
+    
+    @Test
+    public void fromURLAcceptHeaders() throws Exception {
+        final Map<String, List<String>> requestProperties = new HashMap<String, List<String>>();
+        URLStreamHandler handler = new URLStreamHandler() {            
+            @Override
+            protected URLConnection openConnection(URL u) throws IOException {
+                return new URLConnection(u) {
+                    @Override
+                    public void connect() throws IOException {
+                        return;
+                    }
+                    
+                    @Override
+                    public InputStream getInputStream() throws IOException {
+                        if (! requestProperties.isEmpty()) {
+                            fail("Multiple connections");
+                        }
+                        requestProperties.putAll(getRequestProperties());   
+                        assertEquals("application/ld+json", getRequestProperty("Accept"));
+                        return getClass().getResourceAsStream("/custom/contexttest-0001.jsonld");
+                    }
+                    
+                };
+            }
+        };
+        URL url = new URL(null, "jsonldtest:context", handler);
+        Object context = JSONUtils.fromURL(url);
+        assertTrue(context instanceof Map);
+        assertFalse(requestProperties.isEmpty());
+        assertEquals(2, requestProperties.get("Accept").size());
+        assertEquals("application/ld+json", requestProperties.get("Accept").get(0));
+        assertEquals("application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1", requestProperties.get("Accept").get(1));
+
     }
 }
