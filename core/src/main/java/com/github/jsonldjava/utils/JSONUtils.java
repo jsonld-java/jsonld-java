@@ -181,18 +181,13 @@ public class JSONUtils {
         URLConnection conn = url.openConnection();
 
         // For content negotiation
+        conn.addRequestProperty(
+                "Accept",
+                "application/ld+json, application/json;q=0.9, "
+                        + "application/javascript;q=0.5, text/javascript;q=0.5, "
+                        + "text/plain;q=0.2, */*;q=0.1");
 
-        // Qualified fallbacks
-        conn.addRequestProperty("Accept", "application/json;q=0.9, "
-                        + "application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, "
-                        + "*/*;q=0.1");
-        // What we really want. No q (implying q=1.0) and separate Accept
-        // header in case of naive HTTP server implementations who put these in
-        // a map and check for string equality. Note that calling this last will
-        // make it the first Accept header (See JSONUtilsTest)
-        conn.addRequestProperty("Accept", "application/ld+json");
-        
-        InputStream in = conn.getInputStream();
+   InputStream in = conn.getInputStream();
         try {
             JsonParser parser = jsonFactory.createParser(in);
             JsonToken token = parser.nextToken();

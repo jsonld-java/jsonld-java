@@ -106,7 +106,7 @@ public class JSONUtilsTest {
                             fail("Multiple connections");
                         }
                         requestProperties.putAll(getRequestProperties());   
-                        assertEquals("application/ld+json", getRequestProperty("Accept"));
+                        assertTrue(getRequestProperty("Accept").startsWith("application/ld+json,"));
                         return getClass().getResourceAsStream("/custom/contexttest-0001.jsonld");
                     }
                     
@@ -117,9 +117,9 @@ public class JSONUtilsTest {
         Object context = JSONUtils.fromURL(url);
         assertTrue(context instanceof Map);
         assertFalse(requestProperties.isEmpty());
-        assertEquals(2, requestProperties.get("Accept").size());
-        assertEquals("application/ld+json", requestProperties.get("Accept").get(0));
-        assertEquals("application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1", requestProperties.get("Accept").get(1));
+        assertEquals(1, requestProperties.get("Accept").size());
+        String expected = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
+        assertEquals(expected, requestProperties.get("Accept").get(0));
 
     }
 }
