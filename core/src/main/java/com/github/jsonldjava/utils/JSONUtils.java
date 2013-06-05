@@ -116,12 +116,14 @@ public class JSONUtils {
         return fromString(sb.toString());
     }
 
+    @SuppressWarnings("deprecation")
     public static void write(Writer w, Object jsonObject) throws JsonGenerationException, JsonMappingException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.getJsonFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
         objectMapper.writeValue(w, jsonObject);
     }
 
+    @SuppressWarnings("deprecation")
     public static void writePrettyPrint(Writer w, Object jsonObject) throws JsonGenerationException, JsonMappingException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.getJsonFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
@@ -174,14 +176,22 @@ public class JSONUtils {
 
     public static Object fromURL(java.net.URL url) throws JsonParseException,
             IOException {
+        
         MappingJsonFactory jsonFactory = new MappingJsonFactory();
         URLConnection conn = url.openConnection();
+
         // For content negotiation
-        conn.addRequestProperty("Accept", "application/ld+json);");
-        // Fallbacks                       
+
+        // Qualified fallbacks
         conn.addRequestProperty("Accept", "application/json;q=0.9, "
                         + "application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, "
                         + "*/*;q=0.1");
+        // What we really want. No q (implying q=1.0) and separate Accept
+        // header in case of naive HTTP server implementations who put these in
+        // a map and check for string equality. Note that calling this last will
+        // make it the first Accept header (See JSONUtilsTest)
+        conn.addRequestProperty("Accept", "application/ld+json");
+        
         InputStream in = conn.getInputStream();
         try {
             JsonParser parser = jsonFactory.createParser(in);
