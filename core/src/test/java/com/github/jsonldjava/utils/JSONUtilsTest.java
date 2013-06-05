@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -86,6 +87,14 @@ public class JSONUtilsTest {
         assertEquals(1, cont2.size());
         Map<String, Object> term2 = (Map<String, Object>) cont2.get("term2");
         assertEquals("ex:term2", term2.get("@id"));
+    }
+    
+    @Ignore("Integration test")
+    @Test
+    public void fromHTTPS() throws Exception {
+        URL url = new URL("https://w3id.org/bundle/context");
+        Object context = JSONUtils.fromURL(url);
+        assertTrue(context instanceof Map);
     }
     
     @Test

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
@@ -179,15 +180,23 @@ public class JSONUtils {
         
         MappingJsonFactory jsonFactory = new MappingJsonFactory();
         URLConnection conn = url.openConnection();
-
+        
         // For content negotiation
         conn.addRequestProperty(
                 "Accept",
                 "application/ld+json, application/json;q=0.9, "
                         + "application/javascript;q=0.5, text/javascript;q=0.5, "
                         + "text/plain;q=0.2, */*;q=0.1");
-
-   InputStream in = conn.getInputStream();
+        
+        InputStream in = conn.getInputStream();
+        if (conn instanceof HttpURLConnection) {
+            HttpURLConnection httpURLConnection = (HttpURLConnection) conn;
+            int status = httpURLConnection.getResponseCode();
+            if (status != 200) {
+                throw new IOException("Can't read " + url + ", status code: " + status);
+            }
+        }
+        
         try {
             JsonParser parser = jsonFactory.createParser(in);
             JsonToken token = parser.nextToken();
