@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,9 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * 
  */
 public class JSONUtils {
+    /**
+     * An HTTP Accept header that prefers JSONLD.
+     */
     private static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
 
     public static Object fromString(String jsonString) throws JsonParseException, JsonMappingException {
@@ -125,17 +129,15 @@ public class JSONUtils {
         return fromString(sb.toString());
     }
 
-    @SuppressWarnings("deprecation")
     public static void write(Writer w, Object jsonObject) throws JsonGenerationException, JsonMappingException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.getJsonFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+        objectMapper.getFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
         objectMapper.writeValue(w, jsonObject);
     }
 
-    @SuppressWarnings("deprecation")
     public static void writePrettyPrint(Writer w, Object jsonObject) throws JsonGenerationException, JsonMappingException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.getJsonFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+        objectMapper.getFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         
         objectWriter.writeValue(w, jsonObject);
@@ -155,11 +157,12 @@ public class JSONUtils {
         StringWriter sw = new StringWriter();
         try {
             writePrettyPrint(sw, obj);
-        } catch (Exception e) {
+        } catch (IOException e) {
             // TODO Is this really possible with stringwriter?
             // I think it's only there because of the interface
             // however, if so... well, we have to do something!
             // it seems weird for toString to throw an IOException
+            e.printStackTrace();
         }
         return sw.toString();
     }
@@ -170,19 +173,37 @@ public class JSONUtils {
         StringWriter sw = new StringWriter();
         try {
             write(sw, obj);
-        } catch (Exception e) {
+        } catch (IOException e) {
             // TODO Is this really possible with stringwriter?
             // I think it's only there because of the interface
             // however, if so... well, we have to do something!
             // it seems weird for toString to throw an IOException
+            e.printStackTrace();
         }
         return sw.toString();
     }
 
+    /**
+     * A null-safe equals check using v1.equals(v2) if they are both not null.
+     * @param v1 The source object for the equals check.
+     * @param v2 The object to be checked for equality using the first objects equals method.
+     * @return True if the objects were both null. True if both objects were not null and 
+     * 		v1.equals(v2). False otherwise.
+     */
     public static boolean equals(Object v1, Object v2) {
     	return v1 == null ? v2 == null : v1.equals(v2);
     }
 
+    /**
+     * Returns a Map, List, or String containing the contents of the JSON 
+     * resource resolved from the URL.
+     * 
+     * @param url The URL to resolve
+     * @return The Map, List, or String that represent the JSON resource 
+     * 		resolved from the URL
+     * @throws JsonParseException If the JSON was not valid.
+     * @throws IOException If there was an error resolving the resource.
+     */
     public static Object fromURL(java.net.URL url) throws JsonParseException,
             IOException {
         
@@ -209,6 +230,15 @@ public class JSONUtils {
         }
     }
 
+    /**
+     * Opens an {@link InputStream} for the given {@link URL}, including support for 
+     * http and https URLs that are requested using Content Negotiation with 
+     * application/ld+json as the preferred content type.
+     * 
+     * @param url The URL identifying the source.
+     * @return An InputStream containing the contents of the source.
+     * @throws IOException If there was an error resolving the URL.
+     */
     public static InputStream openStreamFromURL(java.net.URL url) throws IOException {
         String protocol = url.getProtocol();
         if (! protocol.equalsIgnoreCase("http") && ! protocol.equalsIgnoreCase("https")) {
