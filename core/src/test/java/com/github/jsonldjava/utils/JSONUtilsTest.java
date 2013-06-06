@@ -1,6 +1,7 @@
 package com.github.jsonldjava.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -87,7 +88,7 @@ public class JSONUtilsTest {
         assertEquals("ex:term2", term2.get("@id"));
     }
     
-    @Ignore("Integration test")
+    //@Ignore("Integration test")
     @Test
     public void fromURLredirectHTTPSToHTTP() throws Exception {
         URL url = new URL("https://w3id.org/bundle/context");
@@ -95,15 +96,17 @@ public class JSONUtilsTest {
         // Should not fail because of http://stackoverflow.com/questions/1884230/java-doesnt-follow-redirect-in-urlconnection
         // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4620571
         assertTrue(context instanceof Map);
+        assertFalse(((Map) context).isEmpty());
     }
     
 
-    @Ignore("Integration test")
+    //@Ignore("Integration test")
     @Test
     public void fromURLredirect() throws Exception {
         URL url = new URL("http://purl.org/wf4ever/ro-bundle/context.json");
         Object context = JSONUtils.fromURL(url);
         assertTrue(context instanceof Map);
+        assertFalse(((Map) context).isEmpty());
     }
     
     
@@ -131,6 +134,7 @@ public class JSONUtilsTest {
         Object context = JSONUtils.fromURL(url);
         assertEquals(1, requests.get());
         assertTrue(context instanceof Map);
+        assertFalse(((Map) context).isEmpty());
         
 //        assertEquals(1, requestProperties.get("Accept").size());
 //        String expected = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
