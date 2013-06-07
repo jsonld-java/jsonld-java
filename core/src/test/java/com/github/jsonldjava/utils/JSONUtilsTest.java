@@ -22,7 +22,13 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.cache.CacheResponseStatus;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.cache.CachingHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -122,6 +128,28 @@ public class JSONUtilsTest {
     
     
     @Test
+    public void fromURLCache() throws Exception {
+        URL url = new URL("http://json-ld.org/contexts/person.jsonld");
+        JSONUtils.fromURL(url);
+        
+        // Now try to get it again and ensure it is 
+        // cached
+        HttpClient client = new CachingHttpClient(JSONUtils.getHttpClient());
+        HttpUriRequest get = new HttpGet(url.toURI());
+        get.setHeader("Accept", JSONUtils.ACCEPT_HEADER);
+        HttpContext localContext = new BasicHttpContext();
+        HttpResponse respo = client.execute(get, localContext);
+        EntityUtils.consume(respo.getEntity());
+
+        // Check cache status 
+        // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/caching.html
+        CacheResponseStatus responseStatus = (CacheResponseStatus) localContext.getAttribute(
+                CachingHttpClient.CACHE_RESPONSE_STATUS);
+        assertFalse(CacheResponseStatus.CACHE_MISS.equals(responseStatus));
+    }
+    
+    
+    @Test
     public void fromURLCustomHandler() throws Exception {
         final AtomicInteger requests = new AtomicInteger();
         URLStreamHandler handler = new URLStreamHandler() {            
@@ -183,9 +211,8 @@ public class JSONUtilsTest {
         
         Header[] accept = req.getHeaders("Accept");
         assertEquals(1, accept.length);
-        String expected = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
+        assertEquals(JSONUtils.ACCEPT_HEADER, accept[0].getValue());
         // Test that this header parses correctly
-        assertEquals(expected, accept[0].getValue());
         HeaderElement[] elems = accept[0].getElements();
         assertEquals("application/ld+json", elems[0].getName());
         assertEquals(0, elems[0].getParameterCount());
