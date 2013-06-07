@@ -10,7 +10,7 @@ public class JSONLDProcessingError extends Exception {
 	
 	public JSONLDProcessingError(String string, Map<String, Object> details) {
 		super(string);
-		details = details;
+		this.details = details;
 	}
 
 	public JSONLDProcessingError(String string) {
