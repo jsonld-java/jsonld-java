@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.RequestAcceptEncoding;
@@ -41,6 +42,7 @@ public class JSONUtils {
      * An HTTP Accept header that prefers JSONLD.
      */
     private static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
+    protected static HttpClient httpClient;
 
     public static Object fromString(String jsonString) throws JsonParseException, JsonMappingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -247,25 +249,32 @@ public class JSONUtils {
             // Accept headers as it's likely to be file: or jar:
             return url.openStream();
         }
-        // Uses Apache SystemDefaultHttpClient rather than
-        // DefaultHttpClient, thus the normal proxy settings for the JVM
-        // will be used
-        DefaultHttpClient httpClient = new SystemDefaultHttpClient();
-        // Support compressed data
-        // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
-        httpClient.addRequestInterceptor(new RequestAcceptEncoding());
-        httpClient.addResponseInterceptor(new ResponseContentEncoding());
-
         HttpUriRequest request = new HttpGet(url.toExternalForm());
         // We prefer application/ld+json, but fallback to application/json
         // or whatever is available
         request.addHeader("Accept", ACCEPT_HEADER);
-
-        HttpResponse response = httpClient.execute(request);
+        
+        HttpResponse response = getHttpClient().execute(request);
         int status = response.getStatusLine().getStatusCode();
         if (status != 200 && status != 203) {
             throw new IOException("Can't retrieve " + url + ", status code: " + status);
         }
         return  response.getEntity().getContent();
+    }
+
+    protected static HttpClient getHttpClient() {
+        if (httpClient == null) {
+            // Uses Apache SystemDefaultHttpClient rather than
+            // DefaultHttpClient, thus the normal proxy settings for the JVM
+            // will be used
+
+            DefaultHttpClient client = new SystemDefaultHttpClient();
+            // Support compressed data
+            // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
+            client.addRequestInterceptor(new RequestAcceptEncoding());
+            client.addResponseInterceptor(new ResponseContentEncoding());
+            httpClient = client;
+        }
+        return httpClient;
     }
 }

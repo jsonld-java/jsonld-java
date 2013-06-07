@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,13 +16,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Ignore;
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 
 public class JSONUtilsTest {
 	
-	@SuppressWarnings("unchecked")
+	private ArgumentCaptor<HttpUriRequest> httpRequest;
+
+    @SuppressWarnings("unchecked")
     @Test
 	public void fromStringTest() {
 		String testString = "{\"seq\":3,\"id\":\"e48dfa735d9fad88db6b7cd696002df7\",\"changes\":[{\"rev\":\"2-6aebf275bc3f29b67695c727d448df8e\"}]}";
@@ -96,7 +107,7 @@ public class JSONUtilsTest {
         // Should not fail because of http://stackoverflow.com/questions/1884230/java-doesnt-follow-redirect-in-urlconnection
         // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4620571
         assertTrue(context instanceof Map);
-        assertFalse(((Map) context).isEmpty());
+        assertFalse(((Map<?,?>)context).isEmpty());
     }
     
 
@@ -106,7 +117,7 @@ public class JSONUtilsTest {
         URL url = new URL("http://purl.org/wf4ever/ro-bundle/context.json");
         Object context = JSONUtils.fromURL(url);
         assertTrue(context instanceof Map);
-        assertFalse(((Map) context).isEmpty());
+        assertFalse(((Map<?,?>)context).isEmpty());
     }
     
     
@@ -133,12 +144,74 @@ public class JSONUtilsTest {
         assertEquals(0, requests.get());
         Object context = JSONUtils.fromURL(url);
         assertEquals(1, requests.get());
-        assertTrue(context instanceof Map);
-        assertFalse(((Map) context).isEmpty());
-        
-//        assertEquals(1, requestProperties.get("Accept").size());
-//        String expected = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
-//        assertEquals(expected, requestProperties.get("Accept").get(0));
-
+        assertTrue(context instanceof Map);     
+        assertFalse(((Map<?,?>)context).isEmpty());
     }
+
+    protected HttpClient fakeHttpClient() throws IllegalStateException, IOException {
+        HttpClient httpClient = mock(HttpClient.class);
+        HttpResponse fakeResponse = mock(HttpResponse.class);
+        StatusLine statusCode = mock(StatusLine.class);
+        when(statusCode.getStatusCode()).thenReturn(200);
+        when(fakeResponse.getStatusLine()).thenReturn(statusCode);
+        HttpEntity entity = mock(HttpEntity.class);
+        when(entity.getContent())
+                .thenReturn(
+                        JSONUtilsTest.class
+                                .getResourceAsStream("/custom/contexttest-0001.jsonld"));
+        when(fakeResponse.getEntity()).thenReturn(entity);
+        httpRequest = ArgumentCaptor.forClass(HttpUriRequest.class);
+        when(httpClient.execute(httpRequest.capture())).thenReturn(
+                fakeResponse);
+        return httpClient;
+    }
+    
+    @Test
+    public void fromURLAcceptHeaders() throws Exception {
+
+        URL url = new URL("http://example.com/fake-jsonld-test");
+        JSONUtils.httpClient = fakeHttpClient();
+        try {
+            Object context = JSONUtils.fromURL(url);
+            assertTrue(context instanceof Map);
+        } finally {
+            JSONUtils.httpClient = null;
+        }
+        assertEquals(1, httpRequest.getAllValues().size());
+        HttpUriRequest req = httpRequest.getValue();
+        assertEquals(url.toURI(), req.getURI());
+        
+        Header[] accept = req.getHeaders("Accept");
+        assertEquals(1, accept.length);
+        String expected = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
+        // Test that this header parses correctly
+        assertEquals(expected, accept[0].getValue());
+        HeaderElement[] elems = accept[0].getElements();
+        assertEquals("application/ld+json", elems[0].getName());
+        assertEquals(0, elems[0].getParameterCount());
+
+        assertEquals("application/json", elems[1].getName());
+        assertEquals(1, elems[1].getParameterCount());
+        assertEquals("0.9", elems[1].getParameterByName("q").getValue());
+
+        assertEquals("application/javascript", elems[2].getName());
+        assertEquals(1, elems[2].getParameterCount());
+        assertEquals("0.5", elems[2].getParameterByName("q").getValue());
+
+        assertEquals("text/javascript", elems[3].getName());
+        assertEquals(1, elems[3].getParameterCount());
+        assertEquals("0.5", elems[3].getParameterByName("q").getValue());
+
+        assertEquals("text/plain", elems[4].getName());
+        assertEquals(1, elems[4].getParameterCount());
+        assertEquals("0.2", elems[4].getParameterByName("q").getValue());
+
+        assertEquals("*/*", elems[5].getName());
+        assertEquals(1, elems[5].getParameterCount());
+        assertEquals("0.1", elems[5].getParameterByName("q").getValue());
+        
+        assertEquals(6, elems.length);
+    }
+
+    
 }
