@@ -19,6 +19,8 @@ import org.apache.http.client.protocol.RequestAcceptEncoding;
 import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.SystemDefaultHttpClient;
+import org.apache.http.impl.client.cache.CacheConfig;
+import org.apache.http.impl.client.cache.CachingHttpClient;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -41,7 +43,7 @@ public class JSONUtils {
     /**
      * An HTTP Accept header that prefers JSONLD.
      */
-    private static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
+    protected static String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
     protected static HttpClient httpClient;
 
     public static Object fromString(String jsonString) throws JsonParseException, JsonMappingException {
@@ -259,7 +261,7 @@ public class JSONUtils {
         if (status != 200 && status != 203) {
             throw new IOException("Can't retrieve " + url + ", status code: " + status);
         }
-        return  response.getEntity().getContent();
+        return response.getEntity().getContent();
     }
 
     protected static HttpClient getHttpClient() {
@@ -273,7 +275,11 @@ public class JSONUtils {
             // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
             client.addRequestInterceptor(new RequestAcceptEncoding());
             client.addResponseInterceptor(new ResponseContentEncoding());
-            httpClient = client;
+            CacheConfig cacheConfig = new CacheConfig();
+            cacheConfig.setMaxObjectSize(1024*128); // 128 kB
+            cacheConfig.setMaxCacheEntries(1000);
+            // and allow caching
+            httpClient = new CachingHttpClient(client, cacheConfig);
         }
         return httpClient;
     }
