@@ -6,7 +6,6 @@ import java.util.Map;
 
 import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.RDFDataset;
-import com.github.jsonldjava.core.RDFDatasetUtils;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -16,39 +15,39 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-
 public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
 
-	// name generator
+    // name generator
     Iterator<String> _ng = new Iterator<String>() {
-		int i = 0;
-		@Override
-		public void remove() {
-			i++;
-		}
-		
-		@Override
-		public String next() {
-			return "_:t" + i++;
-		}
-		
-		@Override
-		public boolean hasNext() {
-			return true;
-		}
-	};
+        int i = 0;
+
+        @Override
+        public void remove() {
+            i++;
+        }
+
+        @Override
+        public String next() {
+            return "_:t" + i++;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return true;
+        }
+    };
     Map<String, String> _bns = new LinkedHashMap<String, String>();
-    
+
     protected String getNameForBlankNode(String node) {
         if (!_bns.containsKey(node)) {
             _bns.put(node, _ng.next());
         }
         return _bns.get(node);
     }
-   
+
     public void setPrefix(String fullUri, String prefix) {
-    	// TODO: graphs?
-    	//_context.put(prefix, fullUri);
+        // TODO: graphs?
+        // _context.put(prefix, fullUri);
     }
 
     public String getID(Resource r) {
@@ -63,63 +62,66 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
 
     public void importModel(RDFDataset result, Model model) {
 
-    	// TODO: figure out what to do with this, as setPrefix itself currently does nothing
+        // TODO: figure out what to do with this, as setPrefix itself currently
+        // does nothing
         // add the prefixes to the context
-        Map<String, String> nsPrefixMap = model.getNsPrefixMap();
-        for (String prefix : nsPrefixMap.keySet()) {
+        final Map<String, String> nsPrefixMap = model.getNsPrefixMap();
+        for (final String prefix : nsPrefixMap.keySet()) {
             result.setNamespace(prefix, nsPrefixMap.get(prefix));
         }
 
         // iterate over the list of subjects and add the edges to the json-ld
         // document
-        ResIterator subjects = model.listSubjects();
+        final ResIterator subjects = model.listSubjects();
         while (subjects.hasNext()) {
-            Resource subject = subjects.next();
+            final Resource subject = subjects.next();
             importResource(result, subject);
         }
     }
 
     public void importResource(RDFDataset result, Resource subject) {
-        String subj = getID(subject);
-        StmtIterator statements = subject.getModel().listStatements(subject, (Property) null, (RDFNode) null);
+        final String subj = getID(subject);
+        final StmtIterator statements = subject.getModel().listStatements(subject, (Property) null,
+                (RDFNode) null);
         while (statements.hasNext()) {
-            Statement statement = statements.next();
-            Property predicate = statement.getPredicate();
-            RDFNode object = statement.getObject();
+            final Statement statement = statements.next();
+            final Property predicate = statement.getPredicate();
+            final RDFNode object = statement.getObject();
 
             if (object.isLiteral()) {
-                Literal literal = object.asLiteral();
-                String value = literal.getLexicalForm();
-                String datatypeURI = literal.getDatatypeURI();
+                final Literal literal = object.asLiteral();
+                final String value = literal.getLexicalForm();
+                final String datatypeURI = literal.getDatatypeURI();
                 String language = literal.getLanguage();
                 if ("".equals(language)) {
-                	language = null;
+                    language = null;
                 }
 
                 result.addTriple(subj, predicate.getURI(), value, datatypeURI, language);
             } else {
-                Resource resource = object.asResource();
-                String res = getID(resource);
-                
+                final Resource resource = object.asResource();
+                final String res = getID(resource);
+
                 result.addTriple(subj, predicate.getURI(), res);
             }
         }
     }
 
-	@Override
-	public RDFDataset parse(Object input) throws JSONLDProcessingError {
-		RDFDataset result = new RDFDataset();
-		// allow null input so we can use importModel and importResource before calling fromRDF
-		if (input == null) {
-			return result;
-		}
-		if (input instanceof Resource) {
-			importResource(result, (Resource) input);
-		} else if (input instanceof Model) {
-			importModel(result, (Model)input);
-		} else {
-			throw new JSONLDProcessingError("Jena Serializer expects Model or resource input");
-		}
-		return result;
-	}
+    @Override
+    public RDFDataset parse(Object input) throws JSONLDProcessingError {
+        final RDFDataset result = new RDFDataset();
+        // allow null input so we can use importModel and importResource before
+        // calling fromRDF
+        if (input == null) {
+            return result;
+        }
+        if (input instanceof Resource) {
+            importResource(result, (Resource) input);
+        } else if (input instanceof Model) {
+            importModel(result, (Model) input);
+        } else {
+            throw new JSONLDProcessingError("Jena Serializer expects Model or resource input");
+        }
+        return result;
+    }
 }

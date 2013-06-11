@@ -8,17 +8,12 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 
-import org.junit.Ignore;
 import org.openrdf.model.Model;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.AbstractParserHandlingTest;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParser;
 import org.openrdf.rio.RDFWriter;
-
-import com.github.jsonldjava.impl.SesameJSONLDParser;
-import com.github.jsonldjava.impl.SesameJSONLDWriter;
-
 
 /**
  * Unit tests for {@link SesameJSONLDParser} related to handling of datatypes
@@ -29,32 +24,30 @@ import com.github.jsonldjava.impl.SesameJSONLDWriter;
 public class SesameJSONLDParserHandlerTest extends AbstractParserHandlingTest {
 
     @Override
-    protected InputStream getUnknownDatatypeStream(
-	    Model unknownDatatypeStatements) throws Exception {
-	return writeJSONLD(unknownDatatypeStatements);
+    protected InputStream getUnknownDatatypeStream(Model unknownDatatypeStatements)
+            throws Exception {
+        return writeJSONLD(unknownDatatypeStatements);
     }
 
     @Override
-    protected InputStream getKnownDatatypeStream(Model knownDatatypeStatements)
-	    throws Exception {
-	return writeJSONLD(knownDatatypeStatements);
+    protected InputStream getKnownDatatypeStream(Model knownDatatypeStatements) throws Exception {
+        return writeJSONLD(knownDatatypeStatements);
     }
 
     @Override
-    protected InputStream getUnknownLanguageStream(
-	    Model unknownLanguageStatements) throws Exception {
-	return writeJSONLD(unknownLanguageStatements);
+    protected InputStream getUnknownLanguageStream(Model unknownLanguageStatements)
+            throws Exception {
+        return writeJSONLD(unknownLanguageStatements);
     }
 
     @Override
-    protected InputStream getKnownLanguageStream(Model knownLanguageStatements)
-	    throws Exception {
-	return writeJSONLD(knownLanguageStatements);
+    protected InputStream getKnownLanguageStream(Model knownLanguageStatements) throws Exception {
+        return writeJSONLD(knownLanguageStatements);
     }
 
     @Override
     protected RDFParser getParser() {
-	return new SesameJSONLDParser();
+        return new SesameJSONLDParser();
     }
 
     /**
@@ -65,21 +58,19 @@ public class SesameJSONLDParserHandlerTest extends AbstractParserHandlingTest {
      * @return An {@link InputStream} containing the results.
      * @throws RDFHandlerException
      */
-    private InputStream writeJSONLD(Model statements)
-	    throws RDFHandlerException {
-	StringWriter writer = new StringWriter();
+    private InputStream writeJSONLD(Model statements) throws RDFHandlerException {
+        final StringWriter writer = new StringWriter();
 
-	RDFWriter jsonldWriter = new SesameJSONLDWriter(writer);
-	jsonldWriter.startRDF();
-	for (Statement nextStatement : statements) {
-	    jsonldWriter.handleStatement(nextStatement);
-	}
-	jsonldWriter.endRDF();
+        final RDFWriter jsonldWriter = new SesameJSONLDWriter(writer);
+        jsonldWriter.startRDF();
+        for (final Statement nextStatement : statements) {
+            jsonldWriter.handleStatement(nextStatement);
+        }
+        jsonldWriter.endRDF();
 
-	// System.out.println(writer.toString());
+        // System.out.println(writer.toString());
 
-	return new ByteArrayInputStream(writer.toString().getBytes(
-		Charset.forName("UTF-8")));
+        return new ByteArrayInputStream(writer.toString().getBytes(Charset.forName("UTF-8")));
     }
 
 }
