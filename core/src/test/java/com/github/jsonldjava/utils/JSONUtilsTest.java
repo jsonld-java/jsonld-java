@@ -35,8 +35,6 @@ import org.mockito.ArgumentCaptor;
 
 public class JSONUtilsTest {
 	
-	private ArgumentCaptor<HttpUriRequest> httpRequest;
-
     @SuppressWarnings("unchecked")
     @Test
 	public void fromStringTest() {
@@ -176,7 +174,7 @@ public class JSONUtilsTest {
         assertFalse(((Map<?,?>)context).isEmpty());
     }
 
-    protected HttpClient fakeHttpClient() throws IllegalStateException, IOException {
+    protected HttpClient fakeHttpClient(ArgumentCaptor<HttpUriRequest> httpRequest) throws IllegalStateException, IOException {
         HttpClient httpClient = mock(HttpClient.class);
         HttpResponse fakeResponse = mock(HttpResponse.class);
         StatusLine statusCode = mock(StatusLine.class);
@@ -188,7 +186,6 @@ public class JSONUtilsTest {
                         JSONUtilsTest.class
                                 .getResourceAsStream("/custom/contexttest-0001.jsonld"));
         when(fakeResponse.getEntity()).thenReturn(entity);
-        httpRequest = ArgumentCaptor.forClass(HttpUriRequest.class);
         when(httpClient.execute(httpRequest.capture())).thenReturn(
                 fakeResponse);
         return httpClient;
@@ -198,12 +195,13 @@ public class JSONUtilsTest {
     public void fromURLAcceptHeaders() throws Exception {
 
         URL url = new URL("http://example.com/fake-jsonld-test");
-        JSONUtils.httpClient = fakeHttpClient();
+        ArgumentCaptor<HttpUriRequest> httpRequest = ArgumentCaptor.forClass(HttpUriRequest.class);
+        JSONUtils.setHttpClient(fakeHttpClient(httpRequest));
         try {
             Object context = JSONUtils.fromURL(url);
             assertTrue(context instanceof Map);
         } finally {
-            JSONUtils.httpClient = null;
+            JSONUtils.setHttpClient(null);
         }
         assertEquals(1, httpRequest.getAllValues().size());
         HttpUriRequest req = httpRequest.getValue();

@@ -43,8 +43,8 @@ public class JSONUtils {
     /**
      * An HTTP Accept header that prefers JSONLD.
      */
-    protected static String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
-    protected static HttpClient httpClient;
+    protected static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
+    private static volatile HttpClient httpClient;
 
     public static Object fromString(String jsonString) throws JsonParseException, JsonMappingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -266,21 +266,31 @@ public class JSONUtils {
 
     protected static HttpClient getHttpClient() {
         if (httpClient == null) {
-            // Uses Apache SystemDefaultHttpClient rather than
-            // DefaultHttpClient, thus the normal proxy settings for the JVM
-            // will be used
-
-            DefaultHttpClient client = new SystemDefaultHttpClient();
-            // Support compressed data
-            // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
-            client.addRequestInterceptor(new RequestAcceptEncoding());
-            client.addResponseInterceptor(new ResponseContentEncoding());
-            CacheConfig cacheConfig = new CacheConfig();
-            cacheConfig.setMaxObjectSize(1024*128); // 128 kB
-            cacheConfig.setMaxCacheEntries(1000);
-            // and allow caching
-            httpClient = new CachingHttpClient(client, cacheConfig);
+        	synchronized(JSONUtils.class) {
+                if (httpClient == null) {
+		            // Uses Apache SystemDefaultHttpClient rather than
+		            // DefaultHttpClient, thus the normal proxy settings for the JVM
+		            // will be used
+		
+		            DefaultHttpClient client = new SystemDefaultHttpClient();
+		            // Support compressed data
+		            // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
+		            client.addRequestInterceptor(new RequestAcceptEncoding());
+		            client.addResponseInterceptor(new ResponseContentEncoding());
+		            CacheConfig cacheConfig = new CacheConfig();
+		            cacheConfig.setMaxObjectSize(1024*128); // 128 kB
+		            cacheConfig.setMaxCacheEntries(1000);
+		            // and allow caching
+		            httpClient = new CachingHttpClient(client, cacheConfig);
+                }
+        	}
         }
         return httpClient;
+    }
+    
+    protected static void setHttpClient(HttpClient nextHttpClient) {
+    	synchronized(JSONUtils.class) {
+    		httpClient = nextHttpClient;
+    	}
     }
 }
