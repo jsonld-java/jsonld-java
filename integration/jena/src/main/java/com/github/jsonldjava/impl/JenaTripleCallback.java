@@ -1,18 +1,15 @@
 package com.github.jsonldjava.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import com.github.jsonldjava.core.JSONLDTripleCallback;
 import com.github.jsonldjava.core.RDFDataset;
-import com.github.jsonldjava.utils.Obj;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
-
 
 public class JenaTripleCallback implements JSONLDTripleCallback {
 
@@ -46,11 +43,12 @@ public class JenaTripleCallback implements JSONLDTripleCallback {
             oR = jenaModel.createResource(o);
         }
 
-        Statement statement = jenaModel.createStatement(sR, pR, oR);
+        final Statement statement = jenaModel.createStatement(sR, pR, oR);
         jenaModel.add(statement);
     }
 
-    private void triple(String s, String p, String value, String datatype, String language, String graph) {
+    private void triple(String s, String p, String value, String datatype, String language,
+            String graph) {
         // TODO Auto-generated method stub
 
         Resource sR = jenaModel.getResource(s);
@@ -69,31 +67,30 @@ public class JenaTripleCallback implements JSONLDTripleCallback {
             oR = jenaModel.createTypedLiteral(value, datatype);
         }
 
-        Statement statement = jenaModel.createStatement(sR, pR, oR);
+        final Statement statement = jenaModel.createStatement(sR, pR, oR);
         jenaModel.add(statement);
     }
 
-	@Override
-	public Object call(RDFDataset dataset) {
-		for (String graphName : dataset.graphNames()) {
-			List<RDFDataset.Quad> quads = dataset.getQuads(graphName);
-			if ("@default".equals(graphName)) {
-				graphName = null;
-			}
-			for (RDFDataset.Quad quad : quads) {
-				if (quad.getObject().isLiteral()) {
-					triple(quad.getSubject().getValue(), quad.getPredicate().getValue(), 
-						   quad.getObject().getValue(), quad.getObject().getDatatype(), quad.getObject().getLanguage(), 
-						   graphName);
-				} else {
-					triple(quad.getSubject().getValue(), quad.getPredicate().getValue(), 
-						   quad.getObject().getValue(), 
-						   graphName);
-				}
-			}
-		}
+    @Override
+    public Object call(RDFDataset dataset) {
+        for (String graphName : dataset.graphNames()) {
+            final List<RDFDataset.Quad> quads = dataset.getQuads(graphName);
+            if ("@default".equals(graphName)) {
+                graphName = null;
+            }
+            for (final RDFDataset.Quad quad : quads) {
+                if (quad.getObject().isLiteral()) {
+                    triple(quad.getSubject().getValue(), quad.getPredicate().getValue(), quad
+                            .getObject().getValue(), quad.getObject().getDatatype(), quad
+                            .getObject().getLanguage(), graphName);
+                } else {
+                    triple(quad.getSubject().getValue(), quad.getPredicate().getValue(), quad
+                            .getObject().getValue(), graphName);
+                }
+            }
+        }
 
-		return getJenaModel();
-	}
+        return getJenaModel();
+    }
 
 }

@@ -17,12 +17,12 @@ public class SesameJSONLDParserFactory implements RDFParserFactory {
 
     @Override
     public RDFFormat getRDFFormat() {
-	return RDFFormat.JSONLD;
+        return RDFFormat.JSONLD;
     }
 
     @Override
     public RDFParser getParser() {
-	return new SesameJSONLDParser();
+        return new SesameJSONLDParser();
     }
 
 }
