@@ -1,6 +1,5 @@
 package com.github.jsonldjava.impl;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -13,42 +12,43 @@ import org.junit.Test;
 
 import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.impl.ClerezzaTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
-
 
 public class ClerezzaTripleCallbackTest {
 
-	@Test
-	public void triplesTest() throws IOException, JSONLDProcessingError {
-		InputStream in = getClass().getClassLoader().getResourceAsStream("testfiles/product.jsonld");
-		Object input = JSONUtils.fromInputStream(in);
-		
-		ClerezzaTripleCallback callback = new ClerezzaTripleCallback();
+    @Test
+    public void triplesTest() throws IOException, JSONLDProcessingError {
+        final InputStream in = getClass().getClassLoader().getResourceAsStream(
+                "testfiles/product.jsonld");
+        final Object input = JSONUtils.fromInputStream(in);
 
-		MGraph graph = (MGraph)JSONLD.toRDF(input, callback);
+        final ClerezzaTripleCallback callback = new ClerezzaTripleCallback();
 
-		for (Triple t : graph) {
-			System.out.println(t);
-		}
-		assertEquals("Graph size",13, graph.size());
-		
-	}
-	
-	@Test
-	public void curiesInContextTest() throws IOException, JSONLDProcessingError {
-		InputStream in = getClass().getClassLoader().getResourceAsStream("testfiles/curies-in-context.jsonld");
-		Object input = JSONUtils.fromInputStream(in);
-		
-		ClerezzaTripleCallback callback = new ClerezzaTripleCallback();
+        final MGraph graph = (MGraph) JSONLD.toRDF(input, callback);
 
-		MGraph graph = (MGraph)JSONLD.toRDF(input, callback);
+        for (final Triple t : graph) {
+            System.out.println(t);
+        }
+        assertEquals("Graph size", 13, graph.size());
 
-		for (Triple t : graph) {
-			System.out.println(t);
-			assertTrue("Predicate got fully expanded", t.getPredicate().getUnicodeString().startsWith("http"));
-		}
-		assertEquals("Graph size",3, graph.size());
-		
-	}
+    }
+
+    @Test
+    public void curiesInContextTest() throws IOException, JSONLDProcessingError {
+        final InputStream in = getClass().getClassLoader().getResourceAsStream(
+                "testfiles/curies-in-context.jsonld");
+        final Object input = JSONUtils.fromInputStream(in);
+
+        final ClerezzaTripleCallback callback = new ClerezzaTripleCallback();
+
+        final MGraph graph = (MGraph) JSONLD.toRDF(input, callback);
+
+        for (final Triple t : graph) {
+            System.out.println(t);
+            assertTrue("Predicate got fully expanded", t.getPredicate().getUnicodeString()
+                    .startsWith("http"));
+        }
+        assertEquals("Graph size", 3, graph.size());
+
+    }
 }

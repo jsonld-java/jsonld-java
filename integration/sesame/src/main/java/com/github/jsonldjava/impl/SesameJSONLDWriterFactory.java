@@ -20,17 +20,17 @@ public class SesameJSONLDWriterFactory implements RDFWriterFactory {
 
     @Override
     public RDFFormat getRDFFormat() {
-	return RDFFormat.JSONLD;
+        return RDFFormat.JSONLD;
     }
 
     @Override
     public RDFWriter getWriter(OutputStream out) {
-	return new SesameJSONLDWriter(out);
+        return new SesameJSONLDWriter(out);
     }
 
     @Override
     public RDFWriter getWriter(Writer writer) {
-	return new SesameJSONLDWriter(writer);
+        return new SesameJSONLDWriter(writer);
     }
 
 }
