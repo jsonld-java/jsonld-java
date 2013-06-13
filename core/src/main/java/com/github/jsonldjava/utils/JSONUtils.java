@@ -19,6 +19,8 @@ import org.apache.http.client.protocol.RequestAcceptEncoding;
 import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.SystemDefaultHttpClient;
+import org.apache.http.impl.client.cache.CacheConfig;
+import org.apache.http.impl.client.cache.CachingHttpClient;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -41,16 +43,17 @@ public class JSONUtils {
     /**
      * An HTTP Accept header that prefers JSONLD.
      */
-    private static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
-    protected static HttpClient httpClient;
+    protected static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
+    private static volatile HttpClient httpClient;
 
-    public static Object fromString(String jsonString) throws JsonParseException, JsonMappingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public static Object fromString(String jsonString) throws JsonParseException,
+            JsonMappingException {
+        final ObjectMapper objectMapper = new ObjectMapper();
         Object rval = null;
         if (jsonString.trim().startsWith("[")) {
             try {
                 rval = objectMapper.readValue(jsonString, List.class);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 // TODO: what?
                 if (e instanceof JsonParseException) {
                     throw (JsonParseException) e;
@@ -64,7 +67,7 @@ public class JSONUtils {
         } else if (jsonString.trim().startsWith("{")) {
             try {
                 rval = objectMapper.readValue(jsonString, Map.class);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 if (e instanceof JsonParseException) {
                     throw (JsonParseException) e;
                 } else if (e instanceof JsonMappingException) {
@@ -77,7 +80,7 @@ public class JSONUtils {
         } else if (jsonString.trim().startsWith("\"")) {
             try {
                 rval = objectMapper.readValue(jsonString, String.class);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 if (e instanceof JsonParseException) {
                     throw (JsonParseException) e;
                 } else if (e instanceof JsonMappingException) {
@@ -90,7 +93,7 @@ public class JSONUtils {
         } else if (jsonString.trim().equals("true") || (jsonString.trim().equals("false"))) {
             try {
                 rval = objectMapper.readValue(jsonString, Boolean.class);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 if (e instanceof JsonParseException) {
                     throw (JsonParseException) e;
                 } else if (e instanceof JsonMappingException) {
@@ -103,7 +106,7 @@ public class JSONUtils {
         } else if (jsonString.trim().matches("[0-9.e+-]+")) {
             try {
                 rval = objectMapper.readValue(jsonString, Number.class);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 if (e instanceof JsonParseException) {
                     throw (JsonParseException) e;
                 } else if (e instanceof JsonMappingException) {
@@ -116,14 +119,16 @@ public class JSONUtils {
         } else if (jsonString.trim().equals("null")) {
             rval = null;
         } else {
-            throw new JsonParseException("document doesn't start with a valid json element", new JsonLocation("\""
-                    + jsonString.substring(0, Math.min(jsonString.length(), 100)) + "...\"", 0, 1, 0));
+            throw new JsonParseException("document doesn't start with a valid json element",
+                    new JsonLocation(
+                            "\"" + jsonString.substring(0, Math.min(jsonString.length(), 100))
+                                    + "...\"", 0, 1, 0));
         }
         return rval;
     }
 
     public static Object fromReader(Reader r) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         int b;
         while ((b = r.read()) != -1) {
             sb.append((char) b);
@@ -131,17 +136,19 @@ public class JSONUtils {
         return fromString(sb.toString());
     }
 
-    public static void write(Writer w, Object jsonObject) throws JsonGenerationException, JsonMappingException, IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public static void write(Writer w, Object jsonObject) throws JsonGenerationException,
+            JsonMappingException, IOException {
+        final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.getFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
         objectMapper.writeValue(w, jsonObject);
     }
 
-    public static void writePrettyPrint(Writer w, Object jsonObject) throws JsonGenerationException, JsonMappingException, IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public static void writePrettyPrint(Writer w, Object jsonObject)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.getFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-        ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
-        
+        final ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
+
         objectWriter.writeValue(w, jsonObject);
     }
 
@@ -156,10 +163,10 @@ public class JSONUtils {
     }
 
     public static String toPrettyString(Object obj) {
-        StringWriter sw = new StringWriter();
+        final StringWriter sw = new StringWriter();
         try {
             writePrettyPrint(sw, obj);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // TODO Is this really possible with stringwriter?
             // I think it's only there because of the interface
             // however, if so... well, we have to do something!
@@ -172,10 +179,10 @@ public class JSONUtils {
     public static String toString(Object obj) { // throws
                                                 // JsonGenerationException,
                                                 // JsonMappingException {
-        StringWriter sw = new StringWriter();
+        final StringWriter sw = new StringWriter();
         try {
             write(sw, obj);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // TODO Is this really possible with stringwriter?
             // I think it's only there because of the interface
             // however, if so... well, we have to do something!
@@ -187,37 +194,43 @@ public class JSONUtils {
 
     /**
      * A null-safe equals check using v1.equals(v2) if they are both not null.
-     * @param v1 The source object for the equals check.
-     * @param v2 The object to be checked for equality using the first objects equals method.
-     * @return True if the objects were both null. True if both objects were not null and 
-     * 		v1.equals(v2). False otherwise.
+     * 
+     * @param v1
+     *            The source object for the equals check.
+     * @param v2
+     *            The object to be checked for equality using the first objects
+     *            equals method.
+     * @return True if the objects were both null. True if both objects were not
+     *         null and v1.equals(v2). False otherwise.
      */
     public static boolean equals(Object v1, Object v2) {
-    	return v1 == null ? v2 == null : v1.equals(v2);
+        return v1 == null ? v2 == null : v1.equals(v2);
     }
 
     /**
-     * Returns a Map, List, or String containing the contents of the JSON 
+     * Returns a Map, List, or String containing the contents of the JSON
      * resource resolved from the URL.
      * 
-     * @param url The URL to resolve
-     * @return The Map, List, or String that represent the JSON resource 
-     * 		resolved from the URL
-     * @throws JsonParseException If the JSON was not valid.
-     * @throws IOException If there was an error resolving the resource.
+     * @param url
+     *            The URL to resolve
+     * @return The Map, List, or String that represent the JSON resource
+     *         resolved from the URL
+     * @throws JsonParseException
+     *             If the JSON was not valid.
+     * @throws IOException
+     *             If there was an error resolving the resource.
      */
-    public static Object fromURL(java.net.URL url) throws JsonParseException,
-            IOException {
-        
-        MappingJsonFactory jsonFactory = new MappingJsonFactory();
-        InputStream in = openStreamFromURL(url);
+    public static Object fromURL(java.net.URL url) throws JsonParseException, IOException {
+
+        final MappingJsonFactory jsonFactory = new MappingJsonFactory();
+        final InputStream in = openStreamFromURL(url);
         try {
-            JsonParser parser = jsonFactory.createParser(in);
-            JsonToken token = parser.nextToken();
+            final JsonParser parser = jsonFactory.createParser(in);
+            final JsonToken token = parser.nextToken();
             Class<?> type;
             if (token == JsonToken.START_OBJECT) {
                 type = Map.class;
-            } else if(token == JsonToken.START_ARRAY) {
+            } else if (token == JsonToken.START_ARRAY) {
                 type = List.class;
             } else {
                 type = String.class;
@@ -233,48 +246,65 @@ public class JSONUtils {
     }
 
     /**
-     * Opens an {@link InputStream} for the given {@link URL}, including support for 
-     * http and https URLs that are requested using Content Negotiation with 
+     * Opens an {@link InputStream} for the given {@link URL}, including support
+     * for http and https URLs that are requested using Content Negotiation with
      * application/ld+json as the preferred content type.
      * 
-     * @param url The URL identifying the source.
+     * @param url
+     *            The URL identifying the source.
      * @return An InputStream containing the contents of the source.
-     * @throws IOException If there was an error resolving the URL.
+     * @throws IOException
+     *             If there was an error resolving the URL.
      */
     public static InputStream openStreamFromURL(java.net.URL url) throws IOException {
-        String protocol = url.getProtocol();
-        if (! protocol.equalsIgnoreCase("http") && ! protocol.equalsIgnoreCase("https")) {
+        final String protocol = url.getProtocol();
+        if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
             // Can't use the HTTP client for those!
             // Fallback to Java's built-in URL handler. No need for
             // Accept headers as it's likely to be file: or jar:
             return url.openStream();
         }
-        HttpUriRequest request = new HttpGet(url.toExternalForm());
+        final HttpUriRequest request = new HttpGet(url.toExternalForm());
         // We prefer application/ld+json, but fallback to application/json
         // or whatever is available
         request.addHeader("Accept", ACCEPT_HEADER);
-        
-        HttpResponse response = getHttpClient().execute(request);
-        int status = response.getStatusLine().getStatusCode();
+
+        final HttpResponse response = getHttpClient().execute(request);
+        final int status = response.getStatusLine().getStatusCode();
         if (status != 200 && status != 203) {
             throw new IOException("Can't retrieve " + url + ", status code: " + status);
         }
-        return  response.getEntity().getContent();
+        return response.getEntity().getContent();
     }
 
     protected static HttpClient getHttpClient() {
         if (httpClient == null) {
-            // Uses Apache SystemDefaultHttpClient rather than
-            // DefaultHttpClient, thus the normal proxy settings for the JVM
-            // will be used
+            synchronized (JSONUtils.class) {
+                if (httpClient == null) {
+                    // Uses Apache SystemDefaultHttpClient rather than
+                    // DefaultHttpClient, thus the normal proxy settings for the
+                    // JVM
+                    // will be used
 
-            DefaultHttpClient client = new SystemDefaultHttpClient();
-            // Support compressed data
-            // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
-            client.addRequestInterceptor(new RequestAcceptEncoding());
-            client.addResponseInterceptor(new ResponseContentEncoding());
-            httpClient = client;
+                    final DefaultHttpClient client = new SystemDefaultHttpClient();
+                    // Support compressed data
+                    // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
+                    client.addRequestInterceptor(new RequestAcceptEncoding());
+                    client.addResponseInterceptor(new ResponseContentEncoding());
+                    final CacheConfig cacheConfig = new CacheConfig();
+                    cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
+                    cacheConfig.setMaxCacheEntries(1000);
+                    // and allow caching
+                    httpClient = new CachingHttpClient(client, cacheConfig);
+                }
+            }
         }
         return httpClient;
+    }
+
+    protected static void setHttpClient(HttpClient nextHttpClient) {
+        synchronized (JSONUtils.class) {
+            httpClient = nextHttpClient;
+        }
     }
 }
