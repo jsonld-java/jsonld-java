@@ -83,6 +83,15 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
 CHANGELOG
 =========
 
+### 18.06.2013
+
+* Bump to version 0.2
+* Updated Turtle integration
+* Added Caching of contexts loaded from URI
+* Added source formatting eclipse config
+* Fixed up seasame integration package names
+* Replaced depreciated Jackson code
+
 ### 19.05.2013
 
 * Added Turtle RDFParser and TripleCallback
