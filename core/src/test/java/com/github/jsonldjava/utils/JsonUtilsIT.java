@@ -15,6 +15,7 @@ import org.apache.http.impl.client.cache.CachingHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class JsonUtilsIT {
@@ -42,7 +43,7 @@ public class JsonUtilsIT {
     public void fromURLCache() throws Exception {
         final URL url = new URL("http://json-ld.org/contexts/person.jsonld");
         JSONUtils.fromURL(url);
-
+        
         // Now try to get it again and ensure it is
         // cached
         final HttpClient client = new CachingHttpClient(JSONUtils.getHttpClient());
@@ -57,6 +58,24 @@ public class JsonUtilsIT {
         final CacheResponseStatus responseStatus = (CacheResponseStatus) localContext
                 .getAttribute(CachingHttpClient.CACHE_RESPONSE_STATUS);
         assertFalse(CacheResponseStatus.CACHE_MISS.equals(responseStatus));
+    }
+    
+    @Ignore
+    @Test
+    public void fromURLCacheWithRedirect() throws Exception {
+        final URL url = new URL("https://w3id.org/web-keys/v1");
+        JSONUtils.fromURL(url);
+        
+        System.out.println("To test caching, turn off wifi/disconnect network cable now!");
+        Thread.sleep(5000);
+        System.out.println("Checking loading from cache:");
+        
+        // Now try to get it again and ensure it is cached
+        Object cached = JSONUtils.fromURL(url);
+        System.out.println(cached);
+        assertTrue(cached instanceof Map);
+        Map<String,?> cachedMap = (Map<String, ?>) cached;
+        assertFalse(cachedMap.isEmpty());
     }
 
 }
