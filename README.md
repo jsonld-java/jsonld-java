@@ -12,7 +12,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.1</version>
+        <version>0.2</version>
     </dependency>
 
 Code example
