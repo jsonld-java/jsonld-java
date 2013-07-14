@@ -1051,7 +1051,7 @@ public class JSONLDProcessor {
                             final List src = (List) ((Map) o).get("@list");
                             for (final Object n : src) {
                                 // recurse into subject reference
-                                if (isSubjectReference(o)) {
+                                if (isSubjectReference(n)) {
                                     final List tmp = new ArrayList();
                                     tmp.add(((Map) n).get("@id"));
                                     frame(state, tmp, frame.get(prop), list, "@list");
