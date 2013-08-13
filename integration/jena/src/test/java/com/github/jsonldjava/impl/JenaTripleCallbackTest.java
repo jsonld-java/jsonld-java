@@ -1,14 +1,15 @@
 package com.github.jsonldjava.impl;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -17,7 +18,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.JSONLDTripleCallback;
-import com.github.jsonldjava.utils.JSONUtils;
 import com.hp.hpl.jena.rdf.model.Model;
 
 public class JenaTripleCallbackTest {
@@ -56,13 +56,29 @@ public class JenaTripleCallbackTest {
                         });
                     }
                 });
+                add(new LinkedHashMap<String, Object>() {
+                    {
+                        // Anonymous
+                        put("http://foo.com/code", new ArrayList<Object>() {
+                            {
+                                add(new LinkedHashMap<String, Object>() {
+                                    {
+                                        put("@id", "http://www.example.com/");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+                
             }
         };
 
-        final List<String> expected = new ArrayList<String>() {
+        final Set<String> expected = new HashSet<String>() {
             {
                 add("<http://localhost:8080/foo1> <http://foo.com/code> \"123\"^^<http://www.w3.org/2001/XMLSchema#string> .");
                 add("<http://localhost:8080/foo2> <http://foo.com/code> \"ABC\"^^<http://www.w3.org/2001/XMLSchema#string> .");
+                add("_:b0 <http://foo.com/code> <http://www.example.com/> .");
             }
         };
 
@@ -72,11 +88,13 @@ public class JenaTripleCallbackTest {
         final StringWriter w = new StringWriter();
         model.write(w, "N-TRIPLE");
 
-        final List<String> result = new ArrayList<String>(Arrays.asList(w.getBuffer().toString()
+        System.out.println(w);
+        
+        final Set<String> result = new HashSet<String>(Arrays.asList(w.getBuffer().toString()
                 .split(System.getProperty("line.separator"))));
-        Collections.sort(result);
 
-        assertTrue(JSONUtils.equals(expected, result));
+        assertEquals(expected, result);        
     }
 
 }
+
