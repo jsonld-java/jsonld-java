@@ -108,7 +108,7 @@ public class JenaTripleCallbackTest {
         final StringWriter w = new StringWriter();
         model.write(w, "N-TRIPLE");
 
-        System.out.println(w);
+//        System.out.println(w);
         
         final Set<String> result = new HashSet<String>(Arrays.asList(w.getBuffer().toString()
                 .split(System.getProperty("line.separator"))));
