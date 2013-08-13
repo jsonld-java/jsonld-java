@@ -22,6 +22,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 public class JenaTripleCallbackTest {
 
+    @SuppressWarnings("serial")
     @Test
     public void triplesTest() throws JsonParseException, JsonMappingException,
             JSONLDProcessingError {
@@ -56,10 +57,10 @@ public class JenaTripleCallbackTest {
                         });
                     }
                 });
+                // Anonymous to URI
                 add(new LinkedHashMap<String, Object>() {
                     {
-                        // Anonymous
-                        put("http://foo.com/code", new ArrayList<Object>() {
+                        put("http://example.com/homepage", new ArrayList<Object>() {
                             {
                                 add(new LinkedHashMap<String, Object>() {
                                     {
@@ -70,6 +71,23 @@ public class JenaTripleCallbackTest {
                         });
                     }
                 });
+                // Anonymous to self!
+                add(new LinkedHashMap<String, Object>() {
+                    {
+                        // Anonymous
+                        put("@id", "_:anon1");
+                        put("http://example.com/self", new ArrayList<Object>() {
+                            {
+                                add(new LinkedHashMap<String, Object>() {
+                                    {
+                                        put("@id", "_:anon1");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+
                 
             }
         };
@@ -78,13 +96,15 @@ public class JenaTripleCallbackTest {
             {
                 add("<http://localhost:8080/foo1> <http://foo.com/code> \"123\"^^<http://www.w3.org/2001/XMLSchema#string> .");
                 add("<http://localhost:8080/foo2> <http://foo.com/code> \"ABC\"^^<http://www.w3.org/2001/XMLSchema#string> .");
-                add("_:b0 <http://foo.com/code> <http://www.example.com/> .");
+                add("_:Ab0 <http://example.com/homepage> <http://www.example.com/> .");
+                add("_:Ab1 <http://example.com/self> _:Ab1 .");
+                // FIXME: _:Ab0 and :_Ab1 is not really guaranteed by Jena
             }
         };
 
         final JSONLDTripleCallback callback = new JenaTripleCallback();
         final Model model = (Model) JSONLD.toRDF(input, callback);
-
+        
         final StringWriter w = new StringWriter();
         model.write(w, "N-TRIPLE");
 

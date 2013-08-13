@@ -37,7 +37,7 @@ public class JenaTripleCallback implements JSONLDTripleCallback {
             throw new InvalidPropertyURIException(propertyNode.getValue());
         }
         Property property = jenaModel.createProperty(propertyNode.getValue());
-        Resource object = createResourceFromNode(subjectNode);
+        Resource object = createResourceFromNode(objectNode);
 
         final Statement statement = jenaModel.createStatement(subject, property, object);
         jenaModel.add(statement);
@@ -63,12 +63,16 @@ public class JenaTripleCallback implements JSONLDTripleCallback {
         jenaModel.add(statement);
     }
 
-    private Resource createResourceFromNode(Node subjectNode) {
+    private Resource createResourceFromNode(Node node) {
         Resource sR;
-        if (subjectNode.isIRI()) {
-            sR = jenaModel.createResource(subjectNode.getValue());
+        if (node.isIRI()) {
+            sR = jenaModel.createResource(node.getValue());
         } else {
-            sR = jenaModel.createResource(new AnonId(subjectNode.getValue()));
+            String name = node.getValue();
+            if (name.startsWith("_:")) {
+                name = node.getValue().substring(2, node.getValue().length());
+            }
+            sR = jenaModel.createResource(new AnonId(name));
         }
         return sR;
     }
