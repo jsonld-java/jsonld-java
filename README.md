@@ -83,6 +83,9 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
 CHANGELOG
 =========
 
+### 13.08.2013
+* Fixed JSON-LD to Jena to handle of BNodes
+
 ### 18.06.2013
 
 * Bump to version 0.2
