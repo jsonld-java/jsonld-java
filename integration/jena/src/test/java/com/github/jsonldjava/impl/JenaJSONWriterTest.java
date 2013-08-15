@@ -33,7 +33,6 @@ public class JenaJSONWriterTest {
         assertTrue(json.contains("http://example.com/test"));
         assertTrue(json.contains("http://example.com/value"));
         assertTrue(json.contains("Test"));
-
-        
     }
+    
 }
