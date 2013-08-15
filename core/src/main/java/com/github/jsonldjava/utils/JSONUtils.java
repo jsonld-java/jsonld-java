@@ -129,9 +129,10 @@ public class JSONUtils {
 
     public static Object fromReader(Reader r) throws IOException {
         final StringBuffer sb = new StringBuffer();
+        char[] buffer = new char[4096];
         int b;
-        while ((b = r.read()) != -1) {
-            sb.append((char) b);
+        while ((b = r.read(buffer)) != -1) {
+            sb.append(buffer, 0, b);
         }
         return fromString(sb.toString());
     }
@@ -159,7 +160,7 @@ public class JSONUtils {
     }
 
     public static Object fromInputStream(InputStream content, String enc) throws IOException {
-        return fromReader(new BufferedReader(new InputStreamReader(content, enc)));
+        return fromReader(new InputStreamReader(content, enc));
     }
 
     public static String toPrettyString(Object obj) {
