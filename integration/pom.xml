@@ -17,5 +17,4 @@
 		<module>clerezza</module>
 		<module>rdf2go</module>
 	</modules>
-	
 </project>
