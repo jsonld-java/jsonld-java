@@ -15,6 +15,6 @@
 		<module>sesame</module>
 		<module>jena</module>
 		<module>clerezza</module>
+		<module>rdf2go</module>
 	</modules>
 </project>
-
