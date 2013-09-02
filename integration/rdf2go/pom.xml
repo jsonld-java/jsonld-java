@@ -98,6 +98,7 @@
 			<groupId>org.semweb4j</groupId>
 			<artifactId>rdf2go.impl.sesame23</artifactId>
 			<version>${rdf2go.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 		
 	</dependencies>
