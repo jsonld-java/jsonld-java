@@ -21,21 +21,22 @@ import com.github.jsonldjava.utils.JSONUtils;
  */
 public class RDF2GoTripleCallbackTest {
 
-	@Test
-	public void testToRDF() throws JsonParseException, JsonMappingException, JSONLDProcessingError {
-		final String inputstring = "{ `@id`:`http://nonexistent.com/abox#Document1823812`, `@type`:`http://nonexistent.com/tbox#Document` }".replace('`', '"');
-		final String expectedString = "null - http://nonexistent.com/abox#Document1823812 - http://www.w3.org/1999/02/22-rdf-syntax-ns#type - http://nonexistent.com/tbox#Document";
-		final Object input = JSONUtils.fromString(inputstring);
+    @Test
+    public void testToRDF() throws JsonParseException, JsonMappingException, JSONLDProcessingError {
+        final String inputstring = "{ `@id`:`http://nonexistent.com/abox#Document1823812`, `@type`:`http://nonexistent.com/tbox#Document` }"
+                .replace('`', '"');
+        final String expectedString = "null - http://nonexistent.com/abox#Document1823812 - http://www.w3.org/1999/02/22-rdf-syntax-ns#type - http://nonexistent.com/tbox#Document";
+        final Object input = JSONUtils.fromString(inputstring);
 
-		final RDF2GoTripleCallback callback = new RDF2GoTripleCallback();
+        final RDF2GoTripleCallback callback = new RDF2GoTripleCallback();
 
-		final ModelSet model = (ModelSet) JSONLD.toRDF(input, callback);
-		
-		// contains only one statement (type)
-		final ClosableIterator<Statement> statements = model.iterator();
-		final Statement stmt = statements.next();
-		assertEquals(expectedString, stmt.getContext() + " - " + stmt.toString());
-		assertFalse("Deserialized RDF contains more triples than expected", statements.hasNext());
-	}
+        final ModelSet model = (ModelSet) JSONLD.toRDF(input, callback);
+
+        // contains only one statement (type)
+        final ClosableIterator<Statement> statements = model.iterator();
+        final Statement stmt = statements.next();
+        assertEquals(expectedString, stmt.getContext() + " - " + stmt.toString());
+        assertFalse("Deserialized RDF contains more triples than expected", statements.hasNext());
+    }
 
 }
