@@ -47,8 +47,9 @@
 		
 		<clerezza.version>0.12-incubating</clerezza.version>
 		<jackson.version>2.2.1</jackson.version>
-		<junit.version>4.11</junit.version>
 		<jena.version>2.10.0</jena.version>
+		<junit.version>4.11</junit.version>
+		<rdf2go.version>4.7.4</rdf2go.version>
 		<sesame.version>2.7.1</sesame.version>
 		<slf4j.version>1.7.5</slf4j.version>
 	</properties>

@@ -44,10 +44,6 @@
 		</repository>
 	</repositories>
 	
-	<properties>
-		<rdf2go.version>4.7.4</rdf2go.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
