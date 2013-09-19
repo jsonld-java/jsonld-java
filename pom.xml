@@ -45,13 +45,17 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		
-		<clerezza.version>0.12-incubating</clerezza.version>
-		<jackson.version>2.2.1</jackson.version>
+		<clerezza.version>0.13</clerezza.version>
+		<jackson.version>2.2.3</jackson.version>
+		<jena.version>2.10.0</jena.version>
 		<junit.version>4.11</junit.version>
-		<jena.version>2.10.1</jena.version>
-		<sesame.version>2.7.1</sesame.version>
+		<rdf2go.version>4.7.4</rdf2go.version>
+		<sesame.version>2.7.6</sesame.version>
 		<slf4j.version>1.7.5</slf4j.version>
 	</properties>
+	<prerequisites>
+		<maven>2.2.1</maven>
+	</prerequisites>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -170,23 +174,9 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.14.1</version>
+					<version>2.16</version>
 				</plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.14.1</version>
-                    <executions>
-                        <execution>
-                            <id>integration-test</id>
-                            <goals>
-                                <goal>integration-test</goal>
-                                <goal>verify</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                </plugins>
+			</plugins>
 		</pluginManagement>
 	</build>
 </project>

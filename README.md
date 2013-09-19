@@ -83,6 +83,11 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
 CHANGELOG
 =========
 
+### 02.09.2013
+
+* Add RDF2Go integration
+* Bump Sesame and Clerezza dependency versions
+
 ### 18.06.2013
 
 * Bump to version 0.2
