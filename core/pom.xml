@@ -48,14 +48,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<build>
-	    <plugins>
-	        <plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-failsafe-plugin</artifactId>
-	            <version>2.14.1</version>
-	        </plugin>
-	    </plugins>
-	</build>
 </project>
 
