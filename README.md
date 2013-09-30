@@ -83,8 +83,13 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
 CHANGELOG
 =========
 
-### 13.08.2013
+### 30.09.2013
 * Fixed JSON-LD to Jena to handle of BNodes
+
+### 02.09.2013
+
+* Add RDF2Go integration
+* Bump Sesame and Clerezza dependency versions
 
 ### 18.06.2013
 

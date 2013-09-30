@@ -1,6 +1,5 @@
 package com.github.jsonldjava.utils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -128,10 +127,11 @@ public class JSONUtils {
     }
 
     public static Object fromReader(Reader r) throws IOException {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder(4096);
+        char[] buffer = new char[4096];
         int b;
-        while ((b = r.read()) != -1) {
-            sb.append((char) b);
+        while ((b = r.read(buffer)) > 0) {
+            sb.append(buffer, 0, b);
         }
         return fromString(sb.toString());
     }
@@ -159,7 +159,7 @@ public class JSONUtils {
     }
 
     public static Object fromInputStream(InputStream content, String enc) throws IOException {
-        return fromReader(new BufferedReader(new InputStreamReader(content, enc)));
+        return fromReader(new InputStreamReader(content, enc));
     }
 
     public static String toPrettyString(Object obj) {
