@@ -29,7 +29,7 @@ public class JenaRDFParserTest {
                 + "<http://localhost:8080/foo1> const:code \"123\" .\n"                
                 + "<http://localhost:8080/foo2> const:code \"ABC\"^^xsd:string .\n"
                 + "_:a1 <http://example.com/homepage> <http://www.example.com/> .\n"
-                + "_:a2 <http://example.com/self> _:a2 .";
+                + "_:a1 <http://example.com/self> _:a2 .";
 
         final List<Map<String, Object>> expected = new ArrayList<Map<String, Object>>() {
             {
