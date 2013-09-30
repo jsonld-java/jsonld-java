@@ -1,5 +1,6 @@
 package com.github.jsonldjava.impl;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import java.io.StringWriter;
@@ -19,6 +20,9 @@ import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.JSONLDTripleCallback;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 
 public class JenaTripleCallbackTest {
 
@@ -92,28 +96,28 @@ public class JenaTripleCallbackTest {
             }
         };
 
-        final Set<String> expected = new HashSet<String>() {
-            {
-                add("<http://localhost:8080/foo1> <http://foo.com/code> \"123\"^^<http://www.w3.org/2001/XMLSchema#string> .");
-                add("<http://localhost:8080/foo2> <http://foo.com/code> \"ABC\"^^<http://www.w3.org/2001/XMLSchema#string> .");
-                add("_:Ab0 <http://example.com/homepage> <http://www.example.com/> .");
-                add("_:Ab1 <http://example.com/self> _:Ab1 .");
-                // FIXME: _:Ab0 and :_Ab1 is not really guaranteed by Jena
-            }
-        };
 
         final JSONLDTripleCallback callback = new JenaTripleCallback();
         final Model model = (Model) JSONLD.toRDF(input, callback);
         
-        final StringWriter w = new StringWriter();
-        model.write(w, "N-TRIPLE");
-
-//        System.out.println(w);
+        Property homepage = model.getProperty("http://example.com/homepage");
+        Property self = model.getProperty("http://example.com/self");
+        Property code = model.getProperty("http://foo.com/code");
         
-        final Set<String> result = new HashSet<String>(Arrays.asList(w.getBuffer().toString()
-                .split(System.getProperty("line.separator"))));
+        Resource foo1 = model.getResource("http://localhost:8080/foo1");
+        Resource foo2 = model.getResource("http://localhost:8080/foo2");
 
-        assertEquals(expected, result);        
+        assertEquals("123", model.getProperty(foo1,code).getString());
+        assertEquals("ABC", model.getProperty(foo2,code).getString());
+
+        Statement homepageSt = model.getProperty((Resource)null, homepage);
+        assertTrue(homepageSt.getSubject().isAnon());
+        assertEquals("http://www.example.com/", homepageSt.getResource().getURI());
+        
+        Statement selfSt = model.getProperty((Resource)null, self);
+        assertEquals(selfSt.getSubject(), selfSt.getObject());
+        assertTrue(selfSt.getObject().isAnon());
+        
     }
 
 }
