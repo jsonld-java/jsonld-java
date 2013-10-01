@@ -59,7 +59,7 @@ public class JenaJSONLD {
      * Factory for JSONLD RIOT dataset writer.
      * 
      */
-    public static class JSONLDWriterDatasetRIOTFactory implements
+    public static class JsonLDWriterDatasetRIOTFactory implements
             WriterDatasetRIOTFactory {
         @Override
         public WriterDatasetRIOT create(RDFFormat syntaxForm) {
@@ -71,7 +71,7 @@ public class JenaJSONLD {
      * Factory for JSONLD RIOT graph writer.
      * 
      */
-    public static class JSONLDWriterGraphRIOTFactory implements
+    public static class JsonLDWriterGraphRIOTFactory implements
             WriterGraphRIOTFactory {
         @Override
         public WriterGraphRIOT create(RDFFormat syntaxForm) {
@@ -83,8 +83,8 @@ public class JenaJSONLD {
      * Classic RDFReader for JSONLD. Must be a subclass as registration is done
      * by class.
      */
-    public static class RDFReaderRIOT_RDFJSONLD extends RDFReaderRIOT {
-        public RDFReaderRIOT_RDFJSONLD() {
+    public static class JsonLDRDFReader extends RDFReaderRIOT {
+        public JsonLDRDFReader() {
             super(JSONLD.getName());
         }
     }
@@ -93,8 +93,8 @@ public class JenaJSONLD {
      * Classic RDFWriter for JSONLD. Must be a subclass as registration is done
      * by class.
      */
-    public static class RDFWriterRIOT_RDFJSONLD extends RDFWriterRIOT {
-        public RDFWriterRIOT_RDFJSONLD() {
+    public static class JsonLDRDFWriter extends RDFWriterRIOT {
+        public JsonLDRDFWriter() {
             super(JSONLD.getName());
         }
     }
@@ -144,7 +144,7 @@ public class JenaJSONLD {
 
         // Register for Model.read (old world)
         IO_Jena.registerForModelRead(JSONLD.getName(),
-                RDFReaderRIOT_RDFJSONLD.class);
+                JsonLDRDFReader.class);
     }
 
     protected static void registerWriter() {
@@ -153,19 +153,19 @@ public class JenaJSONLD {
         RDFWriterRegistry.register(JSONLD, JSONLD_FORMAT_PRETTY);
 
         // For datasets
-        WriterDatasetRIOTFactory wfactory = new JSONLDWriterDatasetRIOTFactory();
+        WriterDatasetRIOTFactory wfactory = new JsonLDWriterDatasetRIOTFactory();
         // Uses the same code for each form.
         RDFWriterRegistry.register(JSONLD_FORMAT_PRETTY, wfactory);
         RDFWriterRegistry.register(JSONLD_FORMAT_FLAT, wfactory);
 
         // For graphs
-        WriterGraphRIOTFactory wfactory2 = new JSONLDWriterGraphRIOTFactory();
+        WriterGraphRIOTFactory wfactory2 = new JsonLDWriterGraphRIOTFactory();
         RDFWriterRegistry.register(JSONLD_FORMAT_PRETTY, wfactory2);
         RDFWriterRegistry.register(JSONLD_FORMAT_FLAT, wfactory2);
 
         // Register for use with Model.write (old world)
         IO_Jena.registerForModelWrite(JSONLD.getName(),
-                RDFWriterRIOT_RDFJSONLD.class);
+                JsonLDRDFWriter.class);
     }
 
     protected static void unregisterReader() {
