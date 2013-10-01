@@ -533,7 +533,8 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
                 // Eliminate blank node predicates by default
                 if (property == null || property.indexOf("_:") == 0) {
-                    if (options.produceGeneralizedRdf == null || options.produceGeneralizedRdf != true) {
+                    if (options.produceGeneralizedRdf == null
+                            || options.produceGeneralizedRdf != true) {
                         continue;
                     }
                 }
@@ -553,6 +554,16 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
                 // RDF predicates
                 Node predicate = new IRI(property);
+                if (property == null) {
+                    // TODO: this is a hack to handle the node generator not
+                    // handling blank nodes that have a "@list" property
+                    // alongside other properties
+                    predicate = new BlankNode(namer.getName("undefined"));
+                } else if (property.indexOf("_:") == 0) {
+                    predicate = new BlankNode(namer.getName(property));
+                } else {
+                    predicate = new IRI(property);
+                }
 
                 for (final Object item : (List<Object>) items) {
                     // convert @list to triples
