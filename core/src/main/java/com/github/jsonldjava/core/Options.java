@@ -31,6 +31,7 @@ public class Options {
     public Boolean collate = null;
     public Boolean useRdfType = null;
     public Boolean useNativeTypes = null;
+    public Boolean produceGeneralizedRdf = null;
 
     private final Set<String> ignoredKeys = new HashSet<String>();
 
@@ -76,6 +77,7 @@ public class Options {
         rval.collate = collate;
         rval.useNativeTypes = useNativeTypes;
         rval.useRdfType = useRdfType;
+        rval.produceGeneralizedRdf = produceGeneralizedRdf;
         rval.addBlankNodeIDs = addBlankNodeIDs;
         rval.keepFreeFloatingNodes = keepFreeFloatingNodes;
         rval.compactArrays = compactArrays;
