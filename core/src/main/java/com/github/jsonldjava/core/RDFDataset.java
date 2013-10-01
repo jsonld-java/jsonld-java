@@ -531,6 +531,12 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                     continue;
                 }
 
+                // Eliminate blank node predicates by default
+                if (property == null || property.indexOf("_:") == 0) {
+                    // TODO: Support Options.produceGeneralizedRdf
+                    continue;
+                }
+                
                 // RDF subjects
                 Node subject;
                 if (id == null) {
