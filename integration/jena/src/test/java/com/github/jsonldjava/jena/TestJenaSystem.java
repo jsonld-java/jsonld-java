@@ -28,59 +28,78 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 // Test system integration / registration
-public class TestJenaSystem extends Assert
-{
-    @BeforeClass static public void setupClass() { JenaJSONLD.init(); }
-    private static RDFFormat jsonldFmt1 = new RDFFormat(JenaJSONLD.JSONLD, RDFFormat.PRETTY) ;
-    private static RDFFormat jsonldFmt2 = new RDFFormat(JenaJSONLD.JSONLD, RDFFormat.FLAT) ;
-    
-    @Test public void jenaSystem_basic_1() {
-        assertEquals("name",           "JSON-LD",               JenaJSONLD.JSONLD.getName()) ;
-        assertEquals("content-type",   "application/ld+json",   JenaJSONLD.JSONLD.getContentType().getContentType()) ;
-    }
-    
-    @Test public void jenaSystem_read_1() {
-        assertTrue(RDFLanguages.isRegistered(JenaJSONLD.JSONLD)) ;
-        assertTrue(RDFLanguages.isTriples(JenaJSONLD.JSONLD)) ;
-        assertTrue(RDFLanguages.isQuads(JenaJSONLD.JSONLD)) ;
-    }
-    @Test public void jenaSystem_read_2() {
-        assertNotNull(RDFParserRegistry.getFactory(JenaJSONLD.JSONLD)) ;
+public class TestJenaSystem extends Assert {
+    @BeforeClass
+    static public void setupClass() {
+        JenaJSONLD.init();
     }
 
-    
-    @Test public void jenaSystem_write_1() {
-        assertTrue(RDFWriterRegistry.contains(JenaJSONLD.JSONLD)) ;
+    private static RDFFormat jsonldFmt1 = new RDFFormat(JenaJSONLD.JSONLD,
+            RDFFormat.PRETTY);
+    private static RDFFormat jsonldFmt2 = new RDFFormat(JenaJSONLD.JSONLD,
+            RDFFormat.FLAT);
+
+    @Test
+    public void jenaSystem_basic_1() {
+        assertEquals("name", "JSON-LD", JenaJSONLD.JSONLD.getName());
+        assertEquals("content-type", "application/ld+json", JenaJSONLD.JSONLD
+                .getContentType().getContentType());
     }
 
-    @Test public void jenaSystem_write_2() {
-        assertNotNull(RDFWriterRegistry.getWriterGraphFactory(JenaJSONLD.JSONLD)) ;
-        assertNotNull(RDFWriterRegistry.getWriterDatasetFactory(JenaJSONLD.JSONLD)) ;
-        assertNotNull(RDFWriterRegistry.defaultSerialization(JenaJSONLD.JSONLD)) ;
+    @Test
+    public void jenaSystem_read_1() {
+        assertTrue(RDFLanguages.isRegistered(JenaJSONLD.JSONLD));
+        assertTrue(RDFLanguages.isTriples(JenaJSONLD.JSONLD));
+        assertTrue(RDFLanguages.isQuads(JenaJSONLD.JSONLD));
     }
-    
-    @Test public void jenaSystem_write_3() {
-        
-        assertEquals(jsonldFmt1, RDFWriterRegistry.defaultSerialization(JenaJSONLD.JSONLD)) ;
-        
-        assertNotNull(RDFWriterRegistry.getWriterGraphFactory(jsonldFmt1)) ;
-        assertNotNull(RDFWriterRegistry.getWriterGraphFactory(jsonldFmt2)) ;
 
-        assertTrue(RDFWriterRegistry.registeredGraphFormats().contains(jsonldFmt1)) ;
-        assertTrue(RDFWriterRegistry.registeredGraphFormats().contains(jsonldFmt2)) ;
-
-        assertNotNull(RDFWriterRegistry.getWriterDatasetFactory(jsonldFmt1)) ;
-        assertNotNull(RDFWriterRegistry.getWriterDatasetFactory(jsonldFmt2)) ;
-        
-        assertTrue(RDFWriterRegistry.registeredDatasetFormats().contains(jsonldFmt1)) ;
-        assertTrue(RDFWriterRegistry.registeredDatasetFormats().contains(jsonldFmt2)) ;
+    @Test
+    public void jenaSystem_read_2() {
+        assertNotNull(RDFParserRegistry.getFactory(JenaJSONLD.JSONLD));
     }
-    
-    @Test public void jenaSystem_write_4() {
-        assertNotNull(RDFDataMgr.createGraphWriter(jsonldFmt1)) ;
-        assertNotNull(RDFDataMgr.createGraphWriter(jsonldFmt2)) ;
-        assertNotNull(RDFDataMgr.createDatasetWriter(jsonldFmt1)) ;
-        assertNotNull(RDFDataMgr.createDatasetWriter(jsonldFmt2)) ;
+
+    @Test
+    public void jenaSystem_write_1() {
+        assertTrue(RDFWriterRegistry.contains(JenaJSONLD.JSONLD));
+    }
+
+    @Test
+    public void jenaSystem_write_2() {
+        assertNotNull(RDFWriterRegistry
+                .getWriterGraphFactory(JenaJSONLD.JSONLD));
+        assertNotNull(RDFWriterRegistry
+                .getWriterDatasetFactory(JenaJSONLD.JSONLD));
+        assertNotNull(RDFWriterRegistry.defaultSerialization(JenaJSONLD.JSONLD));
+    }
+
+    @Test
+    public void jenaSystem_write_3() {
+
+        assertEquals(jsonldFmt1,
+                RDFWriterRegistry.defaultSerialization(JenaJSONLD.JSONLD));
+
+        assertNotNull(RDFWriterRegistry.getWriterGraphFactory(jsonldFmt1));
+        assertNotNull(RDFWriterRegistry.getWriterGraphFactory(jsonldFmt2));
+
+        assertTrue(RDFWriterRegistry.registeredGraphFormats().contains(
+                jsonldFmt1));
+        assertTrue(RDFWriterRegistry.registeredGraphFormats().contains(
+                jsonldFmt2));
+
+        assertNotNull(RDFWriterRegistry.getWriterDatasetFactory(jsonldFmt1));
+        assertNotNull(RDFWriterRegistry.getWriterDatasetFactory(jsonldFmt2));
+
+        assertTrue(RDFWriterRegistry.registeredDatasetFormats().contains(
+                jsonldFmt1));
+        assertTrue(RDFWriterRegistry.registeredDatasetFormats().contains(
+                jsonldFmt2));
+    }
+
+    @Test
+    public void jenaSystem_write_4() {
+        assertNotNull(RDFDataMgr.createGraphWriter(jsonldFmt1));
+        assertNotNull(RDFDataMgr.createGraphWriter(jsonldFmt2));
+        assertNotNull(RDFDataMgr.createDatasetWriter(jsonldFmt1));
+        assertNotNull(RDFDataMgr.createDatasetWriter(jsonldFmt2));
     }
 }
-

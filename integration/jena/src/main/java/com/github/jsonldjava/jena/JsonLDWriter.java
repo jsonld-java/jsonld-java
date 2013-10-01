@@ -52,64 +52,63 @@ import com.hp.hpl.jena.sparql.core.DatasetGraph;
 import com.hp.hpl.jena.sparql.util.Context;
 import com.hp.hpl.jena.vocabulary.RDF;
 
-class JsonLDWriter extends WriterDatasetRIOTBase
-{
-    private final RDFFormat format ;
-    public JsonLDWriter(RDFFormat syntaxForm)
-    {
-        format = syntaxForm ;
+class JsonLDWriter extends WriterDatasetRIOTBase {
+    private final RDFFormat format;
+
+    public JsonLDWriter(RDFFormat syntaxForm) {
+        format = syntaxForm;
     }
 
     @Override
-    public Lang getLang()
-    {
-        return format.getLang() ;
+    public Lang getLang() {
+        return format.getLang();
     }
 
     @Override
-    public void write(Writer out, DatasetGraph dataset, PrefixMap prefixMap, String baseURI, Context context)
-    {
-        serialize(out, dataset, prefixMap, baseURI) ;
+    public void write(Writer out, DatasetGraph dataset, PrefixMap prefixMap,
+            String baseURI, Context context) {
+        serialize(out, dataset, prefixMap, baseURI);
     }
 
-    private boolean isPretty() { return RDFFormat.PRETTY.equals(format.getVariant()) ; }
+    private boolean isPretty() {
+        return RDFFormat.PRETTY.equals(format.getVariant());
+    }
 
     @Override
-    public void write(OutputStream out, DatasetGraph dataset, PrefixMap prefixMap, String baseURI, Context context)
-    {
-        Writer w = new OutputStreamWriter(out, Chars.charsetUTF8) ;
-        write(w, dataset, prefixMap, baseURI, context) ;
-        IO.flush(w) ;
+    public void write(OutputStream out, DatasetGraph dataset,
+            PrefixMap prefixMap, String baseURI, Context context) {
+        Writer w = new OutputStreamWriter(out, Chars.charsetUTF8);
+        write(w, dataset, prefixMap, baseURI, context);
+        IO.flush(w);
     }
 
-    private void serialize(Writer writer, DatasetGraph dataset, PrefixMap prefixMap, String baseURI)
-    {
+    private void serialize(Writer writer, DatasetGraph dataset,
+            PrefixMap prefixMap, String baseURI) {
         final Map<String, Object> ctx = new LinkedHashMap<String, Object>();
-        addProperties(ctx, dataset.getDefaultGraph()) ;
-        addPrefixes(ctx, prefixMap) ; 
-        
+        addProperties(ctx, dataset.getDefaultGraph());
+        addPrefixes(ctx, prefixMap);
+
         try {
-            Object obj = JSONLD.fromRDF(dataset, new JenaRDF2JSONLD()) ;
+            Object obj = JSONLD.fromRDF(dataset, new JenaRDF2JSONLD());
             Options opts = new Options();
-            opts.graph =  false ;
-            opts.addBlankNodeIDs = false ;
-            opts.useRdfType = true ;
-            opts.useNativeTypes = true ;
-            opts.skipExpansion = false ;
-            opts.compactArrays = true ;
-            opts.keepFreeFloatingNodes = false ;
-            Map<String, Object> localCtx = new HashMap<String, Object>() ;
+            opts.graph = false;
+            opts.addBlankNodeIDs = false;
+            opts.useRdfType = true;
+            opts.useNativeTypes = true;
+            opts.skipExpansion = false;
+            opts.compactArrays = true;
+            opts.keepFreeFloatingNodes = false;
+            Map<String, Object> localCtx = new HashMap<String, Object>();
             localCtx.put("@context", ctx);
-            
-            
-            //AT A MINIMUM
-            if ( false )
+
+            // AT A MINIMUM
+            if (false)
                 obj = JSONLD.simplify(obj, opts);
             else
                 // Unclear as to the way to set better printing.
-                obj = JSONLD.compact(obj, localCtx) ;
-            
-            if ( isPretty() )
+                obj = JSONLD.compact(obj, localCtx);
+
+            if (isPretty())
                 JSONUtils.writePrettyPrint(writer, obj);
             else
                 JSONUtils.write(writer, obj);
@@ -125,42 +124,40 @@ class JsonLDWriter extends WriterDatasetRIOTBase
     }
 
     private static void addPrefixes(Map<String, Object> ctx, PrefixMap prefixMap) {
-        Map<String, IRI> pmap = prefixMap.getMapping() ;
-        for ( Entry<String, IRI> e : pmap.entrySet()) {
-            ctx.put(e.getKey(),  e.getValue().toString()) ;
+        Map<String, IRI> pmap = prefixMap.getMapping();
+        for (Entry<String, IRI> e : pmap.entrySet()) {
+            ctx.put(e.getKey(), e.getValue().toString());
         }
-        
+
     }
 
     private void addProperties(final Map<String, Object> ctx, Graph graph) {
         // Add some properties directly so it becomes "localname": ....
-        final Set<String> dups = new HashSet<String>() ;
+        final Set<String> dups = new HashSet<String>();
         Action<Triple> x = new Action<Triple>() {
             @Override
             public void apply(Triple item) {
-                Node p = item.getPredicate() ;
-                if ( p.equals( RDF.type.asNode() ))
-                    return ;
-                String x = p.getLocalName() ;
-                if ( dups.contains(x))
-                    return ;
-                
-                if ( ctx.containsKey(x) ) {
+                Node p = item.getPredicate();
+                if (p.equals(RDF.type.asNode()))
+                    return;
+                String x = p.getLocalName();
+                if (dups.contains(x))
+                    return;
+
+                if (ctx.containsKey(x)) {
                     // Check different URI
-//                    pmap2.remove(x) ;
-//                    dups.add(x) ;  
+                    // pmap2.remove(x) ;
+                    // dups.add(x) ;
                 } else {
                     Map<String, Object> x2 = new LinkedHashMap<String, Object>();
-                    x2.put("@id", p.getURI()) ;
-                    x2.put("@type", "@id") ;
-                    ctx.put(x, x2) ;
+                    x2.put("@id", p.getURI());
+                    x2.put("@type", "@id");
+                    ctx.put(x, x2);
                 }
             }
-        } ; 
-        
+        };
+
         Iter.iter(graph.find(null, null, null)).apply(x);
-        
-        
 
     }
 }

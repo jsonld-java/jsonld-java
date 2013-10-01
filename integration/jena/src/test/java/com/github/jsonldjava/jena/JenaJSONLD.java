@@ -37,79 +37,89 @@ import org.apache.jena.riot.system.RiotLib;
 
 import com.hp.hpl.jena.rdf.model.impl.IO_Ctl;
 
-public class JenaJSONLD
-{
-    //public static 
-    
-    public static Lang JSONLD = LangBuilder.create("JSON-LD", "application/ld+json")
-        //.addAltNames("RDF/JSON-LD")
-        .addFileExtensions("jsonld").build() ;
- 
-    
-    
-    public static void init() {}
+public class JenaJSONLD {
+    // public static
+
+    public static Lang JSONLD = LangBuilder
+            .create("JSON-LD", "application/ld+json")
+            // .addAltNames("RDF/JSON-LD")
+            .addFileExtensions("jsonld").build();
+
+    public static void init() {
+    }
+
     static {
         // Temp
-        IO_Ctl.init() ;
-        initReader() ;
-        initWriter() ;
+        IO_Ctl.init();
+        initReader();
+        initWriter();
     }
-    
+
     // ---- Reader
-    public static class RDFReaderRIOT_RDFJSONLD extends RDFReaderRIOT  { public RDFReaderRIOT_RDFJSONLD() { super(JSONLD.getName()) ; } }
-    
-    private static void initReader()
-    {
+    public static class RDFReaderRIOT_RDFJSONLD extends RDFReaderRIOT {
+        public RDFReaderRIOT_RDFJSONLD() {
+            super(JSONLD.getName());
+        }
+    }
+
+    private static void initReader() {
         // This just registers the name, not the parser.
-        RDFLanguages.register(JSONLD) ;
-        
+        RDFLanguages.register(JSONLD);
+
         // Register the parser factory.
         ReaderRIOTFactory rfactory = new ReaderRIOTFactory() {
-            @Override public ReaderRIOT create(Lang language) { return new JsonLDReader() ; }
-        } ;
-        
-        RDFParserRegistry.registerLangTriples(JSONLD, rfactory) ;
-        RDFParserRegistry.registerLangQuads(JSONLD, rfactory) ;
-        
-        // Register for Model.read (old world) 
-        IO_Jena.registerForModelRead(JSONLD.getName(), RDFReaderRIOT_RDFJSONLD.class) ;
+            @Override
+            public ReaderRIOT create(Lang language) {
+                return new JsonLDReader();
+            }
+        };
+
+        RDFParserRegistry.registerLangTriples(JSONLD, rfactory);
+        RDFParserRegistry.registerLangQuads(JSONLD, rfactory);
+
+        // Register for Model.read (old world)
+        IO_Jena.registerForModelRead(JSONLD.getName(),
+                RDFReaderRIOT_RDFJSONLD.class);
     }
 
     // ---- Writer
-    public static class RDFWriterRIOT_RDFJSONLD extends RDFWriterRIOT { public RDFWriterRIOT_RDFJSONLD() { super(JSONLD.getName()) ; } }
+    public static class RDFWriterRIOT_RDFJSONLD extends RDFWriterRIOT {
+        public RDFWriterRIOT_RDFJSONLD() {
+            super(JSONLD.getName());
+        }
+    }
 
-    private static void initWriter()
-    {
-        RDFFormat format1 = new RDFFormat(JSONLD, RDFFormat.PRETTY) ;
-        RDFFormat format2 = new RDFFormat(JSONLD, RDFFormat.FLAT) ;
-        
+    private static void initWriter() {
+        RDFFormat format1 = new RDFFormat(JSONLD, RDFFormat.PRETTY);
+        RDFFormat format2 = new RDFFormat(JSONLD, RDFFormat.FLAT);
+
         // Register the default format for the language.
-        RDFWriterRegistry.register(JSONLD, format1)  ;
-        
+        RDFWriterRegistry.register(JSONLD, format1);
+
         // For datasets
         WriterDatasetRIOTFactory wfactory = new WriterDatasetRIOTFactory() {
             @Override
-            public WriterDatasetRIOT create(RDFFormat syntaxForm)
-            {
-                return new JsonLDWriter(syntaxForm) ;
-            }} ;
+            public WriterDatasetRIOT create(RDFFormat syntaxForm) {
+                return new JsonLDWriter(syntaxForm);
+            }
+        };
         // Uses the same code for each form.
-        RDFWriterRegistry.register(format1, wfactory) ;
-        RDFWriterRegistry.register(format2, wfactory) ;
-        
+        RDFWriterRegistry.register(format1, wfactory);
+        RDFWriterRegistry.register(format2, wfactory);
+
         // For graphs
         WriterGraphRIOTFactory wfactory2 = new WriterGraphRIOTFactory() {
             @Override
-            public WriterGraphRIOT create(RDFFormat syntaxForm)
-            {
-                return RiotLib.adapter(new JsonLDWriter(syntaxForm)) ;
-            }} ;
-        RDFWriterRegistry.register(format1, wfactory2) ;
-        RDFWriterRegistry.register(format2, wfactory2) ;
+            public WriterGraphRIOT create(RDFFormat syntaxForm) {
+                return RiotLib.adapter(new JsonLDWriter(syntaxForm));
+            }
+        };
+        RDFWriterRegistry.register(format1, wfactory2);
+        RDFWriterRegistry.register(format2, wfactory2);
 
         // Register for use with Model.write (old world)
-        IO_Jena.registerForModelWrite(JSONLD.getName(),    RDFWriterRIOT_RDFJSONLD.class) ;
+        IO_Jena.registerForModelWrite(JSONLD.getName(),
+                RDFWriterRIOT_RDFJSONLD.class);
     }
-    
-}
 
+}
