@@ -1,40 +1,31 @@
-===================================
-JSONLD-Java Jena integration module
-===================================
+package com.github.jsonldjava.jena;
 
-This module integrates JSONLD-Java with Jena 0.11.0 or later.
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
-There are several levels of integration, detailed under Usage below.
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.junit.Ignore;
+import org.junit.Test;
 
+import com.github.jsonldjava.core.JSONLD;
+import com.github.jsonldjava.core.Options;
+import com.github.jsonldjava.utils.JSONUtils;
+import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.DatasetFactory;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
 
+/** 
+ * Examples from README.md
+ */
+public class ExampleTest {
 
-USAGE
-=====
-
-From Maven
-----------
-
-    <dependency>
-        <groupId>com.github.jsonld-java</groupId>
-        <artifactId>jsonld-java-jena</artifactId>
-        <version>0.3</version>
-    </dependency>
-
-(Adjust for most recent <version>, as found in ``pom.xml``).
-
-
-Initialization
---------------
-JenaJSONLD must be initialized so that the readers and writers are registered with Jena. You would typically
-do this from within a static {} block, although there is no danger in calling this several times:
-
-    static {
-        JenaJSONLD.init();       
-    }
-
-
-Parse JSON-LD (newer RIOT reader)
----------------------------------
+    @Ignore("Integration test")
+    @Test
+    public void jsonldToTurtleRIOT() throws Exception {
         JenaJSONLD.init(); // Only needed once       
         String url = "http://json-ld.org/test-suite/tests/expand-0002-in.jsonld";
         // Detects language based on extension (ideally content type)
@@ -43,7 +34,6 @@ Parse JSON-LD (newer RIOT reader)
         // or explicit with base URI,  Lang and any supported source
         InputStream inStream = new ByteArrayInputStream("{}".getBytes("UTF-8"));        
         RDFDataMgr.read(model, inStream, "http://example.com/", JenaJSONLD.JSONLD);
-        
         
         RDFDataMgr.write(System.out, model, Lang.TURTLE);
         // <http://example.com/id1>
@@ -54,11 +44,10 @@ Parse JSON-LD (newer RIOT reader)
         //    <http://example.com/term4>  4 ;
         //    <http://example.com/term5>  51 , 50 .        
     }
-       
-
-Write JSON-LD (newer RIOT writer)
----------------------------------
-
+    
+    
+    @Test
+    public void modelTojsonldRIOT() throws Exception {
         JenaJSONLD.init(); // Only needed once       
 
         Model model = ModelFactory.createDefaultModel();
@@ -77,14 +66,13 @@ Write JSON-LD (newer RIOT writer)
         //    "@id" : "http://example.com/test",
         //    "http://example.com/value" : "Test"
         // }
-
-Or more compact:
+        
+        
+        // Or more compact:
         RDFDataMgr.write(System.out, model, JenaJSONLD.JSONLD_FORMAT_FLAT);
         // "@context":{"value":{"@id":"http://example.com/value","@type":"@id"}},"@id":"http://example.com/test","http://example.com/value":"Test"}
-
-
-Datasets are also supported:
-
+        
+        // Datasets are also supported        
         Dataset dataset = DatasetFactory.createMem();
         dataset.addNamedModel("http://example.com/graph", model);
         RDFDataMgr.write(System.out, dataset, JenaJSONLD.JSONLD);
@@ -96,41 +84,10 @@ Datasets are also supported:
         //    "@id" : "http://example.com/graph"
         // }
 
-
-Note that Jena's RDFDataMgr.write() does not currently support passing the 
-base URI parameter, although this is supported by the underlying writer.
-
-
-
-Parse JSON-LD (classic Jena RDFReader)
---------------------------------------
-        JenaJSONLD.init(); // Only needed once
-
-        String url = "http://json-ld.org/test-suite/tests/expand-0002-in.jsonld";
-        Model model = ModelFactory.createDefaultModel();
-        model.read(url, "JSON-LD");
-        
-        model.write(System.out, "TURTLE", "http://example.com/");
-        // @base          <http://example.com/> .
-        //    <id1>   a                           <t1> ;
-        //            <term1>                     "v1"^^<http://www.w3.org/2001/XMLSchema#string> ;
-        //            <term2>                     "v2"^^<t2> ;
-        //            <term3>                     "v3"@en ;
-        //            <term4>                     4 ;
-        //            <term5>                     51 , 50 .       
-
-Notes: 
-* Jena's classic reader factory looks up implementation using Class.forName()
-  and com.github.jsonldjava.jena.JenaJSONLD must therefore be in the same 
-  classloader (e.g. on the classpath) as Jena - this does not work in OSGi.
-* The optional baseURI parameter to read() is supported. If the base is unknown, 
-  "" generally works fine, although Jena might not be able to serialise graphs
-  with relative URI references (e.g. <term1>) as RDF/XML
-
-
-
-Write JSON-LD (classic Jena)
-----------------------------
+    }
+    
+    @Test
+    public void modelToJsonldClassic() throws Exception {
         JenaJSONLD.init(); // Only needed once       
 
         Model model = ModelFactory.createDefaultModel();
@@ -149,8 +106,8 @@ Write JSON-LD (classic Jena)
         //    "http://example.com/value" : "Test"
         //  }
  
-Or made relative from a base URI(notice the relative @id below):
-
+        // Or made relative from a base URI 
+        // (notice the relative @id below)
         model.write(System.out, "JSON-LD", "http://example.com/");
         // {
         //    "@context" : {
@@ -162,16 +119,28 @@ Or made relative from a base URI(notice the relative @id below):
         //    "@id" : "test",
         //    "http://example.com/value" : "Test"
         // }        
+    }
 
-Notes:      
-* The optional base URI parameter can be used to set a base that URIs are to be made
-  relative from (without including @base in the JSONLD)
-* Same classpath considerations as for "Parse JSON-LD (classic Jena RDFReader)" above        
+    @Ignore("Integration test")
+    @Test
+    public void jsonldToTurtleClassic() throws Exception {
+        JenaJSONLD.init(); // Only needed once
 
-
-Jena model to JSON-LD objects
------------------------------
-
+        String url = "http://json-ld.org/test-suite/tests/expand-0002-in.jsonld";
+        Model model = ModelFactory.createDefaultModel();
+        model.read(url, "JSON-LD");
+        model.write(System.out, "TURTLE", "http://example.com/");
+        // @base          <http://example.com/> .
+        //    <id1>   a                           <t1> ;
+        //            <term1>                     "v1"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        //            <term2>                     "v2"^^<t2> ;
+        //            <term3>                     "v3"@en ;
+        //            <term4>                     4 ;
+        //            <term5>                     51 , 50 .       
+    }
+    
+    @Test
+    public void modelToJsonLD() throws Exception {
         JenaJSONLD.init(); // Only needed once
         Model model = ModelFactory.createDefaultModel();
         Resource resource = model.createResource("http://example.com/test");
@@ -189,23 +158,5 @@ Jena model to JSON-LD objects
         //      "@value" : "Test"
         //    } ]
         //  } ]
-
-
-JenaRDFParser
--------------
-
-This internal class is used by JSONLD-Java to "parse" an existing Jena model and generate JSON-LD. 
-
-The JenaRDFParser expects input as an instance of `com.hp.hpl.jena.rdf.model.Model` containing the entire graph.
-
-See [JenaRDFParserTest.java](./src/test/java/com/github/jsonldjava/impl/JenaRDFParserTest.java) for example Usage.
-
-
-JenaTripleCallback
-------------------
-
-This internal class is used by JSONLD-Java to create an existing Jena model from an existing JSON-LD. 
-
-The JenaTripleCallback returns an instance of `com.hp.hpl.jena.rdf.model.Model`
-
-See [JenaTripleCallbackTest.java](./src/test/java/com/github/jsonldjava/impl/JenaTripleCallbackTest.java) for example Usage.
+    }
+}
