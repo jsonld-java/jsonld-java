@@ -29,8 +29,9 @@ import org.junit.Test;
 
 // Test system integration / registration
 public class JenaSystemTest extends Assert {
+
     @BeforeClass
-    static public void setupClass() {
+    public static void init() {
         JenaJSONLD.init();
     }
 

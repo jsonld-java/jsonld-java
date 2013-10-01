@@ -36,10 +36,9 @@ import org.apache.jena.riot.adapters.RDFReaderRIOT;
 import org.apache.jena.riot.adapters.RDFWriterRIOT;
 import org.apache.jena.riot.system.RiotLib;
 
+import com.github.jsonldjava.core.JSONLD;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.impl.IO_Ctl;
-import com.hp.hpl.jena.rdf.model.impl.RDFReaderFImpl;
-import com.hp.hpl.jena.rdf.model.impl.RDFWriterFImpl;
 
 public class JenaJSONLD {
 
@@ -111,11 +110,11 @@ public class JenaJSONLD {
             RDFFormat.PRETTY);
 
     static {
-        initInternal();
+        init();
     }
 
     /**
-     * Initialise JSONLD readers and writers with Jena. 
+     * Initialize JSONLD readers and writers with Jena. 
      * <p>
      * After initialization, the language {@link JSONLD} can be used with
      * {@link RDFDataMgr} for read/write. Additionally the classic {@link Model} (as "JSON-LD")  
@@ -124,10 +123,6 @@ public class JenaJSONLD {
      * 
      */
     public static void init() {
-        initInternal();
-    }
-
-    private static void initInternal() {
         IO_Ctl.init();
         registerReader();
         registerWriter();
@@ -166,31 +161,6 @@ public class JenaJSONLD {
         // Register for use with Model.write (old world)
         IO_Jena.registerForModelWrite(JSONLD.getName(),
                 JsonLDRDFWriter.class);
-    }
-
-    protected static void unregisterReader() {
-        RDFLanguages.unregister(JSONLD);
-        RDFParserRegistry.removeRegistration(JSONLD);
-
-        // IO_Jena.registerForModelRead(JSONLD.getName(), null);
-        // FIXME: IO_Jena can't handle null above - so we'll cheat:
-        RDFReaderFImpl.setBaseReaderClassName(JSONLD.getName(), null);
-    }
-
-    protected static void unregisterWriter() {
-        RDFWriterRegistry.register(JSONLD, null);
-        RDFWriterRegistry.register(JSONLD_FORMAT_PRETTY,
-                (WriterGraphRIOTFactory) null);
-        RDFWriterRegistry.register(JSONLD_FORMAT_FLAT,
-                (WriterGraphRIOTFactory) null);
-        RDFWriterRegistry.register(JSONLD_FORMAT_PRETTY,
-                (WriterDatasetRIOTFactory) null);
-        RDFWriterRegistry.register(JSONLD_FORMAT_FLAT,
-                (WriterGraphRIOTFactory) null);
-
-        IO_Jena.registerForModelWrite(JSONLD.getName(), null);
-        // FIXME: IO_Jena can't handle null above - so we'll cheat:
-        RDFWriterFImpl.setBaseWriterClassName(JSONLD.getName(), null);
     }
 
 }
