@@ -40,6 +40,20 @@ import com.github.jsonldjava.core.JSONLD;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.impl.IO_Ctl;
 
+/**
+ * Jena binding for JSON-LD.
+ * <p>
+ * The bindings must be initialized by calling {@link JenaJSONLD#init()}. After
+ * initialization, the language {@link JSONLD} can be used with
+ * {@link RDFDataMgr} for read/write of JSONLD. The file extension ".jsonld" and
+ * media type "application/ld+json" is also recognized. The classic
+ * {@link Model} can also read/write JSON-LD using the language "JSON-LD".
+ * 
+ * 
+ * @author Andy Seaborne
+ * @author Stian Soiland-Reyes
+ * 
+ */
 public class JenaJSONLD {
 
     /**
@@ -114,10 +128,11 @@ public class JenaJSONLD {
     }
 
     /**
-     * Initialize JSONLD readers and writers with Jena. 
+     * Initialize JSONLD readers and writers with Jena.
      * <p>
      * After initialization, the language {@link JSONLD} can be used with
-     * {@link RDFDataMgr} for read/write. Additionally the classic {@link Model} (as "JSON-LD")  
+     * {@link RDFDataMgr} for read/write. Additionally the classic {@link Model}
+     * (as "JSON-LD")
      * 
      * This method is safe to call multiple times.
      * 
@@ -138,8 +153,7 @@ public class JenaJSONLD {
         RDFParserRegistry.registerLangQuads(JSONLD, rfactory);
 
         // Register for Model.read (old world)
-        IO_Jena.registerForModelRead(JSONLD.getName(),
-                JsonLDRDFReader.class);
+        IO_Jena.registerForModelRead(JSONLD.getName(), JsonLDRDFReader.class);
     }
 
     protected static void registerWriter() {
@@ -159,8 +173,7 @@ public class JenaJSONLD {
         RDFWriterRegistry.register(JSONLD_FORMAT_FLAT, wfactory2);
 
         // Register for use with Model.write (old world)
-        IO_Jena.registerForModelWrite(JSONLD.getName(),
-                JsonLDRDFWriter.class);
+        IO_Jena.registerForModelWrite(JSONLD.getName(), JsonLDRDFWriter.class);
     }
 
 }
