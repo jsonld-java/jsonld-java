@@ -18,11 +18,12 @@
 
 package com.github.jsonldjava.jena;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static com.github.jsonldjava.jena.JenaJSONLD.JSONLD ;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.URL;
 
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.BeforeClass;
@@ -38,7 +39,6 @@ import com.hp.hpl.jena.sparql.sse.SSE;
 /** tests : JSONLD->RDF ; JSONLD->RDF->JSONLD */
 public class TestJJLDReadWrite
 {
-    private static String DIR = "testing/RIOT/jsonld/" ; 
     @BeforeClass static public void setupClass() { JenaJSONLD.init(); }  
     
     @Test public void read_g01() { graphJ2R("graph1.jsonld", "graph1.ttl") ; }
@@ -47,21 +47,20 @@ public class TestJJLDReadWrite
 
     @Test public void read_ds02() { datasetJ2R("dataset1.jsonld", "dataset1.trig") ; }
 
-    private void graphJ2R(String inFile, String outFile)
+    private void graphJ2R(String inResource, String outResource)
     {
-        inFile = DIR+inFile ;
-        outFile = DIR+outFile ;
-        Model model1 = RDFDataMgr.loadModel(inFile) ;
-        Model model2 = RDFDataMgr.loadModel(outFile) ;
-        assertTrue(model1.isIsomorphicWith(model2)) ;
+        Model model1 = loadModelFromClasspathResource(inResource);
+        Model model2 = loadModelFromClasspathResource(outResource);
+        assertTrue("Input graph " + inResource  + " not isomorphic to output dataset" + outResource,
+                model1.isIsomorphicWith(model2)) ;
     }
 
-    private void datasetJ2R(String inFile, String outFile)
+    private void datasetJ2R(String inResource, String outResource)
     {
-        inFile = DIR+inFile ;
-        outFile = DIR+outFile ;
-        Dataset ds1 = RDFDataMgr.loadDataset(inFile) ;
-        Dataset ds2 = RDFDataMgr.loadDataset(outFile) ;
+        Dataset ds1 = loadDatasetFromClasspathResource(inResource) ;
+        Dataset ds2 = loadDatasetFromClasspathResource(outResource) ;
+        assertTrue("Input dataset " + inResource  + " not isomorphic to output dataset" + outResource, 
+                isIsomorphic(ds1, ds2));
     }
 
 
@@ -71,11 +70,9 @@ public class TestJJLDReadWrite
 
     @Test public void roundtrip_03() { rtRJRds("dataset1.trig") ; }
 
-    static void rtRJRg(String filename)
+    public void rtRJRg(String filename)
     {
-        filename = DIR+filename ;
-        // Read in
-        Model model = RDFDataMgr.loadModel(filename) ;
+        Model model = loadModelFromClasspathResource(filename);
         
         // Write a JSON-LD
         ByteArrayOutputStream out = new ByteArrayOutputStream() ;
@@ -90,11 +87,21 @@ public class TestJJLDReadWrite
         if ( ! model.isIsomorphicWith(model2) ) 
             System.out.println("## ---- DIFFERENT") ;
     }
+
+    private Model loadModelFromClasspathResource(String resource) {
+        URL url = getResource(resource);
+        return RDFDataMgr.loadModel(url.toExternalForm());
+    }
+
+    private URL getResource(String resource) {
+        URL url = getClass().getResource(resource);
+        assertNotNull("Could not find resource on classpath: " + resource, url);
+        return url;
+    }
     
-    static void rtRJRds(String filename)
+    public void rtRJRds(String resource)
     {
-        filename = DIR+filename ;
-        Dataset ds1 = RDFDataMgr.loadDataset(filename) ;
+        Dataset ds1 = loadDatasetFromClasspathResource(resource);
         
         // Write a JSON-LD
         ByteArrayOutputStream out = new ByteArrayOutputStream() ;
@@ -112,6 +119,11 @@ public class TestJJLDReadWrite
         }
         
         assertTrue(isIsomorphic(ds1, ds2) ) ; 
+    }
+
+    private Dataset loadDatasetFromClasspathResource(String resource) {
+        URL url = getResource(resource);
+        return RDFDataMgr.loadDataset(url.toExternalForm()) ;        
     }
 
     private static boolean isIsomorphic(Dataset ds1, Dataset ds2)
