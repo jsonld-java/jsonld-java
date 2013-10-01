@@ -36,6 +36,8 @@ import org.apache.jena.riot.adapters.RDFWriterRIOT;
 import org.apache.jena.riot.system.RiotLib;
 
 import com.hp.hpl.jena.rdf.model.impl.IO_Ctl;
+import com.hp.hpl.jena.rdf.model.impl.RDFReaderFImpl;
+import com.hp.hpl.jena.rdf.model.impl.RDFWriterFImpl;
 
 public class JenaJSONLD {
     // public static
@@ -44,15 +46,33 @@ public class JenaJSONLD {
             .create("JSON-LD", "application/ld+json")
             // .addAltNames("RDF/JSON-LD")
             .addFileExtensions("jsonld").build();
+    public static RDFFormat JSONLD_FORMAT_PRETTY = new RDFFormat(JSONLD, RDFFormat.PRETTY);
+    public static RDFFormat JSONLD_FORMAT_FLAT = new RDFFormat(JSONLD, RDFFormat.FLAT);
 
     public static void init() {
         IO_Ctl.init();
-        initReader();
-        initWriter();
+        registerReader();
+        registerWriter();
     }
 
     static {
         init();
+    }
+
+    public static class JSONLDWriterGraphRIOTFactory implements
+            WriterGraphRIOTFactory {
+        @Override
+        public WriterGraphRIOT create(RDFFormat syntaxForm) {
+            return RiotLib.adapter(new JsonLDWriter(syntaxForm));
+        }
+    }
+
+    public static class JSONLDWriterDatasetRIOTFactory implements
+            WriterDatasetRIOTFactory {
+        @Override
+        public WriterDatasetRIOT create(RDFFormat syntaxForm) {
+            return new JsonLDWriter(syntaxForm);
+        }
     }
 
     public static final class JsonLDReaderRIOTFactory implements
@@ -70,7 +90,7 @@ public class JenaJSONLD {
         }
     }
 
-    private static void initReader() {
+    protected static void registerReader() {
         // This just registers the name, not the parser.        
         RDFLanguages.register(JSONLD);
 
@@ -84,6 +104,16 @@ public class JenaJSONLD {
                 RDFReaderRIOT_RDFJSONLD.class);
     }
 
+    protected static void unregisterReader() {
+        RDFLanguages.unregister(JSONLD);
+        RDFParserRegistry.removeRegistration(JSONLD);
+        
+        
+        //IO_Jena.registerForModelRead(JSONLD.getName(), null);
+        // FIXME: IO_Jena can't handle null above - so we'll cheat:
+        RDFReaderFImpl.setBaseReaderClassName(JSONLD.getName(), null);
+    }
+    
     // ---- Writer
     public static class RDFWriterRIOT_RDFJSONLD extends RDFWriterRIOT {
         public RDFWriterRIOT_RDFJSONLD() {
@@ -91,37 +121,38 @@ public class JenaJSONLD {
         }
     }
 
-    private static void initWriter() {
-        RDFFormat format1 = new RDFFormat(JSONLD, RDFFormat.PRETTY);
-        RDFFormat format2 = new RDFFormat(JSONLD, RDFFormat.FLAT);
+    protected static void registerWriter() {
+
 
         // Register the default format for the language.
-        RDFWriterRegistry.register(JSONLD, format1);
+        RDFWriterRegistry.register(JSONLD, JSONLD_FORMAT_PRETTY);
 
         // For datasets
-        WriterDatasetRIOTFactory wfactory = new WriterDatasetRIOTFactory() {
-            @Override
-            public WriterDatasetRIOT create(RDFFormat syntaxForm) {
-                return new JsonLDWriter(syntaxForm);
-            }
-        };
+        WriterDatasetRIOTFactory wfactory = new JSONLDWriterDatasetRIOTFactory();
         // Uses the same code for each form.
-        RDFWriterRegistry.register(format1, wfactory);
-        RDFWriterRegistry.register(format2, wfactory);
+        RDFWriterRegistry.register(JSONLD_FORMAT_PRETTY, wfactory);
+        RDFWriterRegistry.register(JSONLD_FORMAT_FLAT, wfactory);
 
         // For graphs
-        WriterGraphRIOTFactory wfactory2 = new WriterGraphRIOTFactory() {
-            @Override
-            public WriterGraphRIOT create(RDFFormat syntaxForm) {
-                return RiotLib.adapter(new JsonLDWriter(syntaxForm));
-            }
-        };
-        RDFWriterRegistry.register(format1, wfactory2);
-        RDFWriterRegistry.register(format2, wfactory2);
+        WriterGraphRIOTFactory wfactory2 = new JSONLDWriterGraphRIOTFactory();
+        RDFWriterRegistry.register(JSONLD_FORMAT_PRETTY, wfactory2);
+        RDFWriterRegistry.register(JSONLD_FORMAT_FLAT, wfactory2);
 
         // Register for use with Model.write (old world)
         IO_Jena.registerForModelWrite(JSONLD.getName(),
                 RDFWriterRIOT_RDFJSONLD.class);
+    }
+    
+    protected static void unregisterWriter() {
+        RDFWriterRegistry.register(JSONLD, null);
+        RDFWriterRegistry.register(JSONLD_FORMAT_PRETTY, (WriterGraphRIOTFactory)null);
+        RDFWriterRegistry.register(JSONLD_FORMAT_FLAT, (WriterGraphRIOTFactory)null);
+        RDFWriterRegistry.register(JSONLD_FORMAT_PRETTY, (WriterDatasetRIOTFactory)null);
+        RDFWriterRegistry.register(JSONLD_FORMAT_FLAT, (WriterGraphRIOTFactory)null);
+        
+        IO_Jena.registerForModelWrite(JSONLD.getName(), null);
+        // FIXME: IO_Jena can't handle null above - so we'll cheat:
+        RDFWriterFImpl.setBaseWriterClassName(JSONLD.getName(), null);
     }
 
 }
