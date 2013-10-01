@@ -46,16 +46,24 @@ public class JenaJSONLD {
             .addFileExtensions("jsonld").build();
 
     public static void init() {
-    }
-
-    static {
-        // Temp
         IO_Ctl.init();
         initReader();
         initWriter();
     }
 
-    // ---- Reader
+    static {
+        init();
+    }
+
+    public static final class JsonLDReaderRIOTFactory implements
+            ReaderRIOTFactory {
+        @Override
+        public ReaderRIOT create(Lang language) {
+            return new JsonLDReader();
+        }
+    }
+
+    // Classic RDFReader. Must be a subclass as registration is done by class
     public static class RDFReaderRIOT_RDFJSONLD extends RDFReaderRIOT {
         public RDFReaderRIOT_RDFJSONLD() {
             super(JSONLD.getName());
@@ -63,17 +71,11 @@ public class JenaJSONLD {
     }
 
     private static void initReader() {
-        // This just registers the name, not the parser.
+        // This just registers the name, not the parser.        
         RDFLanguages.register(JSONLD);
 
         // Register the parser factory.
-        ReaderRIOTFactory rfactory = new ReaderRIOTFactory() {
-            @Override
-            public ReaderRIOT create(Lang language) {
-                return new JsonLDReader();
-            }
-        };
-
+        JsonLDReaderRIOTFactory rfactory = new JsonLDReaderRIOTFactory();
         RDFParserRegistry.registerLangTriples(JSONLD, rfactory);
         RDFParserRegistry.registerLangQuads(JSONLD, rfactory);
 
