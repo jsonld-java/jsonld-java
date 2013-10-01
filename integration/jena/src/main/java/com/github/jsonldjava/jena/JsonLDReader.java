@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.jena.atlas.lib.InternalErrorException;
 import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.riot.ReaderRIOT;
+import org.apache.jena.riot.RiotException;
 import org.apache.jena.riot.lang.LabelToNode;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.SyntaxLabels;
@@ -86,9 +87,9 @@ public class JsonLDReader implements ReaderRIOT {
             Options options = new Options(baseURI);
             JSONLD.toRDF(jsonObject, callback, options);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RiotException("Could not read JSONLD: " + e, e);
         } catch (JSONLDProcessingError e) {
-            e.printStackTrace();
+            throw new RiotException("Could not parse JSONLD: " + e, e);
         }
     }
 

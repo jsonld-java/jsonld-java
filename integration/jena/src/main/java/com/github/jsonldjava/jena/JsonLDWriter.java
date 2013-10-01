@@ -36,6 +36,7 @@ import org.apache.jena.atlas.lib.Chars;
 import org.apache.jena.iri.IRI;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.riot.RiotException;
 import org.apache.jena.riot.system.PrefixMap;
 import org.apache.jena.riot.writer.WriterDatasetRIOTBase;
 
@@ -112,14 +113,10 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
                 JSONUtils.writePrettyPrint(writer, obj);
             else
                 JSONUtils.write(writer, obj);
-        } catch (JSONLDProcessingError e) {
-            e.printStackTrace();
-        } catch (JsonGenerationException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RiotException("Could not write JSONLD: " + e, e);
+        } catch (JSONLDProcessingError e) {
+            throw new RiotException("Error while generating JSONLD: " + e, e);
         }
     }
 
