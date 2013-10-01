@@ -1,4 +1,4 @@
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.jena;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
