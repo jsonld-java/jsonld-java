@@ -1,21 +1,21 @@
 package com.github.jsonldjava.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
+import com.github.jsonldjava.jena.JenaJSONLD;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 
 public class JenaJSONReaderTest {
     static {
-        JenaJSONLDReader.registerWithJena();
+        //JenaJSONLDReader.registerWithJena();
+        JenaJSONLD.init(); 
     }
 
     @Test
@@ -29,22 +29,25 @@ public class JenaJSONReaderTest {
         String uri = "http://example.com/";
         model.read(in, uri, "JSON-LD");
 //        model.write(System.out, "TURTLE", "");
+        checkRelative(model);
+    }
+
+    private void checkRelative(Model model) {
         assertEquals(1, model.size());
-        Resource test = model.getResource("http://example.com/test");
-        Property value = model.getProperty("http://example.com/value");
-        assertEquals("Test", model.getProperty(test, value).getString());
+        Statement statement = model.listStatements().next();
+        assertEquals("http://example.com/value", statement.getPredicate().toString());
+        assertEquals("Test", statement.getString());
+        assertEquals("http://example.com/test", statement.getSubject().toString());
     }
     
-    @Ignore("Integration test")
+//    @Ignore("Integration test")
     @Test
     public void readURL() throws Exception {
         Model model = ModelFactory.createDefaultModel();
-        String url = "http://json-ld.org/test-suite/tests/expand-0002-in.jsonld";
+        String url = getClass().getResource("../jena/relative.jsonld").toExternalForm();
+        
         model.read(url, "JSON-LD");
         model.write(System.out, "TURTLE", "");
-//        assertEquals(7, model.size());
-        Resource test = model.getResource("http://example.com/id1");
-        Property value = model.getProperty("http://example.com/term1");
-        assertEquals("v1", model.getProperty(test, value).getString());
+        checkRelative(model);
     }
 }
