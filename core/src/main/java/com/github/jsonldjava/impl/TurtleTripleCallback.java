@@ -212,8 +212,13 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
             obj = getURI((String) object);
         } else if (object instanceof RDFDataset.Literal) {
             obj = ((RDFDataset.Literal) object).getValue();
+            final String lang = ((RDFDataset.Literal) object).getLanguage();
             final String dt = ((RDFDataset.Literal) object).getDatatype();
-            if (dt != null) {
+            if (lang != null) {
+                obj = "\"" + obj + "\"";
+                obj += "@" + lang;
+            }
+            else if(dt != null) {
                 // TODO: this probably isn't an exclusive list of all the
                 // datatype literals that can be represented as native types
                 if (!(XSD_DOUBLE.equals(dt) || XSD_INTEGER.equals(dt) || XSD_FLOAT.equals(dt) || XSD_BOOLEAN
@@ -225,10 +230,6 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
                 }
             } else {
                 obj = "\"" + obj + "\"";
-                final String lang = ((RDFDataset.Literal) object).getLanguage();
-                if (lang != null) {
-                    obj += "@" + lang;
-                }
             }
         } else {
             // must be an object
