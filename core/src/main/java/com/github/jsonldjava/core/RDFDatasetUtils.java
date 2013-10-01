@@ -250,8 +250,19 @@ public class RDFDatasetUtils {
             quad += s.getValue();
         }
 
-        // predicate is always an IRI
-        quad += " <" + escape(p.getValue()) + "> ";
+        // predicate is always an IRI in RDF (JSON-LD has a "Generalized RDF" where it can be a blank node)
+        if (p.isIRI()) {
+            quad += " <" + escape(p.getValue()) + "> ";
+        } else if (p.isBlankNode()) {
+            // normalization mode
+            if (bnode != null) {
+                quad += bnode.equals(p.getValue()) ? "_:a" : "_:z";
+            }
+            // normal mode
+            else {
+                quad += p.getValue();
+            }
+        }
 
         // object is IRI, bnode or literal
         if (o.isIRI()) {
