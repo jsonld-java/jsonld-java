@@ -146,20 +146,5 @@ public class JsonLDReader implements ReaderRIOT {
         // return null ;
     }
 
-    private Node createURI(String str) {
-        if (str.startsWith("_:"))
-            return labels.get(null, str);
-        else
-            return NodeFactory.createURI(str);
-    }
-
-    private Node createLiteral(String lex, String datatype, String lang) {
-        if (lang == null && datatype == null)
-            return NodeFactory.createLiteral(lex);
-        if (lang != null)
-            return NodeFactory.createLiteral(lex, lang, null);
-        RDFDatatype dt = NodeFactory.getType(datatype);
-        return NodeFactory.createLiteral(lex, dt);
-    }
 
 }

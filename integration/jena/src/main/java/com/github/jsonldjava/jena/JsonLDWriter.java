@@ -40,8 +40,6 @@ import org.apache.jena.riot.RiotException;
 import org.apache.jena.riot.system.PrefixMap;
 import org.apache.jena.riot.writer.WriterDatasetRIOTBase;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.Options;
@@ -102,10 +100,10 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
             Map<String, Object> localCtx = new HashMap<String, Object>();
             localCtx.put("@context", ctx);
 
-            // AT A MINIMUM
-            if (false)
-                obj = JSONLD.simplify(obj, opts);
-            else
+            // TODO: How/when to do simplify vs compact?
+//            if (false)
+//                obj = JSONLD.simplify(obj, opts);
+//            else
                 // Unclear as to the way to set better printing.
                 obj = JSONLD.compact(obj, localCtx, opts);
 
