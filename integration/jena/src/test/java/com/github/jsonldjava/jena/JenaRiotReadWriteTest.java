@@ -37,7 +37,7 @@ import com.hp.hpl.jena.sparql.lib.DatasetLib;
 import com.hp.hpl.jena.sparql.sse.SSE;
 
 /** tests : JSONLD->RDF ; JSONLD->RDF->JSONLD */
-public class TestJJLDReadWrite {
+public class JenaRiotReadWriteTest {
     @BeforeClass
     static public void setupClass() {
         JenaJSONLD.init();
