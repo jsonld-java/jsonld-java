@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.jsonldjava.jena.JenaJSONLD;
@@ -13,8 +14,9 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 
 public class JenaJSONReaderTest {
-    static {
-        //JenaJSONLDReader.registerWithJena();
+    
+    @BeforeClass
+    public static void init() {
         JenaJSONLD.init(); 
     }
 

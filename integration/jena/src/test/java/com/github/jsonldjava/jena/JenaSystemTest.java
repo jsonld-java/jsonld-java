@@ -32,7 +32,7 @@ public class JenaSystemTest extends Assert {
 
     @BeforeClass
     public static void init() {
-        JenaJSONLD.init();
+        JenaJSONLD.init(); 
     }
 
     private static RDFFormat jsonldFmt1 = new RDFFormat(JenaJSONLD.JSONLD,

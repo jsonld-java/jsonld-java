@@ -38,9 +38,15 @@ import com.hp.hpl.jena.sparql.sse.SSE;
 
 /** tests : JSONLD->RDF ; JSONLD->RDF->JSONLD */
 public class JenaRiotReadWriteTest {
+    
+
     @BeforeClass
-    static public void setupClass() {
-        JenaJSONLD.init();
+    public static void init() {
+        /*
+         * Disabled to test that static { } in JenaJSONLD forces init() by
+         * accessing the field JenaJSONLD.JSONLD.
+         */
+        //         JenaJSONLD.init();
     }
 
     @Test

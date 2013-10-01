@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.StringWriter;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.jsonldjava.jena.JenaJSONLD;
@@ -15,8 +16,8 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 public class JenaJSONWriterTest {
     
-    static {
-//        JenaJSONLDWriter.registerWithJena();
+    @BeforeClass
+    public static void init() {
         JenaJSONLD.init(); 
     }
     
