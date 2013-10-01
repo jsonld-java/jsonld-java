@@ -517,7 +517,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
      * @param graph
      *            the graph to create RDF triples for.
      */
-    void graphToRDF(String graphName, Map<String, Object> graph) {
+    void graphToRDF(String graphName, Map<String, Object> graph, Options options) {
         final List<Quad> triples = new ArrayList<Quad>();
         for (final String id : graph.keySet()) {
             final Map<String, Object> node = (Map<String, Object>) graph.get(id);
@@ -533,10 +533,11 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
                 // Eliminate blank node predicates by default
                 if (property == null || property.indexOf("_:") == 0) {
-                    // TODO: Support Options.produceGeneralizedRdf
-                    continue;
+                    if (options.produceGeneralizedRdf == null || options.produceGeneralizedRdf != true) {
+                        continue;
+                    }
                 }
-                
+
                 // RDF subjects
                 Node subject;
                 if (id == null) {

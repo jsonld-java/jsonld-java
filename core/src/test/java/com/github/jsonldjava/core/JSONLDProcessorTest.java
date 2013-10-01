@@ -403,6 +403,13 @@ public class JSONLDProcessorTest {
                 result = JSONLD.frame(input, frameJson, options);
             } else if (testType.contains("jld:ToRDFTest")) {
                 options.format = "application/nquads";
+                if (test.containsKey("option")) {
+                    if (((Map<String, Object>) test.get("option"))
+                            .containsKey("produceGeneralizedRdf")) {
+                        options.produceGeneralizedRdf = (Boolean) ((Map<String, Object>) test
+                                .get("option")).get("produceGeneralizedRdf");
+                    }
+                }
                 result = JSONLD.toRDF(input, options);
                 result = ((String) result).trim();
             } else if (testType.contains("jld:FromRDFTest")) {

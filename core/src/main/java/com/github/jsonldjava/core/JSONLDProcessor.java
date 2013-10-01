@@ -1417,7 +1417,7 @@ public class JSONLDProcessor {
             if (graphName.indexOf("_:") == 0) {
                 graphName = namer.getName(graphName);
             }
-            dataset.graphToRDF(graphName, graph);
+            dataset.graphToRDF(graphName, graph, opts);
         }
         return dataset;
     }
