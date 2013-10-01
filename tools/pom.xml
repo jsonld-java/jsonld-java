@@ -40,7 +40,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>appassembler-maven-plugin</artifactId>
-					<version>1.2</version>
+					<version>1.4</version>
 				</plugin>
 			</plugins>		
 		</pluginManagement>
