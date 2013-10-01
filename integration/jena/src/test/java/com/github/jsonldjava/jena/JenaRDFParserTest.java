@@ -1,4 +1,4 @@
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.jena;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
+import com.github.jsonldjava.impl.JenaRDFParser;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
