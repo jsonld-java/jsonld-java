@@ -47,7 +47,7 @@
 		
 		<clerezza.version>0.13</clerezza.version>
 		<jackson.version>2.2.3</jackson.version>
-		<jena.version>2.10.0</jena.version>
+		<jena.version>2.11.0</jena.version>
 		<junit.version>4.11</junit.version>
 		<rdf2go.version>4.7.4</rdf2go.version>
 		<sesame.version>2.7.6</sesame.version>

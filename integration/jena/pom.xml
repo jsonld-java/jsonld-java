@@ -1,5 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<parent>
 		<artifactId>jsonld-java-integration</artifactId>
 		<groupId>com.github.jsonld-java</groupId>
@@ -12,20 +13,20 @@
 	<packaging>jar</packaging>
 
 	<dependencies>
-                <dependency>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>jsonld-java</artifactId>
-                        <version>${project.version}</version>
-                        <type>jar</type> 
-                        <scope>compile</scope> 
-                </dependency>
-                <dependency>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>jsonld-java</artifactId>
-                        <version>${project.version}</version>
-                        <type>test-jar</type>
-                        <scope>test</scope>
-                </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>jsonld-java</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>jsonld-java</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-core</artifactId>
@@ -40,7 +41,31 @@
 			<artifactId>slf4j-jdk14</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>xerces</groupId>
+				<artifactId>xercesImpl</artifactId>
+				<version>2.11.0</version>
+			</dependency>
+			<dependency>
+				<groupId>xml-apis</groupId>
+				<artifactId>xml-apis</artifactId>
+				<version>1.4.01</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
 
