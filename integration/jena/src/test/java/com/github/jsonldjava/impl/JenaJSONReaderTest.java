@@ -26,8 +26,8 @@ public class JenaJSONReaderTest {
         jsonld = jsonld.replace('\'', '"');
         InputStream in = new ByteArrayInputStream(jsonld.getBytes("utf8"));
         
-        String uri = "http://example.com/";
-        model.read(in, uri, "JSON-LD");
+        String baseUri = "http://example.com/";
+        model.read(in, baseUri, "JSON-LD");
 //        model.write(System.out, "TURTLE", "");
         checkRelative(model);
     }
@@ -45,8 +45,8 @@ public class JenaJSONReaderTest {
     public void readURL() throws Exception {
         Model model = ModelFactory.createDefaultModel();
         String url = getClass().getResource("../jena/relative.jsonld").toExternalForm();
-        
-        model.read(url, "JSON-LD");
+        String baseUri = "http://example.com/";
+        model.read(url, baseUri, "JSON-LD");
         model.write(System.out, "TURTLE", "");
         checkRelative(model);
     }
