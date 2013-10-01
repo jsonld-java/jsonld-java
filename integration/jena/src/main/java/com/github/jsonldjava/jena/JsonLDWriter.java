@@ -90,7 +90,7 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
 
         try {
             Object obj = JSONLD.fromRDF(dataset, new JenaRDF2JSONLD());
-            Options opts = new Options();
+            Options opts = new Options(baseURI);
             opts.graph = false;
             opts.addBlankNodeIDs = false;
             opts.useRdfType = true;
@@ -106,7 +106,7 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
                 obj = JSONLD.simplify(obj, opts);
             else
                 // Unclear as to the way to set better printing.
-                obj = JSONLD.compact(obj, localCtx);
+                obj = JSONLD.compact(obj, localCtx, opts);
 
             if (isPretty())
                 JSONUtils.writePrettyPrint(writer, obj);
