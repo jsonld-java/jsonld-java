@@ -622,7 +622,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                 if (value instanceof Boolean) {
                     return new Literal(value.toString(), datatype == null ? XSD_BOOLEAN
                             : (String) datatype, null);
-                } else if (value instanceof Double || value instanceof Float) {
+                } else if (value instanceof Double || value instanceof Float || XSD_DOUBLE.equals(datatype)) {
                     // canonical double representation
                     final DecimalFormat df = new DecimalFormat("0.0###############E0");
                     return new Literal(df.format(value), datatype == null ? XSD_DOUBLE
