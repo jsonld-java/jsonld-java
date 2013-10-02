@@ -31,26 +31,26 @@ public class JenaTripleCallback implements JSONLDTripleCallback {
             // TODO: i don't know what to do here!!!!
             return;
         }
-        
-        Resource subject = createResourceFromNode(subjectNode);
-        if (! propertyNode.isIRI()) {
+
+        final Resource subject = createResourceFromNode(subjectNode);
+        if (!propertyNode.isIRI()) {
             throw new InvalidPropertyURIException(propertyNode.getValue());
         }
-        Property property = jenaModel.createProperty(propertyNode.getValue());
-        Resource object = createResourceFromNode(objectNode);
+        final Property property = jenaModel.createProperty(propertyNode.getValue());
+        final Resource object = createResourceFromNode(objectNode);
 
         final Statement statement = jenaModel.createStatement(subject, property, object);
         jenaModel.add(statement);
     }
 
-    private void triple(Node subjectNode, Node propertyNode, String value, String datatype, String language,
-            String graph) {
+    private void triple(Node subjectNode, Node propertyNode, String value, String datatype,
+            String language, String graph) {
 
-        Resource subject = createResourceFromNode(subjectNode);
-        if (! propertyNode.isIRI()) {
+        final Resource subject = createResourceFromNode(subjectNode);
+        if (!propertyNode.isIRI()) {
             throw new InvalidPropertyURIException(propertyNode.getValue());
         }
-        Property property = jenaModel.createProperty(propertyNode.getValue());
+        final Property property = jenaModel.createProperty(propertyNode.getValue());
 
         RDFNode object;
         if (language != null) {
@@ -86,12 +86,11 @@ public class JenaTripleCallback implements JSONLDTripleCallback {
             }
             for (final RDFDataset.Quad quad : quads) {
                 if (quad.getObject().isLiteral()) {
-                    triple(quad.getSubject(), quad.getPredicate(), quad
-                            .getObject().getValue(), quad.getObject().getDatatype(), quad
-                            .getObject().getLanguage(), graphName);
+                    triple(quad.getSubject(), quad.getPredicate(), quad.getObject().getValue(),
+                            quad.getObject().getDatatype(), quad.getObject().getLanguage(),
+                            graphName);
                 } else {
-                    triple(quad.getSubject(), quad.getPredicate(), quad
-                            .getObject(), graphName);
+                    triple(quad.getSubject(), quad.getPredicate(), quad.getObject(), graphName);
                 }
             }
         }

@@ -26,7 +26,7 @@ public class JenaRDFParserTest {
     final String foo2 = "<http://localhost:8080/foo2> const:code \"ABC\"^^xsd:string .\n";
     final String homepage = "_:a1 <http://example.com/homepage> <http://www.example.com/> .\n";
     final String self = "_:a2 <http://example.com/self> _:a2 .";
-    
+
     LinkedHashMap<String, Object> foo1Json = new LinkedHashMap<String, Object>() {
         {
             put("@id", "http://localhost:8080/foo1");
@@ -59,17 +59,15 @@ public class JenaRDFParserTest {
     LinkedHashMap<String, Object> homepageJson = new LinkedHashMap<String, Object>() {
         {
             put("@id", "_:t0");
-            put("http://example.com/homepage",
-                    new ArrayList<Object>() {
+            put("http://example.com/homepage", new ArrayList<Object>() {
+                {
+                    add(new LinkedHashMap<String, Object>() {
                         {
-                            add(new LinkedHashMap<String, Object>() {
-                                {
-                                    put("@id",
-                                            "http://www.example.com/");
-                                }
-                            });
+                            put("@id", "http://www.example.com/");
                         }
                     });
+                }
+            });
         }
     };
     // And the node for the www.example.com
@@ -94,27 +92,27 @@ public class JenaRDFParserTest {
             });
         }
     };
-    
+
     @SuppressWarnings("rawtypes")
     @Test
     public void foo1() throws Exception {
-        List expected = Collections.singletonList(foo1Json);
-        List json = turtleToJsonLD(prefix  + foo1);
-        assertEquals(expected, json);        
+        final List expected = Collections.singletonList(foo1Json);
+        final List json = turtleToJsonLD(prefix + foo1);
+        assertEquals(expected, json);
     }
 
     @SuppressWarnings("rawtypes")
     @Test
     public void foo2() throws Exception {
-        List expected = Collections.singletonList(foo2Json);
-        List json = turtleToJsonLD(prefix  + foo2);
-        assertEquals(expected, json);        
+        final List expected = Collections.singletonList(foo2Json);
+        final List json = turtleToJsonLD(prefix + foo2);
+        assertEquals(expected, json);
     }
 
     @SuppressWarnings("rawtypes")
     @Test
     public void homepage() throws Exception {
-        List json = turtleToJsonLD(prefix  + homepage);
+        final List json = turtleToJsonLD(prefix + homepage);
         assertEquals(2, json.size());
         assertTrue(json.contains(exampleCom));
         assertTrue(json.contains(homepageJson));
@@ -123,17 +121,16 @@ public class JenaRDFParserTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void self() throws Exception {
-        List expected = Collections.singletonList(selfJson);
-        List json = turtleToJsonLD(prefix  + self);
-        assertEquals(expected, json);        
+        final List expected = Collections.singletonList(selfJson);
+        final List json = turtleToJsonLD(prefix + self);
+        assertEquals(expected, json);
     }
-    
-    
+
     @SuppressWarnings("rawtypes")
-    public static List turtleToJsonLD(String turtle) throws JSONLDProcessingError {        
-        Model modelResult = ModelFactory.createDefaultModel().read(
+    public static List turtleToJsonLD(String turtle) throws JSONLDProcessingError {
+        final Model modelResult = ModelFactory.createDefaultModel().read(
                 new ByteArrayInputStream(turtle.getBytes()), "", "TURTLE");
-        JenaRDFParser parser = new JenaRDFParser();
+        final JenaRDFParser parser = new JenaRDFParser();
         return (List) JSONLD.fromRDF(modelResult, parser);
     }
 }

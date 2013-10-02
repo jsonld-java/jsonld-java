@@ -61,8 +61,7 @@ public class JenaJSONLD {
      * Factory for JSONLD RIOT graph reader.
      * 
      */
-    public static final class JsonLDReaderRIOTFactory implements
-            ReaderRIOTFactory {
+    public static final class JsonLDReaderRIOTFactory implements ReaderRIOTFactory {
         @Override
         public ReaderRIOT create(Lang language) {
             return new JsonLDReader();
@@ -73,8 +72,7 @@ public class JenaJSONLD {
      * Factory for JSONLD RIOT dataset writer.
      * 
      */
-    public static class JsonLDWriterDatasetRIOTFactory implements
-            WriterDatasetRIOTFactory {
+    public static class JsonLDWriterDatasetRIOTFactory implements WriterDatasetRIOTFactory {
         @Override
         public WriterDatasetRIOT create(RDFFormat syntaxForm) {
             return new JsonLDWriter(syntaxForm);
@@ -85,8 +83,7 @@ public class JenaJSONLD {
      * Factory for JSONLD RIOT graph writer.
      * 
      */
-    public static class JsonLDWriterGraphRIOTFactory implements
-            WriterGraphRIOTFactory {
+    public static class JsonLDWriterGraphRIOTFactory implements WriterGraphRIOTFactory {
         @Override
         public WriterGraphRIOT create(RDFFormat syntaxForm) {
             return RiotLib.adapter(new JsonLDWriter(syntaxForm));
@@ -113,16 +110,13 @@ public class JenaJSONLD {
         }
     }
 
-    public static Lang JSONLD = LangBuilder
-            .create("JSON-LD", "application/ld+json")
-            // .addAltNames("RDF/JSON-LD")
+    public static Lang JSONLD = LangBuilder.create("JSON-LD", "application/ld+json")
+    // .addAltNames("RDF/JSON-LD")
             .addFileExtensions("jsonld").build();
 
-    public static RDFFormat JSONLD_FORMAT_FLAT = new RDFFormat(JSONLD,
-            RDFFormat.FLAT);
+    public static RDFFormat JSONLD_FORMAT_FLAT = new RDFFormat(JSONLD, RDFFormat.FLAT);
 
-    public static RDFFormat JSONLD_FORMAT_PRETTY = new RDFFormat(JSONLD,
-            RDFFormat.PRETTY);
+    public static RDFFormat JSONLD_FORMAT_PRETTY = new RDFFormat(JSONLD, RDFFormat.PRETTY);
 
     static {
         init();
@@ -146,8 +140,8 @@ public class JenaJSONLD {
     }
 
     protected static void registerWithJsonLD() {
-        com.github.jsonldjava.core.JSONLD.registerRDFParser(JSONLD
-                .getContentType().getContentType(), new JenaRDFParser());        
+        com.github.jsonldjava.core.JSONLD.registerRDFParser(JSONLD.getContentType()
+                .getContentType(), new JenaRDFParser());
     }
 
     protected static void registerReader() {
@@ -155,7 +149,7 @@ public class JenaJSONLD {
         RDFLanguages.register(JSONLD);
 
         // Register the parser factory.
-        JsonLDReaderRIOTFactory rfactory = new JsonLDReaderRIOTFactory();
+        final JsonLDReaderRIOTFactory rfactory = new JsonLDReaderRIOTFactory();
         RDFParserRegistry.registerLangTriples(JSONLD, rfactory);
         RDFParserRegistry.registerLangQuads(JSONLD, rfactory);
 
@@ -169,13 +163,13 @@ public class JenaJSONLD {
         RDFWriterRegistry.register(JSONLD, JSONLD_FORMAT_PRETTY);
 
         // For datasets
-        WriterDatasetRIOTFactory wfactory = new JsonLDWriterDatasetRIOTFactory();
+        final WriterDatasetRIOTFactory wfactory = new JsonLDWriterDatasetRIOTFactory();
         // Uses the same code for each form.
         RDFWriterRegistry.register(JSONLD_FORMAT_PRETTY, wfactory);
         RDFWriterRegistry.register(JSONLD_FORMAT_FLAT, wfactory);
 
         // For graphs
-        WriterGraphRIOTFactory wfactory2 = new JsonLDWriterGraphRIOTFactory();
+        final WriterGraphRIOTFactory wfactory2 = new JsonLDWriterGraphRIOTFactory();
         RDFWriterRegistry.register(JSONLD_FORMAT_PRETTY, wfactory2);
         RDFWriterRegistry.register(JSONLD_FORMAT_FLAT, wfactory2);
 

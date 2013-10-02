@@ -89,33 +89,30 @@ public class JenaTripleCallbackTest {
                     }
                 });
 
-                
             }
         };
 
-
         final JSONLDTripleCallback callback = new JenaTripleCallback();
         final Model model = (Model) JSONLD.toRDF(input, callback);
-        
-        Property homepage = model.getProperty("http://example.com/homepage");
-        Property self = model.getProperty("http://example.com/self");
-        Property code = model.getProperty("http://foo.com/code");
-        
-        Resource foo1 = model.getResource("http://localhost:8080/foo1");
-        Resource foo2 = model.getResource("http://localhost:8080/foo2");
 
-        assertEquals("123", model.getProperty(foo1,code).getString());
-        assertEquals("ABC", model.getProperty(foo2,code).getString());
+        final Property homepage = model.getProperty("http://example.com/homepage");
+        final Property self = model.getProperty("http://example.com/self");
+        final Property code = model.getProperty("http://foo.com/code");
 
-        Statement homepageSt = model.getProperty((Resource)null, homepage);
+        final Resource foo1 = model.getResource("http://localhost:8080/foo1");
+        final Resource foo2 = model.getResource("http://localhost:8080/foo2");
+
+        assertEquals("123", model.getProperty(foo1, code).getString());
+        assertEquals("ABC", model.getProperty(foo2, code).getString());
+
+        final Statement homepageSt = model.getProperty((Resource) null, homepage);
         assertTrue(homepageSt.getSubject().isAnon());
         assertEquals("http://www.example.com/", homepageSt.getResource().getURI());
-        
-        Statement selfSt = model.getProperty((Resource)null, self);
+
+        final Statement selfSt = model.getProperty((Resource) null, self);
         assertEquals(selfSt.getSubject(), selfSt.getObject());
         assertTrue(selfSt.getObject().isAnon());
-        
+
     }
 
 }
-

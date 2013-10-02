@@ -1154,10 +1154,10 @@ public class JSONLDUtils {
             if (!preserveIndex) {
                 // matching @type or @language specified in context, compact
                 // value
-                if ((((Map<String, Object>) value).containsKey("@type") && JSONUtils.equals(
+                if ((((Map<String, Object>) value).containsKey("@type") && Obj.equals(
                         ((Map<String, Object>) value).get("@type"), type))
-                        || (((Map<String, Object>) value).containsKey("@language") && JSONUtils
-                                .equals(((Map<String, Object>) value).get("@language"), language))) {
+                        || (((Map<String, Object>) value).containsKey("@language") && Obj.equals(
+                                ((Map<String, Object>) value).get("@language"), language))) {
                     // NOTE: have to check containsKey here as javascript
                     // version relies on undefined !== null
                     return ((Map<String, Object>) value).get("@value");
@@ -1486,13 +1486,13 @@ public class JSONLDUtils {
 
         if (isValue(v1)
                 && isValue(v2)
-                && JSONUtils.equals(((Map<String, Object>) v1).get("@value"),
+                && Obj.equals(((Map<String, Object>) v1).get("@value"),
                         ((Map<String, Object>) v2).get("@value"))
-                && JSONUtils.equals(((Map<String, Object>) v1).get("@type"),
+                && Obj.equals(((Map<String, Object>) v1).get("@type"),
                         ((Map<String, Object>) v2).get("@type"))
-                && JSONUtils.equals(((Map<String, Object>) v1).get("@language"),
+                && Obj.equals(((Map<String, Object>) v1).get("@language"),
                         ((Map<String, Object>) v2).get("@language"))
-                && JSONUtils.equals(((Map<String, Object>) v1).get("@index"),
+                && Obj.equals(((Map<String, Object>) v1).get("@index"),
                         ((Map<String, Object>) v2).get("@index"))) {
             return true;
         }

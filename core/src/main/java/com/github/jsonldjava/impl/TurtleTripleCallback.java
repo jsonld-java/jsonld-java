@@ -217,8 +217,7 @@ public class TurtleTripleCallback implements JSONLDTripleCallback {
             if (lang != null) {
                 obj = "\"" + obj + "\"";
                 obj += "@" + lang;
-            }
-            else if(dt != null) {
+            } else if (dt != null) {
                 // TODO: this probably isn't an exclusive list of all the
                 // datatype literals that can be represented as native types
                 if (!(XSD_DOUBLE.equals(dt) || XSD_INTEGER.equals(dt) || XSD_FLOAT.equals(dt) || XSD_BOOLEAN

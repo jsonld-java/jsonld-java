@@ -36,7 +36,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jsonldjava.utils.JSONUtils;
 import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.URL;
 
@@ -1775,7 +1774,7 @@ public class JSONLDProcessor {
             // check if the key is already in the frame ctx
             if (ctx.containsKey(skey)) {
                 // if so, check if the values are the same
-                if (JSONUtils.equals(ctx.get(skey), keyval)) {
+                if (Obj.equals(ctx.get(skey), keyval)) {
                     // if they are, skip adding this
                     break;
                 }

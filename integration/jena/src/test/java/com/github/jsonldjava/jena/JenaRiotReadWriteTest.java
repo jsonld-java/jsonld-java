@@ -18,8 +18,9 @@
 
 package com.github.jsonldjava.jena;
 
-import static org.junit.Assert.*;
 import static com.github.jsonldjava.jena.JenaJSONLD.JSONLD;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,7 +39,6 @@ import com.hp.hpl.jena.sparql.sse.SSE;
 
 /** tests : JSONLD->RDF ; JSONLD->RDF->JSONLD */
 public class JenaRiotReadWriteTest {
-    
 
     @BeforeClass
     public static void init() {
@@ -46,7 +46,7 @@ public class JenaRiotReadWriteTest {
          * Disabled to test that static { } in JenaJSONLD forces init() by
          * accessing the field JenaJSONLD.JSONLD.
          */
-        //         JenaJSONLD.init();
+        // JenaJSONLD.init();
     }
 
     @Test
@@ -65,19 +65,17 @@ public class JenaRiotReadWriteTest {
     }
 
     private void graphJ2R(String inResource, String outResource) {
-        Model model1 = loadModelFromClasspathResource(inResource);
-        Model model2 = loadModelFromClasspathResource(outResource);
-        assertTrue("Input graph " + inResource
-                + " not isomorphic to output dataset" + outResource,
+        final Model model1 = loadModelFromClasspathResource(inResource);
+        final Model model2 = loadModelFromClasspathResource(outResource);
+        assertTrue("Input graph " + inResource + " not isomorphic to output dataset" + outResource,
                 model1.isIsomorphicWith(model2));
     }
 
     private void datasetJ2R(String inResource, String outResource) {
-        Dataset ds1 = loadDatasetFromClasspathResource(inResource);
-        Dataset ds2 = loadDatasetFromClasspathResource(outResource);
-        assertTrue("Input dataset " + inResource
-                + " not isomorphic to output dataset" + outResource,
-                isIsomorphic(ds1, ds2));
+        final Dataset ds1 = loadDatasetFromClasspathResource(inResource);
+        final Dataset ds2 = loadDatasetFromClasspathResource(outResource);
+        assertTrue("Input dataset " + inResource + " not isomorphic to output dataset"
+                + outResource, isIsomorphic(ds1, ds2));
     }
 
     @Test
@@ -96,43 +94,44 @@ public class JenaRiotReadWriteTest {
     }
 
     public void rtRJRg(String filename) {
-        Model model = loadModelFromClasspathResource(filename);
+        final Model model = loadModelFromClasspathResource(filename);
 
         // Write a JSON-LD
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         RDFDataMgr.write(out, model, JSONLD);
-        ByteArrayInputStream r = new ByteArrayInputStream(out.toByteArray());
+        final ByteArrayInputStream r = new ByteArrayInputStream(out.toByteArray());
 
         // Read as JSON-LD
-        Model model2 = ModelFactory.createDefaultModel();
+        final Model model2 = ModelFactory.createDefaultModel();
         RDFDataMgr.read(model2, r, null, JSONLD);
 
         // Compare
-        if (!model.isIsomorphicWith(model2))
+        if (!model.isIsomorphicWith(model2)) {
             System.out.println("## ---- DIFFERENT");
+        }
     }
 
     private Model loadModelFromClasspathResource(String resource) {
-        URL url = getResource(resource);
+        final URL url = getResource(resource);
         return RDFDataMgr.loadModel(url.toExternalForm());
     }
 
     private URL getResource(String resource) {
-        URL url = getClass().getResource(resource);
+        final URL url = getClass().getResource(resource);
         assertNotNull("Could not find resource on classpath: " + resource, url);
         return url;
     }
 
     public void rtRJRds(String resource) {
-        Dataset ds1 = loadDatasetFromClasspathResource(resource);
+        final Dataset ds1 = loadDatasetFromClasspathResource(resource);
 
         // Write a JSON-LD
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         RDFDataMgr.write(out, ds1, JSONLD);
-        ByteArrayInputStream r = new ByteArrayInputStream(out.toByteArray());
+        final ByteArrayInputStream r = new ByteArrayInputStream(out.toByteArray());
 
         // Read as JSON-LD
-        Dataset ds2 = DatasetFactory.createMem();
+        final Dataset ds2 = DatasetFactory.createMem();
         RDFDataMgr.read(ds2, r, null, JSONLD);
 
         if (!isIsomorphic(ds1, ds2)) {
@@ -144,7 +143,7 @@ public class JenaRiotReadWriteTest {
     }
 
     private Dataset loadDatasetFromClasspathResource(String resource) {
-        URL url = getResource(resource);
+        final URL url = getResource(resource);
         return RDFDataMgr.loadDataset(url.toExternalForm());
     }
 

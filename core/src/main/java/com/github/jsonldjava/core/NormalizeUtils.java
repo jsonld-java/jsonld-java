@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.Obj;
 
 class NormalizeUtils {
 
@@ -491,7 +491,7 @@ class NormalizeUtils {
      */
     private static String getAdjacentBlankNodeName(Map<String, Object> node, String id) {
         return "blank node".equals(node.get("type"))
-                && (!node.containsKey("value") || !JSONUtils.equals(node.get("value"), id)) ? (String) node
+                && (!node.containsKey("value") || !Obj.equals(node.get("value"), id)) ? (String) node
                 .get("value") : null;
     }
 

@@ -59,4 +59,19 @@ public class Obj {
     public static Object remove(Object map, String k1, String k2) {
         return ((Map<String, Object>) ((Map<String, Object>) map).get(k1)).remove(k2);
     }
+
+    /**
+     * A null-safe equals check using v1.equals(v2) if they are both not null.
+     * 
+     * @param v1
+     *            The source object for the equals check.
+     * @param v2
+     *            The object to be checked for equality using the first objects
+     *            equals method.
+     * @return True if the objects were both null. True if both objects were not
+     *         null and v1.equals(v2). False otherwise.
+     */
+    public static boolean equals(Object v1, Object v2) {
+        return v1 == null ? v2 == null : v1.equals(v2);
+    }
 }

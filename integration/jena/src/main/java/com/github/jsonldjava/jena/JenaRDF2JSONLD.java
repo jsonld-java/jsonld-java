@@ -37,49 +37,52 @@ class JenaRDF2JSONLD implements com.github.jsonldjava.core.RDFParser {
 
     @Override
     public RDFDataset parse(Object object) throws JSONLDProcessingError {
-        RDFDataset result = new RDFDataset();
+        final RDFDataset result = new RDFDataset();
         if (object instanceof DatasetGraph) {
-            DatasetGraph dsg = (DatasetGraph) object;
+            final DatasetGraph dsg = (DatasetGraph) object;
 
-            Iterator<Quad> iter = dsg.find();
+            final Iterator<Quad> iter = dsg.find();
             for (; iter.hasNext();) {
-                Quad q = iter.next();
-                Node s = q.getSubject();
-                Node p = q.getPredicate();
-                Node o = q.getObject();
-                Node g = q.getGraph();
+                final Quad q = iter.next();
+                final Node s = q.getSubject();
+                final Node p = q.getPredicate();
+                final Node o = q.getObject();
+                final Node g = q.getGraph();
 
-                String gq = (g == null || Quad.isDefaultGraph(g)) ? null : g
-                        .getURI();
-                String sq = resourceString(s);
-                String pq = p.getURI();
+                final String gq = (g == null || Quad.isDefaultGraph(g)) ? null : g.getURI();
+                final String sq = resourceString(s);
+                final String pq = p.getURI();
                 if (o.isLiteral()) {
-                    String lex = o.getLiteralLexicalForm();
+                    final String lex = o.getLiteralLexicalForm();
                     String lang = o.getLiteralLanguage();
                     String dt = o.getLiteralDatatypeURI();
                     if (lang != null && lang.length() == 0) {
                         lang = null;
                         // dt = RDF.getURI()+"langString" ;
                     }
-                    if (dt == null)
+                    if (dt == null) {
                         dt = XSDDatatype.XSDstring.getURI();
+                    }
 
                     result.addQuad(sq, pq, lex, dt, lang, gq);
                 } else {
-                    String oq = resourceString(o);
+                    final String oq = resourceString(o);
                     result.addQuad(sq, pq, oq, gq);
                 }
             }
-        } else
+        } else {
             Log.warn(JenaRDF2JSONLD.class, "unknown");
+        }
         return result;
     }
 
     private String resourceString(Node x) {
-        if (x.isURI())
+        if (x.isURI()) {
             return x.getURI();
-        if (x.isBlank())
+        }
+        if (x.isBlank()) {
             return labels.get(null, x);
+        }
         return null;
     }
 }
