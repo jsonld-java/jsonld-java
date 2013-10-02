@@ -43,6 +43,7 @@ public class EarlTestSuite {
      *            one every time you run the tests).
      * @throws IOException
      */
+    @SuppressWarnings("unchecked")
     public EarlTestSuite(String manifestURL, String cacheDir, String etag) throws IOException {
         if (cacheDir == null) {
             cacheDir = getCacheDir(manifestURL);
