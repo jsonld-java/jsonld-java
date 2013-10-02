@@ -26,7 +26,6 @@ import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.core.RDFDataset.Quad;
 import com.github.jsonldjava.core.RDFDatasetUtils;
 import com.github.jsonldjava.utils.EarlTestSuite;
-import com.github.jsonldjava.utils.JSONUtils;
 import com.github.jsonldjava.utils.Obj;
 
 @Ignore
@@ -115,7 +114,7 @@ public class TurtleRDFParserTest {
                 format = "text/turtle";
             }
         }, new TurtleRDFParser());
-        assertTrue(JSONUtils.equals(expected, json));
+        assertTrue(Obj.equals(expected, json));
     }
 
     @BeforeClass

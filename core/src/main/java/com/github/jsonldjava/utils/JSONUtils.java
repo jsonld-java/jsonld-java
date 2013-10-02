@@ -25,13 +25,10 @@ import org.apache.http.impl.client.cache.CachingHttpClient;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -48,6 +45,13 @@ public class JSONUtils {
     protected static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final JsonFactory JSON_FACTORY = new JsonFactory(JSON_MAPPER);
+
+    static {
+        // Disable default Jackson behaviour to close
+        // InputStreams/Readers/OutputStreams/Writers
+        JSON_FACTORY.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+    }
+
     private static volatile HttpClient httpClient;
 
     public static Object fromString(String jsonString) throws JsonParseException,
@@ -66,8 +70,7 @@ public class JSONUtils {
             rval = jp.readValueAs(Map.class);
         } else if (initialToken == JsonToken.VALUE_STRING) {
             rval = jp.readValueAs(String.class);
-        } else if (initialToken == JsonToken.VALUE_FALSE
-                || initialToken == JsonToken.VALUE_TRUE) {
+        } else if (initialToken == JsonToken.VALUE_FALSE || initialToken == JsonToken.VALUE_TRUE) {
             rval = jp.readValueAs(Boolean.class);
         } else if (initialToken == JsonToken.VALUE_NUMBER_FLOAT
                 || initialToken == JsonToken.VALUE_NUMBER_INT) {
@@ -83,16 +86,12 @@ public class JSONUtils {
 
     public static void write(Writer w, Object jsonObject) throws JsonGenerationException,
             JsonMappingException, IOException {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.getFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-        objectMapper.writeValue(w, jsonObject);
+        JSON_MAPPER.writeValue(w, jsonObject);
     }
 
     public static void writePrettyPrint(Writer w, Object jsonObject)
             throws JsonGenerationException, JsonMappingException, IOException {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.getFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-        final ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
+        final ObjectWriter objectWriter = JSON_MAPPER.writerWithDefaultPrettyPrinter();
 
         objectWriter.writeValue(w, jsonObject);
     }
@@ -138,21 +137,6 @@ public class JSONUtils {
     }
 
     /**
-     * A null-safe equals check using v1.equals(v2) if they are both not null.
-     * 
-     * @param v1
-     *            The source object for the equals check.
-     * @param v2
-     *            The object to be checked for equality using the first objects
-     *            equals method.
-     * @return True if the objects were both null. True if both objects were not
-     *         null and v1.equals(v2). False otherwise.
-     */
-    public static boolean equals(Object v1, Object v2) {
-        return v1 == null ? v2 == null : v1.equals(v2);
-    }
-
-    /**
      * Returns a Map, List, or String containing the contents of the JSON
      * resource resolved from the URL.
      * 
@@ -167,10 +151,10 @@ public class JSONUtils {
      */
     public static Object fromURL(java.net.URL url) throws JsonParseException, IOException {
 
-        final MappingJsonFactory jsonFactory = new MappingJsonFactory();
-        final InputStream in = openStreamFromURL(url);
+        InputStream in = null;
         try {
-            final JsonParser parser = jsonFactory.createParser(in);
+            in = openStreamFromURL(url);
+            final JsonParser parser = JSON_FACTORY.createParser(in);
             final JsonToken token = parser.nextToken();
             Class<?> type;
             if (token == JsonToken.START_OBJECT) {
@@ -186,7 +170,9 @@ public class JSONUtils {
                 parser.close();
             }
         } finally {
-            in.close();
+            if (in != null) {
+                in.close();
+            }
         }
     }
 

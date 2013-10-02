@@ -16,7 +16,7 @@ import org.ontoware.rdf2go.model.Syntax;
 
 import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.Obj;
 
 /**
  * Unit tests for {@link RDF2GoRDFParser} containing a single test, including
@@ -105,7 +105,7 @@ public class RDF2GoRDFParserTest {
         modelResult.readFrom(new ByteArrayInputStream(turtle.getBytes()), Syntax.Turtle);
         final Object json = JSONLD.fromRDF(modelResult, parser);
 
-        assertTrue(JSONUtils.equals(json, expected));
+        assertTrue(Obj.equals(json, expected));
     }
 
 }

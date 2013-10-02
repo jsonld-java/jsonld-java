@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.github.jsonldjava.impl.NQuadTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.Obj;
 
 /**
  * Test to make sure the ignoreKeys are behaving as expected
@@ -123,7 +124,7 @@ public class IgnoreKeysTest {
     private void docheck(String test, Object expect, Object result) {
         boolean testpassed = false;
         try {
-            testpassed = JSONUtils.equals(expect, result);
+            testpassed = Obj.equals(expect, result);
             if (testpassed == false) {
                 System.out.println("failed test: " + test);
                 System.out.println("{\"expected\": " + JSONUtils.toString(expect)

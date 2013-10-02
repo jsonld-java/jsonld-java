@@ -36,6 +36,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.jsonldjava.impl.TurtleTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.Obj;
 
 @RunWith(Parameterized.class)
 public class JSONLDProcessorTest {
@@ -420,7 +421,7 @@ public class JSONLDProcessorTest {
         try {
             // TODO: for tests that are supposed to fail, a more detailed check
             // that it failed in the right way is needed
-            testpassed = JSONUtils.equals(expect, result) || failure_expected;
+            testpassed = Obj.equals(expect, result) || failure_expected;
             if (testpassed == false) {
                 // System.out.println("failed test!!! details:");
                 // jsonDiff("/", expect, result);
