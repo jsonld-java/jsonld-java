@@ -50,7 +50,7 @@
 		<jena.version>2.11.0</jena.version>
 		<junit.version>4.11</junit.version>
 		<rdf2go.version>4.7.4</rdf2go.version>
-		<sesame.version>2.7.6</sesame.version>
+		<sesame.version>2.7.7</sesame.version>
 		<slf4j.version>1.7.5</slf4j.version>
 	</properties>
 	<prerequisites>
@@ -81,6 +81,11 @@
 			<dependency>
 				<groupId>org.openrdf.sesame</groupId>
 				<artifactId>sesame-rio-api</artifactId>
+				<version>${sesame.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openrdf.sesame</groupId>
+				<artifactId>sesame-rio-nquads</artifactId>
 				<version>${sesame.version}</version>
 			</dependency>
 			<dependency>
