@@ -285,6 +285,7 @@ public class JSONLDProcessorTest {
         return builder.toString();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void runTest() throws URISyntaxException, IOException, JSONLDProcessingError {
         // System.out.println("running test: " + group + test.get("@id") +
@@ -418,6 +419,10 @@ public class JSONLDProcessorTest {
                     if (((Map<String, Object>) test.get("option")).containsKey("useRdfType")) {
                         options.useRdfType = (Boolean) ((Map<String, Object>) test.get("option"))
                                 .get("useRdfType");
+                    }
+                    if (((Map<String, Object>) test.get("option")).containsKey("useNativeTypes")) {
+                        options.useNativeTypes = (Boolean) ((Map<String, Object>) test.get("option"))
+                                .get("useNativeTypes");
                     }
                 }
                 result = JSONLD.fromRDF(input, options);
