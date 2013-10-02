@@ -40,7 +40,7 @@ public interface RDFParser {
      * @param dataset
      *            The RDF library specific input to parse
      * @return input in internal RDF Dataset format
-     * @throws JSONLDProcessingError
+     * @throws JsonLdError
      */
-    public RDFDataset parse(Object input) throws JSONLDProcessingError;
+    public RDFDataset parse(Object input) throws JsonLdError;
 }

@@ -5,8 +5,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.Options;
+import com.github.jsonldjava.core.JsonLdApi;
+import com.github.jsonldjava.core.JsonLdOptions;
+import com.github.jsonldjava.core.RDFDataset;
+import com.github.jsonldjava.impl.JenaRDFParser;
 import com.github.jsonldjava.utils.JSONUtils;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -27,9 +29,11 @@ public class JSONLDToRDFTest {
         final Property property = model.createProperty("http://example.com/value");
         model.add(resource, property, "Test");
 
-        final Options options = new Options();
+        final JsonLdOptions options = new JsonLdOptions();
         options.format = "application/ld+json";
-        final Object json = JSONLD.fromRDF(model, options);
+        JenaRDFParser parser = new JenaRDFParser();
+        RDFDataset dataset = parser.parse(model);
+        final Object json = new JsonLdApi(options).fromRDF(dataset);
         final String jsonStr = JSONUtils.toPrettyString(json);
         // System.out.println(jsonStr);
         assertTrue(jsonStr.contains("@id"));

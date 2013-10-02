@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.core.Options;
+import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.core.JsonLdError;
+import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.utils.JSONUtils;
 
 public class Playground {
@@ -36,7 +36,7 @@ public class Playground {
                 usage();
             } else {
 
-                final Options opts = new Options("");
+                final JsonLdOptions opts = new JsonLdOptions("");
                 Object inobj = null;
                 Object ctxobj = null;
                 String opt = null;
@@ -44,14 +44,9 @@ public class Playground {
                     if ("--debug".equals(args[i])) {
                         i++;
                         debug = true;
-                    } else if ("--ignorekeys".equals(args[i])) {
-                        i++;
-                        while (i < args.length && !validOption(args[i])) {
-                            opts.ignoreKey(args[i++]);
-                        }
                     } else if ("--base".equals(args[i])) {
                         i++;
-                        opts.base = args[i++];
+                        opts.setBase(args[i++]);
                     } else if ("--outputForm".equals(args[i])) {
                         i++;
                         opts.outputForm = args[i++];
@@ -77,8 +72,8 @@ public class Playground {
                             return;
                         }
                         // if base is currently null, set it
-                        if (opts.base == null || opts.base.equals("")) {
-                            opts.base = in.toURI().toASCIIString();
+                        if (opts.getBase() == null || opts.getBase().equals("")) {
+                            opts.setBase(in.toURI().toASCIIString());
                         }
                         if ("--fromRDF".equals(opt)) {
                             final BufferedReader buf = new BufferedReader(new InputStreamReader(
@@ -147,16 +142,16 @@ public class Playground {
 
                 Object outobj = null;
                 if ("--expand".equals(opt)) {
-                    outobj = JSONLD.expand(inobj, opts);
+                    outobj = JsonLdProcessor.expand(inobj, opts);
                 } else if ("--compact".equals(opt)) {
                     if (ctxobj == null) {
                         System.out.println("Error: The compaction context must not be null.");
                         usage();
                         return;
                     }
-                    outobj = JSONLD.compact(inobj, ctxobj, opts);
+                    outobj = JsonLdProcessor.compact(inobj, ctxobj, opts);
                 } else if ("--normalize".equals(opt)) {
-                    outobj = JSONLD.normalize(inobj, opts);
+                    outobj = JsonLdProcessor.normalize(inobj, opts);
                 } else if ("--frame".equals(opt)) {
                     if (ctxobj != null && !(ctxobj instanceof Map)) {
                         System.out
@@ -164,16 +159,14 @@ public class Playground {
                         usage();
                         return;
                     }
-                    outobj = JSONLD.frame(inobj, (Map<String, Object>) ctxobj, opts);
+                    outobj = JsonLdProcessor.frame(inobj, (Map<String, Object>) ctxobj, opts);
                 } else if ("--flatten".equals(opt)) {
-                    outobj = JSONLD.flatten(inobj, ctxobj, opts);
+                    outobj = JsonLdProcessor.flatten(inobj, ctxobj, opts);
                 } else if ("--toRDF".equals(opt)) {
                     opts.useNamespaces = true;
-                    outobj = JSONLD.toRDF(inobj, opts);
+                    outobj = JsonLdProcessor.toRDF(inobj, opts);
                 } else if ("--fromRDF".equals(opt)) {
-                    outobj = JSONLD.fromRDF(inobj, opts);
-                } else if ("--simplify".equals(opt)) {
-                    outobj = JSONLD.simplify(inobj, opts);
+                    outobj = JsonLdProcessor.fromRDF(inobj, opts);
                 } else {
                     System.out.println("Error: invalid option \"" + opt + "\"");
                     usage();
@@ -188,8 +181,8 @@ public class Playground {
             }
         } catch (final Exception e) {
             System.out.println("ERROR: " + e.getMessage());
-            if (e instanceof JSONLDProcessingError) {
-                for (final Entry<String, Object> detail : ((JSONLDProcessingError) e).getDetails()
+            if (e instanceof JsonLdError) {
+                for (final Entry<String, Object> detail : ((JsonLdError) e).getDetails()
                         .entrySet()) {
                     System.out.println(detail.getKey() + ": " + detail.getValue());
                 }

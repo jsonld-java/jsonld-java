@@ -34,7 +34,7 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.github.jsonldjava.core.JSONLDProcessingError;
+import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.core.RDFParser;
 import com.github.jsonldjava.core.UniqueNamer;
@@ -116,7 +116,7 @@ public class TurtleRDFParser implements RDFParser {
         private final Stack<Map<String, String>> stack = new Stack<Map<String, String>>();
         public boolean expectingBnodeClose = false;
 
-        public State(String input) throws JSONLDProcessingError {
+        public State(String input) throws JsonLdError {
             line = input;
             lineNumber = 1;
             advanceLinePosition(0);
@@ -145,7 +145,7 @@ public class TurtleRDFParser implements RDFParser {
             }
         }
 
-        private void advanceLineNumber() throws JSONLDProcessingError {
+        private void advanceLineNumber() throws JsonLdError {
             final Matcher match = Regex.NEXT_EOLN.matcher(line);
             if (match.find()) {
                 final String[] split = match.group(0).split("" + Regex.EOLN);
@@ -155,7 +155,7 @@ public class TurtleRDFParser implements RDFParser {
             }
         }
 
-        public void advanceLinePosition(int len) throws JSONLDProcessingError {
+        public void advanceLinePosition(int len) throws JsonLdError {
             if (len > 0) {
                 linePosition += len;
                 line = line.substring(len);
@@ -178,10 +178,8 @@ public class TurtleRDFParser implements RDFParser {
                 }
             }
             if ("".equals(line) && !endIsOK()) {
-                throw new JSONLDProcessingError(
-                        "Error while parsing Turtle; unexpected end of input.")
-                        .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
-                        .setDetail("line", lineNumber).setDetail("position", linePosition);
+                throw new JsonLdError(JsonLdError.Error.PARSE_ERROR,
+                        "Error while parsing Turtle; unexpected end of input. {line: " + lineNumber + ", position:" + linePosition + "}");
             }
         }
 
@@ -189,22 +187,20 @@ public class TurtleRDFParser implements RDFParser {
             return curSubject == null && stack.size() == 0;
         }
 
-        public String expandIRI(String ns, String name) throws JSONLDProcessingError {
+        public String expandIRI(String ns, String name) throws JsonLdError {
             if (namespaces.containsKey(ns)) {
                 return namespaces.get(ns) + name;
             } else {
-                throw new JSONLDProcessingError("No prefix found for: " + ns)
-                        .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
-                        .setDetail("line", lineNumber).setDetail("position", linePosition);
-                // return ns + ":" + name;
+            	throw new JsonLdError(JsonLdError.Error.PARSE_ERROR,
+                        "No prefix found for: " + ns + " {line: " + lineNumber + ", position:" + linePosition + "}");
             }
         }
     }
 
     @Override
-    public RDFDataset parse(Object input) throws JSONLDProcessingError {
+    public RDFDataset parse(Object input) throws JsonLdError {
         if (!(input instanceof String)) {
-            throw new JSONLDProcessingError(
+        	throw new JsonLdError(JsonLdError.Error.INVALID_INPUT,
                     "Invalid input; Triple RDF Parser requires a string input");
         }
         final RDFDataset result = new RDFDataset();
@@ -289,11 +285,9 @@ public class TurtleRDFParser implements RDFParser {
                 }
                 // make sure we have a subject already
                 else {
-                    throw new JSONLDProcessingError(
-                            "Error while parsing Turtle; missing expected subject.")
-                            .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
-                            .setDetail("line", state.lineNumber)
-                            .setDetail("position", state.linePosition);
+                	throw new JsonLdError(JsonLdError.Error.PARSE_ERROR,
+                            "Error while parsing Turtle; missing expected subject. {line: " + state.lineNumber +
+                            "position: " + state.linePosition + "}");
                 }
             }
 
@@ -324,11 +318,9 @@ public class TurtleRDFParser implements RDFParser {
                     state.curPredicate = iri;
                     state.advanceLinePosition(match.group(0).length());
                 } else {
-                    throw new JSONLDProcessingError(
-                            "Error while parsing Turtle; missing expected predicate.")
-                            .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
-                            .setDetail("line", state.lineNumber)
-                            .setDetail("position", state.linePosition);
+                	throw new JsonLdError(JsonLdError.Error.PARSE_ERROR,
+                            "Error while parsing Turtle; missing expected predicate. {line: " + state.lineNumber +
+                            "position: " + state.linePosition + "}");
                 }
             }
 
@@ -445,11 +437,9 @@ public class TurtleRDFParser implements RDFParser {
                     }
                     state.advanceLinePosition(match.group(0).length());
                 } else {
-                    throw new JSONLDProcessingError(
-                            "Error while parsing Turtle; missing expected object or blank node.")
-                            .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
-                            .setDetail("line", state.lineNumber)
-                            .setDetail("position", state.linePosition);
+                	throw new JsonLdError(JsonLdError.Error.PARSE_ERROR,
+                            "Error while parsing Turtle; missing expected object or blank node. {line: " + state.lineNumber +
+                            "position: " + state.linePosition + "}");
                 }
             }
 
@@ -457,10 +447,9 @@ public class TurtleRDFParser implements RDFParser {
             boolean collectionClosed = false;
             while (state.line.startsWith(")")) {
                 if (!RDF_FIRST.equals(state.curPredicate)) {
-                    throw new JSONLDProcessingError("Error while parsing Turtle; unexpected ).")
-                            .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
-                            .setDetail("line", state.lineNumber)
-                            .setDetail("position", state.linePosition);
+                	throw new JsonLdError(JsonLdError.Error.PARSE_ERROR,
+                            "Error while parsing Turtle; unexpected ). {line: " + state.lineNumber +
+                            "position: " + state.linePosition + "}");
                 }
                 result.addTriple(state.curSubject, RDF_REST, RDF_NIL);
                 state.pop();
@@ -502,11 +491,9 @@ public class TurtleRDFParser implements RDFParser {
 
             if (state.line.startsWith(".")) {
                 if (state.expectingBnodeClose) {
-                    throw new JSONLDProcessingError(
-                            "Error while parsing Turtle; missing expected )\"]\".")
-                            .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
-                            .setDetail("line", state.lineNumber)
-                            .setDetail("position", state.linePosition);
+                	throw new JsonLdError(JsonLdError.Error.PARSE_ERROR,
+                            "Error while parsing Turtle; missing expected )\"]\". {line: " + state.lineNumber +
+                            "position: " + state.linePosition + "}");
                 }
                 state.curSubject = null;
                 state.curPredicate = null;
@@ -533,10 +520,9 @@ public class TurtleRDFParser implements RDFParser {
             }
 
             // if we get here, we're missing a close statement
-            throw new JSONLDProcessingError(
-                    "Error while parsing Turtle; missing expected \"]\" \",\" \";\" or \".\".")
-                    .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
-                    .setDetail("line", state.lineNumber).setDetail("position", state.linePosition);
+            throw new JsonLdError(JsonLdError.Error.PARSE_ERROR,
+            		"Error while parsing Turtle; missing expected \"]\" \",\" \";\" or \".\". {line: " + state.lineNumber +
+                    "position: " + state.linePosition + "}");
         }
 
         return result;
@@ -545,12 +531,11 @@ public class TurtleRDFParser implements RDFParser {
     final public static Pattern IRIREF_MINUS_CONTAINER = Pattern
             .compile("(?:(?:[^\\x00-\\x20<>\"{}|\\^`\\\\]|" + UCHAR + ")*)|" + Regex.PREFIXED_NAME);
 
-    private void validateIRI(State state, String iri) throws JSONLDProcessingError {
+    private void validateIRI(State state, String iri) throws JsonLdError {
         if (!IRIREF_MINUS_CONTAINER.matcher(iri).matches()) {
-            throw new JSONLDProcessingError(
-                    "Error while parsing Turtle; invalid IRI after escaping.")
-                    .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
-                    .setDetail("line", state.lineNumber).setDetail("position", state.linePosition);
+            throw new JsonLdError(JsonLdError.Error.PARSE_ERROR,
+                    "Error while parsing Turtle; invalid IRI after escaping. {line: " + state.lineNumber +
+                    "position: " + state.linePosition + "}");
         }
     }
 

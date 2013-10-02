@@ -8,8 +8,9 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.Options;
+import com.github.jsonldjava.core.JsonLdApi;
+import com.github.jsonldjava.core.JsonLdOptions;
+import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.utils.JSONUtils;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.DatasetFactory;
@@ -146,9 +147,11 @@ public class ExampleTest {
         final Property property = model.createProperty("http://example.com/value");
         model.add(resource, property, "Test");
 
-        final Options options = new Options();
+        final JsonLdOptions options = new JsonLdOptions();
         options.format = "application/ld+json";
-        final Object json = JSONLD.fromRDF(model, options);
+        JsonLdApi api = new JsonLdApi(options);
+        RDFDataset dataset = new RDFDataset(api);
+        final Object json = api.fromRDF(dataset);
         final String jsonStr = JSONUtils.toPrettyString(json);
         System.out.println(jsonStr);
         // [ {

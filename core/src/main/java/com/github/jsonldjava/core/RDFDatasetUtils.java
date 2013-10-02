@@ -9,10 +9,10 @@ import static com.github.jsonldjava.core.JSONLDConsts.XSD_BOOLEAN;
 import static com.github.jsonldjava.core.JSONLDConsts.XSD_DOUBLE;
 import static com.github.jsonldjava.core.JSONLDConsts.XSD_INTEGER;
 import static com.github.jsonldjava.core.JSONLDConsts.XSD_STRING;
-import static com.github.jsonldjava.core.JSONLDUtils.isKeyword;
-import static com.github.jsonldjava.core.JSONLDUtils.isList;
-import static com.github.jsonldjava.core.JSONLDUtils.isObject;
-import static com.github.jsonldjava.core.JSONLDUtils.isValue;
+import static com.github.jsonldjava.core.JsonLdUtils.isKeyword;
+import static com.github.jsonldjava.core.JsonLdUtils.isList;
+import static com.github.jsonldjava.core.JsonLdUtils.isObject;
+import static com.github.jsonldjava.core.JsonLdUtils.isValue;
 import static com.github.jsonldjava.core.Regex.HEX;
 
 import java.text.DecimalFormat;
@@ -250,21 +250,13 @@ public class RDFDatasetUtils {
             quad += s.getValue();
         }
 
-        quad += " ";
-        // predicate is always an IRI in RDF (JSON-LD has a "Generalized RDF" where it can be a blank node)
         if (p.isIRI()) {
-            quad += "<" + escape(p.getValue()) + ">";
-        } else if (p.isBlankNode()) {
-            // normalization mode
-            if (bnode != null) {
-                quad += bnode.equals(p.getValue()) ? "_:a" : "_:z";
-            }
-            // normal mode
-            else {
-                quad += p.getValue();
-            }
+        	quad += " <" + escape(p.getValue()) + "> ";
         }
-        quad += " ";
+        // otherwise it must be a bnode (TODO: can we only allow this if the flag is set in options?)
+        else {
+        	quad += " " + escape(p.getValue()) + " ";
+        }
 
         // object is IRI, bnode or literal
         if (o.isIRI()) {
@@ -472,7 +464,7 @@ public class RDFDatasetUtils {
      * 
      * @return an RDF dataset.
      */
-    public static RDFDataset parseNQuads(String input) throws JSONLDProcessingError {
+    public static RDFDataset parseNQuads(String input) throws JsonLdError {
         // build RDF dataset
         final RDFDataset dataset = new RDFDataset();
 
@@ -490,8 +482,7 @@ public class RDFDatasetUtils {
             // parse quad
             final Matcher match = Regex.QUAD.matcher(line);
             if (!match.matches()) {
-                throw new JSONLDProcessingError("Error while parsing N-Quads; invalid quad.")
-                        .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR).setDetail("line",
+                throw new JsonLdError(JsonLdError.Error.SYNTAX_ERROR, "Error while parsing N-Quads; invalid quad. line:" +
                                 lineNumber);
             }
 

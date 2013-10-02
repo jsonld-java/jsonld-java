@@ -21,18 +21,18 @@ class NormalizeUtils {
     private final UniqueNamer namer;
     private final Map<String, Object> bnodes;
     private final List<Object> quads;
-    private final Options options;
+    private final JsonLdOptions options;
 
     public NormalizeUtils(List<Object> quads, Map<String, Object> bnodes, UniqueNamer namer,
-            Options options) {
+            JsonLdOptions options) {
         this.options = options;
         this.quads = quads;
         this.bnodes = bnodes;
         this.namer = namer;
     }
-
+    
     // generates unique and duplicate hashes for bnodes
-    public Object hashBlankNodes(Collection<String> unnamed_) throws JSONLDProcessingError {
+    public Object hashBlankNodes(Collection<String> unnamed_) throws JsonLdError {
         List<String> unnamed = new ArrayList<String>(unnamed_);
         List<String> nextUnnamed = new ArrayList<String>();
         Map<String, List<String>> duplicates = new LinkedHashMap<String, List<String>>();
@@ -125,9 +125,7 @@ class NormalizeUtils {
                                     }
                                     return rval;
                                 } else {
-                                    throw new JSONLDProcessingError("Unknown output format.")
-                                            .setType(JSONLDProcessingError.ErrorType.UNKNOWN_FORMAT)
-                                            .setDetail("format", options.format);
+                                    throw new JsonLdError(JsonLdError.Error.UNKNOWN_FORMAT, options.format);
                                 }
                             }
                             String rval = "";
@@ -502,7 +500,7 @@ class NormalizeUtils {
         private final Map<String, Boolean> left;
 
         public Permutator(List<String> list) {
-            this.list = (List<String>) JSONLDUtils.clone(list);
+            this.list = (List<String>) JsonLdUtils.clone(list);
             Collections.sort(this.list);
             this.done = false;
             this.left = new LinkedHashMap<String, Boolean>();
@@ -527,7 +525,7 @@ class NormalizeUtils {
          * @return the next permutation.
          */
         public List<String> next() {
-            final List<String> rval = (List<String>) JSONLDUtils.clone(this.list);
+            final List<String> rval = (List<String>) JsonLdUtils.clone(this.list);
 
             // Calculate the next permutation using Steinhaus-Johnson-Trotter
             // permutation algoritm

@@ -14,7 +14,7 @@ import org.openrdf.model.Value;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.model.vocabulary.XMLSchema;
 
-import com.github.jsonldjava.core.JSONLDProcessingError;
+import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.RDFDataset;
 
 public class SesameRDFParser implements com.github.jsonldjava.core.RDFParser {
@@ -75,7 +75,7 @@ public class SesameRDFParser implements com.github.jsonldjava.core.RDFParser {
     }
 
     @Override
-    public RDFDataset parse(Object input) throws JSONLDProcessingError {
+    public RDFDataset parse(Object input) throws JsonLdError {
         final RDFDataset result = new RDFDataset();
         if (input instanceof Statement) {
             handleStatement(result, (Statement) input);

@@ -9,11 +9,11 @@ import static com.github.jsonldjava.core.JSONLDConsts.XSD_BOOLEAN;
 import static com.github.jsonldjava.core.JSONLDConsts.XSD_DOUBLE;
 import static com.github.jsonldjava.core.JSONLDConsts.XSD_INTEGER;
 import static com.github.jsonldjava.core.JSONLDConsts.XSD_STRING;
-import static com.github.jsonldjava.core.JSONLDUtils.isKeyword;
-import static com.github.jsonldjava.core.JSONLDUtils.isList;
-import static com.github.jsonldjava.core.JSONLDUtils.isObject;
-import static com.github.jsonldjava.core.JSONLDUtils.isString;
-import static com.github.jsonldjava.core.JSONLDUtils.isValue;
+import static com.github.jsonldjava.core.JsonLdUtils.isKeyword;
+import static com.github.jsonldjava.core.JsonLdUtils.isList;
+import static com.github.jsonldjava.core.JsonLdUtils.isObject;
+import static com.github.jsonldjava.core.JsonLdUtils.isString;
+import static com.github.jsonldjava.core.JsonLdUtils.isValue;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -151,9 +151,9 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
          *            true to output native types, false not to.
          * 
          * @return the JSON-LD object.
-         * @throws JSONLDProcessingError
+         * @throws JsonLdError
          */
-        Map<String, Object> toObject(Boolean useNativeTypes) throws JSONLDProcessingError {
+        Map<String, Object> toObject(Boolean useNativeTypes) throws JsonLdError {
             // If value is an an IRI or a blank node identifier, return a new
             // JSON object consisting
             // of a single member @id whose value is set to value.
@@ -219,7 +219,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                     else {
                         rval.put("@type", type);
                     }
-                } else {
+                } else if (!XSD_STRING.equals(type)) {
                     rval.put("@type", type);
                 }
             }
@@ -334,7 +334,8 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
     private final Map<String, String> context;
 
-    private UniqueNamer namer;
+    //private UniqueNamer namer;
+	private JsonLdApi api;
 
     public RDFDataset() {
         super();
@@ -342,7 +343,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
         context = new LinkedHashMap<String, String>();
         // put("@context", context);
     }
-
+/*
     public RDFDataset(String blankNodePrefix) {
         this(new UniqueNamer(blankNodePrefix));
     }
@@ -351,8 +352,13 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
         this();
         this.namer = namer;
     }
+*/
+    public RDFDataset(JsonLdApi jsonLdApi) {
+    	this();
+    	this.api = jsonLdApi;
+	}
 
-    public void setNamespace(String ns, String prefix) {
+	public void setNamespace(String ns, String prefix) {
         context.put(ns, prefix);
     }
 
@@ -517,81 +523,87 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
      * @param graph
      *            the graph to create RDF triples for.
      */
-    void graphToRDF(String graphName, Map<String, Object> graph, Options options) {
+    void graphToRDF(String graphName, Map<String, Object> graph) {
+    	// 4.2)
         final List<Quad> triples = new ArrayList<Quad>();
-        for (final String id : graph.keySet()) {
+        // 4.3)
+        List<String> subjects = new ArrayList<String>(graph.keySet());
+        //Collections.sort(subjects);
+        for (final String id : subjects) {
+        	if (JsonLdUtils.isRelativeIri(id)) {
+        		continue;
+        	}
             final Map<String, Object> node = (Map<String, Object>) graph.get(id);
             final List<String> properties = new ArrayList<String>(node.keySet());
             Collections.sort(properties);
             for (String property : properties) {
-                final Object items = node.get(property);
+            	final List<Object> values;
+                // 4.3.2.1)
                 if ("@type".equals(property)) {
+                	values = (List<Object>) node.get("@type");
                     property = RDF_TYPE;
-                } else if (isKeyword(property)) {
+                }
+                // 4.3.2.2)
+                else if (isKeyword(property)) {
                     continue;
                 }
-
-                // Eliminate blank node predicates by default
-                if (property == null || property.indexOf("_:") == 0) {
-                    if (options.produceGeneralizedRdf == null
-                            || options.produceGeneralizedRdf != true) {
-                        continue;
-                    }
+                // 4.3.2.3) 
+                else if (property.startsWith("_:") && !api.opts.getProduceGeneralizedRdf()) {
+                	continue;
+                }
+                // 4.3.2.4)
+                else if (JsonLdUtils.isRelativeIri(property)) {
+                	continue;
+                } else {
+                	values = (List<Object>) node.get(property);
                 }
 
-                // RDF subjects
                 Node subject;
-                if (id == null) {
-                    // TODO: this is a hack to handle the node generator not
-                    // handling blank nodes that have a "@list" property
-                    // alongside other properties
-                    subject = new BlankNode(namer.getName("undefined"));
-                } else if (id.indexOf("_:") == 0) {
-                    subject = new BlankNode(namer.getName(id));
+                if (id.indexOf("_:") == 0) {
+                	// NOTE: don't rename, just set it as a blank node
+                    subject = new BlankNode(id);
                 } else {
                     subject = new IRI(id);
                 }
 
                 // RDF predicates
-                Node predicate = new IRI(property);
-                if (property == null) {
-                    // TODO: this is a hack to handle the node generator not
-                    // handling blank nodes that have a "@list" property
-                    // alongside other properties
-                    predicate = new BlankNode(namer.getName("undefined"));
-                } else if (property.indexOf("_:") == 0) {
-                    predicate = new BlankNode(namer.getName(property));
+                Node predicate;
+                if (property.startsWith("_:")) {
+                	predicate = new BlankNode(property);
                 } else {
-                    predicate = new IRI(property);
+                	predicate = new IRI(property);
                 }
 
-                for (final Object item : (List<Object>) items) {
+                for (final Object item : values) {
                     // convert @list to triples
                     if (isList(item)) {
-                        // listToRDF((List<Object>) ((Map<String, Object>)
-                        // item).get("@list"), namer, subject, predicate, rval);
-                        for (final Object listItem : (List<Object>) ((Map<String, Object>) item)
-                                .get("@list")) {
-                            final Node blankNode = new BlankNode(namer.getName());
-                            triples.add(new Quad(subject, predicate, blankNode, graphName));
-
-                            subject = blankNode;
-                            predicate = first;
-                            final Node object = objectToRDF(listItem);
-
-                            triples.add(new Quad(subject, predicate, object, graphName));
-                            predicate = rest;
+                    	List<Object> list = (List<Object>) ((Map<String, Object>) item)
+                                .get("@list");
+                    	Node last = null;
+                    	Node firstBNode = nil;
+                    	if (!list.isEmpty()) {
+                    		last = objectToRDF(list.get(list.size()-1));
+                    		firstBNode = new BlankNode(api.generateBlankNodeIdentifier());
+                    	}
+                    	triples.add(new Quad(subject, predicate, firstBNode, graphName));
+                        for (int i = 0; i < list.size()-1; i++) {
+                        	final Node object = objectToRDF(list.get(i));
+                            triples.add(new Quad(firstBNode, first, object, graphName));
+                            Node restBNode = new BlankNode(api.generateBlankNodeIdentifier());
+                            triples.add(new Quad(firstBNode, rest, restBNode, graphName));
+                            firstBNode = restBNode;
                         }
-                        triples.add(new Quad(subject, predicate, nil, graphName));
+                        if (last != null) {
+                        	triples.add(new Quad(firstBNode, first, last, graphName));
+                        	triples.add(new Quad(firstBNode, rest, nil, graphName));
+                        }
                     }
                     // convert value or node object to triple
                     else {
                         final Node object = objectToRDF(item);
-                        final Map<String, Object> tmp = new LinkedHashMap<String, Object>();
-                        tmp.put("subject", subject);
-                        tmp.put("predicate", predicate);
-                        tmp.put("object", object);
-                        triples.add(new Quad(subject, predicate, object, graphName));
+                        if (object != null) {
+                        	triples.add(new Quad(subject, predicate, object, graphName));
+                        }
                     }
                 }
             }
@@ -642,10 +654,18 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
         }
         // convert string/node object to RDF
         else {
-            final String id = isObject(item) ? (String) ((Map<String, Object>) item).get("@id")
-                    : (String) item;
+        	final String id;
+        	if (isObject(item)) {
+        		id = (String) ((Map<String, Object>) item).get("@id");
+        		if (JsonLdUtils.isRelativeIri(id)) {
+        			return null;
+        		}
+        	} else {
+        		id = (String) item;
+        	}
             if (id.indexOf("_:") == 0) {
-                return new BlankNode(namer.getName(id));
+                // NOTE: once again no need to rename existing blank nodes
+                return new BlankNode(id);
             } else {
                 return new IRI(id);
             }

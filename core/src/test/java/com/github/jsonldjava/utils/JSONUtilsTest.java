@@ -32,6 +32,9 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.github.jsonldjava.core.DocumentLoader;
+import com.github.jsonldjava.core.RemoteDocument;
+
 public class JSONUtilsTest {
 
     @SuppressWarnings("unchecked")
@@ -63,7 +66,7 @@ public class JSONUtilsTest {
     public void fromURLTest0001() throws Exception {
         final URL contexttest = getClass().getResource("/custom/contexttest-0001.jsonld");
         assertNotNull(contexttest);
-        final Object context = JSONUtils.fromURL(contexttest);
+        final Object context = DocumentLoader.fromURL(contexttest);
         assertTrue(context instanceof Map);
         final Map<String, Object> contextMap = (Map<String, Object>) context;
         assertEquals(1, contextMap.size());
@@ -79,7 +82,7 @@ public class JSONUtilsTest {
     public void fromURLTest0002() throws Exception {
         final URL contexttest = getClass().getResource("/custom/contexttest-0002.jsonld");
         assertNotNull(contexttest);
-        final Object context = JSONUtils.fromURL(contexttest);
+        final Object context = DocumentLoader.fromURL(contexttest);
         assertTrue(context instanceof List);
         final List<Map<String, Object>> contextList = (List<Map<String, Object>>) context;
 
@@ -103,7 +106,7 @@ public class JSONUtilsTest {
     @Test
     public void fromURLredirectHTTPSToHTTP() throws Exception {
         final URL url = new URL("https://w3id.org/bundle/context");
-        final Object context = JSONUtils.fromURL(url);
+        final Object context = DocumentLoader.fromURL(url);
         // Should not fail because of
         // http://stackoverflow.com/questions/1884230/java-doesnt-follow-redirect-in-urlconnection
         // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4620571
@@ -115,7 +118,7 @@ public class JSONUtilsTest {
     @Test
     public void fromURLredirect() throws Exception {
         final URL url = new URL("http://purl.org/wf4ever/ro-bundle/context.json");
-        final Object context = JSONUtils.fromURL(url);
+        final Object context = DocumentLoader.fromURL(url);
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
@@ -123,13 +126,13 @@ public class JSONUtilsTest {
     @Test
     public void fromURLCache() throws Exception {
         final URL url = new URL("http://json-ld.org/contexts/person.jsonld");
-        JSONUtils.fromURL(url);
+        DocumentLoader.fromURL(url);
 
         // Now try to get it again and ensure it is
         // cached
-        final HttpClient client = new CachingHttpClient(JSONUtils.getHttpClient());
+        final HttpClient client = new CachingHttpClient(DocumentLoader.getHttpClient());
         final HttpUriRequest get = new HttpGet(url.toURI());
-        get.setHeader("Accept", JSONUtils.ACCEPT_HEADER);
+        get.setHeader("Accept", DocumentLoader.ACCEPT_HEADER);
         final HttpContext localContext = new BasicHttpContext();
         final HttpResponse respo = client.execute(get, localContext);
         EntityUtils.consume(respo.getEntity());
@@ -163,7 +166,7 @@ public class JSONUtilsTest {
         };
         final URL url = new URL(null, "jsonldtest:context", handler);
         assertEquals(0, requests.get());
-        final Object context = JSONUtils.fromURL(url);
+        final Object context = DocumentLoader.fromURL(url);
         assertEquals(1, requests.get());
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
@@ -190,12 +193,12 @@ public class JSONUtilsTest {
         final URL url = new URL("http://example.com/fake-jsonld-test");
         final ArgumentCaptor<HttpUriRequest> httpRequest = ArgumentCaptor
                 .forClass(HttpUriRequest.class);
-        JSONUtils.setHttpClient(fakeHttpClient(httpRequest));
+        DocumentLoader.setHttpClient(fakeHttpClient(httpRequest));
         try {
-            final Object context = JSONUtils.fromURL(url);
+            final Object context = DocumentLoader.fromURL(url);
             assertTrue(context instanceof Map);
         } finally {
-            JSONUtils.setHttpClient(null);
+        	DocumentLoader.setHttpClient(null);
         }
         assertEquals(1, httpRequest.getAllValues().size());
         final HttpUriRequest req = httpRequest.getValue();
@@ -203,7 +206,7 @@ public class JSONUtilsTest {
 
         final Header[] accept = req.getHeaders("Accept");
         assertEquals(1, accept.length);
-        assertEquals(JSONUtils.ACCEPT_HEADER, accept[0].getValue());
+        assertEquals(DocumentLoader.ACCEPT_HEADER, accept[0].getValue());
         // Test that this header parses correctly
         final HeaderElement[] elems = accept[0].getElements();
         assertEquals("application/ld+json", elems[0].getName());

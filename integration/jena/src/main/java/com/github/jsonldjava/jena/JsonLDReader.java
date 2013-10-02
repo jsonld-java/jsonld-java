@@ -31,10 +31,9 @@ import org.apache.jena.riot.lang.LabelToNode;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.SyntaxLabels;
 
-import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.JSONLDTripleCallback;
-import com.github.jsonldjava.core.Options;
+import com.github.jsonldjava.core.JsonLdApi;
+import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.utils.JSONUtils;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
@@ -84,12 +83,10 @@ public class JsonLDReader implements ReaderRIOT {
                     return null;
                 }
             };
-            final Options options = new Options(baseURI);
-            JSONLD.toRDF(jsonObject, callback, options);
+            //final Options options = new Options(baseURI);
+            //JsonLdApi.toRDF(jsonObject, callback, options);
         } catch (final IOException e) {
             throw new RiotException("Could not read JSONLD: " + e, e);
-        } catch (final JSONLDProcessingError e) {
-            throw new RiotException("Could not parse JSONLD: " + e, e);
         }
     }
 

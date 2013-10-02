@@ -14,9 +14,9 @@ import org.ontoware.rdf2go.RDF2Go;
 import org.ontoware.rdf2go.model.Model;
 import org.ontoware.rdf2go.model.Syntax;
 
-import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.utils.Obj;
+import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.core.JsonLdError;
+import com.github.jsonldjava.utils.JSONUtils;
 
 /**
  * Unit tests for {@link RDF2GoRDFParser} containing a single test, including
@@ -27,7 +27,7 @@ import com.github.jsonldjava.utils.Obj;
 public class RDF2GoRDFParserTest {
 
     @Test
-    public void testFromRDF() throws JSONLDProcessingError, IOException {
+    public void testFromRDF() throws JsonLdError, IOException {
 
         final String turtle = "@prefix const: <http://foo.com/> .\n"
                 + "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n"
@@ -103,7 +103,7 @@ public class RDF2GoRDFParserTest {
 
         final Model modelResult = RDF2Go.getModelFactory().createModel().open();
         modelResult.readFrom(new ByteArrayInputStream(turtle.getBytes()), Syntax.Turtle);
-        final Object json = JSONLD.fromRDF(modelResult, parser);
+        final Object json = JsonLdProcessor.fromRDF(modelResult, parser);
 
         assertTrue(Obj.equals(json, expected));
     }

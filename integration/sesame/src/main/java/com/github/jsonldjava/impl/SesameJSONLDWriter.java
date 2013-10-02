@@ -26,9 +26,9 @@ import org.openrdf.rio.helpers.StatementCollector;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.core.Options;
+import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.core.JsonLdError;
+import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.utils.JSONUtils;
 
 /**
@@ -74,26 +74,26 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
     public void endRDF() throws RDFHandlerException {
         final SesameRDFParser serialiser = new SesameRDFParser();
         try {
-            Object output = JSONLD.fromRDF(model, serialiser);
+            Object output = JsonLdProcessor.fromRDF(model, serialiser);
 
             final JSONLDMode mode = getWriterConfig().get(JSONLDSettings.JSONLD_MODE);
 
-            final Options opts = new Options();
-            opts.addBlankNodeIDs = getWriterConfig().get(BasicParserSettings.PRESERVE_BNODE_IDS);
-            opts.useRdfType = getWriterConfig().get(JSONLDSettings.USE_RDF_TYPE);
-            opts.useNativeTypes = getWriterConfig().get(JSONLDSettings.USE_NATIVE_TYPES);
+            final JsonLdOptions opts = new JsonLdOptions();
+            //opts.addBlankNodeIDs = getWriterConfig().get(BasicParserSettings.PRESERVE_BNODE_IDS);
+            opts.setUseRdfType(getWriterConfig().get(JSONLDSettings.USE_RDF_TYPE));
+            opts.setUseNativeTypes(getWriterConfig().get(JSONLDSettings.USE_NATIVE_TYPES));
             // opts.optimize = getWriterConfig().get(JSONLDSettings.OPTIMIZE);
 
             if (mode == JSONLDMode.EXPAND) {
-                output = JSONLD.expand(output, opts);
+                output = JsonLdProcessor.expand(output, opts);
             }
             // TODO: Implement inframe in JSONLDSettings
             final Object inframe = null;
             if (mode == JSONLDMode.FLATTEN) {
-                output = JSONLD.frame(output, (Map<String, Object>) inframe, opts);
+                output = JsonLdProcessor.frame(output, (Map<String, Object>) inframe, opts);
             }
             if (mode == JSONLDMode.COMPACT) {
-                output = JSONLD.simplify(output, opts);
+                output = JsonLdProcessor.compact(output, null, opts);
             }
             if (getWriterConfig().get(BasicWriterSettings.PRETTY_PRINT)) {
                 JSONUtils.writePrettyPrint(writer, output);
@@ -101,7 +101,7 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
                 JSONUtils.write(writer, output);
             }
 
-        } catch (final JSONLDProcessingError e) {
+        } catch (final JsonLdError e) {
             throw new RDFHandlerException("Could not render JSONLD", e);
         } catch (final JsonGenerationException e) {
             throw new RDFHandlerException("Could not render JSONLD", e);

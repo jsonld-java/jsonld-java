@@ -83,6 +83,16 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
 CHANGELOG
 =========
 
+### 07.10.2013
+
+* Matched class names to Spec
+ - Renamed `JSONLDException` to `JsonLdError`
+ - Renamed `JSONLDProcessor` to `JsonLdApi`
+ - Renamed `JSONLD` to `JsonLdProcessor`
+ - Renamed `ActiveContext` to `Context`
+ - Renamed `Options` to `JsonLdOptions`
+* All context related utility functions moved to be members of the `Context` class
+
 ### 30.09.2013
 * Fixed JSON-LD to Jena to handle of BNodes
 
@@ -131,3 +141,10 @@ CHANGELOG
 * Changed entry point for the functions to the static functions in the JSONLD class
 * Changed the JSONLDSerializer to an abstract class, requiring the implementation of a "parse" function. The JSONLDSerializer is now passed to the JSONLD.fromRDF function.
 * Added JSONLDProcessingError class to handle errors more efficiently
+
+
+Considerations for 1.0 release / optimisations
+=========
+
+* The `Context` class is a `Map` and many of the options are stored as values of the map. These could be made into variables, whice should speed things up a bit (the same with the termDefinitions variable inside the Context).
+* some sort of document loader interface (with a mockup for testing) is required

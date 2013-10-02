@@ -40,9 +40,12 @@ import org.apache.jena.riot.RiotException;
 import org.apache.jena.riot.system.PrefixMap;
 import org.apache.jena.riot.writer.WriterDatasetRIOTBase;
 
-import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.core.Options;
+import com.github.jsonldjava.core.JsonLdApi;
+import com.github.jsonldjava.core.JsonLdError;
+import com.github.jsonldjava.core.JsonLdOptions;
+import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.core.RDFDataset;
+import com.github.jsonldjava.impl.JenaRDFParser;
 import com.github.jsonldjava.utils.JSONUtils;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
@@ -87,15 +90,18 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
         addPrefixes(ctx, prefixMap);
 
         try {
-            Object obj = JSONLD.fromRDF(dataset, new JenaRDF2JSONLD());
-            final Options opts = new Options(baseURI);
-            opts.graph = false;
-            opts.addBlankNodeIDs = false;
-            opts.useRdfType = true;
-            opts.useNativeTypes = true;
-            opts.skipExpansion = false;
-            opts.compactArrays = true;
-            opts.keepFreeFloatingNodes = false;
+            final JsonLdOptions opts = new JsonLdOptions(baseURI);
+            //opts.graph = false;
+            //opts.addBlankNodeIDs = false;
+            opts.setUseRdfType(true);
+            opts.setUseNativeTypes(true);
+            //opts.skipExpansion = false;
+            opts.setCompactArrays(true);
+            //opts.keepFreeFloatingNodes = false;
+            JsonLdApi api = new JsonLdApi(opts);
+            RDFDataset result = new RDFDataset(api);
+            JenaRDFParser parser = new JenaRDFParser();
+            Object obj = api.fromRDF(result);
             final Map<String, Object> localCtx = new HashMap<String, Object>();
             localCtx.put("@context", ctx);
 
@@ -104,7 +110,7 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
             // obj = JSONLD.simplify(obj, opts);
             // else
             // Unclear as to the way to set better printing.
-            obj = JSONLD.compact(obj, localCtx, opts);
+            obj = JsonLdProcessor.compact(obj, localCtx, opts);
 
             if (isPretty()) {
                 JSONUtils.writePrettyPrint(writer, obj);
@@ -113,8 +119,9 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
             }
         } catch (final IOException e) {
             throw new RiotException("Could not write JSONLD: " + e, e);
-        } catch (final JSONLDProcessingError e) {
-            throw new RiotException("Error while generating JSONLD: " + e, e);
+        }
+        catch(JsonLdError e) {
+            throw new RiotException("Could not process JSONLD: " + e, e);
         }
     }
 

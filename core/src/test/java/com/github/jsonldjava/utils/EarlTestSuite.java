@@ -13,9 +13,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.core.Options;
+import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.core.JsonLdError;
+import com.github.jsonldjava.core.JsonLdOptions;
 
 public class EarlTestSuite {
 
@@ -62,8 +62,8 @@ public class EarlTestSuite {
         if (manifestURL.endsWith(".ttl") || manifestURL.endsWith("nq")
                 || manifestURL.endsWith("nt")) {
             try {
-                Map<String, Object> rval = (Map<String, Object>) JSONLD.fromRDF(manifestFile,
-                        new Options(manifestURL) {
+                Map<String, Object> rval = (Map<String, Object>) JsonLdProcessor.fromRDF(manifestFile,
+                        new JsonLdOptions(manifestURL) {
                             {
                                 this.format = "text/turtle";
                                 this.useNamespaces = true;
@@ -77,14 +77,14 @@ public class EarlTestSuite {
                         "http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#Manifest");
                 // make manifest the base object, embeding any referenced items
                 // (e.g. the test entries)
-                rval = (Map<String, Object>) JSONLD.frame(rval, frame, new Options(manifestURL));
+                rval = (Map<String, Object>) JsonLdProcessor.frame(rval, frame, new JsonLdOptions(manifestURL));
                 // compact to remove the @graph label
-                this.manifest = (Map<String, Object>) JSONLD.compact(rval, frame.get("@context"),
-                        new Options(manifestURL));
+                this.manifest = (Map<String, Object>) JsonLdProcessor.compact(rval, frame.get("@context"),
+                        new JsonLdOptions(manifestURL));
                 this.tests = (List<Map<String, Object>>) Obj.get(this.manifest, "mf:entries",
                         "@list");
 
-            } catch (final JSONLDProcessingError e) {
+            } catch (final JsonLdError e) {
                 throw new RuntimeException(e);
             }
         } else if (manifestURL.endsWith(".jsonld") || manifestURL.endsWith(".json")) {

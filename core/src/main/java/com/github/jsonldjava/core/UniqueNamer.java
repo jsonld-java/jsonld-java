@@ -30,7 +30,7 @@ public class UniqueNamer {
     public UniqueNamer clone() {
         final UniqueNamer copy = new UniqueNamer(this.prefix);
         copy.counter = this.counter;
-        copy.existing = (Map<String, String>) JSONLDUtils.clone(this.existing);
+        copy.existing = (Map<String, String>) JsonLdUtils.clone(this.existing);
         return copy;
     }
 
