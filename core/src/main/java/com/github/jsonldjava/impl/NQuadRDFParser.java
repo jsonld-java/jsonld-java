@@ -13,7 +13,7 @@ public class NQuadRDFParser implements RDFParser {
             return parseNQuads((String) input);
         } else {
             throw new JSONLDProcessingError("NQuad Parser expected string input.").setType(
-                    JSONLDProcessingError.Error.INVALID_INPUT).setDetail("input", input);
+                    JSONLDProcessingError.ErrorType.INVALID_INPUT).setDetail("input", input);
         }
     }
 

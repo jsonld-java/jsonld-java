@@ -126,7 +126,7 @@ class NormalizeUtils {
                                     return rval;
                                 } else {
                                     throw new JSONLDProcessingError("Unknown output format.")
-                                            .setType(JSONLDProcessingError.Error.UNKNOWN_FORMAT)
+                                            .setType(JSONLDProcessingError.ErrorType.UNKNOWN_FORMAT)
                                             .setDetail("format", options.format);
                                 }
                             }

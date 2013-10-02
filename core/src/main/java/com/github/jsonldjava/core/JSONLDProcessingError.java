@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JSONLDProcessingError extends Exception {
+    private static final long serialVersionUID = -7833425987237452867L;
 
     Map<String, Object> details;
-    private Error type;
+    private ErrorType type;
 
     public JSONLDProcessingError(String string, Map<String, Object> details) {
         super(string);
@@ -15,7 +16,7 @@ public class JSONLDProcessingError extends Exception {
 
     public JSONLDProcessingError(String string) {
         super(string);
-        details = new HashMap();
+        details = new HashMap<String, Object>();
     }
 
     public JSONLDProcessingError setDetail(String string, Object val) {
@@ -25,16 +26,16 @@ public class JSONLDProcessingError extends Exception {
         return this;
     }
 
-    public enum Error {
+    public enum ErrorType {
         SYNTAX_ERROR, PARSE_ERROR, RDF_ERROR, CONTEXT_URL_ERROR, INVALID_URL, COMPACT_ERROR, CYCLICAL_CONTEXT, FLATTEN_ERROR, FRAME_ERROR, NORMALIZE_ERROR, UNKNOWN_FORMAT, INVALID_INPUT
     }
 
-    public JSONLDProcessingError setType(Error error) {
+    public JSONLDProcessingError setType(ErrorType error) {
         this.type = error;
         return this;
     };
 
-    public Error getType() {
+    public ErrorType getType() {
         return type;
     }
 

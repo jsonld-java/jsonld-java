@@ -180,7 +180,7 @@ public class TurtleRDFParser implements RDFParser {
             if ("".equals(line) && !endIsOK()) {
                 throw new JSONLDProcessingError(
                         "Error while parsing Turtle; unexpected end of input.")
-                        .setType(JSONLDProcessingError.Error.PARSE_ERROR)
+                        .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
                         .setDetail("line", lineNumber).setDetail("position", linePosition);
             }
         }
@@ -194,7 +194,7 @@ public class TurtleRDFParser implements RDFParser {
                 return namespaces.get(ns) + name;
             } else {
                 throw new JSONLDProcessingError("No prefix found for: " + ns)
-                        .setType(JSONLDProcessingError.Error.PARSE_ERROR)
+                        .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
                         .setDetail("line", lineNumber).setDetail("position", linePosition);
                 // return ns + ":" + name;
             }
@@ -291,7 +291,7 @@ public class TurtleRDFParser implements RDFParser {
                 else {
                     throw new JSONLDProcessingError(
                             "Error while parsing Turtle; missing expected subject.")
-                            .setType(JSONLDProcessingError.Error.PARSE_ERROR)
+                            .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
                             .setDetail("line", state.lineNumber)
                             .setDetail("position", state.linePosition);
                 }
@@ -326,7 +326,7 @@ public class TurtleRDFParser implements RDFParser {
                 } else {
                     throw new JSONLDProcessingError(
                             "Error while parsing Turtle; missing expected predicate.")
-                            .setType(JSONLDProcessingError.Error.PARSE_ERROR)
+                            .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
                             .setDetail("line", state.lineNumber)
                             .setDetail("position", state.linePosition);
                 }
@@ -447,7 +447,7 @@ public class TurtleRDFParser implements RDFParser {
                 } else {
                     throw new JSONLDProcessingError(
                             "Error while parsing Turtle; missing expected object or blank node.")
-                            .setType(JSONLDProcessingError.Error.PARSE_ERROR)
+                            .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
                             .setDetail("line", state.lineNumber)
                             .setDetail("position", state.linePosition);
                 }
@@ -458,7 +458,7 @@ public class TurtleRDFParser implements RDFParser {
             while (state.line.startsWith(")")) {
                 if (!RDF_FIRST.equals(state.curPredicate)) {
                     throw new JSONLDProcessingError("Error while parsing Turtle; unexpected ).")
-                            .setType(JSONLDProcessingError.Error.PARSE_ERROR)
+                            .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
                             .setDetail("line", state.lineNumber)
                             .setDetail("position", state.linePosition);
                 }
@@ -504,7 +504,7 @@ public class TurtleRDFParser implements RDFParser {
                 if (state.expectingBnodeClose) {
                     throw new JSONLDProcessingError(
                             "Error while parsing Turtle; missing expected )\"]\".")
-                            .setType(JSONLDProcessingError.Error.PARSE_ERROR)
+                            .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
                             .setDetail("line", state.lineNumber)
                             .setDetail("position", state.linePosition);
                 }
@@ -535,7 +535,7 @@ public class TurtleRDFParser implements RDFParser {
             // if we get here, we're missing a close statement
             throw new JSONLDProcessingError(
                     "Error while parsing Turtle; missing expected \"]\" \",\" \";\" or \".\".")
-                    .setType(JSONLDProcessingError.Error.PARSE_ERROR)
+                    .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
                     .setDetail("line", state.lineNumber).setDetail("position", state.linePosition);
         }
 
@@ -549,7 +549,7 @@ public class TurtleRDFParser implements RDFParser {
         if (!IRIREF_MINUS_CONTAINER.matcher(iri).matches()) {
             throw new JSONLDProcessingError(
                     "Error while parsing Turtle; invalid IRI after escaping.")
-                    .setType(JSONLDProcessingError.Error.PARSE_ERROR)
+                    .setType(JSONLDProcessingError.ErrorType.PARSE_ERROR)
                     .setDetail("line", state.lineNumber).setDetail("position", state.linePosition);
         }
     }

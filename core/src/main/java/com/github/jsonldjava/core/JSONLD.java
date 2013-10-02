@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.jsonldjava.core.JSONLDProcessingError.Error;
+import com.github.jsonldjava.core.JSONLDProcessingError.ErrorType;
 import com.github.jsonldjava.impl.NQuadRDFParser;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
 import com.github.jsonldjava.impl.TurtleRDFParser;
@@ -48,7 +48,7 @@ public class JSONLD {
         // NOTE: javascript does this check before input check
         if (ctx == null) {
             throw new JSONLDProcessingError("The compaction context must not be null.")
-                    .setType(JSONLDProcessingError.Error.COMPACT_ERROR);
+                    .setType(JSONLDProcessingError.ErrorType.COMPACT_ERROR);
         }
 
         // set default options
@@ -79,7 +79,7 @@ public class JSONLD {
             }
         } catch (final JSONLDProcessingError e) {
             throw new JSONLDProcessingError("Could not expand input before compaction.").setType(
-                    JSONLDProcessingError.Error.COMPACT_ERROR).setDetail("cause", e);
+                    JSONLDProcessingError.ErrorType.COMPACT_ERROR).setDetail("cause", e);
         }
 
         // process context
@@ -88,7 +88,7 @@ public class JSONLD {
             activeCtx = JSONLD.processContext(activeCtx, ctx, opts);
         } catch (final JSONLDProcessingError e) {
             throw new JSONLDProcessingError("Could not process context before compaction.")
-                    .setType(JSONLDProcessingError.Error.COMPACT_ERROR).setDetail("cause", e);
+                    .setType(JSONLDProcessingError.ErrorType.COMPACT_ERROR).setDetail("cause", e);
         }
 
         // do compaction
@@ -243,7 +243,7 @@ public class JSONLD {
             _input = expand(input, opts);
         } catch (final JSONLDProcessingError e) {
             throw new JSONLDProcessingError("Could not expand input before flattening.").setType(
-                    JSONLDProcessingError.Error.FLATTEN_ERROR).setDetail("cause", e);
+                    JSONLDProcessingError.ErrorType.FLATTEN_ERROR).setDetail("cause", e);
         }
 
         final Object flattened = new JSONLDProcessor(opts).flatten(_input);
@@ -260,7 +260,7 @@ public class JSONLD {
             return compacted;
         } catch (final JSONLDProcessingError e) {
             throw new JSONLDProcessingError("Could not compact flattened output.").setType(
-                    JSONLDProcessingError.Error.FLATTEN_ERROR).setDetail("cause", e);
+                    JSONLDProcessingError.ErrorType.FLATTEN_ERROR).setDetail("cause", e);
         }
     }
 
@@ -320,7 +320,7 @@ public class JSONLD {
             expanded = JSONLD.expand(input, options);
         } catch (final JSONLDProcessingError e) {
             throw new JSONLDProcessingError("Could not expand input before framing.").setType(
-                    JSONLDProcessingError.Error.FRAME_ERROR).setDetail("cause", e);
+                    JSONLDProcessingError.ErrorType.FRAME_ERROR).setDetail("cause", e);
         }
         // expand frame
         Object expandedFrame;
@@ -330,7 +330,7 @@ public class JSONLD {
             expandedFrame = JSONLD.expand(frame, opts);
         } catch (final JSONLDProcessingError e) {
             throw new JSONLDProcessingError("Could not expand frame before framing.").setType(
-                    JSONLDProcessingError.Error.FRAME_ERROR).setDetail("cause", e);
+                    JSONLDProcessingError.ErrorType.FRAME_ERROR).setDetail("cause", e);
         }
 
         // do framing
@@ -349,7 +349,7 @@ public class JSONLD {
             return compacted;
         } catch (final JSONLDProcessingError e) {
             throw new JSONLDProcessingError("Could not compact framed output.").setType(
-                    JSONLDProcessingError.Error.FRAME_ERROR).setDetail("cause", e);
+                    JSONLDProcessingError.ErrorType.FRAME_ERROR).setDetail("cause", e);
         }
     }
 
@@ -424,7 +424,7 @@ public class JSONLD {
         } catch (final JSONLDProcessingError e) {
             throw new JSONLDProcessingError(
                     "Could not convert input to RDF dataset before normalization.").setType(
-                    JSONLDProcessingError.Error.NORMALIZE_ERROR).setDetail("cause", e);
+                    JSONLDProcessingError.ErrorType.NORMALIZE_ERROR).setDetail("cause", e);
         }
         return new JSONLDProcessor(options).normalize(dataset);
     }
@@ -459,7 +459,7 @@ public class JSONLD {
             expanded = JSONLD.expand(input, options);
         } catch (final JSONLDProcessingError e) {
             throw new JSONLDProcessingError("Could not expand input before conversion to RDF.")
-                    .setType(JSONLDProcessingError.Error.RDF_ERROR).setDetail("cause", e);
+                    .setType(JSONLDProcessingError.ErrorType.RDF_ERROR).setDetail("cause", e);
         }
 
         final UniqueNamer namer = new UniqueNamer("_:b");
@@ -500,7 +500,7 @@ public class JSONLD {
                 return new TurtleTripleCallback().call(dataset);
             } else {
                 throw new JSONLDProcessingError("Unknown output format.").setType(
-                        JSONLDProcessingError.Error.UNKNOWN_FORMAT).setDetail("format",
+                        JSONLDProcessingError.ErrorType.UNKNOWN_FORMAT).setDetail("format",
                         options.format);
             }
         }
@@ -569,7 +569,8 @@ public class JSONLD {
             parser = rdfParsers.get(options.format);
         } else {
             throw new JSONLDProcessingError("Unknown input format.").setType(
-                    JSONLDProcessingError.Error.UNKNOWN_FORMAT).setDetail("format", options.format);
+                    JSONLDProcessingError.ErrorType.UNKNOWN_FORMAT).setDetail("format",
+                    options.format);
         }
 
         // convert from RDF
@@ -608,7 +609,7 @@ public class JSONLD {
                 return flatten(rval, dataset.getContext(), options);
             } else {
                 throw new JSONLDProcessingError("Unknown value for output form").setType(
-                        Error.INVALID_INPUT).setDetail("outputForm", options.outputForm);
+                        ErrorType.INVALID_INPUT).setDetail("outputForm", options.outputForm);
             }
         }
         return rval;

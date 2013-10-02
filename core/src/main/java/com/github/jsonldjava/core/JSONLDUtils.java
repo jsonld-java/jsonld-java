@@ -134,7 +134,7 @@ public class JSONLDUtils {
             }
             // cycle detected
             throw new JSONLDProcessingError("Cyclical context definition detected.")
-                    .setType(JSONLDProcessingError.Error.CYCLICAL_CONTEXT)
+                    .setType(JSONLDProcessingError.ErrorType.CYCLICAL_CONTEXT)
                     .setDetail("context", localCtx).setDetail("term", term);
         }
 
@@ -144,7 +144,7 @@ public class JSONLDUtils {
         if (isKeyword(term)) {
             throw new JSONLDProcessingError(
                     "Invalid JSON-LD syntax; keywords cannot be overridden.").setType(
-                    JSONLDProcessingError.Error.SYNTAX_ERROR).setDetail("context", localCtx);
+                    JSONLDProcessingError.ErrorType.SYNTAX_ERROR).setDetail("context", localCtx);
         }
 
         // remove old mapping
@@ -176,7 +176,7 @@ public class JSONLDUtils {
             throw new JSONLDProcessingError(
                     "Invalid JSON-LD syntax; @context property values must be string or objects.")
                     .setDetail("context", localCtx).setType(
-                            JSONLDProcessingError.Error.SYNTAX_ERROR);
+                            JSONLDProcessingError.ErrorType.SYNTAX_ERROR);
         }
 
         final Map<String, Object> val = (Map<String, Object>) value;
@@ -191,13 +191,13 @@ public class JSONLDUtils {
                 throw new JSONLDProcessingError(
                         "Invalid JSON-LD syntax; a @reverse term definition must not contain @id, @type or @language.")
                         .setDetail("context", localCtx).setType(
-                                JSONLDProcessingError.Error.SYNTAX_ERROR);
+                                JSONLDProcessingError.ErrorType.SYNTAX_ERROR);
             }
             if (!isString(val.get("@reverse"))) {
                 throw new JSONLDProcessingError(
                         "Invalid JSON-LD syntax; a @context @reverse value must be a string.")
                         .setDetail("context", localCtx).setType(
-                                JSONLDProcessingError.Error.SYNTAX_ERROR);
+                                JSONLDProcessingError.ErrorType.SYNTAX_ERROR);
             }
             final String reverse = (String) val.get("@reverse");
 
@@ -210,7 +210,7 @@ public class JSONLDUtils {
                 throw new JSONLDProcessingError(
                         "Invalid JSON-LD syntax; a @context @id value must be an array of strings or a string.")
                         .setDetail("context", localCtx).setType(
-                                JSONLDProcessingError.Error.SYNTAX_ERROR);
+                                JSONLDProcessingError.ErrorType.SYNTAX_ERROR);
             }
             final String id = (String) val.get("@id");
             if (id != null && !id.equals(term)) {
@@ -247,7 +247,7 @@ public class JSONLDUtils {
                     throw new JSONLDProcessingError(
                             "Invalid JSON-LD syntax; @context terms must define an @id.")
                             .setDetail("context", localCtx).setDetail("term", term)
-                            .setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
+                            .setType(JSONLDProcessingError.ErrorType.SYNTAX_ERROR);
                 }
                 // prepend vocab to term
                 mapping.put("@id", (String) activeCtx.get("@vocab") + term);
@@ -262,7 +262,7 @@ public class JSONLDUtils {
                 throw new JSONLDProcessingError(
                         "Invalid JSON-LD syntax; a @context @type values must be strings.")
                         .setDetail("context", localCtx).setType(
-                                JSONLDProcessingError.Error.SYNTAX_ERROR);
+                                JSONLDProcessingError.ErrorType.SYNTAX_ERROR);
             }
             String type = (String) val.get("@type");
             if (!"@id".equals(type)) {
@@ -279,13 +279,13 @@ public class JSONLDUtils {
                 throw new JSONLDProcessingError(
                         "Invalid JSON-LD syntax; @context @container value must be one of the following: "
                                 + "@list, @set, @index or @language.").setDetail("context",
-                        localCtx).setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
+                        localCtx).setType(JSONLDProcessingError.ErrorType.SYNTAX_ERROR);
             }
             if ((Boolean) mapping.get("reverse") && !"@index".equals(container)) {
                 throw new JSONLDProcessingError(
                         "Invalid JSON-LD syntax; @context @container value for a @reverse type "
                                 + "definition must be @index.").setDetail("context", localCtx)
-                        .setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
+                        .setType(JSONLDProcessingError.ErrorType.SYNTAX_ERROR);
             }
 
             // add @container to mapping
@@ -298,7 +298,7 @@ public class JSONLDUtils {
                 throw new JSONLDProcessingError(
                         "Invalid JSON-LD syntax; @context @language value value must be a string or null.")
                         .setDetail("context", localCtx).setType(
-                                JSONLDProcessingError.Error.SYNTAX_ERROR);
+                                JSONLDProcessingError.ErrorType.SYNTAX_ERROR);
             }
             String language = (String) val.get("@language");
 
@@ -314,7 +314,7 @@ public class JSONLDUtils {
         if ("@context".equals(id) || "@preserve".equals(id)) {
             throw new JSONLDProcessingError(
                     "Invalid JSON-LD syntax; @context and @preserve cannot be aliased.")
-                    .setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
+                    .setType(JSONLDProcessingError.ErrorType.SYNTAX_ERROR);
         }
     }
 
@@ -413,7 +413,7 @@ public class JSONLDUtils {
                 throw new JSONLDProcessingError(
                         "Invalid JSON-LD syntax; a @context value does not expand to an absolue IRI.")
                         .setDetail("context", localCtx).setDetail("value", value)
-                        .setType(JSONLDProcessingError.Error.SYNTAX_ERROR);
+                        .setType(JSONLDProcessingError.ErrorType.SYNTAX_ERROR);
             }
         }
 
@@ -525,7 +525,7 @@ public class JSONLDUtils {
                     throw new JSONLDProcessingError(
                             "Invalid JSON-LD syntax; language map values must be strings.")
                             .setDetail("languageMap", languageMap).setType(
-                                    JSONLDProcessingError.Error.SYNTAX_ERROR);
+                                    JSONLDProcessingError.ErrorType.SYNTAX_ERROR);
                 }
                 final Map<String, Object> tmp = new LinkedHashMap<String, Object>();
                 tmp.put("@value", item);
@@ -644,7 +644,7 @@ public class JSONLDUtils {
         if (!isValid) {
             throw new JSONLDProcessingError(
                     "Invalid JSON-LD syntax; \"@type\" value must a string, a subject reference, an array of strings or subject references, or an empty object.")
-                    .setType(JSONLDProcessingError.Error.SYNTAX_ERROR).setDetail("value", v);
+                    .setType(JSONLDProcessingError.ErrorType.SYNTAX_ERROR).setDetail("value", v);
         }
         return true;
     }
@@ -1348,8 +1348,8 @@ public class JSONLDUtils {
                 if ("@index".equals(property) && subjects.containsKey("@index")) {
                     throw new JSONLDProcessingError(
                             "Invalid JSON-LD syntax; conflicting @index property detected.")
-                            .setType(JSONLDProcessingError.Error.SYNTAX_ERROR).setDetail("subject",
-                                    subject);
+                            .setType(JSONLDProcessingError.ErrorType.SYNTAX_ERROR).setDetail(
+                                    "subject", subject);
                 }
                 subject.put(property, ((Map<String, Object>) input).get(property));
                 continue;
@@ -1634,7 +1634,7 @@ public class JSONLDUtils {
 
         if (cycles.size() > MAX_CONTEXT_URLS) {
             throw new JSONLDProcessingError("Maximum number of @context URLs exceeded.").setType(
-                    JSONLDProcessingError.Error.CONTEXT_URL_ERROR).setDetail("max",
+                    JSONLDProcessingError.ErrorType.CONTEXT_URL_ERROR).setDetail("max",
                     MAX_CONTEXT_URLS);
         }
 
@@ -1654,7 +1654,7 @@ public class JSONLDUtils {
                 // validate URL
                 if (!regex.matcher(url).matches()) {
                     throw new JSONLDProcessingError("Malformed URL.").setType(
-                            JSONLDProcessingError.Error.INVALID_URL).setDetail("url", url);
+                            JSONLDProcessingError.ErrorType.INVALID_URL).setDetail("url", url);
                 }
                 queue.add(url);
             }
@@ -1666,7 +1666,7 @@ public class JSONLDUtils {
             // check for context URL cycle
             if (cycles.containsKey(url)) {
                 throw new JSONLDProcessingError("Cyclical @context URLs detected.").setType(
-                        JSONLDProcessingError.Error.CONTEXT_URL_ERROR).setDetail("url", url);
+                        JSONLDProcessingError.ErrorType.CONTEXT_URL_ERROR).setDetail("url", url);
             }
             final Map<String, Object> _cycles = (Map<String, Object>) clone(cycles);
             _cycles.put(url, Boolean.TRUE);
@@ -1686,13 +1686,13 @@ public class JSONLDUtils {
                 }
             } catch (final JsonParseException e) {
                 throw new JSONLDProcessingError("URL does not resolve to a valid JSON-LD object.")
-                        .setType(JSONLDProcessingError.Error.INVALID_URL).setDetail("url", url);
+                        .setType(JSONLDProcessingError.ErrorType.INVALID_URL).setDetail("url", url);
             } catch (final MalformedURLException e) {
                 throw new JSONLDProcessingError("Malformed URL.").setType(
-                        JSONLDProcessingError.Error.INVALID_URL).setDetail("url", url);
+                        JSONLDProcessingError.ErrorType.INVALID_URL).setDetail("url", url);
             } catch (final IOException e) {
                 throw new JSONLDProcessingError("Unable to open URL.").setType(
-                        JSONLDProcessingError.Error.INVALID_URL).setDetail("url", url);
+                        JSONLDProcessingError.ErrorType.INVALID_URL).setDetail("url", url);
             }
         }
 

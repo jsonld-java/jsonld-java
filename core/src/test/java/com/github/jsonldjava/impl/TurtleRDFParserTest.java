@@ -187,7 +187,7 @@ public class TurtleRDFParserTest {
                 });
                 failmsg = "Expected parse error, but no problems detected";
             } catch (final JSONLDProcessingError e) {
-                if (e.getType() == JSONLDProcessingError.Error.PARSE_ERROR) {
+                if (e.getType() == JSONLDProcessingError.ErrorType.PARSE_ERROR) {
                     passed = true;
                 } else {
                     failmsg = "Expected parse error, got: " + e.getMessage();

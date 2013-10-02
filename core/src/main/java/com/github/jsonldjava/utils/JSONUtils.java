@@ -31,7 +31,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
  * A bunch of functions to make loading JSON easy
@@ -92,13 +91,13 @@ public class JSONUtils {
 
     public static void write(Writer w, Object jsonObject) throws JsonGenerationException,
             JsonMappingException, IOException {
-        JsonGenerator jw = JSON_FACTORY.createGenerator(w);
+        final JsonGenerator jw = JSON_FACTORY.createGenerator(w);
         jw.writeObject(jsonObject);
     }
 
     public static void writePrettyPrint(Writer w, Object jsonObject)
             throws JsonGenerationException, JsonMappingException, IOException {
-        JsonGenerator jw = JSON_FACTORY.createGenerator(w);
+        final JsonGenerator jw = JSON_FACTORY.createGenerator(w);
         jw.useDefaultPrettyPrinter();
         jw.writeObject(jsonObject);
     }
