@@ -414,6 +414,12 @@ public class JSONLDProcessorTest {
                 result = ((String) result).trim();
             } else if (testType.contains("jld:FromRDFTest")) {
                 // result = JSONLD.fromRDF(input, new NQuadJSONLDSerializer());
+                if (test.containsKey("option")) {
+                    if (((Map<String, Object>) test.get("option")).containsKey("useRdfType")) {
+                        options.useRdfType = (Boolean) ((Map<String, Object>) test.get("option"))
+                                .get("useRdfType");
+                    }
+                }
                 result = JSONLD.fromRDF(input, options);
             } else if (testType.contains("jld:SimplifyTest")) {
                 result = JSONLD.simplify(input, options);
