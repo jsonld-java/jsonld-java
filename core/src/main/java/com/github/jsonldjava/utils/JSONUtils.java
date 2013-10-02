@@ -56,42 +56,29 @@ public class JSONUtils {
     }
 
     public static Object fromReader(Reader r) throws IOException {
-        try {
-            JsonParser jp = JSON_FACTORY.createParser(r);
-            Object rval = null;
-            JsonToken initialToken = jp.nextToken();
+        JsonParser jp = JSON_FACTORY.createParser(r);
+        Object rval = null;
+        JsonToken initialToken = jp.nextToken();
 
-            if (initialToken == JsonToken.START_ARRAY) {
-                rval = jp.readValueAs(List.class);
-            } else if (initialToken == JsonToken.START_OBJECT) {
-                rval = jp.readValueAs(Map.class);
-            } else if (initialToken == JsonToken.VALUE_STRING) {
-                rval = jp.readValueAs(String.class);
-            } else if (initialToken == JsonToken.VALUE_FALSE
-                    || initialToken == JsonToken.VALUE_TRUE) {
-                rval = jp.readValueAs(Boolean.class);
-            } else if (initialToken == JsonToken.VALUE_NUMBER_FLOAT
-                    || initialToken == JsonToken.VALUE_NUMBER_INT) {
-                rval = jp.readValueAs(Number.class);
-            } else if (initialToken == JsonToken.VALUE_NULL) {
-                rval = null;
-            } else {
-                throw new JsonParseException("document doesn't start with a valid json element : "
-                        + initialToken, jp.getCurrentLocation());
-            }
-            return rval;
-        } catch (final IOException e) {
-            // TODO: what?
-            if (e instanceof JsonParseException) {
-                throw (JsonParseException) e;
-            } else if (e instanceof JsonMappingException) {
-                throw (JsonMappingException) e;
-            } else {
-                // TODO: Auto-generated catch block
-                e.printStackTrace();
-                throw e;
-            }
+        if (initialToken == JsonToken.START_ARRAY) {
+            rval = jp.readValueAs(List.class);
+        } else if (initialToken == JsonToken.START_OBJECT) {
+            rval = jp.readValueAs(Map.class);
+        } else if (initialToken == JsonToken.VALUE_STRING) {
+            rval = jp.readValueAs(String.class);
+        } else if (initialToken == JsonToken.VALUE_FALSE
+                || initialToken == JsonToken.VALUE_TRUE) {
+            rval = jp.readValueAs(Boolean.class);
+        } else if (initialToken == JsonToken.VALUE_NUMBER_FLOAT
+                || initialToken == JsonToken.VALUE_NUMBER_INT) {
+            rval = jp.readValueAs(Number.class);
+        } else if (initialToken == JsonToken.VALUE_NULL) {
+            rval = null;
+        } else {
+            throw new JsonParseException("document doesn't start with a valid json element : "
+                    + initialToken, jp.getCurrentLocation());
         }
+        return rval;
     }
 
     public static void write(Writer w, Object jsonObject) throws JsonGenerationException,
