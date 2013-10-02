@@ -51,6 +51,11 @@ public class JSONUtils {
         // Disable default Jackson behaviour to close
         // InputStreams/Readers/OutputStreams/Writers
         JSON_FACTORY.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+        // Disable string retention features that may work for most JSON where
+        // the field names are in limited supply, but does not work for JSON-LD
+        // where a wide range of URIs are used for subjects and predicates
+        JSON_FACTORY.disable(JsonFactory.Feature.INTERN_FIELD_NAMES);
+        JSON_FACTORY.disable(JsonFactory.Feature.CANONICALIZE_FIELD_NAMES);
     }
 
     private static volatile HttpClient httpClient;
