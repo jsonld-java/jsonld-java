@@ -64,8 +64,8 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
     }
 
     @Override
-    public void write(Writer out, DatasetGraph dataset, PrefixMap prefixMap,
-            String baseURI, Context context) {
+    public void write(Writer out, DatasetGraph dataset, PrefixMap prefixMap, String baseURI,
+            Context context) {
         serialize(out, dataset, prefixMap, baseURI);
     }
 
@@ -74,22 +74,21 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
     }
 
     @Override
-    public void write(OutputStream out, DatasetGraph dataset,
-            PrefixMap prefixMap, String baseURI, Context context) {
-        Writer w = new OutputStreamWriter(out, Chars.charsetUTF8);
+    public void write(OutputStream out, DatasetGraph dataset, PrefixMap prefixMap, String baseURI,
+            Context context) {
+        final Writer w = new OutputStreamWriter(out, Chars.charsetUTF8);
         write(w, dataset, prefixMap, baseURI, context);
         IO.flush(w);
     }
 
-    private void serialize(Writer writer, DatasetGraph dataset,
-            PrefixMap prefixMap, String baseURI) {
+    private void serialize(Writer writer, DatasetGraph dataset, PrefixMap prefixMap, String baseURI) {
         final Map<String, Object> ctx = new LinkedHashMap<String, Object>();
         addProperties(ctx, dataset.getDefaultGraph());
         addPrefixes(ctx, prefixMap);
 
         try {
             Object obj = JSONLD.fromRDF(dataset, new JenaRDF2JSONLD());
-            Options opts = new Options(baseURI);
+            final Options opts = new Options(baseURI);
             opts.graph = false;
             opts.addBlankNodeIDs = false;
             opts.useRdfType = true;
@@ -97,30 +96,31 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
             opts.skipExpansion = false;
             opts.compactArrays = true;
             opts.keepFreeFloatingNodes = false;
-            Map<String, Object> localCtx = new HashMap<String, Object>();
+            final Map<String, Object> localCtx = new HashMap<String, Object>();
             localCtx.put("@context", ctx);
 
             // TODO: How/when to do simplify vs compact?
-//            if (false)
-//                obj = JSONLD.simplify(obj, opts);
-//            else
-                // Unclear as to the way to set better printing.
-                obj = JSONLD.compact(obj, localCtx, opts);
+            // if (false)
+            // obj = JSONLD.simplify(obj, opts);
+            // else
+            // Unclear as to the way to set better printing.
+            obj = JSONLD.compact(obj, localCtx, opts);
 
-            if (isPretty())
+            if (isPretty()) {
                 JSONUtils.writePrettyPrint(writer, obj);
-            else
+            } else {
                 JSONUtils.write(writer, obj);
-        } catch (IOException e) {
+            }
+        } catch (final IOException e) {
             throw new RiotException("Could not write JSONLD: " + e, e);
-        } catch (JSONLDProcessingError e) {
+        } catch (final JSONLDProcessingError e) {
             throw new RiotException("Error while generating JSONLD: " + e, e);
         }
     }
 
     private static void addPrefixes(Map<String, Object> ctx, PrefixMap prefixMap) {
-        Map<String, IRI> pmap = prefixMap.getMapping();
-        for (Entry<String, IRI> e : pmap.entrySet()) {
+        final Map<String, IRI> pmap = prefixMap.getMapping();
+        for (final Entry<String, IRI> e : pmap.entrySet()) {
             ctx.put(e.getKey(), e.getValue().toString());
         }
 
@@ -129,22 +129,24 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
     private void addProperties(final Map<String, Object> ctx, Graph graph) {
         // Add some properties directly so it becomes "localname": ....
         final Set<String> dups = new HashSet<String>();
-        Action<Triple> x = new Action<Triple>() {
+        final Action<Triple> x = new Action<Triple>() {
             @Override
             public void apply(Triple item) {
-                Node p = item.getPredicate();
-                if (p.equals(RDF.type.asNode()))
+                final Node p = item.getPredicate();
+                if (p.equals(RDF.type.asNode())) {
                     return;
-                String x = p.getLocalName();
-                if (dups.contains(x))
+                }
+                final String x = p.getLocalName();
+                if (dups.contains(x)) {
                     return;
+                }
 
                 if (ctx.containsKey(x)) {
                     // Check different URI
                     // pmap2.remove(x) ;
                     // dups.add(x) ;
                 } else {
-                    Map<String, Object> x2 = new LinkedHashMap<String, Object>();
+                    final Map<String, Object> x2 = new LinkedHashMap<String, Object>();
                     x2.put("@id", p.getURI());
                     x2.put("@type", "@id");
                     ctx.put(x, x2);

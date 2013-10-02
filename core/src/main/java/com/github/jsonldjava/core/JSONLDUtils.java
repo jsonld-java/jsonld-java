@@ -1156,8 +1156,8 @@ public class JSONLDUtils {
                 // value
                 if ((((Map<String, Object>) value).containsKey("@type") && Obj.equals(
                         ((Map<String, Object>) value).get("@type"), type))
-                        || (((Map<String, Object>) value).containsKey("@language") && Obj
-                                .equals(((Map<String, Object>) value).get("@language"), language))) {
+                        || (((Map<String, Object>) value).containsKey("@language") && Obj.equals(
+                                ((Map<String, Object>) value).get("@language"), language))) {
                     // NOTE: have to check containsKey here as javascript
                     // version relies on undefined !== null
                     return ((Map<String, Object>) value).get("@value");

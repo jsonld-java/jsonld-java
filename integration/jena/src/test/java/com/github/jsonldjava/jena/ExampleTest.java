@@ -18,7 +18,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-/** 
+/**
  * Examples from README.md
  */
 public class ExampleTest {
@@ -26,99 +26,98 @@ public class ExampleTest {
     @Ignore("Integration test")
     @Test
     public void jsonldToTurtleRIOT() throws Exception {
-        JenaJSONLD.init(); // Only needed once       
-        String url = "http://json-ld.org/test-suite/tests/expand-0002-in.jsonld";
+        JenaJSONLD.init(); // Only needed once
+        final String url = "http://json-ld.org/test-suite/tests/expand-0002-in.jsonld";
         // Detects language based on extension (ideally content type)
-        Model model = RDFDataMgr.loadModel(url);
-        
-        // or explicit with base URI,  Lang and any supported source
-        InputStream inStream = new ByteArrayInputStream("{}".getBytes("UTF-8"));        
+        final Model model = RDFDataMgr.loadModel(url);
+
+        // or explicit with base URI, Lang and any supported source
+        final InputStream inStream = new ByteArrayInputStream("{}".getBytes("UTF-8"));
         RDFDataMgr.read(model, inStream, "http://example.com/", JenaJSONLD.JSONLD);
-        
+
         RDFDataMgr.write(System.out, model, Lang.TURTLE);
         // <http://example.com/id1>
-        //    a                           <http://example.com/t1> ;
-        //    <http://example.com/term1>  "v1"^^<http://www.w3.org/2001/XMLSchema#string> ;
-        //    <http://example.com/term2>  "v2"^^<http://example.com/t2> ;
-        //    <http://example.com/term3>  "v3"@en ;
-        //    <http://example.com/term4>  4 ;
-        //    <http://example.com/term5>  51 , 50 .        
+        // a <http://example.com/t1> ;
+        // <http://example.com/term1>
+        // "v1"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        // <http://example.com/term2> "v2"^^<http://example.com/t2> ;
+        // <http://example.com/term3> "v3"@en ;
+        // <http://example.com/term4> 4 ;
+        // <http://example.com/term5> 51 , 50 .
     }
-    
-    
+
     @Test
     public void modelTojsonldRIOT() throws Exception {
-        JenaJSONLD.init(); // Only needed once       
+        JenaJSONLD.init(); // Only needed once
 
-        Model model = ModelFactory.createDefaultModel();
-        Resource resource = model.createResource("http://example.com/test");
-        Property property = model.createProperty("http://example.com/value");
+        final Model model = ModelFactory.createDefaultModel();
+        final Resource resource = model.createResource("http://example.com/test");
+        final Property property = model.createProperty("http://example.com/value");
         model.add(resource, property, "Test");
-        
-        RDFDataMgr.write(System.out, model, JenaJSONLD.JSONLD);        
+
+        RDFDataMgr.write(System.out, model, JenaJSONLD.JSONLD);
         // {
-        //    "@context" : {
-        //      "value" : {
-        //        "@id" : "http://example.com/value",
-        //        "@type" : "@id"
-        //      }
-        //    },
-        //    "@id" : "http://example.com/test",
-        //    "http://example.com/value" : "Test"
+        // "@context" : {
+        // "value" : {
+        // "@id" : "http://example.com/value",
+        // "@type" : "@id"
         // }
-        
-        
+        // },
+        // "@id" : "http://example.com/test",
+        // "http://example.com/value" : "Test"
+        // }
+
         // Or more compact:
         RDFDataMgr.write(System.out, model, JenaJSONLD.JSONLD_FORMAT_FLAT);
         // "@context":{"value":{"@id":"http://example.com/value","@type":"@id"}},"@id":"http://example.com/test","http://example.com/value":"Test"}
-        
-        // Datasets are also supported        
-        Dataset dataset = DatasetFactory.createMem();
+
+        // Datasets are also supported
+        final Dataset dataset = DatasetFactory.createMem();
         dataset.addNamedModel("http://example.com/graph", model);
         RDFDataMgr.write(System.out, dataset, JenaJSONLD.JSONLD);
         // {
-        //    "@graph" : [ {
-        //      "@id" : "http://example.com/test",
-        //      "http://example.com/value" : "Test"
-        //    } ],
-        //    "@id" : "http://example.com/graph"
+        // "@graph" : [ {
+        // "@id" : "http://example.com/test",
+        // "http://example.com/value" : "Test"
+        // } ],
+        // "@id" : "http://example.com/graph"
         // }
 
     }
-    
+
     @Test
     public void modelToJsonldClassic() throws Exception {
-        JenaJSONLD.init(); // Only needed once       
+        JenaJSONLD.init(); // Only needed once
 
-        Model model = ModelFactory.createDefaultModel();
-        Resource resource = model.createResource("http://example.com/test");
-        Property property = model.createProperty("http://example.com/value");
-        model.add(resource, property, "Test");        
+        final Model model = ModelFactory.createDefaultModel();
+        final Resource resource = model.createResource("http://example.com/test");
+        final Property property = model.createProperty("http://example.com/value");
+        model.add(resource, property, "Test");
         model.write(System.out, "JSON-LD");
         // {
-        //    "@context" : {
-        //      "value" : {
-        //        "@id" : "http://example.com/value",
-        //        "@type" : "@id"
-        //      }
-        //    },
-        //    "@id" : "http://example.com/test",
-        //    "http://example.com/value" : "Test"
-        //  }
- 
-        // Or made relative from a base URI 
+        // "@context" : {
+        // "value" : {
+        // "@id" : "http://example.com/value",
+        // "@type" : "@id"
+        // }
+        // },
+        // "@id" : "http://example.com/test",
+        // "http://example.com/value" : "Test"
+        // }
+
+        // Or made relative from a base URI
         // (notice the relative @id below)
         model.write(System.out, "JSON-LD", "http://example.com/");
         // {
-        //    "@context" : {
-        //      "value" : {
-        //        "@id" : "http://example.com/value",
-        //        "@type" : "@id"
-        //      }
-        //    },
-        //    "@id" : "test",
-        //    "http://example.com/value" : "Test"
-        // }        
+        // "@context" : {
+        // "value" : {
+        // "@id" : "http://example.com/value",
+        // "@type" : "@id"
+        // }
+        // },
+        // "@id" : "test",
+        // "http://example.com/value" : "Test"
+        // }
     }
 
     @Ignore("Integration test")
@@ -126,37 +125,37 @@ public class ExampleTest {
     public void jsonldToTurtleClassic() throws Exception {
         JenaJSONLD.init(); // Only needed once
 
-        String url = "http://json-ld.org/test-suite/tests/expand-0002-in.jsonld";
-        Model model = ModelFactory.createDefaultModel();
+        final String url = "http://json-ld.org/test-suite/tests/expand-0002-in.jsonld";
+        final Model model = ModelFactory.createDefaultModel();
         model.read(url, "JSON-LD");
         model.write(System.out, "TURTLE", "http://example.com/");
-        // @base          <http://example.com/> .
-        //    <id1>   a                           <t1> ;
-        //            <term1>                     "v1"^^<http://www.w3.org/2001/XMLSchema#string> ;
-        //            <term2>                     "v2"^^<t2> ;
-        //            <term3>                     "v3"@en ;
-        //            <term4>                     4 ;
-        //            <term5>                     51 , 50 .       
+        // @base <http://example.com/> .
+        // <id1> a <t1> ;
+        // <term1> "v1"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        // <term2> "v2"^^<t2> ;
+        // <term3> "v3"@en ;
+        // <term4> 4 ;
+        // <term5> 51 , 50 .
     }
-    
+
     @Test
     public void modelToJsonLD() throws Exception {
         JenaJSONLD.init(); // Only needed once
-        Model model = ModelFactory.createDefaultModel();
-        Resource resource = model.createResource("http://example.com/test");
-        Property property = model.createProperty("http://example.com/value");
+        final Model model = ModelFactory.createDefaultModel();
+        final Resource resource = model.createResource("http://example.com/test");
+        final Property property = model.createProperty("http://example.com/value");
         model.add(resource, property, "Test");
 
-        Options options = new Options();
+        final Options options = new Options();
         options.format = "application/ld+json";
-        Object json = JSONLD.fromRDF(model, options);
-        String jsonStr = JSONUtils.toPrettyString(json);
+        final Object json = JSONLD.fromRDF(model, options);
+        final String jsonStr = JSONUtils.toPrettyString(json);
         System.out.println(jsonStr);
         // [ {
-        //    "@id" : "http://example.com/test",
-        //    "http://example.com/value" : [ {
-        //      "@value" : "Test"
-        //    } ]
-        //  } ]
+        // "@id" : "http://example.com/test",
+        // "http://example.com/value" : [ {
+        // "@value" : "Test"
+        // } ]
+        // } ]
     }
 }

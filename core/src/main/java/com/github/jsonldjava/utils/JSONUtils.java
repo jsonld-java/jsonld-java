@@ -60,9 +60,9 @@ public class JSONUtils {
     }
 
     public static Object fromReader(Reader r) throws IOException {
-        JsonParser jp = JSON_FACTORY.createParser(r);
+        final JsonParser jp = JSON_FACTORY.createParser(r);
         Object rval = null;
-        JsonToken initialToken = jp.nextToken();
+        final JsonToken initialToken = jp.nextToken();
 
         if (initialToken == JsonToken.START_ARRAY) {
             rval = jp.readValueAs(List.class);

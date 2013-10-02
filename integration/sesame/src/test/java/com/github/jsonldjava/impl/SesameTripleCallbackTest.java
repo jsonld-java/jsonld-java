@@ -2,7 +2,6 @@ package com.github.jsonldjava.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 import org.junit.Test;
@@ -14,10 +13,7 @@ import org.openrdf.rio.ParserConfig;
 import org.openrdf.rio.helpers.ParseErrorCollector;
 import org.openrdf.rio.helpers.StatementCollector;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.utils.JSONUtils;
 
 public class SesameTripleCallbackTest {

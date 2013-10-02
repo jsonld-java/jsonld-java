@@ -32,19 +32,17 @@ public class JenaSystemTest extends Assert {
 
     @BeforeClass
     public static void init() {
-        JenaJSONLD.init(); 
+        JenaJSONLD.init();
     }
 
-    private static RDFFormat jsonldFmt1 = new RDFFormat(JenaJSONLD.JSONLD,
-            RDFFormat.PRETTY);
-    private static RDFFormat jsonldFmt2 = new RDFFormat(JenaJSONLD.JSONLD,
-            RDFFormat.FLAT);
+    private static RDFFormat jsonldFmt1 = new RDFFormat(JenaJSONLD.JSONLD, RDFFormat.PRETTY);
+    private static RDFFormat jsonldFmt2 = new RDFFormat(JenaJSONLD.JSONLD, RDFFormat.FLAT);
 
     @Test
     public void jenaSystem_basic_1() {
         assertEquals("name", "JSON-LD", JenaJSONLD.JSONLD.getName());
-        assertEquals("content-type", "application/ld+json", JenaJSONLD.JSONLD
-                .getContentType().getContentType());
+        assertEquals("content-type", "application/ld+json", JenaJSONLD.JSONLD.getContentType()
+                .getContentType());
     }
 
     @Test
@@ -66,34 +64,27 @@ public class JenaSystemTest extends Assert {
 
     @Test
     public void jenaSystem_write_2() {
-        assertNotNull(RDFWriterRegistry
-                .getWriterGraphFactory(JenaJSONLD.JSONLD));
-        assertNotNull(RDFWriterRegistry
-                .getWriterDatasetFactory(JenaJSONLD.JSONLD));
+        assertNotNull(RDFWriterRegistry.getWriterGraphFactory(JenaJSONLD.JSONLD));
+        assertNotNull(RDFWriterRegistry.getWriterDatasetFactory(JenaJSONLD.JSONLD));
         assertNotNull(RDFWriterRegistry.defaultSerialization(JenaJSONLD.JSONLD));
     }
 
     @Test
     public void jenaSystem_write_3() {
 
-        assertEquals(jsonldFmt1,
-                RDFWriterRegistry.defaultSerialization(JenaJSONLD.JSONLD));
+        assertEquals(jsonldFmt1, RDFWriterRegistry.defaultSerialization(JenaJSONLD.JSONLD));
 
         assertNotNull(RDFWriterRegistry.getWriterGraphFactory(jsonldFmt1));
         assertNotNull(RDFWriterRegistry.getWriterGraphFactory(jsonldFmt2));
 
-        assertTrue(RDFWriterRegistry.registeredGraphFormats().contains(
-                jsonldFmt1));
-        assertTrue(RDFWriterRegistry.registeredGraphFormats().contains(
-                jsonldFmt2));
+        assertTrue(RDFWriterRegistry.registeredGraphFormats().contains(jsonldFmt1));
+        assertTrue(RDFWriterRegistry.registeredGraphFormats().contains(jsonldFmt2));
 
         assertNotNull(RDFWriterRegistry.getWriterDatasetFactory(jsonldFmt1));
         assertNotNull(RDFWriterRegistry.getWriterDatasetFactory(jsonldFmt2));
 
-        assertTrue(RDFWriterRegistry.registeredDatasetFormats().contains(
-                jsonldFmt1));
-        assertTrue(RDFWriterRegistry.registeredDatasetFormats().contains(
-                jsonldFmt2));
+        assertTrue(RDFWriterRegistry.registeredDatasetFormats().contains(jsonldFmt1));
+        assertTrue(RDFWriterRegistry.registeredDatasetFormats().contains(jsonldFmt2));
     }
 
     @Test

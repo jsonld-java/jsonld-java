@@ -46,35 +46,35 @@ import com.hp.hpl.jena.sparql.util.Context;
 
 public class JsonLDReader implements ReaderRIOT {
     @Override
-    public void read(InputStream in, String baseURI, ContentType ct,
-            final StreamRDF output, Context context) {
+    public void read(InputStream in, String baseURI, ContentType ct, final StreamRDF output,
+            Context context) {
         try {
-            Object jsonObject = JSONUtils.fromInputStream(in);
-            JSONLDTripleCallback callback = new JSONLDTripleCallback() {
+            final Object jsonObject = JSONUtils.fromInputStream(in);
+            final JSONLDTripleCallback callback = new JSONLDTripleCallback() {
 
                 @Override
                 // public Object call(Map<String, Object> dataset) {
                 public Object call(RDFDataset dataset) {
-                    for (String gn : dataset.keySet()) {
-                        Object x = dataset.get(gn);
+                    for (final String gn : dataset.keySet()) {
+                        final Object x = dataset.get(gn);
                         if ("@default".equals(gn)) {
                             @SuppressWarnings("unchecked")
-                            List<Map<String, Object>> triples = (List<Map<String, Object>>) x;
-                            for (Map<String, Object> t : triples) {
-                                Node s = createNode(t, "subject");
-                                Node p = createNode(t, "predicate");
-                                Node o = createNode(t, "object");
-                                Triple triple = Triple.create(s, p, o);
+                            final List<Map<String, Object>> triples = (List<Map<String, Object>>) x;
+                            for (final Map<String, Object> t : triples) {
+                                final Node s = createNode(t, "subject");
+                                final Node p = createNode(t, "predicate");
+                                final Node o = createNode(t, "object");
+                                final Triple triple = Triple.create(s, p, o);
                                 output.triple(triple);
                             }
                         } else {
                             @SuppressWarnings("unchecked")
-                            List<Map<String, Object>> quads = (List<Map<String, Object>>) x;
-                            Node g = NodeFactory.createURI(gn); // Bnodes?
-                            for (Map<String, Object> q : quads) {
-                                Node s = createNode(q, "subject");
-                                Node p = createNode(q, "predicate");
-                                Node o = createNode(q, "object");
+                            final List<Map<String, Object>> quads = (List<Map<String, Object>>) x;
+                            final Node g = NodeFactory.createURI(gn); // Bnodes?
+                            for (final Map<String, Object> q : quads) {
+                                final Node s = createNode(q, "subject");
+                                final Node p = createNode(q, "predicate");
+                                final Node o = createNode(q, "object");
                                 output.quad(Quad.create(g, s, p, o));
                             }
 
@@ -84,16 +84,16 @@ public class JsonLDReader implements ReaderRIOT {
                     return null;
                 }
             };
-            Options options = new Options(baseURI);
+            final Options options = new Options(baseURI);
             JSONLD.toRDF(jsonObject, callback, options);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RiotException("Could not read JSONLD: " + e, e);
-        } catch (JSONLDProcessingError e) {
+        } catch (final JSONLDProcessingError e) {
             throw new RiotException("Could not parse JSONLD: " + e, e);
         }
     }
 
-    private LabelToNode labels = SyntaxLabels.createLabelToNode();
+    private final LabelToNode labels = SyntaxLabels.createLabelToNode();
 
     public static String LITERAL = "literal";
     public static String BLANK_NODE = "blank node";
@@ -101,50 +101,53 @@ public class JsonLDReader implements ReaderRIOT {
 
     private Node createNode(Map<String, Object> tripleMap, String key) {
         @SuppressWarnings("unchecked")
-        Map<String, Object> x = (Map<String, Object>) (tripleMap.get(key));
+        final Map<String, Object> x = (Map<String, Object>) (tripleMap.get(key));
         return createNode(x);
     }
 
     // See RDFParser
     private Node createNode(Map<String, Object> map) {
-        String type = (String) map.get("type");
-        String lex = (String) map.get("value");
-        if (type.equals(IRI))
+        final String type = (String) map.get("type");
+        final String lex = (String) map.get("value");
+        if (type.equals(IRI)) {
             return NodeFactory.createURI(lex);
-        else if (type.equals(BLANK_NODE))
+        } else if (type.equals(BLANK_NODE)) {
             return labels.get(null, lex);
-        else if (type.equals(LITERAL)) {
-            String lang = (String) map.get("language");
-            String datatype = (String) map.get("datatype");
-            if (lang == null && datatype == null)
+        } else if (type.equals(LITERAL)) {
+            final String lang = (String) map.get("language");
+            final String datatype = (String) map.get("datatype");
+            if (lang == null && datatype == null) {
                 return NodeFactory.createLiteral(lex);
-            if (lang != null)
+            }
+            if (lang != null) {
                 return NodeFactory.createLiteral(lex, lang, null);
-            RDFDatatype dt = NodeFactory.getType(datatype);
+            }
+            final RDFDatatype dt = NodeFactory.getType(datatype);
             return NodeFactory.createLiteral(lex, dt);
-        } else
-            throw new InternalErrorException(
-                    "Node is not a IRI, bNode or a literal: " + type);
-        // /*
-        // * "value" : The value of the node.
-        // * "subject" can be an IRI or blank node id.
-        // * "predicate" should only ever be an IRI
-        // * "object" can be and IRI or blank node id, or a literal value
-        // (represented as a string)
-        // * "type" : "IRI" if the value is an IRI or "blank node" if the value
-        // is a blank node.
-        // * "object" can also be "literal" in the case of literals.
-        // * The value of "object" can also contain the following optional
-        // key-value pairs:
-        // * "language" : the language value of a string literal
-        // * "datatype" : the datatype of the literal. (if not set will default
-        // to XSD:string, if set to null, null will be used). */
-        // System.out.println(map.get("value")) ;
-        // System.out.println(map.get("type")) ;
-        // System.out.println(map.get("language")) ;
-        // System.out.println(map.get("datatype")) ;
-        // return null ;
+        } else {
+            throw new InternalErrorException("Node is not a IRI, bNode or a literal: " + type);
+            // /*
+            // * "value" : The value of the node.
+            // * "subject" can be an IRI or blank node id.
+            // * "predicate" should only ever be an IRI
+            // * "object" can be and IRI or blank node id, or a literal value
+            // (represented as a string)
+            // * "type" : "IRI" if the value is an IRI or "blank node" if the
+            // value
+            // is a blank node.
+            // * "object" can also be "literal" in the case of literals.
+            // * The value of "object" can also contain the following optional
+            // key-value pairs:
+            // * "language" : the language value of a string literal
+            // * "datatype" : the datatype of the literal. (if not set will
+            // default
+            // to XSD:string, if set to null, null will be used). */
+            // System.out.println(map.get("value")) ;
+            // System.out.println(map.get("type")) ;
+            // System.out.println(map.get("language")) ;
+            // System.out.println(map.get("datatype")) ;
+            // return null ;
+        }
     }
-
 
 }
