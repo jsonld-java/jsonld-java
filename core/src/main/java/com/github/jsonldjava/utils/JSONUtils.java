@@ -86,14 +86,15 @@ public class JSONUtils {
 
     public static void write(Writer w, Object jsonObject) throws JsonGenerationException,
             JsonMappingException, IOException {
-        JSON_MAPPER.writeValue(w, jsonObject);
+        JsonGenerator jw = JSON_FACTORY.createGenerator(w);
+        jw.writeObject(jsonObject);
     }
 
     public static void writePrettyPrint(Writer w, Object jsonObject)
             throws JsonGenerationException, JsonMappingException, IOException {
-        final ObjectWriter objectWriter = JSON_MAPPER.writerWithDefaultPrettyPrinter();
-
-        objectWriter.writeValue(w, jsonObject);
+        JsonGenerator jw = JSON_FACTORY.createGenerator(w);
+        jw.useDefaultPrettyPrinter();
+        jw.writeObject(jsonObject);
     }
 
     public static Object fromInputStream(InputStream content) throws IOException {
