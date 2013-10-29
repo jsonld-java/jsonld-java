@@ -110,7 +110,7 @@ Note that these currently fail due to the lack of an implementation of frame.
     serializer.setPrefix("http://xmlns.com/foaf/0.1/", "foaf");
     // for each triple you have where the object is a literal
     // (if datatypeURI is null, a plain literal will be assumed and language may be null or an empty string)
-    serializer.triple(subjectURI, perdicateURI, value, datatypeURI, language);
+    serializer.triple(subjectURI, predicateURI, value, datatypeURI, language);
     // for each triple you have where the object is an URI
     serializer.triple(subjectURI, predicateURI, objectURI);
     // grab the resulting JSON-LD map
