@@ -12,7 +12,8 @@ public class NQuadRDFParser implements RDFParser {
         if (input instanceof String) {
             return parseNQuads((String) input);
         } else {
-            throw new JsonLdError(JsonLdError.Error.INVALID_INPUT, "NQuad Parser expected string input.");
+            throw new JsonLdError(JsonLdError.Error.INVALID_INPUT,
+                    "NQuad Parser expected string input.");
         }
     }
 

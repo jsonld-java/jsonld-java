@@ -36,7 +36,6 @@ import org.apache.jena.riot.adapters.RDFReaderRIOT;
 import org.apache.jena.riot.adapters.RDFWriterRIOT;
 import org.apache.jena.riot.system.RiotLib;
 
-import com.github.jsonldjava.core.JsonLdApi;
 import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.impl.JenaRDFParser;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -141,8 +140,8 @@ public class JenaJSONLD {
     }
 
     protected static void registerWithJsonLD() {
-        JsonLdProcessor.registerRDFParser(JSONLD.getContentType()
-                .getContentType(), new JenaRDFParser());
+        JsonLdProcessor.registerRDFParser(JSONLD.getContentType().getContentType(),
+                new JenaRDFParser());
     }
 
     protected static void registerReader() {

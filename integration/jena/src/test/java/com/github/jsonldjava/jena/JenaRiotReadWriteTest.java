@@ -111,9 +111,9 @@ public class JenaRiotReadWriteTest {
         // Read as JSON-LD
         final Model model2 = ModelFactory.createDefaultModel();
         RDFDataMgr.read(model2, r, null, JSONLD);
-        
+
         assertFalse("JSON-LD model was empty", model2.isEmpty());
-        
+
         // Compare
         if (!model.isIsomorphicWith(model2)) {
             System.out.println("## ---- DIFFERENT");

@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.github.jsonldjava.core.DocumentLoader;
-import com.github.jsonldjava.core.RemoteDocument;
 
 public class JSONUtilsTest {
 
@@ -198,7 +197,7 @@ public class JSONUtilsTest {
             final Object context = DocumentLoader.fromURL(url);
             assertTrue(context instanceof Map);
         } finally {
-        	DocumentLoader.setHttpClient(null);
+            DocumentLoader.setHttpClient(null);
         }
         assertEquals(1, httpRequest.getAllValues().size());
         final HttpUriRequest req = httpRequest.getValue();

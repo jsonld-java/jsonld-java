@@ -149,8 +149,8 @@ public class ExampleTest {
 
         final JsonLdOptions options = new JsonLdOptions();
         options.format = "application/ld+json";
-        JsonLdApi api = new JsonLdApi(options);
-        RDFDataset dataset = new RDFDataset(api);
+        final JsonLdApi api = new JsonLdApi(options);
+        final RDFDataset dataset = new RDFDataset(api);
         final Object json = api.fromRDF(dataset);
         final String jsonStr = JSONUtils.toPrettyString(json);
         System.out.println(jsonStr);

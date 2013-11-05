@@ -9,11 +9,9 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.github.jsonldjava.utils.JSONUtils;
 import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.URL;
 
@@ -43,108 +41,111 @@ public class JsonLdUtils {
     }
 
     public static Boolean deepCompare(Object v1, Object v2, Boolean listOrderMatters) {
-    	if (v1 == null) {
-    		return v2 == null;
-    	} else if (v2 == null) {
-    		return v1 == null;
-    	} else if (v1 instanceof Map && v2 instanceof Map) {
-    		Map<String,Object> m1 = (Map<String,Object>)v1;
-    		Map<String,Object> m2 = (Map<String,Object>)v2;
-    		if (m1.size() != m2.size()) {
-    			return false;
-    		}
-    		for (String key : m1.keySet()) {
-    			if (!m2.containsKey(key) || !deepCompare(m1.get(key), m2.get(key), listOrderMatters)) {
-    				return false;
-    			}
-    		}
-    		return true;
-    	} else if (v1 instanceof List && v2 instanceof List) {
-    		List<Object> l1 = (List<Object>)v1;
-    		List<Object> l2 = (List<Object>)v2;
-    		if (l1.size() != l2.size()) {
-    			
-    			return false;
-    		}
-    		// used to mark members of l2 that we have already matched to avoid
-    		// matching the same item twice for lists that have duplicates 
-    		boolean alreadyMatched[] = new boolean[l2.size()]; 
-    		for (int i = 0 ; i < l1.size() ; i++) {
-    			Object o1 = l1.get(i);
-    			Boolean gotmatch = false;
-    			if (listOrderMatters) {
-    				gotmatch = deepCompare(o1, l2.get(i), listOrderMatters);
-    			} else {
-	    			for (int j = 0; j < l2.size() ; j++) {
-	    				if (!alreadyMatched[j] && deepCompare(o1, l2.get(j), listOrderMatters)) {
-	    					alreadyMatched[j] = true;
-	    					gotmatch = true;
-	    					break;
-	    				}
-	    			}
-    			}
-    			if (!gotmatch) {
-    				return false;
-    			}
-    		}
-    		return true;
-    	} else {
-    		return v1.equals(v2);
-    	}
+        if (v1 == null) {
+            return v2 == null;
+        } else if (v2 == null) {
+            return v1 == null;
+        } else if (v1 instanceof Map && v2 instanceof Map) {
+            final Map<String, Object> m1 = (Map<String, Object>) v1;
+            final Map<String, Object> m2 = (Map<String, Object>) v2;
+            if (m1.size() != m2.size()) {
+                return false;
+            }
+            for (final String key : m1.keySet()) {
+                if (!m2.containsKey(key)
+                        || !deepCompare(m1.get(key), m2.get(key), listOrderMatters)) {
+                    return false;
+                }
+            }
+            return true;
+        } else if (v1 instanceof List && v2 instanceof List) {
+            final List<Object> l1 = (List<Object>) v1;
+            final List<Object> l2 = (List<Object>) v2;
+            if (l1.size() != l2.size()) {
+
+                return false;
+            }
+            // used to mark members of l2 that we have already matched to avoid
+            // matching the same item twice for lists that have duplicates
+            final boolean alreadyMatched[] = new boolean[l2.size()];
+            for (int i = 0; i < l1.size(); i++) {
+                final Object o1 = l1.get(i);
+                Boolean gotmatch = false;
+                if (listOrderMatters) {
+                    gotmatch = deepCompare(o1, l2.get(i), listOrderMatters);
+                } else {
+                    for (int j = 0; j < l2.size(); j++) {
+                        if (!alreadyMatched[j] && deepCompare(o1, l2.get(j), listOrderMatters)) {
+                            alreadyMatched[j] = true;
+                            gotmatch = true;
+                            break;
+                        }
+                    }
+                }
+                if (!gotmatch) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return v1.equals(v2);
+        }
     }
-    
+
     public static Boolean deepCompare(Object v1, Object v2) {
-    	return deepCompare(v1, v2, false);
+        return deepCompare(v1, v2, false);
     }
-    
+
     public static boolean deepContains(List<Object> values, Object value) {
-    	for (Object item : values) {
-    		if (deepCompare(item, value, false)) {
-    			return true;
-    		}
-    	}
-		return false;
-	}
-    
-    static void mergeValue(Map<String,Object> obj, String key, Object value) {
-    	if (obj == null) {
-    		return;
-    	}
-    	List<Object> values = (List<Object>) obj.get(key);
-    	if (values == null) {
-    		values = new ArrayList<Object>();
-    		obj.put(key, values);
-    	}
-    	if ("@list".equals(key) || (value instanceof Map && ((Map<String,Object>) value).containsKey("@list")) || !deepContains(values, value)) {
-    		values.add(value);
-    	}
+        for (final Object item : values) {
+            if (deepCompare(item, value, false)) {
+                return true;
+            }
+        }
+        return false;
     }
-    
-    static void mergeCompactedValue(Map<String,Object> obj, String key, Object value) {
-    	if (obj == null) {
-    		return;
-    	}
-    	Object prop = obj.get(key);
-    	if (prop == null) {
-    		obj.put(key, value);
-    		return;
-    	} 
-    	if (!(prop instanceof List)) {
-    		List<Object> tmp = new ArrayList<Object>();
-    		tmp.add(prop);    		
-    	}
-		if (value instanceof List) {
-			((List<Object>) prop).addAll((List<Object>) value);
-		} else {
-			((List<Object>) prop).add(value);
-		}
+
+    static void mergeValue(Map<String, Object> obj, String key, Object value) {
+        if (obj == null) {
+            return;
+        }
+        List<Object> values = (List<Object>) obj.get(key);
+        if (values == null) {
+            values = new ArrayList<Object>();
+            obj.put(key, values);
+        }
+        if ("@list".equals(key)
+                || (value instanceof Map && ((Map<String, Object>) value).containsKey("@list"))
+                || !deepContains(values, value)) {
+            values.add(value);
+        }
+    }
+
+    static void mergeCompactedValue(Map<String, Object> obj, String key, Object value) {
+        if (obj == null) {
+            return;
+        }
+        final Object prop = obj.get(key);
+        if (prop == null) {
+            obj.put(key, value);
+            return;
+        }
+        if (!(prop instanceof List)) {
+            final List<Object> tmp = new ArrayList<Object>();
+            tmp.add(prop);
+        }
+        if (value instanceof List) {
+            ((List<Object>) prop).addAll((List<Object>) value);
+        } else {
+            ((List<Object>) prop).add(value);
+        }
     }
 
     public static boolean isAbsoluteIri(String value) {
-    	// TODO: this is a bit simplistic!
-		return value.contains(":");
-	}
-    
+        // TODO: this is a bit simplistic!
+        return value.contains(":");
+    }
+
     /**
      * Returns true if the given value is a subject with properties.
      * 
@@ -181,17 +182,17 @@ public class JsonLdUtils {
         return (v instanceof Map && ((Map<String, Object>) v).size() == 1 && ((Map<String, Object>) v)
                 .containsKey("@id"));
     }
-    
+
     // TODO: fix this test
-	public static boolean isRelativeIri(String value) {
-		if (!(isKeyword(value) || isAbsoluteIri(value))) {
-			return true;
-		}
-		return false;
-	}
-    
-	////////////////////////////////////////////////////// OLD CODE BELOW
-    
+    public static boolean isRelativeIri(String value) {
+        if (!(isKeyword(value) || isAbsoluteIri(value))) {
+            return true;
+        }
+        return false;
+    }
+
+    // //////////////////////////////////////////////////// OLD CODE BELOW
+
     /**
      * Adds a value to a subject. If the value is an array, all values in the
      * array will be added.
@@ -345,8 +346,7 @@ public class JsonLdUtils {
      * @return the expanded language map.
      * @throws JsonLdError
      */
-    static List<Object> expandLanguageMap(Map<String, Object> languageMap)
-            throws JsonLdError {
+    static List<Object> expandLanguageMap(Map<String, Object> languageMap) throws JsonLdError {
         final List<Object> rval = new ArrayList<Object>();
         final List<String> keys = new ArrayList<String>(languageMap.keySet());
         Collections.sort(keys); // lexicographically sort languages
@@ -360,8 +360,7 @@ public class JsonLdUtils {
             }
             for (final Object item : val) {
                 if (!isString(item)) {
-                    throw new JsonLdError(
-                            JsonLdError.Error.SYNTAX_ERROR);
+                    throw new JsonLdError(JsonLdError.Error.SYNTAX_ERROR);
                 }
                 final Map<String, Object> tmp = new LinkedHashMap<String, Object>();
                 tmp.put("@value", item);
@@ -406,8 +405,7 @@ public class JsonLdUtils {
         }
 
         if (!isValid) {
-            throw new JsonLdError(
-                    JsonLdError.Error.SYNTAX_ERROR);
+            throw new JsonLdError(JsonLdError.Error.SYNTAX_ERROR);
         }
         return true;
     }
@@ -507,7 +505,7 @@ public class JsonLdUtils {
      *            the compaction options used.
      * 
      * @return the resulting output.
-     * @throws JsonLdError 
+     * @throws JsonLdError
      */
     static Object removePreserve(Context ctx, Object input, JsonLdOptions opts) throws JsonLdError {
         // recurse through arrays
@@ -546,8 +544,8 @@ public class JsonLdUtils {
             for (final String prop : ((Map<String, Object>) input).keySet()) {
                 Object result = removePreserve(ctx, ((Map<String, Object>) input).get(prop), opts);
                 final String container = ctx.getContainer(prop);
-                if (opts.getCompactArrays() && isArray(result) && ((List<Object>) result).size() == 1
-                        && container == null) {
+                if (opts.getCompactArrays() && isArray(result)
+                        && ((List<Object>) result).size() == 1 && container == null) {
                     result = ((List<Object>) result).get(0);
                 }
                 ((Map<String, Object>) input).put(prop, result);
@@ -780,8 +778,7 @@ public class JsonLdUtils {
         resolve(input, new LinkedHashMap<String, Object>());
     }
 
-    private static void resolve(Object input, Map<String, Object> cycles)
-            throws JsonLdError {
+    private static void resolve(Object input, Map<String, Object> cycles) throws JsonLdError {
         final Pattern regex = Pattern
                 .compile("(http|https)://(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(/|/([\\w#!:.?+=&%@!\\-/]))?");
 
@@ -821,8 +818,8 @@ public class JsonLdUtils {
             _cycles.put(url, Boolean.TRUE);
 
             try {
-                Map<String, Object> ctx = (Map<String, Object>) DocumentLoader.fromURL(new java.net.URL(
-                        url));
+                Map<String, Object> ctx = (Map<String, Object>) DocumentLoader
+                        .fromURL(new java.net.URL(url));
                 if (!ctx.containsKey("@context")) {
                     ctx = new LinkedHashMap<String, Object>();
                     ctx.put("@context", new LinkedHashMap<String, Object>());
@@ -834,11 +831,11 @@ public class JsonLdUtils {
                     findContextUrls(input, urls, true);
                 }
             } catch (final JsonParseException e) {
-            	throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR);
+                throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR);
             } catch (final MalformedURLException e) {
-            	throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR);
+                throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR);
             } catch (final IOException e) {
-            	throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR);
+                throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR);
             }
         }
 

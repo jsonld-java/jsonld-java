@@ -1,22 +1,13 @@
 package com.github.jsonldjava.impl;
 
+import java.net.URI;
 import java.util.Map;
 
-import org.ontoware.aifbcommons.collection.ClosableIterator;
-import org.ontoware.rdf2go.model.Model;
-import org.ontoware.rdf2go.model.ModelSet;
-import org.ontoware.rdf2go.model.Statement;
-import org.ontoware.rdf2go.model.node.DatatypeLiteral;
-import org.ontoware.rdf2go.model.node.LanguageTagLiteral;
-import org.ontoware.rdf2go.model.node.Literal;
-import org.ontoware.rdf2go.model.node.Node;
-import org.ontoware.rdf2go.model.node.Resource;
-import org.ontoware.rdf2go.model.node.URI;
-
 import com.github.jsonldjava.core.JsonLdError;
-import com.github.jsonldjava.core.RDFDataset;
-import com.github.jsonldjava.core.RDFParser;
 import com.github.jsonldjava.core.JsonLdError.Error;
+import com.github.jsonldjava.core.RDFDataset;
+import com.github.jsonldjava.core.RDFDataset.Literal;
+import com.github.jsonldjava.core.RDFParser;
 
 /**
  * Implementation of {@link RDFParser} which serializes the contents of a

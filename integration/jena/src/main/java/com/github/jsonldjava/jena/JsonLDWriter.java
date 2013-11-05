@@ -91,16 +91,16 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
 
         try {
             final JsonLdOptions opts = new JsonLdOptions(baseURI);
-            //opts.graph = false;
-            //opts.addBlankNodeIDs = false;
+            // opts.graph = false;
+            // opts.addBlankNodeIDs = false;
             opts.setUseRdfType(true);
             opts.setUseNativeTypes(true);
-            //opts.skipExpansion = false;
+            // opts.skipExpansion = false;
             opts.setCompactArrays(true);
-            //opts.keepFreeFloatingNodes = false;
-            JsonLdApi api = new JsonLdApi(opts);
-            RDFDataset result = new RDFDataset(api);
-            JenaRDFParser parser = new JenaRDFParser();
+            // opts.keepFreeFloatingNodes = false;
+            final JsonLdApi api = new JsonLdApi(opts);
+            final RDFDataset result = new RDFDataset(api);
+            final JenaRDFParser parser = new JenaRDFParser();
             Object obj = api.fromRDF(result);
             final Map<String, Object> localCtx = new HashMap<String, Object>();
             localCtx.put("@context", ctx);
@@ -119,8 +119,7 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
             }
         } catch (final IOException e) {
             throw new RiotException("Could not write JSONLD: " + e, e);
-        }
-        catch(JsonLdError e) {
+        } catch (final JsonLdError e) {
             throw new RiotException("Could not process JSONLD: " + e, e);
         }
     }

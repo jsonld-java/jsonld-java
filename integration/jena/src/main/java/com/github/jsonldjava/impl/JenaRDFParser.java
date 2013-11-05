@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.github.jsonldjava.core.JsonLdError;
-import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.core.JsonLdError.Error;
+import com.github.jsonldjava.core.RDFDataset;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -121,7 +121,8 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
         } else if (input instanceof Model) {
             importModel(result, (Model) input);
         } else {
-            throw new JsonLdError(Error.INVALID_INPUT, "Jena Serializer expects Model or resource input");
+            throw new JsonLdError(Error.INVALID_INPUT,
+                    "Jena Serializer expects Model or resource input");
         }
         return result;
     }

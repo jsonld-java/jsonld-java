@@ -156,7 +156,7 @@ public class URL {
         }
         return rval;
     }
-    
+
     public static String removeBase(Object baseobj, String iri) {
         URL base;
         if (baseobj instanceof String) {
@@ -184,13 +184,15 @@ public class URL {
         final URL rel = URL.parse(iri.substring(root.length()));
 
         // remove path segments that match
-        final List<String> baseSegments = new ArrayList<String>(Arrays.asList(base.normalizedPath.split("/")));
+        final List<String> baseSegments = new ArrayList<String>(Arrays.asList(base.normalizedPath
+                .split("/")));
         if (base.normalizedPath.endsWith("/")) {
-        	baseSegments.add("");
+            baseSegments.add("");
         }
-        final List<String> iriSegments = new ArrayList<String>(Arrays.asList(rel.normalizedPath.split("/")));
+        final List<String> iriSegments = new ArrayList<String>(Arrays.asList(rel.normalizedPath
+                .split("/")));
         if (rel.normalizedPath.endsWith("/")) {
-        	iriSegments.add("");
+            iriSegments.add("");
         }
 
         while (baseSegments.size() > 0 && iriSegments.size() > 0) {
@@ -221,10 +223,10 @@ public class URL {
 
         // prepend remaining segments
         if (iriSegments.size() > 0) {
-        	rval += iriSegments.get(0);
+            rval += iriSegments.get(0);
         }
-        for (int i = 1; i < iriSegments.size() ; i++) {
-        	rval += "/" + iriSegments.get(i);
+        for (int i = 1; i < iriSegments.size(); i++) {
+            rval += "/" + iriSegments.get(i);
         }
 
         // add query and hash
@@ -243,38 +245,40 @@ public class URL {
     }
 
     public static String resolve(String baseUri, String pathToResolve) {
-		// TODO: some input will need to be normalized to perform the expected result with java
-    	// TODO: we can do this without using java URI!
-		if (baseUri == null) {
-			return pathToResolve;
-		}
-		if (pathToResolve == null || "".equals(pathToResolve.trim())) {
-			return baseUri;
-		}
-		try {
-			URI uri = new URI(baseUri);
-			// query string parsing
-			if (pathToResolve.startsWith("?")) {
-				// drop fragment from uri if it has one
-				if (uri.getFragment() != null) {
-					uri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), null, null);
-				}
-				// add query to the end manually (as URI.resolve does it wrong)
-				return uri.toString() + pathToResolve;
-			}
-			
-			uri = uri.resolve(pathToResolve);
-			// java doesn't discard unnecessary dot segments
-			String path = uri.getPath();
-			if (path != null) {
-				path = URL.removeDotSegments(uri.getPath(), true);
-			}
-			return new URI(uri.getScheme(), uri.getAuthority(), path, uri.getQuery(), uri.getFragment()).toString();
-		} catch (URISyntaxException e) {
-			return null;
-		}
-	}
-    
+        // TODO: some input will need to be normalized to perform the expected
+        // result with java
+        // TODO: we can do this without using java URI!
+        if (baseUri == null) {
+            return pathToResolve;
+        }
+        if (pathToResolve == null || "".equals(pathToResolve.trim())) {
+            return baseUri;
+        }
+        try {
+            URI uri = new URI(baseUri);
+            // query string parsing
+            if (pathToResolve.startsWith("?")) {
+                // drop fragment from uri if it has one
+                if (uri.getFragment() != null) {
+                    uri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), null, null);
+                }
+                // add query to the end manually (as URI.resolve does it wrong)
+                return uri.toString() + pathToResolve;
+            }
+
+            uri = uri.resolve(pathToResolve);
+            // java doesn't discard unnecessary dot segments
+            String path = uri.getPath();
+            if (path != null) {
+                path = URL.removeDotSegments(uri.getPath(), true);
+            }
+            return new URI(uri.getScheme(), uri.getAuthority(), path, uri.getQuery(),
+                    uri.getFragment()).toString();
+        } catch (final URISyntaxException e) {
+            return null;
+        }
+    }
+
     /**
      * Parses the authority for the pre-parsed given URL.
      * 

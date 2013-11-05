@@ -25,24 +25,23 @@ import com.github.jsonldjava.utils.JSONUtils;
 
 public class DocumentLoader {
 
-	public RemoteDocument loadDocument(String url) throws JsonLdError {
-		// TODO: use fromURL to load document
-		// TODO: get http link context
-		return new RemoteDocument("", null);
-		/*
-		 } catch (Exception e) {
-					// If context cannot be dereferenced
-					throw new JsonLdError(Error.LOADING_REMOTE_CONTEXT_FAILED, (String)context);
-				}
-		 */
-	}
-	
+    public RemoteDocument loadDocument(String url) throws JsonLdError {
+        // TODO: use fromURL to load document
+        // TODO: get http link context
+        return new RemoteDocument("", null);
+        /*
+         * } catch (Exception e) { // If context cannot be dereferenced throw
+         * new JsonLdError(Error.LOADING_REMOTE_CONTEXT_FAILED,
+         * (String)context); }
+         */
+    }
+
     /**
      * An HTTP Accept header that prefers JSONLD.
      */
     public static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
     private static volatile HttpClient httpClient;
-	
+
     /**
      * Returns a Map, List, or String containing the contents of the JSON
      * resource resolved from the URL.

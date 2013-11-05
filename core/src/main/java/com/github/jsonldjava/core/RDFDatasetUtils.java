@@ -251,11 +251,12 @@ public class RDFDatasetUtils {
         }
 
         if (p.isIRI()) {
-        	quad += " <" + escape(p.getValue()) + "> ";
+            quad += " <" + escape(p.getValue()) + "> ";
         }
-        // otherwise it must be a bnode (TODO: can we only allow this if the flag is set in options?)
+        // otherwise it must be a bnode (TODO: can we only allow this if the
+        // flag is set in options?)
         else {
-        	quad += " " + escape(p.getValue()) + " ";
+            quad += " " + escape(p.getValue()) + " ";
         }
 
         // object is IRI, bnode or literal
@@ -482,8 +483,8 @@ public class RDFDatasetUtils {
             // parse quad
             final Matcher match = Regex.QUAD.matcher(line);
             if (!match.matches()) {
-                throw new JsonLdError(JsonLdError.Error.SYNTAX_ERROR, "Error while parsing N-Quads; invalid quad. line:" +
-                                lineNumber);
+                throw new JsonLdError(JsonLdError.Error.SYNTAX_ERROR,
+                        "Error while parsing N-Quads; invalid quad. line:" + lineNumber);
             }
 
             // get subject

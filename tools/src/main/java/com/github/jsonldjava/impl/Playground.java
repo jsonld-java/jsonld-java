@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdOptions;
+import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.utils.JSONUtils;
 
 public class Playground {
@@ -159,7 +159,7 @@ public class Playground {
                         usage();
                         return;
                     }
-                    outobj = JsonLdProcessor.frame(inobj, (Map<String, Object>) ctxobj, opts);
+                    outobj = JsonLdProcessor.frame(inobj, ctxobj, opts);
                 } else if ("--flatten".equals(opt)) {
                     outobj = JsonLdProcessor.flatten(inobj, ctxobj, opts);
                 } else if ("--toRDF".equals(opt)) {
@@ -182,8 +182,7 @@ public class Playground {
         } catch (final Exception e) {
             System.out.println("ERROR: " + e.getMessage());
             if (e instanceof JsonLdError) {
-                for (final Entry<String, Object> detail : ((JsonLdError) e).getDetails()
-                        .entrySet()) {
+                for (final Entry<String, Object> detail : ((JsonLdError) e).getDetails().entrySet()) {
                     System.out.println(detail.getKey() + ": " + detail.getValue());
                 }
             }

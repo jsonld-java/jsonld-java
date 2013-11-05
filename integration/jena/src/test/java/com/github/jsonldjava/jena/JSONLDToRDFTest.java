@@ -31,8 +31,8 @@ public class JSONLDToRDFTest {
 
         final JsonLdOptions options = new JsonLdOptions();
         options.format = "application/ld+json";
-        JenaRDFParser parser = new JenaRDFParser();
-        RDFDataset dataset = parser.parse(model);
+        final JenaRDFParser parser = new JenaRDFParser();
+        final RDFDataset dataset = parser.parse(model);
         final Object json = new JsonLdApi(options).fromRDF(dataset);
         final String jsonStr = JSONUtils.toPrettyString(json);
         // System.out.println(jsonStr);

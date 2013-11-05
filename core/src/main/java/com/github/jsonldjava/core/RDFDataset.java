@@ -334,8 +334,8 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
     private final Map<String, String> context;
 
-    //private UniqueNamer namer;
-	private JsonLdApi api;
+    // private UniqueNamer namer;
+    private JsonLdApi api;
 
     public RDFDataset() {
         super();
@@ -343,22 +343,19 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
         context = new LinkedHashMap<String, String>();
         // put("@context", context);
     }
-/*
-    public RDFDataset(String blankNodePrefix) {
-        this(new UniqueNamer(blankNodePrefix));
-    }
 
-    public RDFDataset(UniqueNamer namer) {
-        this();
-        this.namer = namer;
-    }
-*/
+    /*
+     * public RDFDataset(String blankNodePrefix) { this(new
+     * UniqueNamer(blankNodePrefix)); }
+     * 
+     * public RDFDataset(UniqueNamer namer) { this(); this.namer = namer; }
+     */
     public RDFDataset(JsonLdApi jsonLdApi) {
-    	this();
-    	this.api = jsonLdApi;
-	}
+        this();
+        this.api = jsonLdApi;
+    }
 
-	public void setNamespace(String ns, String prefix) {
+    public void setNamespace(String ns, String prefix) {
         context.put(ns, prefix);
     }
 
@@ -524,43 +521,43 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
      *            the graph to create RDF triples for.
      */
     void graphToRDF(String graphName, Map<String, Object> graph) {
-    	// 4.2)
+        // 4.2)
         final List<Quad> triples = new ArrayList<Quad>();
         // 4.3)
-        List<String> subjects = new ArrayList<String>(graph.keySet());
-        //Collections.sort(subjects);
+        final List<String> subjects = new ArrayList<String>(graph.keySet());
+        // Collections.sort(subjects);
         for (final String id : subjects) {
-        	if (JsonLdUtils.isRelativeIri(id)) {
-        		continue;
-        	}
+            if (JsonLdUtils.isRelativeIri(id)) {
+                continue;
+            }
             final Map<String, Object> node = (Map<String, Object>) graph.get(id);
             final List<String> properties = new ArrayList<String>(node.keySet());
             Collections.sort(properties);
             for (String property : properties) {
-            	final List<Object> values;
+                final List<Object> values;
                 // 4.3.2.1)
                 if ("@type".equals(property)) {
-                	values = (List<Object>) node.get("@type");
+                    values = (List<Object>) node.get("@type");
                     property = RDF_TYPE;
                 }
                 // 4.3.2.2)
                 else if (isKeyword(property)) {
                     continue;
                 }
-                // 4.3.2.3) 
+                // 4.3.2.3)
                 else if (property.startsWith("_:") && !api.opts.getProduceGeneralizedRdf()) {
-                	continue;
+                    continue;
                 }
                 // 4.3.2.4)
                 else if (JsonLdUtils.isRelativeIri(property)) {
-                	continue;
+                    continue;
                 } else {
-                	values = (List<Object>) node.get(property);
+                    values = (List<Object>) node.get(property);
                 }
 
                 Node subject;
                 if (id.indexOf("_:") == 0) {
-                	// NOTE: don't rename, just set it as a blank node
+                    // NOTE: don't rename, just set it as a blank node
                     subject = new BlankNode(id);
                 } else {
                     subject = new IRI(id);
@@ -569,40 +566,40 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                 // RDF predicates
                 Node predicate;
                 if (property.startsWith("_:")) {
-                	predicate = new BlankNode(property);
+                    predicate = new BlankNode(property);
                 } else {
-                	predicate = new IRI(property);
+                    predicate = new IRI(property);
                 }
 
                 for (final Object item : values) {
                     // convert @list to triples
                     if (isList(item)) {
-                    	List<Object> list = (List<Object>) ((Map<String, Object>) item)
+                        final List<Object> list = (List<Object>) ((Map<String, Object>) item)
                                 .get("@list");
-                    	Node last = null;
-                    	Node firstBNode = nil;
-                    	if (!list.isEmpty()) {
-                    		last = objectToRDF(list.get(list.size()-1));
-                    		firstBNode = new BlankNode(api.generateBlankNodeIdentifier());
-                    	}
-                    	triples.add(new Quad(subject, predicate, firstBNode, graphName));
-                        for (int i = 0; i < list.size()-1; i++) {
-                        	final Node object = objectToRDF(list.get(i));
+                        Node last = null;
+                        Node firstBNode = nil;
+                        if (!list.isEmpty()) {
+                            last = objectToRDF(list.get(list.size() - 1));
+                            firstBNode = new BlankNode(api.generateBlankNodeIdentifier());
+                        }
+                        triples.add(new Quad(subject, predicate, firstBNode, graphName));
+                        for (int i = 0; i < list.size() - 1; i++) {
+                            final Node object = objectToRDF(list.get(i));
                             triples.add(new Quad(firstBNode, first, object, graphName));
-                            Node restBNode = new BlankNode(api.generateBlankNodeIdentifier());
+                            final Node restBNode = new BlankNode(api.generateBlankNodeIdentifier());
                             triples.add(new Quad(firstBNode, rest, restBNode, graphName));
                             firstBNode = restBNode;
                         }
                         if (last != null) {
-                        	triples.add(new Quad(firstBNode, first, last, graphName));
-                        	triples.add(new Quad(firstBNode, rest, nil, graphName));
+                            triples.add(new Quad(firstBNode, first, last, graphName));
+                            triples.add(new Quad(firstBNode, rest, nil, graphName));
                         }
                     }
                     // convert value or node object to triple
                     else {
                         final Node object = objectToRDF(item);
                         if (object != null) {
-                        	triples.add(new Quad(subject, predicate, object, graphName));
+                            triples.add(new Quad(subject, predicate, object, graphName));
                         }
                     }
                 }
@@ -634,7 +631,8 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                 if (value instanceof Boolean) {
                     return new Literal(value.toString(), datatype == null ? XSD_BOOLEAN
                             : (String) datatype, null);
-                } else if (value instanceof Double || value instanceof Float || XSD_DOUBLE.equals(datatype)) {
+                } else if (value instanceof Double || value instanceof Float
+                        || XSD_DOUBLE.equals(datatype)) {
                     // canonical double representation
                     final DecimalFormat df = new DecimalFormat("0.0###############E0");
                     return new Literal(df.format(value), datatype == null ? XSD_DOUBLE
@@ -654,15 +652,15 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
         }
         // convert string/node object to RDF
         else {
-        	final String id;
-        	if (isObject(item)) {
-        		id = (String) ((Map<String, Object>) item).get("@id");
-        		if (JsonLdUtils.isRelativeIri(id)) {
-        			return null;
-        		}
-        	} else {
-        		id = (String) item;
-        	}
+            final String id;
+            if (isObject(item)) {
+                id = (String) ((Map<String, Object>) item).get("@id");
+                if (JsonLdUtils.isRelativeIri(id)) {
+                    return null;
+                }
+            } else {
+                id = (String) item;
+            }
             if (id.indexOf("_:") == 0) {
                 // NOTE: once again no need to rename existing blank nodes
                 return new BlankNode(id);

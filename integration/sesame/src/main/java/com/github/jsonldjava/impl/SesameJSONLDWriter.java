@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.Map;
 
 import org.openrdf.model.Model;
 import org.openrdf.model.Statement;
@@ -17,7 +16,6 @@ import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFWriter;
-import org.openrdf.rio.helpers.BasicParserSettings;
 import org.openrdf.rio.helpers.BasicWriterSettings;
 import org.openrdf.rio.helpers.JSONLDMode;
 import org.openrdf.rio.helpers.JSONLDSettings;
@@ -26,9 +24,9 @@ import org.openrdf.rio.helpers.StatementCollector;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdOptions;
+import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.utils.JSONUtils;
 
 /**
@@ -79,7 +77,8 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
             final JSONLDMode mode = getWriterConfig().get(JSONLDSettings.JSONLD_MODE);
 
             final JsonLdOptions opts = new JsonLdOptions();
-            //opts.addBlankNodeIDs = getWriterConfig().get(BasicParserSettings.PRESERVE_BNODE_IDS);
+            // opts.addBlankNodeIDs =
+            // getWriterConfig().get(BasicParserSettings.PRESERVE_BNODE_IDS);
             opts.setUseRdfType(getWriterConfig().get(JSONLDSettings.USE_RDF_TYPE));
             opts.setUseNativeTypes(getWriterConfig().get(JSONLDSettings.USE_NATIVE_TYPES));
             // opts.optimize = getWriterConfig().get(JSONLDSettings.OPTIMIZE);
@@ -90,7 +89,7 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
             // TODO: Implement inframe in JSONLDSettings
             final Object inframe = null;
             if (mode == JSONLDMode.FLATTEN) {
-                output = JsonLdProcessor.frame(output, (Map<String, Object>) inframe, opts);
+                output = JsonLdProcessor.frame(output, inframe, opts);
             }
             if (mode == JSONLDMode.COMPACT) {
                 output = JsonLdProcessor.compact(output, null, opts);

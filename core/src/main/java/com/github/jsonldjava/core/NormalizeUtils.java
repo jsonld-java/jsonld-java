@@ -30,7 +30,7 @@ class NormalizeUtils {
         this.bnodes = bnodes;
         this.namer = namer;
     }
-    
+
     // generates unique and duplicate hashes for bnodes
     public Object hashBlankNodes(Collection<String> unnamed_) throws JsonLdError {
         List<String> unnamed = new ArrayList<String>(unnamed_);
@@ -125,7 +125,8 @@ class NormalizeUtils {
                                     }
                                     return rval;
                                 } else {
-                                    throw new JsonLdError(JsonLdError.Error.UNKNOWN_FORMAT, options.format);
+                                    throw new JsonLdError(JsonLdError.Error.UNKNOWN_FORMAT,
+                                            options.format);
                                 }
                             }
                             String rval = "";
