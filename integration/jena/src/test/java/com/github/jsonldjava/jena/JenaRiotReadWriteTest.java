@@ -19,6 +19,7 @@
 package com.github.jsonldjava.jena;
 
 import static com.github.jsonldjava.jena.JenaJSONLD.JSONLD;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -43,10 +44,12 @@ public class JenaRiotReadWriteTest {
     @BeforeClass
     public static void init() {
         /*
-         * Disabled to test that static { } in JenaJSONLD forces init() by
+         * Disable this to test that static { } in JenaJSONLD forces init() by
          * accessing the field JenaJSONLD.JSONLD.
+         * 
+         * It is enabled by default to enable selective test running.
          */
-        // JenaJSONLD.init();
+        JenaJSONLD.init();
     }
 
     @Test
@@ -66,7 +69,9 @@ public class JenaRiotReadWriteTest {
 
     private void graphJ2R(String inResource, String outResource) {
         final Model model1 = loadModelFromClasspathResource(inResource);
+        assertFalse("Failed to load input model from classpath: " + inResource, model1.isEmpty());
         final Model model2 = loadModelFromClasspathResource(outResource);
+        assertFalse("Failed to load output model from classpath: " + outResource, model2.isEmpty());
         assertTrue("Input graph " + inResource + " not isomorphic to output dataset" + outResource,
                 model1.isIsomorphicWith(model2));
     }
@@ -104,7 +109,9 @@ public class JenaRiotReadWriteTest {
         // Read as JSON-LD
         final Model model2 = ModelFactory.createDefaultModel();
         RDFDataMgr.read(model2, r, null, JSONLD);
-
+        
+        assertFalse("JSON-LD model was empty", model2.isEmpty());
+        
         // Compare
         if (!model.isIsomorphicWith(model2)) {
             System.out.println("## ---- DIFFERENT");
