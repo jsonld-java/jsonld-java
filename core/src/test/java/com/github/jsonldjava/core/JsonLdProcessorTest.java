@@ -3,6 +3,7 @@ package com.github.jsonldjava.core;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -424,6 +425,18 @@ public class JsonLdProcessorTest {
 			if (test_opts.containsKey("produceGeneralizedRdf")) {
 				options.setProduceGeneralizedRdf((Boolean)test_opts.get("produceGeneralizedRdf"));
 			}
+			if (test_opts.containsKey("redirectTo")) {
+			    // TODO: Handle redirectTo for remote-doc tests
+			}
+            if (test_opts.containsKey("httpStatus")) {
+                // TODO: Handle httpStatus for remote-doc tests
+            }
+            if (test_opts.containsKey("contentType")) {
+                // TODO: Handle contentType for remote-doc tests
+            }
+            if (test_opts.containsKey("httpLink")) {
+                // TODO: Handle httpLink for remote-doc tests
+            }
 		}
 
 		// RUN TEST
@@ -461,7 +474,7 @@ public class JsonLdProcessorTest {
 				result = JsonLdProcessor.normalize(input, options);
 				result = ((String) result).trim();
 			} else {
-				assertFalse("Unknown test type", true);
+				fail("Unknown test type: " + testType);
 			}
 		} catch (final JsonLdError e) {
 			result = e;
