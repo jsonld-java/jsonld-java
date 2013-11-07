@@ -59,7 +59,7 @@
 				<configuration>
 					<programs>
 						<program>
-							<mainClass>com.github.jsonldjava.impl.Playground</mainClass>
+							<mainClass>com.github.jsonldjava.tools.Playground</mainClass>
 							<name>jsonldplayground</name>
 						</program>
 					</programs>
