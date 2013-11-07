@@ -1,4 +1,4 @@
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.clerezza;
 
 import java.util.HashMap;
 import java.util.List;
