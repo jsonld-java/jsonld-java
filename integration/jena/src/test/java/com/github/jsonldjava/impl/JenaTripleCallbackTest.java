@@ -72,9 +72,10 @@ public class JenaTripleCallbackTest {
         model.write(w, "N-TRIPLE");
 
         final List<String> result = new ArrayList<String>(Arrays.asList(w.getBuffer().toString()
-                .split(System.getProperty("line.separator"))));
+                .split("\n")));
         Collections.sort(result);
-
+//        System.out.println(expected);
+//        System.out.println(result);
         assertTrue(Obj.equals(expected, result));
     }
 
