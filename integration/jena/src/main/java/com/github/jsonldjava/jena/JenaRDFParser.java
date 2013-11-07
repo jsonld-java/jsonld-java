@@ -1,4 +1,4 @@
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.jena;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;

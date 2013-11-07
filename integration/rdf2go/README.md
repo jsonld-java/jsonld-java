@@ -10,11 +10,16 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java-rdf2go</artifactId>
-        <version>0.3-SNAPSHOT</version>
+        <version>0.3.0</version>
     </dependency>
+
+(Adjust for most recent <version>, as found in ``pom.xml``).
+
 
 Serializing RDF into JSON-LD using RDF2GoRDFParser
 --------------------------------------------------
+
+    import com.github.jsonldjava.rdf2go.*;
 
     ModelSet modelSet = ...; // also works with a Model
     RDF2GoRDFParser parser = new RDF2GoRDFParser();

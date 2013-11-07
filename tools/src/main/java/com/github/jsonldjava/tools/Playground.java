@@ -1,4 +1,4 @@
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.tools;
 
 import java.io.BufferedReader;
 import java.io.File;

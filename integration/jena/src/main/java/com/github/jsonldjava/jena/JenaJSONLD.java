@@ -37,7 +37,6 @@ import org.apache.jena.riot.adapters.RDFWriterRIOT;
 import org.apache.jena.riot.system.RiotLib;
 
 import com.github.jsonldjava.core.JsonLdProcessor;
-import com.github.jsonldjava.impl.JenaRDFParser;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.impl.IO_Ctl;
 

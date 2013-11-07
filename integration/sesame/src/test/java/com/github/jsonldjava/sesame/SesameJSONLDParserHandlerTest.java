@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.sesame;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -14,6 +14,9 @@ import org.openrdf.rio.AbstractParserHandlingTest;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParser;
 import org.openrdf.rio.RDFWriter;
+
+import com.github.jsonldjava.sesame.SesameJSONLDParser;
+import com.github.jsonldjava.sesame.SesameJSONLDWriter;
 
 /**
  * Unit tests for {@link SesameJSONLDParser} related to handling of datatypes

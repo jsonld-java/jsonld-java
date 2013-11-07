@@ -34,7 +34,7 @@ Make sure you have [m2e](http://eclipse.org/m2e/) installed.
  * Select `Maven Module`
  * Enter a `Module Name` which matches the RDF Library you're integrating (e.g. `jena`) 
  * `Next` -> `Next` (you should now be at the `Specify Archetype parameters` page
- * Change `Package` to `com.github.jsonldjava.impl`
+ * Change `Package` to `com.github.jsonldjava.YOURMODULE`
  * `Finish`
 
 ### Clean up automatically generated pom.xml
@@ -130,6 +130,9 @@ Using your Implementations
 
 ### RDFParser
 
+A JSONLD RDF parser is a class that can parse your frameworks' RDF model
+and generate JSON-LD.
+
 There are two ways to use your `RDFParser` implementation.
 
 Register your parser with the `JSONLD` class and set `options.format` when you call `fromRDF`
@@ -143,9 +146,22 @@ or pass an instance of your `RDFParser` into the `fromRDF` function
 
 ### JSONLDTripleCallback
 
+A JSONLD triple callback is a class that can populate your framework's
+RDF model from JSON-LD - being called for each triple (technically quad).
+
 Pass an instance of your `TripleCallback` to `JSONLD.toRDF`
 
 	Object yourOutput = JSONLD.toRDF(jsonld, new YourTripleCallback());
+
+
+Integrate with your framework
+-----------------------------
+Your framework might have its own system of readers and writers, where
+you should register JSON-LD as a supported format. Remember that here
+the "parse" direction is opposite of above, a 'reader' in e.g. Jena will
+be a class that can parse JSON-LD and populate a Jena model.
+
+
 
 Write Tests
 -----------

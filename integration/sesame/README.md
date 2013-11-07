@@ -1,5 +1,5 @@
 JSONLD-Java Sesame Integration module
-===================================
+=====================================
 
 USAGE
 =====
@@ -10,8 +10,11 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java-sesame</artifactId>
-        <version>0.1</version>
+        <version>0.3.0</version>
     </dependency>
+
+(Adjust for most recent <version>, as found in ``pom.xml``).
+
 
 Parsing JSON-LD using Sesame
 ----------------------------

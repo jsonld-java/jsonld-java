@@ -1,1 +1,1 @@
-com.github.jsonldjava.impl.SesameJSONLDWriterFactory
+com.github.jsonldjava.sesame.SesameJSONLDWriterFactory

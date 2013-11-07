@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.sesame;
 
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParser;

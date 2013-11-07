@@ -1,7 +1,13 @@
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.rdf2go;
 
-import java.net.URI;
+
 import java.util.List;
+
+import org.ontoware.rdf2go.RDF2Go;
+import org.ontoware.rdf2go.model.ModelSet;
+import org.ontoware.rdf2go.model.node.Node;
+import org.ontoware.rdf2go.model.node.Resource;
+import org.ontoware.rdf2go.model.node.URI;
 
 import com.github.jsonldjava.core.JSONLDTripleCallback;
 import com.github.jsonldjava.core.RDFDataset;
