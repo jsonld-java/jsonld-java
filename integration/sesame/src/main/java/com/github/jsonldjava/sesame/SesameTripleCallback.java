@@ -1,4 +1,4 @@
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.sesame;
 
 import java.util.List;
 

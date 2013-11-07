@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.sesame;
 
 import java.io.OutputStream;
 import java.io.Writer;

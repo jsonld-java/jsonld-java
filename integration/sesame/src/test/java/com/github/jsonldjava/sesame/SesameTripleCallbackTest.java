@@ -1,4 +1,4 @@
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.sesame;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,6 +16,7 @@ import org.openrdf.rio.helpers.StatementCollector;
 
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.sesame.SesameTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
 
 public class SesameTripleCallbackTest {

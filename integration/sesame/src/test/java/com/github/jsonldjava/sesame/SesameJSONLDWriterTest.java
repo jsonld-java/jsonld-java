@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.sesame;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -30,6 +30,9 @@ import org.openrdf.rio.WriterConfig;
 import org.openrdf.rio.helpers.BasicParserSettings;
 import org.openrdf.rio.helpers.BasicWriterSettings;
 import org.openrdf.rio.helpers.StatementCollector;
+
+import com.github.jsonldjava.sesame.SesameJSONLDParserFactory;
+import com.github.jsonldjava.sesame.SesameJSONLDWriterFactory;
 
 /**
  * @author Peter Ansell p_ansell@yahoo.com
