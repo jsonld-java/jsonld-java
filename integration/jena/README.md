@@ -17,7 +17,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java-jena</artifactId>
-        <version>0.3</version>
+        <version>0.3.0</version>
     </dependency>
 
 (Adjust for most recent <version>, as found in ``pom.xml``).
@@ -28,6 +28,7 @@ Initialization
 JenaJSONLD must be initialized so that the readers and writers are registered with Jena. You would typically
 do this from within a static {} block, although there is no danger in calling this several times:
 
+    import com.github.jsonldjava.jena.*;    
     static {
         JenaJSONLD.init();       
     }
@@ -198,7 +199,7 @@ This internal class is used by JSONLD-Java to "parse" an existing Jena model and
 
 The JenaRDFParser expects input as an instance of `com.hp.hpl.jena.rdf.model.Model` containing the entire graph.
 
-See [JenaRDFParserTest.java](./src/test/java/com/github/jsonldjava/impl/JenaRDFParserTest.java) for example Usage.
+See [JenaRDFParserTest.java](./src/test/java/com/github/jsonldjava/jena/JenaRDFParserTest.java) for example Usage.
 
 
 JenaTripleCallback
@@ -208,4 +209,4 @@ This internal class is used by JSONLD-Java to create an existing Jena model from
 
 The JenaTripleCallback returns an instance of `com.hp.hpl.jena.rdf.model.Model`
 
-See [JenaTripleCallbackTest.java](./src/test/java/com/github/jsonldjava/impl/JenaTripleCallbackTest.java) for example Usage.
+See [JenaTripleCallbackTest.java](./src/test/java/com/github/jsonldjava/jena/JenaTripleCallbackTest.java) for example Usage.
