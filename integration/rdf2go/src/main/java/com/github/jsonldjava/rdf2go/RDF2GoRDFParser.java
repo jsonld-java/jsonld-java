@@ -1,4 +1,4 @@
-package com.github.jsonldjava.impl;
+package com.github.jsonldjava.rdf2go;
 
 import java.net.URI;
 import java.util.Map;
