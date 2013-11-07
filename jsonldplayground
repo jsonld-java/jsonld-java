@@ -8,7 +8,7 @@
 
 if [ ! -d "tools/target/appassembler/bin" ]; then
     mvn -quiet clean install
-    chmod +x tools/target/appassembler/bin/*
 fi
 
+chmod u+x tools/target/appassembler/bin/*
 tools/target/appassembler/bin/jsonldplayground
