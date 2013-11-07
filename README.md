@@ -87,7 +87,7 @@ CHANGELOG
 * Integration packages renamed com.github.jsonldjava.sesame, 
   com.github.jsonldjava.jena etc. (Issue #76)  
 
-### 07.10.2013
+### 2013-10-07
 
 * Matched class names to Spec
  - Renamed `JSONLDException` to `JsonLdError`
@@ -97,15 +97,15 @@ CHANGELOG
  - Renamed `Options` to `JsonLdOptions`
 * All context related utility functions moved to be members of the `Context` class
 
-### 30.09.2013
+### 2013-09-30
 * Fixed JSON-LD to Jena to handle of BNodes
 
-### 02.09.2013
+### 2013-09-02
 
 * Add RDF2Go integration
 * Bump Sesame and Clerezza dependency versions
 
-### 18.06.2013
+### 2013-06-18
 
 * Bump to version 0.2
 * Updated Turtle integration
@@ -114,32 +114,32 @@ CHANGELOG
 * Fixed up seasame integration package names
 * Replaced depreciated Jackson code
 
-### 19.05.2013
+### 2013-05-19
 
 * Added Turtle RDFParser and TripleCallback
 * Changed Maven groupIds to `com.github.jsonld-java` to match github domain.
 * Released version 0.1
 
-### 16.05.2013
+### 2013-05-16
 
 * Updated core code to match [JSON-LD 1.0 Processing Algorithms and API / W3C Editor's Draft 14 May 2013](http://json-ld.org/spec/latest/json-ld-api/)
 * Deprecated JSONLDSerializer in favor of the RDFParser interface to better represent the purpose of the interface and better fit in with the updated core code.
 * Updated the JSONLDTripleCallback to better fit with the updated code.
 * Updated the Playground tool to support updated core code.
 
-### 07.05.2013
+### 2013-05-07
 
 * Changed base package names to com.github.jsonldjava
 * Reverted version to 0.1-SNAPSHOT to allow version incrementing pre 1.0 while allowing a 1.0 release when the json-ld spec is finalised.
 * Turned JSONLDTripleCallback into an interface.
 
-### 18.04.2013
+### 2013-04-18
 
 * Updated to Sesame 2.7.0, Jena 2.10.0, Jackson 2.1.4
 * Fixing a character encoding issue in the JSONLDProcessorTests
 * Bumping to 1.0.1 to reflect dependency changes
 
-### 30.10.2012
+### 2012-10-30
 
 * Brought the implementation up to date with the reference implementation (minus the normalization stuff)
 * Changed entry point for the functions to the static functions in the JSONLD class
