@@ -83,6 +83,10 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
 CHANGELOG
 =========
 
+## 2013-11-07
+* Integration packages renamed com.github.jsonldjava.sesame, 
+  com.github.jsonldjava.jena etc. (Issue #76)  
+
 ### 07.10.2013
 
 * Matched class names to Spec
