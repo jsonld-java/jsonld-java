@@ -10,11 +10,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.ontoware.rdf2go.RDF2Go;
+import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.Syntax;
 
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdProcessor;
-import com.github.jsonldjava.rdf2go.RDF2GoRDFParser;
 import com.github.jsonldjava.utils.Obj;
+
+
 
 /**
  * Unit tests for {@link RDF2GoRDFParser} containing a single test, including
