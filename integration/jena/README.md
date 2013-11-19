@@ -2,11 +2,9 @@
 JSONLD-Java Jena integration module
 ===================================
 
-This module integrates JSONLD-Java with Jena 0.11.0 or later.
+This module integrates JSONLD-Java with Jena 2.11.0 or later.
 
 There are several levels of integration, detailed under Usage below.
-
-
 
 USAGE
 =====
