@@ -113,30 +113,37 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
         }
     }
 
+    private void importGraph(RDFDataset result, Graph graph, String graphName){
+        ExtendedIterator<Triple> triples = graph.find(null, null, null);
+        while (triples.hasNext()) {
+            Triple t = triples.next();
+            final String subj = t.getSubject().getURI();
+            final String prop = t.getPredicate().getURI();
+            if (t.getObject().isLiteral()) {
+                final String value = t.getObject().getLiteralLexicalForm();
+                final String datatypeURI = t.getObject().getLiteralDatatypeURI();
+                String language = t.getObject().getLiteralLanguage();
+                if ("".equals(language)) {
+                    language = null;
+                }
+                result.addQuad(subj, prop, value, datatypeURI, language, graphName);
+            } else {
+                result.addQuad(subj, prop, t.getObject().getURI(), graphName);
+            }
+        }
+    }
+
     private void importDatasetGraph(RDFDataset result, DatasetGraph input) {
+
+        importGraph(result, input.getDefaultGraph(), "@default");
+
         Iterator<Node> graphNodes = input.listGraphNodes();
         while (graphNodes.hasNext()) {
             Node n = graphNodes.next();
             Graph graph = input.getGraph(n);
-            // TODO: do something with this?
             String graphName = n.getURI();
-            ExtendedIterator<Triple> triples = graph.find(null, null, null);
-            while (triples.hasNext()) {
-                Triple t = triples.next();
-                final String subj = t.getSubject().getURI();
-                final String prop = t.getPredicate().getURI();
-                if (t.getObject().isLiteral()) {
-                    final String value = t.getObject().getLiteralLexicalForm();
-                    final String datatypeURI = t.getObject().getLiteralDatatypeURI();
-                    String language = t.getObject().getLiteralLanguage();
-                    if ("".equals(language)) {
-                        language = null;
-                    }
-                    result.addQuad(subj, prop, value, datatypeURI, language, graphName);
-                } else {
-                    result.addQuad(subj, prop, t.getObject().getURI(), graphName);
-                }
-            }
+
+            importGraph(result, graph, graphName);
         }
     }
 
