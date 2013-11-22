@@ -1,3 +1,5 @@
+Note: this is the documentation for the current unstable development branch. [For the stable release documentation see here](https://github.com/jsonld-java/jsonld-java/blob/b8dc62201bb192875ed92e0156e26c94bc38ba82/README.md).
+
 JSONLD-JAVA
 ===========
 
