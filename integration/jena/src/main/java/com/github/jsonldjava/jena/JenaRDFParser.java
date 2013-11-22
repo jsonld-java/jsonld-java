@@ -7,6 +7,9 @@ import java.util.Map;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdError.Error;
 import com.github.jsonldjava.core.RDFDataset;
+import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -15,6 +18,8 @@ import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.sparql.core.DatasetGraph;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
 
@@ -108,6 +113,33 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
         }
     }
 
+    private void importDatasetGraph(RDFDataset result, DatasetGraph input) {
+        Iterator<Node> graphNodes = input.listGraphNodes();
+        while (graphNodes.hasNext()) {
+            Node n = graphNodes.next();
+            Graph graph = input.getGraph(n);
+            // TODO: do something with this?
+            String graphName = n.getURI();
+            ExtendedIterator<Triple> triples = graph.find(null, null, null);
+            while (triples.hasNext()) {
+                Triple t = triples.next();
+                final String subj = t.getSubject().getURI();
+                final String prop = t.getPredicate().getURI();
+                if (t.getObject().isLiteral()) {
+                    final String value = t.getObject().getLiteralLexicalForm();
+                    final String datatypeURI = t.getObject().getLiteralDatatypeURI();
+                    String language = t.getObject().getLiteralLanguage();
+                    if ("".equals(language)) {
+                        language = null;
+                    }
+                    result.addQuad(subj, prop, value, datatypeURI, language, graphName);
+                } else {
+                    result.addQuad(subj, prop, t.getObject().getURI(), graphName);
+                }
+            }
+        }
+    }
+
     @Override
     public RDFDataset parse(Object input) throws JsonLdError {
         final RDFDataset result = new RDFDataset();
@@ -116,7 +148,9 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
         if (input == null) {
             return result;
         }
-        if (input instanceof Resource) {
+        if (input instanceof DatasetGraph) {
+            importDatasetGraph(result, (DatasetGraph)input);
+    	} else if (input instanceof Resource) {
             importResource(result, (Resource) input);
         } else if (input instanceof Model) {
             importModel(result, (Model) input);

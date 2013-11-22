@@ -98,8 +98,8 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
             opts.setCompactArrays(true);
             // opts.keepFreeFloatingNodes = false;
             final JsonLdApi api = new JsonLdApi(opts);
-            final RDFDataset result = new RDFDataset(api);
             final JenaRDFParser parser = new JenaRDFParser();
+            final RDFDataset result = parser.parse(dataset);
             Object obj = api.fromRDF(result);
             final Map<String, Object> localCtx = new HashMap<String, Object>();
             localCtx.put("@context", ctx);

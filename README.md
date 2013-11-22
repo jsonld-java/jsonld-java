@@ -24,14 +24,14 @@ Code example
     // Number or null depending on the root object in the file).
     Object jsonObject = JSONUtils.fromInputStream(inputStream);
     // Call whichever JSONLD function you want! (e.g. compact)
-    Object compact = JSONLD.compact(jsonObject);
+    Object compact = JsonLdProcessor.compact(jsonObject);
     // Print out the result (or don't, it's your call!)
     System.out.println(JSONUtils.toString(normalized));
 
 Processor options
 -----------------
 
-The Options specified by the [JSON-LD API Specification](http://json-ld.org/spec/latest/json-ld-api/#jsonldoptions) are accessible via the `com.github.jsonldjava.core.Options` class, and each `JSONLD.*` function has an optional input to take an instance of this class.
+The Options specified by the [JSON-LD API Specification](http://json-ld.org/spec/latest/json-ld-api/#jsonldoptions) are accessible via the `com.github.jsonldjava.core.JsonLdOptions` class, and each `JsonLdProcessor.*` function has an optional input to take an instance of this class.
 
 RDF implementation specific code
 --------------------------------
@@ -76,14 +76,19 @@ to run only core package tests
 
 Implementation Reports conforming to the [JSON-LD Implementation Report](http://json-ld.org/test-suite/reports/#instructions-for-submitting-implementation-reports) document can be generated using the following command:
 
-    mvn test -pl core -Dtest=JSONLDProcessorTest -Dreport.format=<format>
+    mvn test -pl core -Dtest=JsonLdProcessorTest -Dreport.format=<format>
 
 Current possible values for `<format>` include JSON-LD (`application/ld+json` or `jsonld`), NQuads (`text/plain`, `nquads`, `ntriples`, `nq` or `nt`) and Turtle (`text/turtle`, `turtle` or `ttl`). `*` can be used to generate reports in all available formats.
 
 CHANGELOG
 =========
 
-## 2013-11-07
+### 2013-11-22
+
+* updated jena writer
+
+### 2013-11-07
+
 * Integration packages renamed com.github.jsonldjava.sesame, 
   com.github.jsonldjava.jena etc. (Issue #76)  
 

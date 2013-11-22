@@ -158,6 +158,10 @@ public class URL {
     }
 
     public static String removeBase(Object baseobj, String iri) {
+    	if (baseobj == null) {
+    		return iri;
+    	}
+    	
         URL base;
         if (baseobj instanceof String) {
             base = URL.parse((String) baseobj);
