@@ -1,11 +1,10 @@
 package com.github.jsonldjava.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.MappingJsonFactory;
+import com.github.jsonldjava.utils.JSONUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -17,23 +16,22 @@ import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.MappingJsonFactory;
-import com.github.jsonldjava.utils.JSONUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 public class DocumentLoader {
 
     public RemoteDocument loadDocument(String url) throws JsonLdError {
-        // TODO: use fromURL to load document
-        // TODO: get http link context
-        return new RemoteDocument("", null);
-        /*
-         * } catch (Exception e) { // If context cannot be dereferenced throw
-         * new JsonLdError(Error.LOADING_REMOTE_CONTEXT_FAILED,
-         * (String)context); }
-         */
+        RemoteDocument doc = new RemoteDocument(url, null);
+        try {
+            doc.setDocument(fromURL(new URL(url)));
+        } catch (Exception e) {
+          new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
+        }
+        return doc;
     }
 
     /**
