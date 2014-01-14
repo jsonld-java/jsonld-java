@@ -224,7 +224,7 @@ public class JsonLdProcessorTest {
                     // + name);
                     // Remote-doc tests are not currently supported
                     if (name.contains("remote-doc")) {
-                        return false;
+                        //return false;
                     }
                     return true;
                 }
@@ -255,7 +255,7 @@ public class JsonLdProcessorTest {
                             test.get("@id"), test });
                 } else {
                     // TODO: many disabled while implementation is incomplete
-                    // System.out.println("Skipping test: " + test.get("name"));
+                    System.out.println("Skipping test: " + test.get("name"));
                 }
             }
         }
