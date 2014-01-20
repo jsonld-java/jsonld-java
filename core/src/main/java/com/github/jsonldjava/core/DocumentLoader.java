@@ -59,16 +59,16 @@ public class DocumentLoader {
         final InputStream in = openStreamFromURL(url);
         try {
             final JsonParser parser = jsonFactory.createParser(in);
-            final JsonToken token = parser.nextToken();
-            Class<?> type;
-            if (token == JsonToken.START_OBJECT) {
-                type = Map.class;
-            } else if (token == JsonToken.START_ARRAY) {
-                type = List.class;
-            } else {
-                type = String.class;
-            }
             try {
+                final JsonToken token = parser.nextToken();
+                Class<?> type;
+                if (token == JsonToken.START_OBJECT) {
+                    type = Map.class;
+                } else if (token == JsonToken.START_ARRAY) {
+                    type = List.class;
+                } else {
+                    type = String.class;
+                }
                 return parser.readValueAs(type);
             } finally {
                 parser.close();
