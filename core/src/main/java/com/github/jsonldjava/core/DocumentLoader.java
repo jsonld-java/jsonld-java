@@ -111,13 +111,14 @@ public class DocumentLoader {
     }
 
     public static HttpClient getHttpClient() {
-        if (httpClient == null) {
+        HttpClient result = httpClient;
+        if (result == null) {
             synchronized (JSONUtils.class) {
-                if (httpClient == null) {
+                result = httpClient;
+                if (result == null) {
                     // Uses Apache SystemDefaultHttpClient rather than
                     // DefaultHttpClient, thus the normal proxy settings for the
-                    // JVM
-                    // will be used
+                    // JVM will be used
 
                     final DefaultHttpClient client = new SystemDefaultHttpClient();
                     // Support compressed data
@@ -129,10 +130,11 @@ public class DocumentLoader {
                     cacheConfig.setMaxCacheEntries(1000);
                     // and allow caching
                     httpClient = new CachingHttpClient(client, cacheConfig);
+                    result = httpClient;
                 }
             }
         }
-        return httpClient;
+        return result;
     }
 
     public static void setHttpClient(HttpClient nextHttpClient) {
