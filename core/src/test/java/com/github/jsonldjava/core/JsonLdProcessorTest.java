@@ -228,7 +228,7 @@ public class JsonLdProcessorTest {
                     // + name);
                     // Remote-doc tests are not currently supported
                     if (name.contains("remote-doc")) {
-                        // return false;
+                        return false;
                     }
                     return true;
                 }
@@ -284,7 +284,8 @@ public class JsonLdProcessorTest {
                 if (url.startsWith(this.base)) {
                     String classpath = url.substring(this.base.length());
                     final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                    final InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/" + classpath);
+                    final InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/"
+                            + classpath);
                     try {
                         return new RemoteDocument(url, JSONUtils.fromInputStream(inputStream));
                     } catch (final IOException e) {
@@ -298,28 +299,28 @@ public class JsonLdProcessorTest {
 
         public void setRedirectTo(String string) {
             // TODO Auto-generated method stub
-            
+
         }
 
         public void setHttpStatus(Integer integer) {
             // TODO Auto-generated method stub
-            
+
         }
 
         public void setContentType(String string) {
             // TODO Auto-generated method stub
-            
+
         }
 
         public void addHttpLink(String nextLink) {
             // TODO Auto-generated method stub
-            
+
         }
     }
 
     @Rule
     public Timeout timeout = new Timeout(10000);
-    
+
     @Rule
     public TemporaryFolder tempDir = new TemporaryFolder();
 
@@ -426,7 +427,8 @@ public class JsonLdProcessorTest {
         // OPTIONS SETUP
         final JsonLdOptions options = new JsonLdOptions("http://json-ld.org/test-suite/tests/"
                 + test.get("input"));
-        TestDocumentLoader testLoader = new TestDocumentLoader("http://json-ld.org/test-suite/tests/");
+        TestDocumentLoader testLoader = new TestDocumentLoader(
+                "http://json-ld.org/test-suite/tests/");
         options.documentLoader = testLoader;
         if (test.containsKey("option")) {
             final Map<String, Object> test_opts = (Map<String, Object>) test.get("option");
@@ -451,21 +453,21 @@ public class JsonLdProcessorTest {
                 options.setProduceGeneralizedRdf((Boolean) test_opts.get("produceGeneralizedRdf"));
             }
             if (test_opts.containsKey("redirectTo")) {
-                testLoader.setRedirectTo((String)test_opts.get("redirectTo"));
+                testLoader.setRedirectTo((String) test_opts.get("redirectTo"));
             }
             if (test_opts.containsKey("httpStatus")) {
-                testLoader.setHttpStatus((Integer)test_opts.get("httpStatus"));
+                testLoader.setHttpStatus((Integer) test_opts.get("httpStatus"));
             }
             if (test_opts.containsKey("contentType")) {
-                testLoader.setContentType((String)test_opts.get("contentType"));
+                testLoader.setContentType((String) test_opts.get("contentType"));
             }
             if (test_opts.containsKey("httpLink")) {
-                if(test_opts.get("httpLink") instanceof List) {
-                    for(String nextLink : (List<String>)test_opts.get("httpLink")) {
+                if (test_opts.get("httpLink") instanceof List) {
+                    for (String nextLink : (List<String>) test_opts.get("httpLink")) {
                         testLoader.addHttpLink(nextLink);
                     }
                 } else {
-                    testLoader.addHttpLink((String)test_opts.get("httpLink"));
+                    testLoader.addHttpLink((String) test_opts.get("httpLink"));
                 }
             }
         }

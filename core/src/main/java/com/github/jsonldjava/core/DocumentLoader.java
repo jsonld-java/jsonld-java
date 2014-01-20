@@ -29,7 +29,7 @@ public class DocumentLoader {
         try {
             doc.setDocument(fromURL(new URL(url)));
         } catch (Exception e) {
-          new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
+            new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
         }
         return doc;
     }
