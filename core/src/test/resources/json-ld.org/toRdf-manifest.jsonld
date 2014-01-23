@@ -2,7 +2,7 @@
   "@context": "http://json-ld.org/test-suite/context.jsonld",
   "@id": "",
   "@type": "mf:Manifest",
-  "name": "Serialization to RDF",
+  "name": "Transform JSON-LD to RDF",
   "description": "JSON-LD to RDF tests generate N-Quads output and use string comparison.",
   "baseIri": "http://json-ld.org/test-suite/tests/",
   "sequence": [
@@ -800,6 +800,13 @@
       },
       "input": "toRdf-0118-in.jsonld",
       "expect": "toRdf-0118-out.nq"
+    }, {
+      "@id": "#t0119",
+      "@type": ["jld:PositiveEvaluationTest", "jld:ToRDFTest"],
+      "name": "Blank nodes with reverse properties",
+      "purpose": "Proper (re-)labeling of blank nodes if used with reverse properties.",
+      "input": "toRdf-0119-in.jsonld",
+      "expect": "toRdf-0119-out.nq"
     }
   ]
 }

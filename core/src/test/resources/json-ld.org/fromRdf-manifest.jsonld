@@ -2,8 +2,8 @@
   "@context": "http://json-ld.org/test-suite/context.jsonld",
   "@id": "",
   "@type": "mf:Manifest",
-  "name": "Deserialize RDF to JSON-LD",
-  "description": "Deserialize RDF to JSON-LD tests take N-Quads input and use object comparison.",
+  "name": "Transform RDF to JSON-LD",
+  "description": "Transform RDF to JSON-LD tests take N-Quads input and use object comparison.",
   "baseIri": "http://json-ld.org/test-suite/tests/",
   "sequence": [
     {
@@ -128,13 +128,23 @@
     }, {
       "@id": "#t0018",
       "@type": ["jld:PositiveEvaluationTest", "jld:FromRDFTest"],
-      "name": "use native types flat",
+      "name": "use native types flag set to true",
       "purpose": "Literals with datatype xsd:boolean, xsd:integer, and xsd:double are serialized using native scalar values",
       "option": {
         "useNativeTypes": true
       },
       "input": "fromRdf-0018-in.nq",
       "expect": "fromRdf-0018-out.jsonld"
+    }, {
+      "@id": "#t0019",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FromRDFTest"],
+      "name": "use rdf:type flag set to false",
+      "purpose": "Setting useRdfType to true causes an rdf:type predicate to be treated like a normal property, not @type",
+      "option": {
+        "useRdfType": true
+      },
+      "input": "fromRdf-0019-in.nq",
+      "expect": "fromRdf-0019-out.jsonld"
     }
   ]
 }

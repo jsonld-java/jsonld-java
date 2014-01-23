@@ -318,8 +318,8 @@ public class JsonLdProcessorTest {
         }
     }
 
-    @Rule
-    public Timeout timeout = new Timeout(10000);
+    //@Rule
+    //public Timeout timeout = new Timeout(10000);
 
     @Rule
     public TemporaryFolder tempDir = new TemporaryFolder();
