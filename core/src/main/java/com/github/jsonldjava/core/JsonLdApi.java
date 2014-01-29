@@ -901,7 +901,7 @@ public class JsonLdApi {
     }
 
     void generateNodeMap(Object element, Map<String, Object> nodeMap, String activeGraph,
-            String activeSubject, String activeProperty, Map<String, Object> list)
+            Object activeSubject, String activeProperty, Map<String, Object> list)
             throws JsonLdError {
         // 1)
         if (element instanceof List) {
@@ -966,9 +966,10 @@ public class JsonLdApi {
             final Map<String, Object> result = new LinkedHashMap<String, Object>();
             result.put("@list", new ArrayList<Object>());
             // 5.2)
-            for (final Object item : (List<Object>) elem.get("@list")) {
-                generateNodeMap(item, nodeMap, activeGraph, activeSubject, activeProperty, result);
-            }
+            //for (final Object item : (List<Object>) elem.get("@list")) {
+            //    generateNodeMap(item, nodeMap, activeGraph, activeSubject, activeProperty, result);
+            //}
+            generateNodeMap(elem.get("@list"), nodeMap, activeGraph, activeSubject, activeProperty, result);
             // 5.3)
             JsonLdUtils.mergeValue(node, activeProperty, result);
         }
@@ -992,30 +993,37 @@ public class JsonLdApi {
                 tmp.put("@id", id);
                 graph.put(id, tmp);
             }
-            // 6.4)
-            if (activeProperty != null) {
+            // 6.4) TODO: SPEC this line is asked for by the spec, but it breaks various tests
+            //node = (Map<String, Object>) graph.get(id);
+            // 6.5)
+            if (activeSubject instanceof Map) {
+            	// 6.5.1)
+            	JsonLdUtils.mergeValue((Map<String, Object>) graph.get(id), activeProperty, activeSubject);
+            }
+            // 6.6)
+            else if (activeProperty != null) {
                 final Map<String, Object> reference = new LinkedHashMap<String, Object>();
                 reference.put("@id", id);
-                // 6.4.2)
+                // 6.6.2)
                 if (list == null) {
-                    // 6.4.2.1+2)
+                    // 6.6.2.1+2)
                     JsonLdUtils.mergeValue(node, activeProperty, reference);
                 }
-                // 6.4.3) TODO: SPEC says to add ELEMENT to @list member, should
+                // 6.6.3) TODO: SPEC says to add ELEMENT to @list member, should
                 // be REFERENCE
                 else {
                     JsonLdUtils.mergeValue(list, "@list", reference);
                 }
             }
-            // 6.5)
+            // TODO: SPEC this is removed in the spec now, but it's still needed (see 6.4)
             node = (Map<String, Object>) graph.get(id);
-            // 6.6)
+            // 6.7)
             if (elem.containsKey("@type")) {
                 for (final Object type : (List<Object>) elem.remove("@type")) {
                     JsonLdUtils.mergeValue(node, "@type", type);
                 }
             }
-            // 6.7)
+            // 6.8)
             if (elem.containsKey("@index")) {
                 final Object elemIndex = elem.remove("@index");
                 if (node.containsKey("@index")) {
@@ -1026,49 +1034,42 @@ public class JsonLdApi {
                     node.put("@index", elemIndex);
                 }
             }
-            // 6.8)
+            // 6.9)
             if (elem.containsKey("@reverse")) {
-                // 6.8.2+6.8.4)
+            	// 6.9.1)
+            	final Map<String, Object> referencedNode = new LinkedHashMap<String, Object>();
+                referencedNode.put("@id", id);
+                // 6.9.2+6.9.4)
                 final Map<String, Object> reverseMap = (Map<String, Object>) elem
                         .remove("@reverse");
-                // 6.8.3)
+                // 6.9.3)
                 for (final String property : reverseMap.keySet()) {
                     final List<Object> values = (List<Object>) reverseMap.get(property);
-                    // 6.8.3.1)
+                    // 6.9.3.1)
                     for (final Object value : values) {
-                        // 6.8.1) TODO: SPEC for pass by reference languages,
-                        // referencedNode needs to be recreated for each loop,
-                        // otherwise the @id member gets removed inside the
-                        // generateNodeMap call and screws things up for
-                        // subsequent calls
-                        final Map<String, Object> referencedNode = new LinkedHashMap<String, Object>();
-                        referencedNode.put("@id", id);
-                        // 6.8.3.1.1)
-                        JsonLdUtils.mergeValue((Map<String, Object>) value, property,
-                                referencedNode);
-                        // 6.8.3.1.2)
-                        generateNodeMap(value, nodeMap, activeGraph, null, null, null);
+                        // 6.9.3.1.1)
+                        generateNodeMap(value, nodeMap, activeGraph, referencedNode, property, null);
                     }
                 }
             }
-            // 6.9)
+            // 6.10)
             if (elem.containsKey("@graph")) {
                 generateNodeMap(elem.remove("@graph"), nodeMap, id, null, null, null);
             }
-            // 6.10)
+            // 6.11)
             final List<String> keys = new ArrayList<String>(elem.keySet());
             Collections.sort(keys);
             for (String property : keys) {
                 final Object value = elem.get(property);
-                // 6.10.1)
+                // 6.11.1)
                 if (property.startsWith("_:")) {
                     property = generateBlankNodeIdentifier(property);
                 }
-                // 6.10.2)
+                // 6.11.2)
                 if (!node.containsKey(property)) {
                     node.put(property, new ArrayList<Object>());
                 }
-                // 6.10.3)
+                // 6.11.3)
                 generateNodeMap(value, nodeMap, activeGraph, id, property, null);
             }
         }

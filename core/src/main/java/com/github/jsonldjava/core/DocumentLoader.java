@@ -1,11 +1,10 @@
 package com.github.jsonldjava.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.MappingJsonFactory;
+import com.github.jsonldjava.utils.JSONUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -17,23 +16,22 @@ import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.MappingJsonFactory;
-import com.github.jsonldjava.utils.JSONUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 public class DocumentLoader {
 
     public RemoteDocument loadDocument(String url) throws JsonLdError {
-        // TODO: use fromURL to load document
-        // TODO: get http link context
-        return new RemoteDocument("", null);
-        /*
-         * } catch (Exception e) { // If context cannot be dereferenced throw
-         * new JsonLdError(Error.LOADING_REMOTE_CONTEXT_FAILED,
-         * (String)context); }
-         */
+        RemoteDocument doc = new RemoteDocument(url, null);
+        try {
+            doc.setDocument(fromURL(new URL(url)));
+        } catch (Exception e) {
+            new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
+        }
+        return doc;
     }
 
     /**
@@ -61,16 +59,16 @@ public class DocumentLoader {
         final InputStream in = openStreamFromURL(url);
         try {
             final JsonParser parser = jsonFactory.createParser(in);
-            final JsonToken token = parser.nextToken();
-            Class<?> type;
-            if (token == JsonToken.START_OBJECT) {
-                type = Map.class;
-            } else if (token == JsonToken.START_ARRAY) {
-                type = List.class;
-            } else {
-                type = String.class;
-            }
             try {
+                final JsonToken token = parser.nextToken();
+                Class<?> type;
+                if (token == JsonToken.START_OBJECT) {
+                    type = Map.class;
+                } else if (token == JsonToken.START_ARRAY) {
+                    type = List.class;
+                } else {
+                    type = String.class;
+                }
                 return parser.readValueAs(type);
             } finally {
                 parser.close();
@@ -113,13 +111,14 @@ public class DocumentLoader {
     }
 
     public static HttpClient getHttpClient() {
-        if (httpClient == null) {
+        HttpClient result = httpClient;
+        if (result == null) {
             synchronized (JSONUtils.class) {
-                if (httpClient == null) {
+                result = httpClient;
+                if (result == null) {
                     // Uses Apache SystemDefaultHttpClient rather than
                     // DefaultHttpClient, thus the normal proxy settings for the
-                    // JVM
-                    // will be used
+                    // JVM will be used
 
                     final DefaultHttpClient client = new SystemDefaultHttpClient();
                     // Support compressed data
@@ -131,10 +130,11 @@ public class DocumentLoader {
                     cacheConfig.setMaxCacheEntries(1000);
                     // and allow caching
                     httpClient = new CachingHttpClient(client, cacheConfig);
+                    result = httpClient;
                 }
             }
         }
-        return httpClient;
+        return result;
     }
 
     public static void setHttpClient(HttpClient nextHttpClient) {

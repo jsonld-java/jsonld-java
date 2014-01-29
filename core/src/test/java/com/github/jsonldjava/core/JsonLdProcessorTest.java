@@ -21,14 +21,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -38,6 +41,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.jsonldjava.impl.TurtleTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
 import com.github.jsonldjava.utils.Obj;
+import com.github.jsonldjava.utils.TestUtils;
 
 @RunWith(Parameterized.class)
 public class JsonLdProcessorTest {
@@ -255,7 +259,7 @@ public class JsonLdProcessorTest {
                             test.get("@id"), test });
                 } else {
                     // TODO: many disabled while implementation is incomplete
-                    // System.out.println("Skipping test: " + test.get("name"));
+                    System.out.println("Skipping test: " + test.get("name"));
                 }
             }
         }
@@ -278,21 +282,49 @@ public class JsonLdProcessorTest {
             if (url.contains(":")) {
                 // check if the url is relative to the test base
                 if (url.startsWith(this.base)) {
-                    url = url.substring(this.base.length());
-                } else {
-                    // we can't load remote documents from the test suite
-                    throw new JsonLdError(JsonLdError.Error.NOT_IMPLEMENTED);
+                    String classpath = url.substring(this.base.length());
+                    final ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                    final InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/"
+                            + classpath);
+                    try {
+                        return new RemoteDocument(url, JSONUtils.fromInputStream(inputStream));
+                    } catch (final IOException e) {
+                        throw new JsonLdError(JsonLdError.Error.LOADING_DOCUMENT_FAILED);
+                    }
                 }
             }
-            final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            final InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/" + url);
-            try {
-                return new RemoteDocument(url, JSONUtils.fromInputStream(inputStream));
-            } catch (final IOException e) {
-                throw new JsonLdError(JsonLdError.Error.LOADING_DOCUMENT_FAILED);
-            }
+            // we can't load this remote document from the test suite
+            throw new JsonLdError(JsonLdError.Error.NOT_IMPLEMENTED);
+        }
+
+        public void setRedirectTo(String string) {
+            // TODO Auto-generated method stub
+
+        }
+
+        public void setHttpStatus(Integer integer) {
+            // TODO Auto-generated method stub
+
+        }
+
+        public void setContentType(String string) {
+            // TODO Auto-generated method stub
+
+        }
+
+        public void addHttpLink(String nextLink) {
+            // TODO Auto-generated method stub
+
         }
     }
+
+    //@Rule
+    //public Timeout timeout = new Timeout(10000);
+
+    @Rule
+    public TemporaryFolder tempDir = new TemporaryFolder();
+
+    private File testDir;
 
     private final String group;
     private final Map<String, Object> test;
@@ -302,17 +334,9 @@ public class JsonLdProcessorTest {
         this.test = test;
     }
 
-    public static String join(Collection<String> list, String delim) {
-        final StringBuilder builder = new StringBuilder();
-        final Iterator<String> iter = list.iterator();
-        while (iter.hasNext()) {
-            builder.append(iter.next());
-            if (!iter.hasNext()) {
-                break;
-            }
-            builder.append(delim);
-        }
-        return builder.toString();
+    @Before
+    public void setUp() throws Exception {
+        testDir = tempDir.newFolder("jsonld");
     }
 
     @Test
@@ -344,7 +368,7 @@ public class JsonLdProcessorTest {
                 inputLines.add(line);
             }
             // Collections.sort(inputLines);
-            input = join(inputLines, "\n");
+            input = TestUtils.join(inputLines, "\n");
         }
         Object expect = null;
         String sparql = null;
@@ -377,7 +401,7 @@ public class JsonLdProcessorTest {
                         expectLines.add(line);
                     }
                     Collections.sort(expectLines);
-                    expect = join(expectLines, "\n");
+                    expect = TestUtils.join(expectLines, "\n");
                 } else {
                     expect = "";
                     assertFalse("Unknown expect type: " + expectType, true);
@@ -403,7 +427,9 @@ public class JsonLdProcessorTest {
         // OPTIONS SETUP
         final JsonLdOptions options = new JsonLdOptions("http://json-ld.org/test-suite/tests/"
                 + test.get("input"));
-        options.documentLoader = new TestDocumentLoader("http://json-ld.org/test-suite/tests/");
+        TestDocumentLoader testLoader = new TestDocumentLoader(
+                "http://json-ld.org/test-suite/tests/");
+        options.documentLoader = testLoader;
         if (test.containsKey("option")) {
             final Map<String, Object> test_opts = (Map<String, Object>) test.get("option");
             if (test_opts.containsKey("base")) {
@@ -427,16 +453,22 @@ public class JsonLdProcessorTest {
                 options.setProduceGeneralizedRdf((Boolean) test_opts.get("produceGeneralizedRdf"));
             }
             if (test_opts.containsKey("redirectTo")) {
-                // TODO: Handle redirectTo for remote-doc tests
+                testLoader.setRedirectTo((String) test_opts.get("redirectTo"));
             }
             if (test_opts.containsKey("httpStatus")) {
-                // TODO: Handle httpStatus for remote-doc tests
+                testLoader.setHttpStatus((Integer) test_opts.get("httpStatus"));
             }
             if (test_opts.containsKey("contentType")) {
-                // TODO: Handle contentType for remote-doc tests
+                testLoader.setContentType((String) test_opts.get("contentType"));
             }
             if (test_opts.containsKey("httpLink")) {
-                // TODO: Handle httpLink for remote-doc tests
+                if (test_opts.get("httpLink") instanceof List) {
+                    for (String nextLink : (List<String>) test_opts.get("httpLink")) {
+                        testLoader.addHttpLink(nextLink);
+                    }
+                } else {
+                    testLoader.addHttpLink((String) test_opts.get("httpLink"));
+                }
             }
         }
 
@@ -520,7 +552,7 @@ public class JsonLdProcessorTest {
                 });
                 put("earl:subject", new LinkedHashMap<String, Object>() {
                     {
-                        put("@id", "http://github.com/jsonld-java/jsonld-java");
+                        put("@id", "https://github.com/jsonld-java/jsonld-java");
                     }
                 });
                 put("earl:test", new LinkedHashMap<String, Object>() {
