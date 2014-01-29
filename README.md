@@ -85,6 +85,12 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
 CHANGELOG
 =========
 
+### 2014-01-29
+
+* Updated to final Recommendation
+* Namespaces supported by Sesame integration module
+* Initial implementation of remote document loading
+
 ### 2013-11-22
 
 * updated jena writer
