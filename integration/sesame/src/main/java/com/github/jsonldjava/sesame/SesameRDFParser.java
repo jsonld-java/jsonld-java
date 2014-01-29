@@ -19,9 +19,8 @@ import com.github.jsonldjava.core.RDFDataset;
 
 public class SesameRDFParser implements com.github.jsonldjava.core.RDFParser {
 
-    public void setPrefix(String fullUri, String prefix) {
-        // TODO: graphs?
-        // _context.put(prefix, fullUri);
+    public void setPrefix(RDFDataset result, String fullUri, String prefix) {
+        result.setNamespace(fullUri, prefix);
     }
 
     public void handleStatement(RDFDataset result, Statement nextStatement) {
@@ -83,7 +82,7 @@ public class SesameRDFParser implements com.github.jsonldjava.core.RDFParser {
             if (input instanceof Model) {
                 final Set<Namespace> namespaces = ((Model) input).getNamespaces();
                 for (final Namespace nextNs : namespaces) {
-                    setPrefix(nextNs.getName(), nextNs.getPrefix());
+                    result.setNamespace(nextNs.getName(), nextNs.getPrefix());
                 }
             }
 
