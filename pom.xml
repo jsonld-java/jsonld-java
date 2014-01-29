@@ -46,7 +46,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		
 		<clerezza.version>0.13</clerezza.version>
-		<jackson.version>2.2.3</jackson.version>
+		<jackson.version>2.3.1</jackson.version>
 		<jena.version>2.11.0</jena.version>
 		<junit.version>4.11</junit.version>
 		<rdf2go.version>4.7.4</rdf2go.version>

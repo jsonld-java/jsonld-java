@@ -60,7 +60,7 @@ public class JSONUtils {
     private static volatile HttpClient httpClient;
 
     public static Object fromString(String jsonString) throws JsonParseException,
-            JsonMappingException, IOException {
+             IOException {
         return fromReader(new StringReader(jsonString));
     }
 
@@ -90,13 +90,13 @@ public class JSONUtils {
     }
 
     public static void write(Writer w, Object jsonObject) throws JsonGenerationException,
-            JsonMappingException, IOException {
+             IOException {
         final JsonGenerator jw = JSON_FACTORY.createGenerator(w);
         jw.writeObject(jsonObject);
     }
 
     public static void writePrettyPrint(Writer w, Object jsonObject)
-            throws JsonGenerationException, JsonMappingException, IOException {
+            throws JsonGenerationException,  IOException {
         final JsonGenerator jw = JSON_FACTORY.createGenerator(w);
         jw.useDefaultPrettyPrinter();
         jw.writeObject(jsonObject);
