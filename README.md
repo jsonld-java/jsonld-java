@@ -90,6 +90,7 @@ CHANGELOG
 * Updated to final Recommendation
 * Namespaces supported by Sesame integration module
 * Initial implementation of remote document loading
+* Bump to Jackson-2.3.1
 
 ### 2013-11-22
 
