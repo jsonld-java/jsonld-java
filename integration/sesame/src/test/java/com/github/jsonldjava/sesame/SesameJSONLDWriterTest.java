@@ -29,6 +29,8 @@ import org.openrdf.rio.RDFWriterTest;
 import org.openrdf.rio.WriterConfig;
 import org.openrdf.rio.helpers.BasicParserSettings;
 import org.openrdf.rio.helpers.BasicWriterSettings;
+import org.openrdf.rio.helpers.JSONLDMode;
+import org.openrdf.rio.helpers.JSONLDSettings;
 import org.openrdf.rio.helpers.StatementCollector;
 
 import com.github.jsonldjava.sesame.SesameJSONLDParserFactory;
@@ -76,8 +78,9 @@ public class SesameJSONLDWriterTest extends RDFWriterTest {
         final WriterConfig writerConfig = rdfWriter.getWriterConfig();
         writerConfig.set(BasicWriterSettings.RDF_LANGSTRING_TO_LANG_LITERAL, true);
         writerConfig.set(BasicWriterSettings.XSD_STRING_TO_PLAIN_LITERAL, true);
-        rdfWriter.handleNamespace("ex", ex);
+        writerConfig.set(JSONLDSettings.JSONLD_MODE, JSONLDMode.COMPACT);
         rdfWriter.startRDF();
+        rdfWriter.handleNamespace("ex", ex);
         rdfWriter.handleStatement(st1);
         rdfWriter.handleStatement(st2);
         rdfWriter.handleStatement(st3);
@@ -97,7 +100,7 @@ public class SesameJSONLDWriterTest extends RDFWriterTest {
         rdfParser.setRDFHandler(new StatementCollector(model));
 
         rdfParser.parse(in, "foo:bar");
-
+        assertEquals("Unexpected number of namespaces", 1, model.getNamespaces().size());
         assertEquals("Unexpected number of statements", 6, model.size());
         final Model bnodeModel = model.filter(null, uri1,
                 vf.createLiteral(plainLit.getLabel(), XMLSchema.STRING));

@@ -1,6 +1,7 @@
 package com.github.jsonldjava.sesame;
 
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -172,6 +173,13 @@ public class SesameTripleCallback implements JSONLDTripleCallback {
 
     @Override
     public Object call(final RDFDataset dataset) {
+        for(Entry<String, String> nextNamespace : dataset.getNamespaces().entrySet()) {
+            try {
+                handler.handleNamespace(nextNamespace.getKey(), nextNamespace.getValue());
+            } catch (RDFHandlerException e) {
+                throw new RuntimeException("Failed handling namespace", e);
+            }
+        }
         for (String graphName : dataset.keySet()) {
             final List<RDFDataset.Quad> quads = dataset.getQuads(graphName);
             if ("@default".equals(graphName)) {

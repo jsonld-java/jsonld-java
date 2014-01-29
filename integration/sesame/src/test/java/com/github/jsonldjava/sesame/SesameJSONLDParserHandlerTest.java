@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 
 import org.openrdf.model.Model;
+import org.openrdf.model.Namespace;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.AbstractParserHandlingTest;
 import org.openrdf.rio.RDFHandlerException;
@@ -66,6 +67,9 @@ public class SesameJSONLDParserHandlerTest extends AbstractParserHandlingTest {
 
         final RDFWriter jsonldWriter = new SesameJSONLDWriter(writer);
         jsonldWriter.startRDF();
+        for (final Namespace prefix : statements.getNamespaces()) {
+            jsonldWriter.handleNamespace(prefix.getPrefix(), prefix.getName());
+        }
         for (final Statement nextStatement : statements) {
             jsonldWriter.handleStatement(nextStatement);
         }
