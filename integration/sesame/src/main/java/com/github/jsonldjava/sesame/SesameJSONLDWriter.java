@@ -9,8 +9,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.openrdf.model.Model;
+import org.openrdf.model.Namespace;
 import org.openrdf.model.Statement;
 import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.rio.RDFFormat;
@@ -92,7 +98,12 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
                 output = JsonLdProcessor.frame(output, inframe, opts);
             }
             if (mode == JSONLDMode.COMPACT) {
-                output = JsonLdProcessor.compact(output, null, opts);
+                final Map<String, Object> ctx = new LinkedHashMap<String, Object>();
+                addPrefixes(ctx, model.getNamespaces());
+                final Map<String, Object> localCtx = new HashMap<String, Object>();
+                localCtx.put("@context", ctx);
+                
+                output = JsonLdProcessor.compact(output, localCtx, opts);
             }
             if (getWriterConfig().get(BasicWriterSettings.PRETTY_PRINT)) {
                 JSONUtils.writePrettyPrint(writer, output);
@@ -125,4 +136,10 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
         return RDFFormat.JSONLD;
     }
 
+    private static void addPrefixes(Map<String, Object> ctx, Set<Namespace> namespaces) {
+        for (final Namespace ns : namespaces) {
+            ctx.put(ns.getPrefix(), ns.getName());
+        }
+
+    }
 }
