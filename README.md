@@ -14,7 +14,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.2</version>
+        <version>0.3</version>
     </dependency>
 
 Code example
@@ -84,6 +84,11 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
 
 CHANGELOG
 =========
+
+### 2014-02-06
+
+* Release version 0.3
+* Bump to Sesame-2.7.10
 
 ### 2014-01-29
 
