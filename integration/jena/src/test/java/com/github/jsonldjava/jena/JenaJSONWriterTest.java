@@ -14,7 +14,6 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-@Ignore("FIXME")
 public class JenaJSONWriterTest {
 
     @BeforeClass
