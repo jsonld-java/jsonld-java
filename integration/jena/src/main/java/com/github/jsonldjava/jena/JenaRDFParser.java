@@ -79,9 +79,7 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
 
     public void importModel(RDFDataset result, Model model) {
 
-        // TODO: figure out what to do with this, as setPrefix itself currently
-        // does nothing
-        // add the prefixes to the context
+        // Map the contexts from the Model to the RDFDataset
         final Map<String, String> nsPrefixMap = model.getNsPrefixMap();
         for (final String prefix : nsPrefixMap.keySet()) {
             result.setNamespace(prefix, nsPrefixMap.get(prefix));
@@ -124,7 +122,7 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
         }
     }
 
-    private void importGraph(RDFDataset result, Graph graph, String graphName){
+    private void importGraph(RDFDataset result, Graph graph, String graphName) {
         ExtendedIterator<Triple> triples = graph.find(null, null, null);
         while (triples.hasNext()) {
             Triple t = triples.next();
@@ -167,8 +165,8 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
             return result;
         }
         if (input instanceof DatasetGraph) {
-            importDatasetGraph(result, (DatasetGraph)input);
-    	} else if (input instanceof Resource) {
+            importDatasetGraph(result, (DatasetGraph) input);
+        } else if (input instanceof Resource) {
             importResource(result, (Resource) input);
         } else if (input instanceof Model) {
             importModel(result, (Model) input);
