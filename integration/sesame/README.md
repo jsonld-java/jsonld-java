@@ -1,3 +1,5 @@
+Note: this is the documentation for the current unstable development branch. [For the stable release documentation see here](https://github.com/jsonld-java/jsonld-java/blob/v0.3/integration/sesame/README.md)
+
 JSONLD-Java Sesame Integration module
 =====================================
 
@@ -10,7 +12,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java-sesame</artifactId>
-        <version>0.3.0</version>
+        <version>0.4-SNAPSHOT</version>
     </dependency>
 
 (Adjust for most recent <version>, as found in ``pom.xml``).

@@ -1,3 +1,5 @@
+Note: this is the documentation for the current unstable development branch. [For the stable release documentation see here](https://github.com/jsonld-java/jsonld-java/blob/v0.3/integration/jena/README.md)
+
 ===================================
 JSONLD-Java Jena integration module
 ===================================
@@ -15,7 +17,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java-jena</artifactId>
-        <version>0.3.0</version>
+        <version>0.4-SNAPSHOT</version>
     </dependency>
 
 (Adjust for most recent <version>, as found in ``pom.xml``).
