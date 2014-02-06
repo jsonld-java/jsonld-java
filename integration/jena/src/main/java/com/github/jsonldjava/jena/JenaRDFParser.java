@@ -3,6 +3,7 @@ package com.github.jsonldjava.jena;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdError.Error;
@@ -24,17 +25,17 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
 
     // name generator
-    Iterator<String> _ng = new Iterator<String>() {
-        int i = 0;
+    protected Iterator<String> _ng = new Iterator<String>() {
+        final AtomicInteger i = new AtomicInteger(0);
 
         @Override
         public void remove() {
-            i++;
+            // Do nothing for remove
         }
 
         @Override
         public String next() {
-            return "_:t" + i++;
+            return "_:t" + i.incrementAndGet();
         }
 
         @Override
@@ -42,7 +43,7 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
             return true;
         }
     };
-    Map<String, String> _bns = new LinkedHashMap<String, String>();
+    protected Map<String, String> _bns = new LinkedHashMap<String, String>();
 
     protected String getNameForBlankNode(String node) {
         if (!_bns.containsKey(node)) {
