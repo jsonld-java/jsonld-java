@@ -51,11 +51,11 @@ PLAYGROUND
 
 This is a simple application which provides command line access to JSON-LD functions
 
-### initial setup
+### Initial setup
 
     chmod +x ./jsonldplayground
 
-### usage
+### Usage
 
 run the following to get usage details:
 
@@ -79,10 +79,15 @@ or
 
 to run only core package tests
 
+### Implementation Reports for JSONLD-Java conformance with JSONLD-1.0
 
-### Generating Implementation Report
+The Implementation Reports documenting the conformance of JSONLD-Java with JSONLD-1.0 are available at:
 
-Implementation Reports conforming to the [JSON-LD Implementation Report](http://json-ld.org/test-suite/reports/#instructions-for-submitting-implementation-reports) document can be generated using the following command:
+https://github.com/jsonld-java/jsonld-java/tree/master/core/reports
+
+### Regenerating Implementation Report
+
+Implementation Reports conforming to the [JSON-LD Implementation Report](http://json-ld.org/test-suite/reports/#instructions-for-submitting-implementation-reports) document can be regenerated using the following command:
 
     mvn test -pl core -Dtest=JsonLdProcessorTest -Dreport.format=<format>
 
