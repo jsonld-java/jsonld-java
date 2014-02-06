@@ -26,8 +26,12 @@ public class TestUtils {
     }
 
     public static String copyResourceToFile(File testDir, String resource) throws Exception {
-        String filename = resource.substring(resource.lastIndexOf('/'));
-        String directory = resource.substring(0, resource.lastIndexOf('/'));
+        String filename = resource;
+        String directory = "";
+        if (resource.contains("/")) {
+            filename = resource.substring(resource.lastIndexOf('/'));
+            directory = resource.substring(0, resource.lastIndexOf('/'));
+        }
         File nextDirectory = new File(testDir, directory);
         nextDirectory.mkdirs();
         File nextFile = new File(nextDirectory, filename);
