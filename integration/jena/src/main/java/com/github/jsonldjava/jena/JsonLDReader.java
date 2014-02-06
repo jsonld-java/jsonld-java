@@ -32,6 +32,10 @@ import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.SyntaxLabels;
 
 import com.github.jsonldjava.core.JSONLDTripleCallback;
+import com.github.jsonldjava.core.JsonLdApi;
+import com.github.jsonldjava.core.JsonLdError;
+import com.github.jsonldjava.core.JsonLdOptions;
+import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.utils.JSONUtils;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
@@ -46,7 +50,6 @@ public class JsonLDReader implements ReaderRIOT {
     public void read(InputStream in, String baseURI, ContentType ct, final StreamRDF output,
             Context context) {
         try {
-            final Object jsonObject = JSONUtils.fromInputStream(in);
             final JSONLDTripleCallback callback = new JSONLDTripleCallback() {
 
                 @Override
@@ -81,9 +84,12 @@ public class JsonLDReader implements ReaderRIOT {
                     return null;
                 }
             };
-            // final Options options = new Options(baseURI);
-            // JsonLdApi.toRDF(jsonObject, callback, options);
+            JsonLdOptions options = new JsonLdOptions(baseURI);
+            options.useNamespaces = true;
+            JsonLdProcessor.toRDF(JSONUtils.fromInputStream(in), callback, options);
         } catch (final IOException e) {
+            throw new RiotException("Could not read JSONLD: " + e, e);
+        } catch (final JsonLdError e) {
             throw new RiotException("Could not read JSONLD: " + e, e);
         }
     }
