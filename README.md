@@ -100,6 +100,7 @@ CHANGELOG
 
 * Release version 0.3
 * Bump to Sesame-2.7.10
+* Fix Jena module to use new API
 
 ### 2014-01-29
 
