@@ -56,6 +56,16 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
         // _context.put(prefix, fullUri);
     }
 
+    public String getID(Node r) {
+        String rval = null;
+        if (r.isBlank()) {
+            rval = getNameForBlankNode(r.getBlankNodeLabel());
+        } else {
+            rval = r.getURI();
+        }
+        return rval;
+    }
+
     public String getID(Resource r) {
         String rval = null;
         if (r.isAnon()) {
@@ -117,7 +127,7 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
         ExtendedIterator<Triple> triples = graph.find(null, null, null);
         while (triples.hasNext()) {
             Triple t = triples.next();
-            final String subj = t.getSubject().getURI();
+            final String subj = getID(t.getSubject());
             final String prop = t.getPredicate().getURI();
             if (t.getObject().isLiteral()) {
                 final String value = t.getObject().getLiteralLexicalForm();
@@ -128,7 +138,7 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
                 }
                 result.addQuad(subj, prop, value, datatypeURI, language, graphName);
             } else {
-                result.addQuad(subj, prop, t.getObject().getURI(), graphName);
+                result.addQuad(subj, prop, getID(t.getObject()), graphName);
             }
         }
     }
