@@ -25,13 +25,19 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.jena.riot.RDFDataMgr;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import com.github.jsonldjava.utils.TestUtils;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.DatasetFactory;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -40,7 +46,6 @@ import com.hp.hpl.jena.sparql.lib.DatasetLib;
 import com.hp.hpl.jena.sparql.sse.SSE;
 
 /** tests : JSONLD->RDF ; JSONLD->RDF->JSONLD */
-@Ignore("FIXME")
 public class JenaRiotReadWriteTest {
 
     @BeforeClass
@@ -54,54 +59,107 @@ public class JenaRiotReadWriteTest {
         JenaJSONLD.init();
     }
 
-    @Test
-    public void read_g01() {
-        graphJ2R("graph1.jsonld", "graph1.ttl");
+    private static boolean isIsomorphic(Dataset ds1, Dataset ds2) {
+        return DatasetLib.isomorphic(ds1, ds2);
+    }
+
+    @Rule
+    public TemporaryFolder tempDir = new TemporaryFolder();
+
+    private File testDir;
+
+    @Before
+    public void setUp() throws Exception {
+        testDir = tempDir.newFolder("jenarioreadwritetest");
     }
 
     @Test
-    public void read_ds01() {
+    public void read_ds01() throws Exception {
         datasetJ2R("graph1.jsonld", "graph1.ttl");
     }
 
     @Test
-    public void read_ds02() {
+    public void read_ds02() throws Exception {
         datasetJ2R("dataset1.jsonld", "dataset1.trig");
     }
 
-    private void graphJ2R(String inResource, String outResource) {
-        final Model model1 = loadModelFromClasspathResource(inResource);
+    @Test
+    public void read_g01() throws Exception {
+        graphJ2R("graph1.jsonld", "graph1.ttl");
+    }
+
+    @Test
+    public void roundtrip_01() throws Exception {
+        rtRJRg("graph1.ttl");
+    }
+
+    @Test
+    public void roundtrip_02() throws Exception {
+        rtRJRds("graph1.ttl");
+    }
+
+    @Test
+    public void roundtrip_03() throws Exception {
+        rtRJRds("dataset1.trig");
+    }
+
+    private void datasetJ2R(String inResource, String outResource) throws Exception {
+        final Dataset ds1 = loadDatasetFromClasspathResource("/com/github/jsonldjava/jena/"
+                + inResource);
+        final Dataset ds2 = loadDatasetFromClasspathResource("/com/github/jsonldjava/jena/"
+                + outResource);
+        assertTrue("Input dataset " + inResource + " not isomorphic to output dataset"
+                + outResource, isIsomorphic(ds1, ds2));
+    }
+
+    private void graphJ2R(String inResource, String outResource) throws Exception {
+        final Model model1 = loadModelFromClasspathResource("/com/github/jsonldjava/jena/"
+                + inResource);
         assertFalse("Failed to load input model from classpath: " + inResource, model1.isEmpty());
-        final Model model2 = loadModelFromClasspathResource(outResource);
+        final Model model2 = loadModelFromClasspathResource("/com/github/jsonldjava/jena/"
+                + outResource);
         assertFalse("Failed to load output model from classpath: " + outResource, model2.isEmpty());
         assertTrue("Input graph " + inResource + " not isomorphic to output dataset" + outResource,
                 model1.isIsomorphicWith(model2));
     }
 
-    private void datasetJ2R(String inResource, String outResource) {
-        final Dataset ds1 = loadDatasetFromClasspathResource(inResource);
-        final Dataset ds2 = loadDatasetFromClasspathResource(outResource);
-        assertTrue("Input dataset " + inResource + " not isomorphic to output dataset"
-                + outResource, isIsomorphic(ds1, ds2));
+    private Dataset loadDatasetFromClasspathResource(String resource) throws Exception {
+        final InputStream url = this.getClass().getResourceAsStream(resource);
+        assertNotNull("Could not find resource on classpath: " + resource, url);
+        return RDFDataMgr.loadDataset(TestUtils.copyResourceToFile(testDir, resource));
     }
 
-    @Test
-    public void roundtrip_01() {
-        rtRJRg("graph1.ttl");
+    private Model loadModelFromClasspathResource(String resource) throws Exception {
+        final InputStream url = this.getClass().getResourceAsStream(resource);
+        assertNotNull("Could not find resource on classpath: " + resource, url);
+        return RDFDataMgr.loadModel(TestUtils.copyResourceToFile(testDir, resource));
     }
 
-    @Test
-    public void roundtrip_02() {
-        rtRJRds("graph1.ttl");
+    private void rtRJRds(String resource) throws Exception {
+        final Dataset ds1 = loadDatasetFromClasspathResource("/com/github/jsonldjava/jena/"
+                + resource);
+
+        // Write a JSON-LD
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        RDFDataMgr.write(out, ds1, JSONLD);
+        final ByteArrayInputStream r = new ByteArrayInputStream(out.toByteArray());
+
+        // Read as JSON-LD
+        final Dataset ds2 = DatasetFactory.createMem();
+        RDFDataMgr.read(ds2, r, null, JSONLD);
+
+        if (!isIsomorphic(ds1, ds2)) {
+            SSE.write(ds1);
+            SSE.write(ds2);
+        }
+
+        assertTrue("Input dataset " + resource + " not isomorphic with roundtrip dataset",
+                isIsomorphic(ds1, ds2));
     }
 
-    @Test
-    public void roundtrip_03() {
-        rtRJRds("dataset1.trig");
-    }
-
-    public void rtRJRg(String filename) {
-        final Model model = loadModelFromClasspathResource(filename);
+    private void rtRJRg(String filename) throws Exception {
+        final Model model = loadModelFromClasspathResource("/com/github/jsonldjava/jena/"
+                + filename);
 
         // Write a JSON-LD
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -118,45 +176,5 @@ public class JenaRiotReadWriteTest {
         if (!model.isIsomorphicWith(model2)) {
             System.out.println("## ---- DIFFERENT");
         }
-    }
-
-    private Model loadModelFromClasspathResource(String resource) {
-        final URL url = getResource(resource);
-        return RDFDataMgr.loadModel(url.toExternalForm());
-    }
-
-    private URL getResource(String resource) {
-        final URL url = getClass().getResource(resource);
-        assertNotNull("Could not find resource on classpath: " + resource, url);
-        return url;
-    }
-
-    public void rtRJRds(String resource) {
-        final Dataset ds1 = loadDatasetFromClasspathResource(resource);
-
-        // Write a JSON-LD
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        RDFDataMgr.write(out, ds1, JSONLD);
-        final ByteArrayInputStream r = new ByteArrayInputStream(out.toByteArray());
-
-        // Read as JSON-LD
-        final Dataset ds2 = DatasetFactory.createMem();
-        RDFDataMgr.read(ds2, r, null, JSONLD);
-
-        if (!isIsomorphic(ds1, ds2)) {
-            SSE.write(ds1);
-            SSE.write(ds2);
-        }
-
-        assertTrue(isIsomorphic(ds1, ds2));
-    }
-
-    private Dataset loadDatasetFromClasspathResource(String resource) {
-        final URL url = getResource(resource);
-        return RDFDataMgr.loadDataset(url.toExternalForm());
-    }
-
-    private static boolean isIsomorphic(Dataset ds1, Dataset ds2) {
-        return DatasetLib.isomorphic(ds1, ds2);
     }
 }
