@@ -1144,10 +1144,10 @@ public class JsonLdApi {
             state.embed = this.opts.getEmbed();
         }
         if (this.opts.getExplicit() != null) {
-            state.embed = this.opts.getExplicit();
+            state.explicit = this.opts.getExplicit();
         }
         if (this.opts.getOmitDefault() != null) {
-            state.embed = this.opts.getOmitDefault();
+            state.omitDefault = this.opts.getOmitDefault();
         }
 
         // use tree map so keys are sotred by default
