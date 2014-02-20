@@ -96,6 +96,9 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
 CHANGELOG
 =========
 
+### 2014-02-20
+* Fix JsonLdApi mapping options in framing algorithm (Thanks Scott Blomquist @sblom)
+
 ### 2014-02-06
 
 * Release version 0.3
