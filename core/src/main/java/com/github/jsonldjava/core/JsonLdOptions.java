@@ -1,16 +1,28 @@
 package com.github.jsonldjava.core;
 
 /**
- * http://json-ld.org/spec/latest/json-ld-api/#the-jsonldoptions-type
+ * The JsonLdOptions type as specified in the <a
+ * href="http://www.w3.org/TR/json-ld-api/#the-jsonldoptions-type">JSON-LD-API
+ * specification</a>.
  * 
  * @author tristan
  * 
  */
-public class JsonLdOptions {
+public class JsonLdOptions implements Cloneable {
+
+    /**
+     * Constructs an instance of JsonLdOptions using an empty base.
+     */
     public JsonLdOptions() {
-        this.setBase("");
+        this("");
     }
 
+    /**
+     * Constructs an instance of JsonLdOptions using the given base.
+     * 
+     * @param base
+     *            The base IRI for the document.
+     */
     public JsonLdOptions(String base) {
         this.setBase(base);
     }
@@ -21,21 +33,39 @@ public class JsonLdOptions {
         return rval;
     }
 
-    // base options : http://www.w3.org/TR/json-ld-api/#idl-def-JsonLdOptions
+    // Base options : http://www.w3.org/TR/json-ld-api/#idl-def-JsonLdOptions
 
+    /**
+     * http://www.w3.org/TR/json-ld-api/#widl-JsonLdOptions-base
+     */
     private String base = null;
+
+    /**
+     * http://www.w3.org/TR/json-ld-api/#widl-JsonLdOptions-compactArrays
+     */
     private Boolean compactArrays = true;
+    /**
+     * http://www.w3.org/TR/json-ld-api/#widl-JsonLdOptions-expandContext
+     */
     private Object expandContext = null;
+    /**
+     * http://www.w3.org/TR/json-ld-api/#widl-JsonLdOptions-processingMode
+     */
     private String processingMode = "json-ld-1.0";
+    /**
+     * http://www.w3.org/TR/json-ld-api/#widl-JsonLdOptions-documentLoader
+     */
     private DocumentLoader documentLoader = new DocumentLoader();
 
-    // frame options
+    // Frame options : http://json-ld.org/spec/latest/json-ld-framing/
 
     private Boolean embed = null;
     private Boolean explicit = null;
     private Boolean omitDefault = null;
 
-    // rdf conversion options
+    // RDF conversion options :
+    // http://www.w3.org/TR/json-ld-api/#serialize-rdf-as-json-ld-algorithm
+
     Boolean useRdfType = false;
     Boolean useNativeTypes = false;
     private boolean produceGeneralizedRdf = false;
