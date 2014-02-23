@@ -95,7 +95,7 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
             // TODO: Implement inframe in JSONLDSettings
             final Object inframe = null;
             if (mode == JSONLDMode.FLATTEN) {
-                output = JsonLdProcessor.frame(output, inframe, opts);
+                output = JsonLdProcessor.flatten(output, inframe, opts);
             }
             if (mode == JSONLDMode.COMPACT) {
                 final Map<String, Object> ctx = new LinkedHashMap<String, Object>();
