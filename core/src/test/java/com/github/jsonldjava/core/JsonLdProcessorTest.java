@@ -429,7 +429,7 @@ public class JsonLdProcessorTest {
                 + test.get("input"));
         TestDocumentLoader testLoader = new TestDocumentLoader(
                 "http://json-ld.org/test-suite/tests/");
-        options.documentLoader = testLoader;
+        options.setDocumentLoader(testLoader);
         if (test.containsKey("option")) {
             final Map<String, Object> test_opts = (Map<String, Object>) test.get("option");
             if (test_opts.containsKey("base")) {

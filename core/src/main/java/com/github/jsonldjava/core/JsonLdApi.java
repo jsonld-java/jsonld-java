@@ -966,10 +966,12 @@ public class JsonLdApi {
             final Map<String, Object> result = new LinkedHashMap<String, Object>();
             result.put("@list", new ArrayList<Object>());
             // 5.2)
-            //for (final Object item : (List<Object>) elem.get("@list")) {
-            //    generateNodeMap(item, nodeMap, activeGraph, activeSubject, activeProperty, result);
-            //}
-            generateNodeMap(elem.get("@list"), nodeMap, activeGraph, activeSubject, activeProperty, result);
+            // for (final Object item : (List<Object>) elem.get("@list")) {
+            // generateNodeMap(item, nodeMap, activeGraph, activeSubject,
+            // activeProperty, result);
+            // }
+            generateNodeMap(elem.get("@list"), nodeMap, activeGraph, activeSubject, activeProperty,
+                    result);
             // 5.3)
             JsonLdUtils.mergeValue(node, activeProperty, result);
         }
@@ -993,12 +995,14 @@ public class JsonLdApi {
                 tmp.put("@id", id);
                 graph.put(id, tmp);
             }
-            // 6.4) TODO: SPEC this line is asked for by the spec, but it breaks various tests
-            //node = (Map<String, Object>) graph.get(id);
+            // 6.4) TODO: SPEC this line is asked for by the spec, but it breaks
+            // various tests
+            // node = (Map<String, Object>) graph.get(id);
             // 6.5)
             if (activeSubject instanceof Map) {
-            	// 6.5.1)
-            	JsonLdUtils.mergeValue((Map<String, Object>) graph.get(id), activeProperty, activeSubject);
+                // 6.5.1)
+                JsonLdUtils.mergeValue((Map<String, Object>) graph.get(id), activeProperty,
+                        activeSubject);
             }
             // 6.6)
             else if (activeProperty != null) {
@@ -1015,7 +1019,8 @@ public class JsonLdApi {
                     JsonLdUtils.mergeValue(list, "@list", reference);
                 }
             }
-            // TODO: SPEC this is removed in the spec now, but it's still needed (see 6.4)
+            // TODO: SPEC this is removed in the spec now, but it's still needed
+            // (see 6.4)
             node = (Map<String, Object>) graph.get(id);
             // 6.7)
             if (elem.containsKey("@type")) {
@@ -1036,8 +1041,8 @@ public class JsonLdApi {
             }
             // 6.9)
             if (elem.containsKey("@reverse")) {
-            	// 6.9.1)
-            	final Map<String, Object> referencedNode = new LinkedHashMap<String, Object>();
+                // 6.9.1)
+                final Map<String, Object> referencedNode = new LinkedHashMap<String, Object>();
                 referencedNode.put("@id", id);
                 // 6.9.2+6.9.4)
                 final Map<String, Object> reverseMap = (Map<String, Object>) elem
@@ -1867,10 +1872,6 @@ public class JsonLdApi {
      * 
      * @param input
      *            the expanded JSON-LD object to normalize.
-     * @param options
-     *            the normalization options.
-     * @param callback
-     *            (err, normalized) called once the operation completes.
      * @throws JSONLDProcessingError
      */
     public Object normalize(Map<String, Object> dataset) throws JsonLdError {

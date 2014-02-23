@@ -21,12 +21,13 @@ public class JsonLdOptions {
         return rval;
     }
 
-    // base options
+    // base options : http://www.w3.org/TR/json-ld-api/#idl-def-JsonLdOptions
 
     private String base = null;
     private Boolean compactArrays = true;
     private Object expandContext = null;
     private String processingMode = "json-ld-1.0";
+    private DocumentLoader documentLoader = new DocumentLoader();
 
     // frame options
 
@@ -112,7 +113,6 @@ public class JsonLdOptions {
     }
 
     public boolean getProduceGeneralizedRdf() {
-        // TODO Auto-generated method stub
         return this.produceGeneralizedRdf;
     }
 
@@ -120,10 +120,17 @@ public class JsonLdOptions {
         this.produceGeneralizedRdf = produceGeneralizedRdf;
     }
 
+    public DocumentLoader getDocumentLoader() {
+        return documentLoader;
+    }
+
+    public void setDocumentLoader(DocumentLoader documentLoader) {
+        this.documentLoader = documentLoader;
+    }
+
     // TODO: THE FOLLOWING ONLY EXIST SO I DON'T HAVE TO DELETE A LOT OF CODE,
     // REMOVE IT WHEN DONE
     public String format = null;
     public Boolean useNamespaces = false;
     public String outputForm = null;
-    public DocumentLoader documentLoader = new DocumentLoader();
 }

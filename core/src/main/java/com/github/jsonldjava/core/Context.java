@@ -158,7 +158,7 @@ public class Context extends LinkedHashMap<String, Object> {
                 remoteContexts.add(uri);
 
                 // 3.2.3: Dereference context
-                final RemoteDocument rd = this.options.documentLoader.loadDocument(uri);
+                final RemoteDocument rd = this.options.getDocumentLoader().loadDocument(uri);
                 final Object remoteContext = rd.document;
                 if (!(remoteContext instanceof Map)
                         || !((Map<String, Object>) remoteContext).containsKey("@context")) {
