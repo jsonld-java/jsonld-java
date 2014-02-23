@@ -566,7 +566,7 @@ public class JsonLdProcessor {
      */
     public static Object normalize(Object input, JsonLdOptions options) throws JsonLdError {
 
-        final JsonLdOptions opts = options.clone();
+        final JsonLdOptions opts = new JsonLdOptions(options.getBase());
         opts.format = null;
         final RDFDataset dataset = (RDFDataset) toRDF(input, opts);
 

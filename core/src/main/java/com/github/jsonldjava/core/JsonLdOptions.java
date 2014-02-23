@@ -8,7 +8,7 @@ package com.github.jsonldjava.core;
  * @author tristan
  * 
  */
-public class JsonLdOptions implements Cloneable {
+public class JsonLdOptions {
 
     /**
      * Constructs an instance of JsonLdOptions using an empty base.
@@ -25,12 +25,6 @@ public class JsonLdOptions implements Cloneable {
      */
     public JsonLdOptions(String base) {
         this.setBase(base);
-    }
-
-    @Override
-    public JsonLdOptions clone() {
-        final JsonLdOptions rval = new JsonLdOptions(getBase());
-        return rval;
     }
 
     // Base options : http://www.w3.org/TR/json-ld-api/#idl-def-JsonLdOptions
