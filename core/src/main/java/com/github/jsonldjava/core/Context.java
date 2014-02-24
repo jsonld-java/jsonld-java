@@ -30,14 +30,14 @@ public class Context extends LinkedHashMap<String, Object> {
         this(new JsonLdOptions());
     }
 
-    public Context(JsonLdOptions options) {
+    public Context(JsonLdOptions opts) {
         super();
-        init(options);
+        init(opts);
     }
 
-    public Context(Map<String, Object> map, JsonLdOptions options) {
+    public Context(Map<String, Object> map, JsonLdOptions opts) {
         super(map);
-        init(options);
+        init(opts);
     }
 
     public Context(Map<String, Object> map) {
@@ -48,6 +48,7 @@ public class Context extends LinkedHashMap<String, Object> {
     public Context(Object context, JsonLdOptions opts) {
         // TODO: load remote context
         super(context instanceof Map ? (Map<String, Object>) context : null);
+        init(opts);
     }
 
     private void init(JsonLdOptions options) {
