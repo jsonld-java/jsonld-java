@@ -34,7 +34,7 @@ import org.mockito.ArgumentCaptor;
 
 import com.github.jsonldjava.core.DocumentLoader;
 
-public class JSONUtilsTest {
+public class JsonUtilsTest {
 
     @SuppressWarnings("unchecked")
     @Test
@@ -180,7 +180,7 @@ public class JSONUtilsTest {
         when(fakeResponse.getStatusLine()).thenReturn(statusCode);
         final HttpEntity entity = mock(HttpEntity.class);
         when(entity.getContent()).thenReturn(
-                JSONUtilsTest.class.getResourceAsStream("/custom/contexttest-0001.jsonld"));
+                JsonUtilsTest.class.getResourceAsStream("/custom/contexttest-0001.jsonld"));
         when(fakeResponse.getEntity()).thenReturn(entity);
         when(httpClient.execute(httpRequest.capture())).thenReturn(fakeResponse);
         return httpClient;
