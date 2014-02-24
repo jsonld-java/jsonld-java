@@ -42,12 +42,12 @@ public class DocumentLoader {
 
     /**
      * Returns a Map, List, or String containing the contents of the JSON
-     * resource resolved from the URL.
+     * resource resolved from the JsonLdUrl.
      * 
      * @param url
-     *            The URL to resolve
+     *            The JsonLdUrl to resolve
      * @return The Map, List, or String that represent the JSON resource
-     *         resolved from the URL
+     *         resolved from the JsonLdUrl
      * @throws JsonParseException
      *             If the JSON was not valid.
      * @throws IOException
@@ -79,21 +79,21 @@ public class DocumentLoader {
     }
 
     /**
-     * Opens an {@link InputStream} for the given {@link URL}, including support
-     * for http and https URLs that are requested using Content Negotiation with
-     * application/ld+json as the preferred content type.
+     * Opens an {@link InputStream} for the given {@link JsonLdUrl}, including
+     * support for http and https URLs that are requested using Content
+     * Negotiation with application/ld+json as the preferred content type.
      * 
      * @param url
-     *            The URL identifying the source.
+     *            The JsonLdUrl identifying the source.
      * @return An InputStream containing the contents of the source.
      * @throws IOException
-     *             If there was an error resolving the URL.
+     *             If there was an error resolving the JsonLdUrl.
      */
     public static InputStream openStreamFromURL(java.net.URL url) throws IOException {
         final String protocol = url.getProtocol();
         if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
             // Can't use the HTTP client for those!
-            // Fallback to Java's built-in URL handler. No need for
+            // Fallback to Java's built-in JsonLdUrl handler. No need for
             // Accept headers as it's likely to be file: or jar:
             return url.openStream();
         }

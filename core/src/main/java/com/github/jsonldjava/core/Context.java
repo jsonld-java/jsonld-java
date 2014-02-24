@@ -11,7 +11,7 @@ import java.util.Map;
 
 import com.github.jsonldjava.core.JsonLdError.Error;
 import com.github.jsonldjava.utils.Obj;
-import com.github.jsonldjava.utils.URL;
+import com.github.jsonldjava.utils.JsonLdUrl;
 
 /**
  * A helper class which still stores all the values in a map but gives member
@@ -150,7 +150,7 @@ public class Context extends LinkedHashMap<String, Object> {
             // 3.2)
             else if (context instanceof String) {
                 String uri = (String) result.get("@base");
-                uri = URL.resolve(uri, (String) context);
+                uri = JsonLdUrl.resolve(uri, (String) context);
                 // 3.2.2
                 if (remoteContexts.contains(uri)) {
                     throw new JsonLdError(Error.RECURSIVE_CONTEXT_INCLUSION, uri);
@@ -190,7 +190,7 @@ public class Context extends LinkedHashMap<String, Object> {
                         if (!JsonLdUtils.isAbsoluteIri(baseUri)) {
                             throw new JsonLdError(Error.INVALID_BASE_IRI, baseUri);
                         }
-                        result.put("@base", URL.resolve(baseUri, (String) value));
+                        result.put("@base", JsonLdUrl.resolve(baseUri, (String) value));
                     }
                 } else {
                     throw new JsonLdError(JsonLdError.Error.INVALID_BASE_IRI,
@@ -488,7 +488,7 @@ public class Context extends LinkedHashMap<String, Object> {
         }
         // 6)
         else if (relative) {
-            return URL.resolve((String) this.get("@base"), value);
+            return JsonLdUrl.resolve((String) this.get("@base"), value);
         } else if (context != null && JsonLdUtils.isRelativeIri(value)) {
             throw new JsonLdError(Error.INVALID_IRI_MAPPING, "not an absolute IRI: " + value);
         }
@@ -738,7 +738,7 @@ public class Context extends LinkedHashMap<String, Object> {
 
         // 7)
         if (!relativeToVocab) {
-            return URL.removeBase(this.get("@base"), iri);
+            return JsonLdUrl.removeBase(this.get("@base"), iri);
         }
 
         // 8)

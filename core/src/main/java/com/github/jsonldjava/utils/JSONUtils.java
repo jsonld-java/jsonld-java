@@ -8,7 +8,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -156,11 +155,11 @@ public class JSONUtils {
 
     /**
      * Parses a JSON-LD document, from the contents of the JSON resource
-     * resolved from the URL, to an object that can be used as input for the
-     * {@link JsonLdApi} and {@link JsonLdProcessor} methods.
+     * resolved from the JsonLdUrl, to an object that can be used as input for
+     * the {@link JsonLdApi} and {@link JsonLdProcessor} methods.
      * 
      * @param url
-     *            The URL to resolve
+     *            The JsonLdUrl to resolve
      * @return A JSON Object.
      * @throws JsonParseException
      *             If there was a JSON related error during parsing.
@@ -210,21 +209,21 @@ public class JSONUtils {
     }
 
     /**
-     * Opens an {@link InputStream} for the given {@link URL}, including support
-     * for http and https URLs that are requested using Content Negotiation with
-     * application/ld+json as the preferred content type.
+     * Opens an {@link InputStream} for the given {@link JsonLdUrl}, including
+     * support for http and https URLs that are requested using Content
+     * Negotiation with application/ld+json as the preferred content type.
      * 
      * @param url
-     *            The URL identifying the source.
+     *            The JsonLdUrl identifying the source.
      * @return An InputStream containing the contents of the source.
      * @throws IOException
-     *             If there was an error resolving the URL.
+     *             If there was an error resolving the JsonLdUrl.
      */
     protected static InputStream openStreamFromURL(java.net.URL url) throws IOException {
         final String protocol = url.getProtocol();
         if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
             // Can't use the HTTP client for those!
-            // Fallback to Java's built-in URL handler. No need for
+            // Fallback to Java's built-in JsonLdUrl handler. No need for
             // Accept headers as it's likely to be file: or jar:
             return url.openStream();
         }

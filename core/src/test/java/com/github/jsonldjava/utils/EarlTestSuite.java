@@ -34,7 +34,7 @@ public class EarlTestSuite {
      * Loads an earl test suite
      * 
      * @param manifestURL
-     *            the URL of the manifest file
+     *            the JsonLdUrl of the manifest file
      * @param cacheDir
      *            the base directory to cache the files into
      * @param etag
@@ -101,7 +101,7 @@ public class EarlTestSuite {
     }
 
     public String getFile(String url) throws IOException {
-        final URL url_ = URL.parse(url.toString());
+        final JsonLdUrl url_ = JsonLdUrl.parse(url.toString());
         final String fn = this.cacheDir + url_.file + "." + this.etag;
         final File f = new File(fn);
 
@@ -135,7 +135,7 @@ public class EarlTestSuite {
     }
 
     private static String getCacheDir(String url) {
-        final URL url_ = URL.parse(url);
+        final JsonLdUrl url_ = JsonLdUrl.parse(url);
         String dir = url_.path.substring(0, url_.path.lastIndexOf("/") + 1);
         if (!FILE_SEP.equals("/")) {
             dir = dir.replace("/", FILE_SEP);

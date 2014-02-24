@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class URL {
+public class JsonLdUrl {
 
     public String href = "";
     public String protocol = "";
@@ -34,8 +34,8 @@ public class URL {
     private static Pattern parser = Pattern
             .compile("^(?:([^:\\/?#]+):)?(?:\\/\\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\\/?#]*)(?::(\\d*))?))?((((?:[^?#\\/]*\\/)*)([^?#]*))(?:\\?([^#]*))?(?:#(.*))?)");
 
-    public static URL parse(String url) {
-        final URL rval = new URL();
+    public static JsonLdUrl parse(String url) {
+        final JsonLdUrl rval = new JsonLdUrl();
         rval.href = url;
 
         final Matcher matcher = parser.matcher(url);
@@ -103,12 +103,12 @@ public class URL {
     }
 
     /**
-     * Removes dot segments from a URL path.
+     * Removes dot segments from a JsonLdUrl path.
      * 
      * @param path
      *            the path to remove dot segments from.
      * @param hasAuthority
-     *            true if the URL has an authority, false if not.
+     *            true if the JsonLdUrl has an authority, false if not.
      */
     public static String removeDotSegments(String path, boolean hasAuthority) {
         String rval = "";
@@ -158,15 +158,15 @@ public class URL {
     }
 
     public static String removeBase(Object baseobj, String iri) {
-    	if (baseobj == null) {
-    		return iri;
-    	}
-    	
-        URL base;
+        if (baseobj == null) {
+            return iri;
+        }
+
+        JsonLdUrl base;
         if (baseobj instanceof String) {
-            base = URL.parse((String) baseobj);
+            base = JsonLdUrl.parse((String) baseobj);
         } else {
-            base = (URL) baseobj;
+            base = (JsonLdUrl) baseobj;
         }
 
         // establish base root
@@ -185,7 +185,7 @@ public class URL {
         }
 
         // remove root from IRI and parse remainder
-        final URL rel = URL.parse(iri.substring(root.length()));
+        final JsonLdUrl rel = JsonLdUrl.parse(iri.substring(root.length()));
 
         // remove path segments that match
         final List<String> baseSegments = new ArrayList<String>(Arrays.asList(base.normalizedPath
@@ -274,7 +274,7 @@ public class URL {
             // java doesn't discard unnecessary dot segments
             String path = uri.getPath();
             if (path != null) {
-                path = URL.removeDotSegments(uri.getPath(), true);
+                path = JsonLdUrl.removeDotSegments(uri.getPath(), true);
             }
             return new URI(uri.getScheme(), uri.getAuthority(), path, uri.getQuery(),
                     uri.getFragment()).toString();
@@ -284,12 +284,12 @@ public class URL {
     }
 
     /**
-     * Parses the authority for the pre-parsed given URL.
+     * Parses the authority for the pre-parsed given JsonLdUrl.
      * 
      * @param parsed
-     *            the pre-parsed URL.
+     *            the pre-parsed JsonLdUrl.
      */
-    private static void parseAuthority(URL parsed) {
+    private static void parseAuthority(JsonLdUrl parsed) {
         // parse authority for unparsed relative network-path reference
         if (parsed.href.indexOf(":") == -1 && parsed.href.indexOf("//") == 0
                 && "".equals(parsed.host)) {

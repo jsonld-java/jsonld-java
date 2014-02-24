@@ -196,7 +196,7 @@ public class Playground {
 
     private static void usage() {
         System.out.println("Usage: jsonldplayground <options>");
-        System.out.println("\tinput: a filename or URL to the rdf input (in rdfxml or n3)");
+        System.out.println("\tinput: a filename or JsonLdUrl to the rdf input (in rdfxml or n3)");
         System.out.println("\toptions:");
         System.out
                 .println("\t\t--ignorekeys <keys to ignore> : a (space separated) list of keys to ignore (e.g. @geojson)");

@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.github.jsonldjava.utils.Obj;
-import com.github.jsonldjava.utils.URL;
+import com.github.jsonldjava.utils.JsonLdUrl;
 
 public class JsonLdUtils {
 
@@ -269,9 +269,9 @@ public class JsonLdUtils {
      * 
      * @return the absolute IRI.
      * 
-     *         TODO: the URL class isn't as forgiving as the Node.js url parser,
-     *         we may need to re-implement the parser here to support the
-     *         flexibility required
+     *         TODO: the JsonLdUrl class isn't as forgiving as the Node.js url
+     *         parser, we may need to re-implement the parser here to support
+     *         the flexibility required
      */
     private static String prependBase(Object baseobj, String iri) {
         // already an absolute IRI
@@ -280,15 +280,15 @@ public class JsonLdUtils {
         }
 
         // parse base if it is a string
-        URL base;
+        JsonLdUrl base;
         if (isString(baseobj)) {
-            base = URL.parse((String) baseobj);
+            base = JsonLdUrl.parse((String) baseobj);
         } else {
-            // assume base is already a URL
-            base = (URL) baseobj;
+            // assume base is already a JsonLdUrl
+            base = (JsonLdUrl) baseobj;
         }
 
-        final URL rel = URL.parse(iri);
+        final JsonLdUrl rel = JsonLdUrl.parse(iri);
 
         // start hierarchical part
         String hierPart = base.protocol;
@@ -318,7 +318,7 @@ public class JsonLdUtils {
         }
 
         // remove slashes anddots in path
-        path = URL.removeDotSegments(path, !"".equals(hierPart));
+        path = JsonLdUrl.removeDotSegments(path, !"".equals(hierPart));
 
         // add query and hash
         if (!"".equals(rel.query)) {
@@ -421,11 +421,11 @@ public class JsonLdUtils {
      * @return the relative IRI if relative to base, otherwise the absolute IRI.
      */
     private static String removeBase(Object baseobj, String iri) {
-        URL base;
+        JsonLdUrl base;
         if (isString(baseobj)) {
-            base = URL.parse((String) baseobj);
+            base = JsonLdUrl.parse((String) baseobj);
         } else {
-            base = (URL) baseobj;
+            base = (JsonLdUrl) baseobj;
         }
 
         // establish base root
@@ -444,7 +444,7 @@ public class JsonLdUtils {
         }
 
         // remove root from IRI and parse remainder
-        final URL rel = URL.parse(iri.substring(root.length()));
+        final JsonLdUrl rel = JsonLdUrl.parse(iri.substring(root.length()));
 
         // remove path segments that match
         final List<String> baseSegments = _split(base.normalizedPath, "/");
@@ -762,14 +762,14 @@ public class JsonLdUtils {
     }
 
     /**
-     * Resolves external @context URLs using the given URL resolver. Each
-     * instance of @context in the input that refers to a URL will be replaced
-     * with the JSON @context found at that URL.
+     * Resolves external @context URLs using the given JsonLdUrl resolver. Each
+     * instance of @context in the input that refers to a JsonLdUrl will be
+     * replaced with the JSON @context found at that JsonLdUrl.
      * 
      * @param input
      *            the JSON-LD input with possible contexts.
      * @param resolver
-     *            (url, callback(err, jsonCtx)) the URL resolver to use.
+     *            (url, callback(err, jsonCtx)) the JsonLdUrl resolver to use.
      * @param callback
      *            (err, input) called once the operation completes.
      * @throws JsonLdError
@@ -799,7 +799,7 @@ public class JsonLdUtils {
         final List<String> queue = new ArrayList<String>();
         for (final String url : urls.keySet()) {
             if (Boolean.FALSE.equals(urls.get(url))) {
-                // validate URL
+                // validate JsonLdUrl
                 if (!regex.matcher(url).matches()) {
                     throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR);
                 }
@@ -810,7 +810,7 @@ public class JsonLdUtils {
         // resolve URLs in queue
         int count = queue.size();
         for (final String url : queue) {
-            // check for context URL cycle
+            // check for context JsonLdUrl cycle
             if (cycles.containsKey(url)) {
                 throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR);
             }
@@ -890,7 +890,7 @@ public class JsonLdUtils {
                                     ((List) ctx).set(i, _ctx);
                                 }
                             }
-                            // @context URL found
+                            // @context JsonLdUrl found
                             else if (!urls.containsKey(_ctx)) {
                                 urls.put((String) _ctx, Boolean.FALSE);
                             }
@@ -903,7 +903,7 @@ public class JsonLdUtils {
                     if (replace) {
                         ((Map) input).put(key, urls.get(ctx));
                     }
-                    // @context URL found
+                    // @context JsonLdUrl found
                     else if (!urls.containsKey(ctx)) {
                         urls.put((String) ctx, Boolean.FALSE);
                     }
