@@ -460,7 +460,7 @@ public class JsonLdProcessor {
      * @throws JsonLdError
      *             If there is an error converting the dataset to JSON-LD.
      */
-    public static Object toRDF(Object input, JSONLDTripleCallback callback, JsonLdOptions options)
+    public static Object toRDF(Object input, JsonLdTripleCallback callback, JsonLdOptions options)
             throws JsonLdError {
 
         final Object expandedInput = expand(input, options);
@@ -531,7 +531,7 @@ public class JsonLdProcessor {
      * @throws JsonLdError
      *             If there is an error converting the dataset to JSON-LD.
      */
-    public static Object toRDF(Object input, JSONLDTripleCallback callback) throws JsonLdError {
+    public static Object toRDF(Object input, JsonLdTripleCallback callback) throws JsonLdError {
         return toRDF(input, callback, new JsonLdOptions(""));
     }
 

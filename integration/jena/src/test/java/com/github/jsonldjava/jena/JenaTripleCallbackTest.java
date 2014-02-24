@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.github.jsonldjava.core.JSONLDTripleCallback;
+import com.github.jsonldjava.core.JsonLdTripleCallback;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.jena.JenaTripleCallback;
@@ -66,7 +66,7 @@ public class JenaTripleCallbackTest {
             }
         };
 
-        final JSONLDTripleCallback callback = new JenaTripleCallback();
+        final JsonLdTripleCallback callback = new JenaTripleCallback();
         final Model model = (Model) JsonLdProcessor.toRDF(input, callback);
 
         final StringWriter w = new StringWriter();

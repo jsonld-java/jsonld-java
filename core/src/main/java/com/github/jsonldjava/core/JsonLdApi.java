@@ -1,10 +1,10 @@
 package com.github.jsonldjava.core;
 
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_FIRST;
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_LIST;
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_NIL;
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_REST;
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_TYPE;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_FIRST;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_LIST;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_NIL;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_REST;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_TYPE;
 import static com.github.jsonldjava.core.JsonLdUtils.isKeyword;
 
 import java.util.ArrayList;

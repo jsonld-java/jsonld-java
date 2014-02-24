@@ -2,7 +2,7 @@ package com.github.jsonldjava.jena;
 
 import java.util.List;
 
-import com.github.jsonldjava.core.JSONLDTripleCallback;
+import com.github.jsonldjava.core.JsonLdTripleCallback;
 import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.core.RDFDataset.Node;
 import com.hp.hpl.jena.rdf.model.AnonId;
@@ -14,7 +14,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.shared.InvalidPropertyURIException;
 
-public class JenaTripleCallback implements JSONLDTripleCallback {
+public class JenaTripleCallback implements JsonLdTripleCallback {
 
     private Model jenaModel = ModelFactory.createDefaultModel();
 

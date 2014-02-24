@@ -15,10 +15,10 @@ import org.apache.clerezza.rdf.core.impl.SimpleMGraph;
 import org.apache.clerezza.rdf.core.impl.TripleImpl;
 import org.apache.clerezza.rdf.core.impl.TypedLiteralImpl;
 
-import com.github.jsonldjava.core.JSONLDTripleCallback;
+import com.github.jsonldjava.core.JsonLdTripleCallback;
 import com.github.jsonldjava.core.RDFDataset;
 
-public class ClerezzaTripleCallback implements JSONLDTripleCallback {
+public class ClerezzaTripleCallback implements JsonLdTripleCallback {
 
     private MGraph mGraph = new SimpleMGraph();
     private Map<String, BNode> bNodeMap = new HashMap<String, BNode>();

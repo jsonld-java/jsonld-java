@@ -9,16 +9,16 @@ import org.ontoware.rdf2go.model.node.Node;
 import org.ontoware.rdf2go.model.node.Resource;
 import org.ontoware.rdf2go.model.node.URI;
 
-import com.github.jsonldjava.core.JSONLDTripleCallback;
+import com.github.jsonldjava.core.JsonLdTripleCallback;
 import com.github.jsonldjava.core.RDFDataset;
 
 /**
- * Implementation of {@link JSONLDTripleCallback} which serializes JSONLD
+ * Implementation of {@link JsonLdTripleCallback} which serializes JSONLD
  * datasets into a {@link ModelSet} object.
  * 
  * @author Ismael Rivera
  */
-public class RDF2GoTripleCallback implements JSONLDTripleCallback {
+public class RDF2GoTripleCallback implements JsonLdTripleCallback {
 
     private final ModelSet sinkModel;
 

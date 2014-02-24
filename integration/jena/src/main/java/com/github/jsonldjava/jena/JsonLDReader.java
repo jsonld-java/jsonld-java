@@ -31,7 +31,7 @@ import org.apache.jena.riot.lang.LabelToNode;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.SyntaxLabels;
 
-import com.github.jsonldjava.core.JSONLDTripleCallback;
+import com.github.jsonldjava.core.JsonLdTripleCallback;
 import com.github.jsonldjava.core.JsonLdApi;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdOptions;
@@ -50,7 +50,7 @@ public class JsonLDReader implements ReaderRIOT {
     public void read(InputStream in, String baseURI, ContentType ct, final StreamRDF output,
             Context context) {
         try {
-            final JSONLDTripleCallback callback = new JSONLDTripleCallback() {
+            final JsonLdTripleCallback callback = new JsonLdTripleCallback() {
 
                 @Override
                 // public Object call(Map<String, Object> dataset) {

@@ -19,10 +19,10 @@ import org.openrdf.rio.helpers.ParseErrorLogger;
 import org.openrdf.rio.helpers.RDFParserHelper;
 import org.openrdf.rio.helpers.StatementCollector;
 
-import com.github.jsonldjava.core.JSONLDTripleCallback;
+import com.github.jsonldjava.core.JsonLdTripleCallback;
 import com.github.jsonldjava.core.RDFDataset;
 
-public class SesameTripleCallback implements JSONLDTripleCallback {
+public class SesameTripleCallback implements JsonLdTripleCallback {
 
     private ValueFactory vf;
 

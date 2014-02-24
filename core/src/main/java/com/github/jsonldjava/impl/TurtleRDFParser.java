@@ -1,14 +1,14 @@
 package com.github.jsonldjava.impl;
 
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_FIRST;
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_LANGSTRING;
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_NIL;
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_REST;
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_TYPE;
-import static com.github.jsonldjava.core.JSONLDConsts.XSD_BOOLEAN;
-import static com.github.jsonldjava.core.JSONLDConsts.XSD_DECIMAL;
-import static com.github.jsonldjava.core.JSONLDConsts.XSD_DOUBLE;
-import static com.github.jsonldjava.core.JSONLDConsts.XSD_INTEGER;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_FIRST;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_LANGSTRING;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_NIL;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_REST;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_TYPE;
+import static com.github.jsonldjava.core.JsonLdConsts.XSD_BOOLEAN;
+import static com.github.jsonldjava.core.JsonLdConsts.XSD_DECIMAL;
+import static com.github.jsonldjava.core.JsonLdConsts.XSD_DOUBLE;
+import static com.github.jsonldjava.core.JsonLdConsts.XSD_INTEGER;
 import static com.github.jsonldjava.core.RDFDatasetUtils.unescape;
 import static com.github.jsonldjava.core.Regex.BLANK_NODE_LABEL;
 import static com.github.jsonldjava.core.Regex.DECIMAL;

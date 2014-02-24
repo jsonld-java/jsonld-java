@@ -1,14 +1,14 @@
 package com.github.jsonldjava.core;
 
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_FIRST;
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_LANGSTRING;
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_NIL;
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_REST;
-import static com.github.jsonldjava.core.JSONLDConsts.RDF_TYPE;
-import static com.github.jsonldjava.core.JSONLDConsts.XSD_BOOLEAN;
-import static com.github.jsonldjava.core.JSONLDConsts.XSD_DOUBLE;
-import static com.github.jsonldjava.core.JSONLDConsts.XSD_INTEGER;
-import static com.github.jsonldjava.core.JSONLDConsts.XSD_STRING;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_FIRST;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_LANGSTRING;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_NIL;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_REST;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_TYPE;
+import static com.github.jsonldjava.core.JsonLdConsts.XSD_BOOLEAN;
+import static com.github.jsonldjava.core.JsonLdConsts.XSD_DOUBLE;
+import static com.github.jsonldjava.core.JsonLdConsts.XSD_INTEGER;
+import static com.github.jsonldjava.core.JsonLdConsts.XSD_STRING;
 import static com.github.jsonldjava.core.JsonLdUtils.isKeyword;
 import static com.github.jsonldjava.core.JsonLdUtils.isList;
 import static com.github.jsonldjava.core.JsonLdUtils.isObject;
