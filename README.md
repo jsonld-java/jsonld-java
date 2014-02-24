@@ -99,6 +99,7 @@ CHANGELOG
 ### 2014-02-24
 * Javadoc some core classes, JsonLdProcessor, JsonLdApi, and JsonUtils
 * Rename some core classes for consistency, particularly JSONUtils to JsonUtils and JsonLdTripleCallback
+* Fix for a Context constructor that wasn't taking base into account
 
 ### 2014-02-20
 * Fix JsonLdApi mapping options in framing algorithm (Thanks Scott Blomquist @sblom)
