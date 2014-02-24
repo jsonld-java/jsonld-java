@@ -29,11 +29,13 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jsonldjava.core.JsonLdApi;
+import com.github.jsonldjava.core.JsonLdProcessor;
 
 /**
- * A bunch of functions to make loading JSON easy
+ * Functions used to make loading, parsing, and serializing JSON easy using
+ * Jackson.
  * 
  * @author tristan
  * 
@@ -59,13 +61,60 @@ public class JSONUtils {
 
     private static volatile HttpClient httpClient;
 
-    public static Object fromString(String jsonString) throws JsonParseException,
-             IOException {
-        return fromReader(new StringReader(jsonString));
+    /**
+     * Parses a JSON-LD document from the given {@link InputStream} to an object
+     * that can be used as input for the {@link JsonLdApi} and
+     * {@link JsonLdProcessor} methods.<br>
+     * Uses UTF-8 as the character encoding when decoding the InputStream.
+     * 
+     * @param input
+     *            The JSON-LD document in an InputStream.
+     * @return A JSON Object.
+     * @throws JsonParseException
+     *             If there was a JSON related error during parsing.
+     * @throws IOException
+     *             If there was an IO error during parsing.
+     */
+    public static Object fromInputStream(InputStream input) throws IOException {
+        // no readers from inputstreams w.o. encoding!!
+        return fromInputStream(input, "UTF-8");
     }
 
-    public static Object fromReader(Reader r) throws IOException {
-        final JsonParser jp = JSON_FACTORY.createParser(r);
+    /**
+     * Parses a JSON-LD document from the given {@link InputStream} to an object
+     * that can be used as input for the {@link JsonLdApi} and
+     * {@link JsonLdProcessor} methods.
+     * 
+     * @param input
+     *            The JSON-LD document in an InputStream.
+     * @param enc
+     *            The character encoding to use when interpreting the characters
+     *            in the InputStream.
+     * @return A JSON Object.
+     * @throws JsonParseException
+     *             If there was a JSON related error during parsing.
+     * @throws IOException
+     *             If there was an IO error during parsing.
+     */
+    public static Object fromInputStream(InputStream content, String enc) throws IOException {
+        return fromReader(new BufferedReader(new InputStreamReader(content, enc)));
+    }
+
+    /**
+     * Parses a JSON-LD document from the given {@link Reader} to an object that
+     * can be used as input for the {@link JsonLdApi} and
+     * {@link JsonLdProcessor} methods.
+     * 
+     * @param reader
+     *            The JSON-LD document in a Reader.
+     * @return A JSON Object.
+     * @throws JsonParseException
+     *             If there was a JSON related error during parsing.
+     * @throws IOException
+     *             If there was an IO error during parsing.
+     */
+    public static Object fromReader(Reader reader) throws IOException {
+        final JsonParser jp = JSON_FACTORY.createParser(reader);
         Object rval = null;
         final JsonToken initialToken = jp.nextToken();
 
@@ -89,97 +138,75 @@ public class JSONUtils {
         return rval;
     }
 
-    public static void write(Writer w, Object jsonObject) throws JsonGenerationException,
-             IOException {
-        final JsonGenerator jw = JSON_FACTORY.createGenerator(w);
-        jw.writeObject(jsonObject);
-    }
-
-    public static void writePrettyPrint(Writer w, Object jsonObject)
-            throws JsonGenerationException,  IOException {
-        final JsonGenerator jw = JSON_FACTORY.createGenerator(w);
-        jw.useDefaultPrettyPrinter();
-        jw.writeObject(jsonObject);
-    }
-
-    public static Object fromInputStream(InputStream content) throws IOException {
-        return fromInputStream(content, "UTF-8"); // no readers from
-                                                  // inputstreams w.o.
-                                                  // encoding!!
-    }
-
-    public static Object fromInputStream(InputStream content, String enc) throws IOException {
-        return fromReader(new BufferedReader(new InputStreamReader(content, enc)));
-    }
-
-    public static String toPrettyString(Object obj) {
-        final StringWriter sw = new StringWriter();
-        try {
-            writePrettyPrint(sw, obj);
-        } catch (final IOException e) {
-            // TODO Is this really possible with stringwriter?
-            // I think it's only there because of the interface
-            // however, if so... well, we have to do something!
-            // it seems weird for toString to throw an IOException
-            e.printStackTrace();
-        }
-        return sw.toString();
-    }
-
-    public static String toString(Object obj) { // throws
-                                                // JsonGenerationException,
-                                                // JsonMappingException {
-        final StringWriter sw = new StringWriter();
-        try {
-            write(sw, obj);
-        } catch (final IOException e) {
-            // TODO Is this really possible with stringwriter?
-            // I think it's only there because of the interface
-            // however, if so... well, we have to do something!
-            // it seems weird for toString to throw an IOException
-            e.printStackTrace();
-        }
-        return sw.toString();
+    /**
+     * Parses a JSON-LD document from a string to an object that can be used as
+     * input for the {@link JsonLdApi} and {@link JsonLdProcessor} methods.
+     * 
+     * @param jsonString
+     *            The JSON-LD document as a string.
+     * @return A JSON Object.
+     * @throws JsonParseException
+     *             If there was a JSON related error during parsing.
+     * @throws IOException
+     *             If there was an IO error during parsing.
+     */
+    public static Object fromString(String jsonString) throws JsonParseException, IOException {
+        return fromReader(new StringReader(jsonString));
     }
 
     /**
-     * Returns a Map, List, or String containing the contents of the JSON
-     * resource resolved from the URL.
+     * Parses a JSON-LD document, from the contents of the JSON resource
+     * resolved from the URL, to an object that can be used as input for the
+     * {@link JsonLdApi} and {@link JsonLdProcessor} methods.
      * 
      * @param url
      *            The URL to resolve
-     * @return The Map, List, or String that represent the JSON resource
-     *         resolved from the URL
+     * @return A JSON Object.
      * @throws JsonParseException
-     *             If the JSON was not valid.
+     *             If there was a JSON related error during parsing.
      * @throws IOException
-     *             If there was an error resolving the resource.
+     *             If there was an IO error during parsing.
      */
     public static Object fromURL(java.net.URL url) throws JsonParseException, IOException {
 
         InputStream in = null;
         try {
             in = openStreamFromURL(url);
-            final JsonParser parser = JSON_FACTORY.createParser(in);
-            final JsonToken token = parser.nextToken();
-            Class<?> type;
-            if (token == JsonToken.START_OBJECT) {
-                type = Map.class;
-            } else if (token == JsonToken.START_ARRAY) {
-                type = List.class;
-            } else {
-                type = String.class;
-            }
-            try {
-                return parser.readValueAs(type);
-            } finally {
-                parser.close();
-            }
+            return fromInputStream(in);
         } finally {
             if (in != null) {
                 in.close();
             }
         }
+    }
+
+    /**
+     * Returns the internal {@link HttpClient} object used to resolve URLs.
+     * 
+     * @return The {@link HttpClient} we use to resolve URLs.
+     */
+    protected static HttpClient getHttpClient() {
+        if (httpClient == null) {
+            synchronized (JSONUtils.class) {
+                if (httpClient == null) {
+                    // Uses Apache SystemDefaultHttpClient rather than
+                    // DefaultHttpClient, thus the normal proxy settings for the
+                    // JVM will be used
+
+                    final DefaultHttpClient client = new SystemDefaultHttpClient();
+                    // Support compressed data
+                    // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
+                    client.addRequestInterceptor(new RequestAcceptEncoding());
+                    client.addResponseInterceptor(new ResponseContentEncoding());
+                    final CacheConfig cacheConfig = new CacheConfig();
+                    cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
+                    cacheConfig.setMaxCacheEntries(1000);
+                    // and allow caching
+                    httpClient = new CachingHttpClient(client, cacheConfig);
+                }
+            }
+        }
+        return httpClient;
     }
 
     /**
@@ -193,7 +220,7 @@ public class JSONUtils {
      * @throws IOException
      *             If there was an error resolving the URL.
      */
-    public static InputStream openStreamFromURL(java.net.URL url) throws IOException {
+    protected static InputStream openStreamFromURL(java.net.URL url) throws IOException {
         final String protocol = url.getProtocol();
         if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
             // Can't use the HTTP client for those!
@@ -214,34 +241,80 @@ public class JSONUtils {
         return response.getEntity().getContent();
     }
 
-    protected static HttpClient getHttpClient() {
-        if (httpClient == null) {
-            synchronized (JSONUtils.class) {
-                if (httpClient == null) {
-                    // Uses Apache SystemDefaultHttpClient rather than
-                    // DefaultHttpClient, thus the normal proxy settings for the
-                    // JVM
-                    // will be used
-
-                    final DefaultHttpClient client = new SystemDefaultHttpClient();
-                    // Support compressed data
-                    // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
-                    client.addRequestInterceptor(new RequestAcceptEncoding());
-                    client.addResponseInterceptor(new ResponseContentEncoding());
-                    final CacheConfig cacheConfig = new CacheConfig();
-                    cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
-                    cacheConfig.setMaxCacheEntries(1000);
-                    // and allow caching
-                    httpClient = new CachingHttpClient(client, cacheConfig);
-                }
-            }
-        }
-        return httpClient;
-    }
-
     protected static void setHttpClient(HttpClient nextHttpClient) {
         synchronized (JSONUtils.class) {
             httpClient = nextHttpClient;
         }
+    }
+
+    /**
+     * Writes the given JSON-LD Object out to a String, using indentation and
+     * new lines to improve readability.
+     * 
+     * @param jsonObject
+     *            The JSON-LD Object to serialize.
+     * @throws JsonGenerationException
+     *             If there is a JSON error during serialization.
+     * @throws IOException
+     *             If there is an IO error during serialization.
+     */
+    public static String toPrettyString(Object obj) throws JsonGenerationException, IOException {
+        final StringWriter sw = new StringWriter();
+        writePrettyPrint(sw, obj);
+        return sw.toString();
+    }
+
+    /**
+     * Writes the given JSON-LD Object out to a String.
+     * 
+     * @param jsonObject
+     *            The JSON-LD Object to serialize.
+     * @throws JsonGenerationException
+     *             If there is a JSON error during serialization.
+     * @throws IOException
+     *             If there is an IO error during serialization.
+     */
+    public static String toString(Object obj) throws JsonGenerationException, IOException {
+        final StringWriter sw = new StringWriter();
+        write(sw, obj);
+        return sw.toString();
+    }
+
+    /**
+     * Writes the given JSON-LD Object out to the given Writer.
+     * 
+     * @param writer
+     *            The writer that is to receive the serialized JSON-LD object.
+     * @param jsonObject
+     *            The JSON-LD Object to serialize.
+     * @throws JsonGenerationException
+     *             If there is a JSON error during serialization.
+     * @throws IOException
+     *             If there is an IO error during serialization.
+     */
+    public static void write(Writer writer, Object jsonObject) throws JsonGenerationException,
+            IOException {
+        final JsonGenerator jw = JSON_FACTORY.createGenerator(writer);
+        jw.writeObject(jsonObject);
+    }
+
+    /**
+     * Writes the given JSON-LD Object out to the given Writer, using
+     * indentation and new lines to improve readability.
+     * 
+     * @param writer
+     *            The writer that is to receive the serialized JSON-LD object.
+     * @param jsonObject
+     *            The JSON-LD Object to serialize.
+     * @throws JsonGenerationException
+     *             If there is a JSON error during serialization.
+     * @throws IOException
+     *             If there is an IO error during serialization.
+     */
+    public static void writePrettyPrint(Writer writer, Object jsonObject)
+            throws JsonGenerationException, IOException {
+        final JsonGenerator jw = JSON_FACTORY.createGenerator(writer);
+        jw.useDefaultPrettyPrinter();
+        jw.writeObject(jsonObject);
     }
 }
