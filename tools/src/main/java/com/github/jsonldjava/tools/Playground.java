@@ -26,9 +26,6 @@ public class Playground {
         return "--compact".equals(opt) || "--frame".equals(opt) || "--flatten".equals(opt);
     }
 
-    /**
-     * @param args
-     */
     public static void main(String[] args) {
         boolean debug = false;
         try {

@@ -48,19 +48,23 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
     private final Writer writer;
 
     /**
-     * Create a SesameJSONLDWriter using a java.io.OutputStream
+     * Create a SesameJSONLDWriter using a {@link java.io.OutputStream}
      * 
      * @param outputStream
+     *            The OutputStream to write to.
      */
     public SesameJSONLDWriter(OutputStream outputStream) {
         this(new BufferedWriter(new OutputStreamWriter(outputStream, Charset.forName("UTF-8"))));
     }
 
     /**
-     * Create a SesameJSONLDWriter using a java.io.Writer
+     * Create a SesameJSONLDWriter using a {@link java.io.Writer}
+     * 
+     * @param writer
+     *            The Writer to write to.
      */
-    public SesameJSONLDWriter(Writer nextWriter) {
-        writer = nextWriter;
+    public SesameJSONLDWriter(Writer writer) {
+        this.writer = writer;
     }
 
     @Override
@@ -102,7 +106,7 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
                 addPrefixes(ctx, model.getNamespaces());
                 final Map<String, Object> localCtx = new HashMap<String, Object>();
                 localCtx.put("@context", ctx);
-                
+
                 output = JsonLdProcessor.compact(output, localCtx, opts);
             }
             if (getWriterConfig().get(BasicWriterSettings.PRETTY_PRINT)) {

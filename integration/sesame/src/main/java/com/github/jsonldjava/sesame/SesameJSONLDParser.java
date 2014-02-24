@@ -39,7 +39,7 @@ public class SesameJSONLDParser extends RDFParserBase implements RDFParser {
      * Creates a Sesame JSONLD Parser using the given {@link ValueFactory} to
      * create new {@link Value}s.
      * 
-     * @param valueFactory
+     * @param valueFactory The ValueFactory to use
      */
     public SesameJSONLDParser(final ValueFactory valueFactory) {
         super(valueFactory);
