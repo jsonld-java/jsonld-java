@@ -46,6 +46,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		
 		<clerezza.version>0.13</clerezza.version>
+		<httpclient.version>4.2.5</httpclient.version>
 		<jackson.version>2.3.1</jackson.version>
 		<jena.version>2.11.0</jena.version>
 		<junit.version>4.11</junit.version>
@@ -135,12 +136,17 @@
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
-				<version>4.2.5</version>
+				<version>${httpclient.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient-cache</artifactId>
-				<version>4.2.5</version>
+				<version>${httpclient.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpcore</artifactId>
+				<version>${httpclient.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
