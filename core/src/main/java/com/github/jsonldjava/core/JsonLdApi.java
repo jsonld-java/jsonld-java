@@ -23,26 +23,71 @@ import org.slf4j.LoggerFactory;
 import com.github.jsonldjava.core.JsonLdError.Error;
 import com.github.jsonldjava.utils.Obj;
 
+/**
+ * A container object to maintain state relating to JsonLdOptions and the
+ * current Context, and push these into the relevant algorithms in
+ * JsonLdProcessor as necessary.
+ * 
+ * @author tristan
+ */
 public class JsonLdApi {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JsonLdApi.class);
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     JsonLdOptions opts;
     Object value = null;
     Context context = null;
 
+    /**
+     * Constructs an empty JsonLdApi object using the default JsonLdOptions, and
+     * without initialization.
+     */
     public JsonLdApi() {
-        opts = new JsonLdOptions("");
+        this(new JsonLdOptions(""));
     }
 
+    /**
+     * Constructs a JsonLdApi object using the given object as the initial
+     * JSON-LD object, and the given JsonLdOptions.
+     * 
+     * @param input
+     *            The initial JSON-LD object.
+     * @param opts
+     *            The JsonLdOptions to use.
+     * @throws JsonLdError
+     *             If there is an error initializing using the object and
+     *             options.
+     */
     public JsonLdApi(Object input, JsonLdOptions opts) throws JsonLdError {
-        initialize(input, null, opts);
+        this(opts);
+        initialize(input, null);
     }
 
+    /**
+     * Constructs a JsonLdApi object using the given object as the initial
+     * JSON-LD object, the given context, and the given JsonLdOptions.
+     * 
+     * @param input
+     *            The initial JSON-LD object.
+     * @param context
+     *            The initial context.
+     * @param opts
+     *            The JsonLdOptions to use.
+     * @throws JsonLdError
+     *             If there is an error initializing using the object and
+     *             options.
+     */
     public JsonLdApi(Object input, Object context, JsonLdOptions opts) throws JsonLdError {
-        initialize(input, null, opts);
+        this(opts);
+        initialize(input, null);
     }
 
+    /**
+     * Constructs an empty JsonLdApi object using the given JsonLdOptions, and
+     * without initialization. <br>
+     * If the JsonLdOptions parameter is null, then the default options are
+     * used.
+     */
     public JsonLdApi(JsonLdOptions opts) {
         if (opts == null) {
             opts = new JsonLdOptions("");
@@ -51,11 +96,22 @@ public class JsonLdApi {
         }
     }
 
-    private void initialize(Object input, Object context, JsonLdOptions opts) throws JsonLdError {
-        // set option defaults (TODO: clone?)
-        // NOTE: sane defaults should be set in JsonLdOptions constructor
-        this.opts = opts;
-
+    /**
+     * Initializes this object by cloning the input object using
+     * {@link JsonLdUtils#clone(Object)}, and by parsing the context using
+     * {@link Context#parse(Object)}.
+     * 
+     * @param input
+     *            The initial object, which is to be cloned and used in
+     *            operations.
+     * @param context
+     *            The context object, which is to be parsed and used in
+     *            operations.
+     * @throws JsonLdError
+     *             If there was an error cloning the object, or in parsing the
+     *             context.
+     */
+    private void initialize(Object input, Object context) throws JsonLdError {
         if (input instanceof List || input instanceof Map) {
             this.value = JsonLdUtils.clone(input);
         }
@@ -80,12 +136,17 @@ public class JsonLdApi {
      * 
      * http://json-ld.org/spec/latest/json-ld-api/#compaction-algorithm
      * 
-     * 
      * @param activeCtx
+     *            The Active Context
      * @param activeProperty
+     *            The Active Property
      * @param element
+     *            The current element
      * @param compactArrays
-     * @return
+     *            True to compact arrays.
+     * @return The compacted JSON-LD object.
+     * @throws JsonLdError
+     *             If there was an error during compaction.
      */
     public Object compact(Context activeCtx, String activeProperty, Object element,
             boolean compactArrays) throws JsonLdError {
@@ -176,7 +237,9 @@ public class JsonLdApi {
                             activeCtx, "@reverse", expandedValue, compactArrays);
 
                     // 7.2.2)
-                    for (final String property : compactedValue.keySet()) {
+                    // Note: Must create a new set to avoid modifying the set we
+                    // are iterating over
+                    for (final String property : new HashSet<String>(compactedValue.keySet())) {
                         final Object value = compactedValue.get(property);
                         // 7.2.2.1)
                         if (activeCtx.isReverseProperty(property)) {
@@ -204,8 +267,7 @@ public class JsonLdApi {
                                     ((List<Object>) result.get(property)).add(value);
                                 }
                             }
-                            // 7.2.2.1.4) TODO: this doesn't seem safe (i.e.
-                            // modifying the map being used to drive the loop)!
+                            // 7.2.2.1.4)
                             compactedValue.remove(property);
                         }
                     }
@@ -382,6 +444,19 @@ public class JsonLdApi {
         return element;
     }
 
+    /**
+     * Compaction Algorithm
+     * 
+     * http://json-ld.org/spec/latest/json-ld-api/#compaction-algorithm
+     * 
+     * @param activeCtx
+     *            The Active Context
+     * @param activeProperty
+     *            The Active Property
+     * @param element
+     *            The current element
+     * @return The compacted JSON-LD object.
+     */
     public Object compact(Context activeCtx, String activeProperty, Object element)
             throws JsonLdError {
         return compact(activeCtx, activeProperty, element, true);
@@ -401,10 +476,14 @@ public class JsonLdApi {
      * http://json-ld.org/spec/latest/json-ld-api/#expansion-algorithm
      * 
      * @param activeCtx
+     *            The Active Context
      * @param activeProperty
+     *            The Active Property
      * @param element
-     * @return
+     *            The current element
+     * @return The expanded JSON-LD object.
      * @throws JsonLdError
+     *             If there was an error during expansion.
      */
     public Object expand(Context activeCtx, String activeProperty, Object element)
             throws JsonLdError {
@@ -879,6 +958,19 @@ public class JsonLdApi {
         }
     }
 
+    /**
+     * Expansion Algorithm
+     * 
+     * http://json-ld.org/spec/latest/json-ld-api/#expansion-algorithm
+     * 
+     * @param activeCtx
+     *            The Active Context
+     * @param element
+     *            The current element
+     * @return The expanded JSON-LD object.
+     * @throws JsonLdError
+     *             If there was an error during expansion.
+     */
     public Object expand(Context activeCtx, Object element) throws JsonLdError {
         return expand(activeCtx, null, element);
     }
@@ -1080,9 +1172,32 @@ public class JsonLdApi {
         }
     }
 
+    /**
+     * Blank Node identifier map specified in:
+     * 
+     * http://www.w3.org/TR/json-ld-api/#generate-blank-node-identifier
+     */
     private final Map<String, String> blankNodeIdentifierMap = new LinkedHashMap<String, String>();
+
+    /**
+     * Counter specified in:
+     * 
+     * http://www.w3.org/TR/json-ld-api/#generate-blank-node-identifier
+     */
     private int blankNodeCounter = 0;
 
+    /**
+     * Generates a blank node identifier for the given key using the algorithm
+     * specified in:
+     * 
+     * http://www.w3.org/TR/json-ld-api/#generate-blank-node-identifier
+     * 
+     * @param id
+     *            The id, or null to generate a fresh, unused, blank node
+     *            identifier.
+     * @return A blank node identifier based on id if it was not null, or a
+     *         fresh, unused, blank node identifier if it was null.
+     */
     String generateBlankNodeIdentifier(String id) {
         if (id != null && blankNodeIdentifierMap.containsKey(id)) {
             return blankNodeIdentifierMap.get(id);
@@ -1094,6 +1209,14 @@ public class JsonLdApi {
         return bnid;
     }
 
+    /**
+     * Generates a fresh, unused, blank node identifier using the algorithm
+     * specified in:
+     * 
+     * http://www.w3.org/TR/json-ld-api/#generate-blank-node-identifier
+     * 
+     * @return A fresh, unused, blank node identifier.
+     */
     String generateBlankNodeIdentifier() {
         return generateBlankNodeIdentifier(null);
     }
@@ -1119,6 +1242,19 @@ public class JsonLdApi {
             embeds = null;
         }
 
+        public FramingContext(JsonLdOptions opts) {
+            this();
+            if (opts.getEmbed() != null) {
+                this.embed = opts.getEmbed();
+            }
+            if (opts.getExplicit() != null) {
+                this.explicit = opts.getExplicit();
+            }
+            if (opts.getOmitDefault() != null) {
+                this.omitDefault = opts.getOmitDefault();
+            }
+        }
+
         public Map<String, EmbedNode> embeds = null;
     }
 
@@ -1130,30 +1266,20 @@ public class JsonLdApi {
     private Map<String, Object> nodeMap;
 
     /**
-     * Performs JSON-LD framing.
+     * Performs JSON-LD <a
+     * href="http://json-ld.org/spec/latest/json-ld-framing/">framing</a>.
      * 
      * @param input
      *            the expanded JSON-LD to frame.
      * @param frame
      *            the expanded JSON-LD frame to use.
-     * @param options
-     *            the framing options.
-     * 
      * @return the framed output.
-     * @throws JSONLDProcessingError
+     * @throws JsonLdError
+     *             If the framing was not successful.
      */
     public List<Object> frame(Object input, List<Object> frame) throws JsonLdError {
         // create framing state
-        final FramingContext state = new FramingContext();
-        if (this.opts.getEmbed() != null) {
-            state.embed = this.opts.getEmbed();
-        }
-        if (this.opts.getExplicit() != null) {
-            state.explicit = this.opts.getExplicit();
-        }
-        if (this.opts.getOmitDefault() != null) {
-            state.omitDefault = this.opts.getOmitDefault();
-        }
+        final FramingContext state = new FramingContext(this.opts);
 
         // use tree map so keys are sotred by default
         final Map<String, Object> nodes = new TreeMap<String, Object>();
@@ -1183,7 +1309,8 @@ public class JsonLdApi {
      *            the parent subject or top-level array.
      * @param property
      *            the parent property, initialized to null.
-     * @throws JSONLDProcessingError
+     * @throws JsonLdError
+     *             If there was an error during framing.
      */
     private void frame(FramingContext state, Map<String, Object> nodes, Map<String, Object> frame,
             Object parent, String property) throws JsonLdError {
@@ -1648,11 +1775,9 @@ public class JsonLdApi {
      * 
      * @param statements
      *            the RDF statements.
-     * @param options
-     *            the RDF conversion options.
-     * @param callback
-     *            (err, output) called once the operation completes.
-     * @throws JSONLDProcessingError
+     * @return A list of JSON-LD objects found in the given dataset.
+     * @throws JsonLdError
+     *             If there was an error during conversion from RDF to JSON-LD.
      */
     public List<Object> fromRDF(final RDFDataset dataset) throws JsonLdError {
         // 1)
@@ -1831,10 +1956,12 @@ public class JsonLdApi {
      */
 
     /**
-     * Adds RDF triples for each graph in the given node map to an RDF dataset.
+     * Adds RDF triples for each graph in the current node map to an RDF
+     * dataset.
      * 
      * @return the RDF dataset.
      * @throws JsonLdError
+     *             If there was an error converting from JSON-LD to RDF.
      */
     public RDFDataset toRDF() throws JsonLdError {
         // TODO: make the default generateNodeMap call (i.e. without a
@@ -1872,7 +1999,8 @@ public class JsonLdApi {
      * 
      * @param input
      *            the expanded JSON-LD object to normalize.
-     * @throws JSONLDProcessingError
+     * @throws JsonLdError
+     *             If there was an error while normalizing.
      */
     public Object normalize(Map<String, Object> dataset) throws JsonLdError {
         // create quads and map bnodes to their associated quads
