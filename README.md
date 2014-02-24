@@ -24,7 +24,7 @@ Code example
     InputStream inputStream = new FileInputStream("input.json");
     // Read the file into an Object (The type of this object will be a List, Map, String, Boolean,
     // Number or null depending on the root object in the file).
-    Object jsonObject = JSONUtils.fromInputStream(inputStream);
+    Object jsonObject = JsonUtils.fromInputStream(inputStream);
     // Create a context JSON map containing prefixes and definitions
     Map context = new HashMap();
     // Customise context...
@@ -34,7 +34,7 @@ Code example
     // Call whichever JSONLD function you want! (e.g. compact)
     Object compact = JsonLdProcessor.compact(jsonObject, context, options);
     // Print out the result (or don't, it's your call!)
-    System.out.println(JSONUtils.toPrettyString(normalized));
+    System.out.println(JsonUtils.toPrettyString(normalized));
 
 Processor options
 -----------------
@@ -95,6 +95,10 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
 
 CHANGELOG
 =========
+
+### 2014-02-24
+* Javadoc some core classes, JsonLdProcessor, JsonLdApi, and JsonUtils
+* Rename some core classes for consistency, particularly JSONUtils to JsonUtils and JsonLdTripleCallback
 
 ### 2014-02-20
 * Fix JsonLdApi mapping options in framing algorithm (Thanks Scott Blomquist @sblom)
