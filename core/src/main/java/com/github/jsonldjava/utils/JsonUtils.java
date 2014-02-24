@@ -95,8 +95,8 @@ public class JsonUtils {
      * @throws IOException
      *             If there was an IO error during parsing.
      */
-    public static Object fromInputStream(InputStream content, String enc) throws IOException {
-        return fromReader(new BufferedReader(new InputStreamReader(content, enc)));
+    public static Object fromInputStream(InputStream input, String enc) throws IOException {
+        return fromReader(new BufferedReader(new InputStreamReader(input, enc)));
     }
 
     /**
@@ -252,14 +252,16 @@ public class JsonUtils {
      * 
      * @param jsonObject
      *            The JSON-LD Object to serialize.
+     * @return A JSON document serialised to a String.
      * @throws JsonGenerationException
      *             If there is a JSON error during serialization.
      * @throws IOException
      *             If there is an IO error during serialization.
      */
-    public static String toPrettyString(Object obj) throws JsonGenerationException, IOException {
+    public static String toPrettyString(Object jsonObject) throws JsonGenerationException,
+            IOException {
         final StringWriter sw = new StringWriter();
-        writePrettyPrint(sw, obj);
+        writePrettyPrint(sw, jsonObject);
         return sw.toString();
     }
 
@@ -268,14 +270,15 @@ public class JsonUtils {
      * 
      * @param jsonObject
      *            The JSON-LD Object to serialize.
+     * @return A JSON document serialised to a String.
      * @throws JsonGenerationException
      *             If there is a JSON error during serialization.
      * @throws IOException
      *             If there is an IO error during serialization.
      */
-    public static String toString(Object obj) throws JsonGenerationException, IOException {
+    public static String toString(Object jsonObject) throws JsonGenerationException, IOException {
         final StringWriter sw = new StringWriter();
-        write(sw, obj);
+        write(sw, jsonObject);
         return sw.toString();
     }
 

@@ -35,9 +35,9 @@ public class RDFDatasetUtils {
      *            a UniqueNamer for assigning blank node names.
      * 
      * @return the array of RDF triples for the given graph.
+     * @deprecated Use {@link RDFDataset#graphToRDF(String, Map)} instead
      */
     @Deprecated
-    // use RDFDataset.graphToRDF
     static List<Object> graphToRDF(Map<String, Object> graph, UniqueNamer namer) {
         final List<Object> rval = new ArrayList<Object>();
         for (final String id : graph.keySet()) {
@@ -464,6 +464,8 @@ public class RDFDatasetUtils {
      *            the N-Quads input to parse.
      * 
      * @return an RDF dataset.
+     * @throws JsonLdError
+     *             If there was an error parsing the N-Quads document.
      */
     public static RDFDataset parseNQuads(String input) throws JsonLdError {
         // build RDF dataset

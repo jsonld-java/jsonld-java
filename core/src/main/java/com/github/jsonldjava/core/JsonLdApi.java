@@ -87,6 +87,9 @@ public class JsonLdApi {
      * without initialization. <br>
      * If the JsonLdOptions parameter is null, then the default options are
      * used.
+     * 
+     * @param opts
+     *            The JsonLdOptions to use.
      */
     public JsonLdApi(JsonLdOptions opts) {
         if (opts == null) {
@@ -456,6 +459,8 @@ public class JsonLdApi {
      * @param element
      *            The current element
      * @return The compacted JSON-LD object.
+     * @throws JsonLdError
+     *             If there was an error during compaction.
      */
     public Object compact(Context activeCtx, String activeProperty, Object element)
             throws JsonLdError {
@@ -1773,7 +1778,7 @@ public class JsonLdApi {
     /**
      * Converts RDF statements into JSON-LD.
      * 
-     * @param statements
+     * @param dataset
      *            the RDF statements.
      * @return A list of JSON-LD objects found in the given dataset.
      * @throws JsonLdError
@@ -1997,8 +2002,9 @@ public class JsonLdApi {
     /**
      * Performs RDF normalization on the given JSON-LD input.
      * 
-     * @param input
+     * @param dataset
      *            the expanded JSON-LD object to normalize.
+     * @return The normalized JSON-LD object
      * @throws JsonLdError
      *             If there was an error while normalizing.
      */

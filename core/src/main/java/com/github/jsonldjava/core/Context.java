@@ -64,8 +64,10 @@ public class Context extends LinkedHashMap<String, Object> {
      * http://json-ld.org/spec/latest/json-ld-api/#value-compaction
      * 
      * @param activeProperty
-     * @param element
-     * @return
+     *            The Active Property
+     * @param value
+     *            The value to compact
+     * @return The compacted value
      */
     public Object compactValue(String activeProperty, Map<String, Object> value) {
         // 1)
@@ -122,9 +124,12 @@ public class Context extends LinkedHashMap<String, Object> {
      * http://json-ld.org/spec/latest/json-ld-api/#context-processing-algorithms
      * 
      * @param localContext
+     *            The Local Context object.
      * @param remoteContexts
-     * @return
+     *            The list of Strings denoting the remote Context URLs.
+     * @return The parsed and merged Context.
      * @throws JsonLdError
+     *             If there is an error parsing the contexts.
      */
     public Context parse(Object localContext, List<String> remoteContexts) throws JsonLdError {
         if (remoteContexts == null) {
@@ -929,7 +934,8 @@ public class Context extends LinkedHashMap<String, Object> {
      * Retrieve container mapping.
      * 
      * @param property
-     * @return
+     *            The Property to get a container mapping for.
+     * @return The container mapping
      */
     public String getContainer(String property) {
         if ("@graph".equals(property)) {

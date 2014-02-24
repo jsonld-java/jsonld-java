@@ -40,8 +40,8 @@ import com.github.jsonldjava.core.RDFParser;
 import com.github.jsonldjava.core.UniqueNamer;
 
 /**
- * A (probably terribly slow) Parser for turtle -> the internal RDFDataset used
- * by JSOND-Java
+ * A (probably terribly slow) Parser for turtle. Turtle is the internal
+ * RDFDataset used by JSOND-Java
  * 
  * TODO: this probably needs to be changed to use a proper parser/lexer
  * 

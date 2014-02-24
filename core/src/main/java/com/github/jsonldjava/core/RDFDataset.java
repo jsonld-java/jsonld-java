@@ -375,9 +375,9 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     }
 
     /**
-     * Returns a valid @context containing any namespaces set
+     * Returns a valid context containing any namespaces set
      * 
-     * @return
+     * @return The context map
      */
     public Map<String, Object> getContext() {
         final Map<String, Object> rval = new LinkedHashMap<String, Object>();
@@ -390,9 +390,10 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     }
 
     /**
-     * parses a @context object and sets any namespaces found within it
+     * parses a context object and sets any namespaces found within it
      * 
      * @param context
+     *            The context to parse
      */
     public void parseContext(Map<String, Object> context) {
         for (final String key : context.keySet()) {
@@ -423,9 +424,9 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     /**
      * Adds a triple to the @default graph of this dataset
      * 
-     * @param s
+     * @param subject
      *            the subject for the triple
-     * @param p
+     * @param predicate
      *            the predicate for the triple
      * @param value
      *            the value of the literal object for the triple
@@ -435,9 +436,9 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
      * @param language
      *            the language of the literal object for the triple (or null)
      */
-    public void addTriple(final String s, final String p, final String value,
+    public void addTriple(final String subject, final String predicate, final String value,
             final String datatype, final String language) {
-        addQuad(s, p, value, datatype, language, "@default");
+        addQuad(subject, predicate, value, datatype, language, "@default");
     }
 
     /**
@@ -469,54 +470,47 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     }
 
     /**
-     * Adds a triple to the @default graph of this dataset
+     * Adds a triple to the default graph of this dataset
      * 
-     * @param s
+     * @param subject
      *            the subject for the triple
-     * @param p
+     * @param predicate
      *            the predicate for the triple
-     * @param o
+     * @param object
      *            the object for the triple
-     * @param datatype
-     *            the datatype of the literal object for the triple (null values
-     *            will default to xsd:string)
-     * @param language
-     *            the language of the literal object for the triple (or null)
      */
-    public void addTriple(final String s, final String p, final String o) {
-        addQuad(s, p, o, "@default");
+    public void addTriple(final String subject, final String predicate, final String object) {
+        addQuad(subject, predicate, object, "@default");
     }
 
     /**
-     * Adds a triple to thespecified graph of this dataset
+     * Adds a triple to the specified graph of this dataset
      * 
-     * @param s
+     * @param subject
      *            the subject for the triple
-     * @param p
+     * @param predicate
      *            the predicate for the triple
-     * @param o
+     * @param object
      *            the object for the triple
-     * @param datatype
-     *            the datatype of the literal object for the triple (null values
-     *            will default to xsd:string)
      * @param graph
      *            the graph to add this triple to
-     * @param language
-     *            the language of the literal object for the triple (or null)
      */
-    public void addQuad(final String s, final String p, final String o, String graph) {
+    public void addQuad(final String subject, final String predicate, final String object,
+            String graph) {
         if (graph == null) {
             graph = "@default";
         }
         if (!containsKey(graph)) {
             put(graph, new ArrayList<Quad>());
         }
-        ((ArrayList<Quad>) get(graph)).add(new Quad(s, p, o, graph));
+        ((ArrayList<Quad>) get(graph)).add(new Quad(subject, predicate, object, graph));
     }
 
     /**
      * Creates an array of RDF triples for the given graph.
      * 
+     * @param graphName
+     *            The graph URI
      * @param graph
      *            the graph to create RDF triples for.
      */
@@ -614,9 +608,6 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
      * 
      * @param item
      *            the JSON-LD value or node object.
-     * @param namer
-     *            the UniqueNamer to use to assign blank node names.
-     * 
      * @return the RDF literal or RDF resource.
      */
     private Node objectToRDF(Object item) {

@@ -9,18 +9,24 @@ public class Obj {
      * easier TODO: roll out the loops for efficiency
      * 
      * @param map
+     *            The map to get a key from
      * @param keys
-     * @return
+     *            The list of keys to attempt to get from the map. The first key
+     *            found with a non-null value is returned, or if none are found,
+     *            the original map is returned.
+     * @return The key from the map, or the original map if none of the keys are
+     *         found.
      */
-    public static Object get(Object map, String... keys) {
+    public static Object get(Map<String, Object> map, String... keys) {
+        Map<String, Object> result = map;
         for (final String key : keys) {
-            map = ((Map<String, Object>) map).get(key);
+            result = (Map<String, Object>) map.get(key);
             // make sure we don't crash if we get a null somewhere down the line
-            if (map == null) {
-                return map;
+            if (result == null) {
+                return result;
             }
         }
-        return map;
+        return result;
     }
 
     public static Object put(Object map, String key1, Object value) {

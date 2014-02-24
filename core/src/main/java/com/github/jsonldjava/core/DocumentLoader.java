@@ -79,15 +79,16 @@ public class DocumentLoader {
     }
 
     /**
-     * Opens an {@link InputStream} for the given {@link JsonLdUrl}, including
-     * support for http and https URLs that are requested using Content
-     * Negotiation with application/ld+json as the preferred content type.
+     * Opens an {@link InputStream} for the given {@link java.net.URL},
+     * including support for http and https URLs that are requested using
+     * Content Negotiation with application/ld+json as the preferred content
+     * type.
      * 
      * @param url
-     *            The JsonLdUrl identifying the source.
+     *            The {@link java.net.URL} identifying the source.
      * @return An InputStream containing the contents of the source.
      * @throws IOException
-     *             If there was an error resolving the JsonLdUrl.
+     *             If there was an error resolving the {@link java.net.URL}.
      */
     public static InputStream openStreamFromURL(java.net.URL url) throws IOException {
         final String protocol = url.getProtocol();

@@ -37,10 +37,11 @@ public interface RDFParser {
      * generateTriple(s,p,value,datatype,language);
      * addTripleToRDFDatasetResult(result, graphName, triple);
      * 
-     * @param dataset
+     * @param input
      *            The RDF library specific input to parse
-     * @return input in internal RDF Dataset format
+     * @return The input parsed using the internal RDF Dataset format
      * @throws JsonLdError
+     *             If there was an error parsing the input
      */
     public RDFDataset parse(Object input) throws JsonLdError;
 }

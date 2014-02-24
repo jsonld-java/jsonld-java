@@ -376,6 +376,9 @@ public class JsonLdProcessor {
      * @param dataset
      *            a serialized string of RDF in a format specified by the format
      *            option or an RDF dataset to convert.
+     * @return The JSON-LD object represented by the given RDF dataset
+     * @throws JsonLdError
+     *             If there was an error converting from RDF to JSON-LD
      */
     public static Object fromRDF(Object dataset) throws JsonLdError {
         return fromRDF(dataset, new JsonLdOptions(""));
@@ -385,7 +388,7 @@ public class JsonLdProcessor {
      * Converts an RDF dataset to JSON-LD, using a specific instance of
      * {@link RDFParser}.
      * 
-     * @param dataset
+     * @param input
      *            a serialized string of RDF in a format specified by the format
      *            option or an RDF dataset to convert.
      * @param options
@@ -429,7 +432,7 @@ public class JsonLdProcessor {
      * Converts an RDF dataset to JSON-LD, using a specific instance of
      * {@link RDFParser}, and the default {@link JsonLdOptions}.
      * 
-     * @param dataset
+     * @param input
      *            a serialized string of RDF in a format specified by the format
      *            option or an RDF dataset to convert.
      * @param parser

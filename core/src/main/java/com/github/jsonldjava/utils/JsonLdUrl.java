@@ -109,6 +109,7 @@ public class JsonLdUrl {
      *            the path to remove dot segments from.
      * @param hasAuthority
      *            true if the JsonLdUrl has an authority, false if not.
+     * @return The URL without the dot segments
      */
     public static String removeDotSegments(String path, boolean hasAuthority) {
         String rval = "";
