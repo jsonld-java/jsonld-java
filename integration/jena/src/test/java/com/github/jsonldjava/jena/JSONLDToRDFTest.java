@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.github.jsonldjava.core.JsonLdApi;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.RDFDataset;
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.JsonUtils;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -33,7 +33,7 @@ public class JSONLDToRDFTest {
         final JenaRDFParser parser = new JenaRDFParser();
         final RDFDataset dataset = parser.parse(model);
         final Object json = new JsonLdApi(options).fromRDF(dataset);
-        final String jsonStr = JSONUtils.toPrettyString(json);
+        final String jsonStr = JsonUtils.toPrettyString(json);
         // System.out.println(jsonStr);
         assertTrue(jsonStr.contains("@id"));
         assertTrue(jsonStr.contains("http://example.com/test"));

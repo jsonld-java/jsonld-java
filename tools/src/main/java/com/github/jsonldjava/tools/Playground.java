@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.JsonUtils;
 
 public class Playground {
 
@@ -89,7 +89,7 @@ public class Playground {
                             }
 
                         } else {
-                            inobj = JSONUtils.fromInputStream(new FileInputStream(in));
+                            inobj = JsonUtils.fromInputStream(new FileInputStream(in));
                         }
                         if ("--fromRDF".equals(opt) || "--toRDF".equals(opt)
                                 || "--normalize".equals(opt)) {
@@ -124,7 +124,7 @@ public class Playground {
                                         return;
                                     }
                                 }
-                                ctxobj = JSONUtils.fromInputStream(new FileInputStream(in));
+                                ctxobj = JsonUtils.fromInputStream(new FileInputStream(in));
                             }
                         }
                     } else {
@@ -176,7 +176,7 @@ public class Playground {
                 if ("--toRDF".equals(opt) || "--normalize".equals(opt)) {
                     System.out.println((String) outobj);
                 } else {
-                    System.out.println(JSONUtils.toPrettyString(outobj));
+                    System.out.println(JsonUtils.toPrettyString(outobj));
                 }
             }
         } catch (final Exception e) {

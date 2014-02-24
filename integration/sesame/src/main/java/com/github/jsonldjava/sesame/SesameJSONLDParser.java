@@ -18,7 +18,7 @@ import org.openrdf.rio.helpers.RDFParserBase;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.JsonUtils;
 
 /**
  * An {@link RDFParser} that links to {@link SesameTripleCallback}.
@@ -60,7 +60,7 @@ public class SesameJSONLDParser extends RDFParserBase implements RDFParser {
         options.useNamespaces = true;
         
         try {
-            JsonLdProcessor.toRDF(JSONUtils.fromInputStream(in), callback, options);
+            JsonLdProcessor.toRDF(JsonUtils.fromInputStream(in), callback, options);
         } catch (final JsonLdError e) {
             throw new RDFParseException("Could not parse JSONLD", e);
         } catch (final RuntimeException e) {
@@ -81,7 +81,7 @@ public class SesameJSONLDParser extends RDFParserBase implements RDFParser {
         options.useNamespaces = true;
         
         try {
-            JsonLdProcessor.toRDF(JSONUtils.fromReader(reader), callback, options);
+            JsonLdProcessor.toRDF(JsonUtils.fromReader(reader), callback, options);
         } catch (final JsonLdError e) {
             throw new RDFParseException("Could not parse JSONLD", e);
         } catch (final RuntimeException e) {

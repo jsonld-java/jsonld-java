@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.JsonUtils;
 
 /**
  * @author Peter Ansell p_ansell@yahoo.com
@@ -106,9 +106,9 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
                 output = JsonLdProcessor.compact(output, localCtx, opts);
             }
             if (getWriterConfig().get(BasicWriterSettings.PRETTY_PRINT)) {
-                JSONUtils.writePrettyPrint(writer, output);
+                JsonUtils.writePrettyPrint(writer, output);
             } else {
-                JSONUtils.write(writer, output);
+                JsonUtils.write(writer, output);
             }
 
         } catch (final JsonLdError e) {

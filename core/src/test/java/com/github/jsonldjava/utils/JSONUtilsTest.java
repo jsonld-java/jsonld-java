@@ -44,7 +44,7 @@ public class JSONUtilsTest {
         Object obj = null;
 
         try {
-            obj = JSONUtils.fromString(testString);
+            obj = JsonUtils.fromString(testString);
         } catch (final Exception e) {
             assertTrue(false);
         }
@@ -53,7 +53,7 @@ public class JSONUtilsTest {
         assertTrue(((Map<String, Object>) obj).get("seq") instanceof Number);
 
         try {
-            obj = JSONUtils.fromString(testFailure);
+            obj = JsonUtils.fromString(testFailure);
             assertTrue(false);
         } catch (final Exception e) {
             assertTrue(true);

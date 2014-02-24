@@ -37,7 +37,7 @@ import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.core.RDFDataset;
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.JsonUtils;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
@@ -86,7 +86,7 @@ public class JsonLDReader implements ReaderRIOT {
             };
             JsonLdOptions options = new JsonLdOptions(baseURI);
             options.useNamespaces = true;
-            JsonLdProcessor.toRDF(JSONUtils.fromInputStream(in), callback, options);
+            JsonLdProcessor.toRDF(JsonUtils.fromInputStream(in), callback, options);
         } catch (final IOException e) {
             throw new RiotException("Could not read JSONLD: " + e, e);
         } catch (final JsonLdError e) {

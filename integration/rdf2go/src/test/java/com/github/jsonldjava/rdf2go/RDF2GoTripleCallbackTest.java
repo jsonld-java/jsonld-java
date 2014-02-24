@@ -12,7 +12,7 @@ import org.ontoware.rdf2go.model.Statement;
 
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdProcessor;
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.JsonUtils;
 
 /**
  * Unit tests for {@link RDF2GoTripleCallback}.
@@ -26,7 +26,7 @@ public class RDF2GoTripleCallbackTest {
         final String inputstring = "{ `@id`:`http://nonexistent.com/abox#Document1823812`, `@type`:`http://nonexistent.com/tbox#Document` }"
                 .replace('`', '"');
         final String expectedString = "null - http://nonexistent.com/abox#Document1823812 - http://www.w3.org/1999/02/22-rdf-syntax-ns#type - http://nonexistent.com/tbox#Document";
-        final Object input = JSONUtils.fromString(inputstring);
+        final Object input = JsonUtils.fromString(inputstring);
 
         final RDF2GoTripleCallback callback = new RDF2GoTripleCallback();
 

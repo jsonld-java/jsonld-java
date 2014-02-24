@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdProcessor;
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.JsonUtils;
 
 public class ClerezzaTripleCallbackTest {
 
@@ -20,7 +20,7 @@ public class ClerezzaTripleCallbackTest {
     public void triplesTest() throws IOException, JsonLdError {
         final InputStream in = getClass().getClassLoader().getResourceAsStream(
                 "testfiles/product.jsonld");
-        final Object input = JSONUtils.fromInputStream(in);
+        final Object input = JsonUtils.fromInputStream(in);
 
         final ClerezzaTripleCallback callback = new ClerezzaTripleCallback();
 
@@ -37,7 +37,7 @@ public class ClerezzaTripleCallbackTest {
     public void curiesInContextTest() throws IOException, JsonLdError {
         final InputStream in = getClass().getClassLoader().getResourceAsStream(
                 "testfiles/curies-in-context.jsonld");
-        final Object input = JSONUtils.fromInputStream(in);
+        final Object input = JsonUtils.fromInputStream(in);
 
         final ClerezzaTripleCallback callback = new ClerezzaTripleCallback();
 

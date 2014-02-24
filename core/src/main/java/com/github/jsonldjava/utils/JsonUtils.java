@@ -39,7 +39,7 @@ import com.github.jsonldjava.core.JsonLdProcessor;
  * @author tristan
  * 
  */
-public class JSONUtils {
+public class JsonUtils {
     /**
      * An HTTP Accept header that prefers JSONLD.
      */
@@ -186,7 +186,7 @@ public class JSONUtils {
      */
     protected static HttpClient getHttpClient() {
         if (httpClient == null) {
-            synchronized (JSONUtils.class) {
+            synchronized (JsonUtils.class) {
                 if (httpClient == null) {
                     // Uses Apache SystemDefaultHttpClient rather than
                     // DefaultHttpClient, thus the normal proxy settings for the
@@ -241,7 +241,7 @@ public class JSONUtils {
     }
 
     protected static void setHttpClient(HttpClient nextHttpClient) {
-        synchronized (JSONUtils.class) {
+        synchronized (JsonUtils.class) {
             httpClient = nextHttpClient;
         }
     }

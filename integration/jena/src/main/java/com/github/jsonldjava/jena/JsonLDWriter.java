@@ -45,7 +45,7 @@ import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.core.RDFDataset;
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.JsonUtils;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -112,9 +112,9 @@ class JsonLDWriter extends WriterDatasetRIOTBase {
             obj = JsonLdProcessor.compact(obj, localCtx, opts);
 
             if (isPretty()) {
-                JSONUtils.writePrettyPrint(writer, obj);
+                JsonUtils.writePrettyPrint(writer, obj);
             } else {
-                JSONUtils.write(writer, obj);
+                JsonUtils.write(writer, obj);
             }
         } catch (final IOException e) {
             throw new RiotException("Could not write JSONLD: " + e, e);

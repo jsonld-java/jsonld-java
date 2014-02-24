@@ -88,7 +88,7 @@ public class EarlTestSuite {
                 throw new RuntimeException(e);
             }
         } else if (manifestURL.endsWith(".jsonld") || manifestURL.endsWith(".json")) {
-            final Object rval = JSONUtils.fromString(manifestFile);
+            final Object rval = JsonUtils.fromString(manifestFile);
             if (rval instanceof Map) {
                 this.manifest = (Map<String, Object>) rval;
                 this.tests = (List<Map<String, Object>>) Obj.get(this.manifest, "sequence");

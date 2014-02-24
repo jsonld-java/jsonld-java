@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.github.jsonldjava.core.JsonLdApi;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.RDFDataset;
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.JsonUtils;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.DatasetFactory;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -152,7 +152,7 @@ public class ExampleTest {
         final JsonLdApi api = new JsonLdApi(options);
         final RDFDataset dataset = new RDFDataset(api);
         final Object json = api.fromRDF(dataset);
-        final String jsonStr = JSONUtils.toPrettyString(json);
+        final String jsonStr = JsonUtils.toPrettyString(json);
         System.out.println(jsonStr);
         // [ {
         // "@id" : "http://example.com/test",

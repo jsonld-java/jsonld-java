@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.JsonUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -113,7 +113,7 @@ public class DocumentLoader {
     public static HttpClient getHttpClient() {
         HttpClient result = httpClient;
         if (result == null) {
-            synchronized (JSONUtils.class) {
+            synchronized (JsonUtils.class) {
                 result = httpClient;
                 if (result == null) {
                     // Uses Apache SystemDefaultHttpClient rather than
@@ -138,7 +138,7 @@ public class DocumentLoader {
     }
 
     public static void setHttpClient(HttpClient nextHttpClient) {
-        synchronized (JSONUtils.class) {
+        synchronized (JsonUtils.class) {
             httpClient = nextHttpClient;
         }
     }

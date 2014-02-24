@@ -39,7 +39,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.jsonldjava.impl.TurtleTripleCallback;
-import com.github.jsonldjava.utils.JSONUtils;
+import com.github.jsonldjava.utils.JsonUtils;
 import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.TestUtils;
 
@@ -170,7 +170,7 @@ public class JsonLdProcessorTest {
         if ("application/ld+json".equals(reportFormat) || "jsonld".equals(reportFormat)
                 || "*".equals(reportFormat)) {
             System.out.println("Generating JSON-LD Report");
-            JSONUtils.writePrettyPrint(new OutputStreamWriter(new FileOutputStream(reportOutputFile
+            JsonUtils.writePrettyPrint(new OutputStreamWriter(new FileOutputStream(reportOutputFile
                     + ".jsonld")), REPORT);
         }
 
@@ -242,7 +242,7 @@ public class JsonLdProcessorTest {
             // System.out.println("Reading: " + in.getCanonicalPath());
             final FileInputStream manifestfile = new FileInputStream(in);
 
-            final Map<String, Object> manifest = (Map<String, Object>) JSONUtils
+            final Map<String, Object> manifest = (Map<String, Object>) JsonUtils
                     .fromInputStream(manifestfile);
 
             for (final Map<String, Object> test : (List<Map<String, Object>>) manifest
@@ -287,7 +287,7 @@ public class JsonLdProcessorTest {
                     final InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/"
                             + classpath);
                     try {
-                        return new RemoteDocument(url, JSONUtils.fromInputStream(inputStream));
+                        return new RemoteDocument(url, JsonUtils.fromInputStream(inputStream));
                     } catch (final IOException e) {
                         throw new JsonLdError(JsonLdError.Error.LOADING_DOCUMENT_FAILED);
                     }
@@ -354,7 +354,7 @@ public class JsonLdProcessorTest {
 
         Object input = null;
         if (inputType.equals("jsonld")) {
-            input = JSONUtils.fromInputStream(inputStream);
+            input = JsonUtils.fromInputStream(inputStream);
         } else if (inputType.equals("nt") || inputType.equals("nq")) {
             final List<String> inputLines = new ArrayList<String>();
             final BufferedReader buf = new BufferedReader(new InputStreamReader(inputStream,
@@ -387,7 +387,7 @@ public class JsonLdProcessorTest {
             } else {
                 final String expectType = expectFile.substring(expectFile.lastIndexOf(".") + 1);
                 if (expectType.equals("jsonld")) {
-                    expect = JSONUtils.fromInputStream(expectStream);
+                    expect = JsonUtils.fromInputStream(expectStream);
                 } else if (expectType.equals("nt") || expectType.equals("nq")) {
                     final List<String> expectLines = new ArrayList<String>();
                     final BufferedReader buf = new BufferedReader(new InputStreamReader(
@@ -438,7 +438,7 @@ public class JsonLdProcessorTest {
             if (test_opts.containsKey("expandContext")) {
                 final InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/"
                         + test_opts.get("expandContext"));
-                options.setExpandContext(JSONUtils.fromInputStream(contextStream));
+                options.setExpandContext(JsonUtils.fromInputStream(contextStream));
             }
             if (test_opts.containsKey("compactArrays")) {
                 options.setCompactArrays((Boolean) test_opts.get("compactArrays"));
@@ -479,13 +479,13 @@ public class JsonLdProcessorTest {
             } else if (testType.contains("jld:CompactTest")) {
                 final InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/"
                         + test.get("context"));
-                final Object contextJson = JSONUtils.fromInputStream(contextStream);
+                final Object contextJson = JsonUtils.fromInputStream(contextStream);
                 result = JsonLdProcessor.compact(input, contextJson, options);
             } else if (testType.contains("jld:FlattenTest")) {
                 if (test.containsKey("context")) {
                     final InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/"
                             + test.get("context"));
-                    final Object contextJson = JSONUtils.fromInputStream(contextStream);
+                    final Object contextJson = JsonUtils.fromInputStream(contextStream);
                     result = JsonLdProcessor.flatten(input, contextJson, options);
                 } else {
                     result = JsonLdProcessor.flatten(input, options);
@@ -493,7 +493,7 @@ public class JsonLdProcessorTest {
             } else if (testType.contains("jld:FrameTest")) {
                 final InputStream frameStream = cl.getResourceAsStream(TEST_DIR + "/"
                         + test.get("frame"));
-                final Map<String, Object> frameJson = (Map<String, Object>) JSONUtils
+                final Map<String, Object> frameJson = (Map<String, Object>) JsonUtils
                         .fromInputStream(frameStream);
                 result = JsonLdProcessor.frame(input, frameJson, options);
             } else if (testType.contains("jld:FromRDFTest")) {
@@ -600,10 +600,10 @@ public class JsonLdProcessorTest {
                         + test.get("expect")
                         + ")\n"
                         + "expected: "
-                        + JSONUtils.toPrettyString(expect)
+                        + JsonUtils.toPrettyString(expect)
                         + "\nresult: "
                         + (result instanceof JsonLdError ? ((JsonLdError) result).toString()
-                                : JSONUtils.toPrettyString(result)), testpassed);
+                                : JsonUtils.toPrettyString(result)), testpassed);
     }
 
 }
