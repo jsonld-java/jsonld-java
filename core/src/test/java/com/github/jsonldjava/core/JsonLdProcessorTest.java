@@ -98,7 +98,7 @@ public class JsonLdProcessorTest {
                         // project
                         add(new LinkedHashMap<String, Object>() {
                             {
-                                put("@id", "http://github.com/jsonld-java/jsonld-java");
+                                put("@id", "https://github.com/jsonld-java/jsonld-java");
                                 put("@type", new ArrayList<Object>() {
                                     {
                                         add("doap:Project");
@@ -107,7 +107,7 @@ public class JsonLdProcessorTest {
                                     }
                                 });
                                 put("doap:name", "JSONLD-Java");
-                                put("doap:homepage", "http://github.com/jsonld-java/jsonld-java");
+                                put("doap:homepage", "https://github.com/jsonld-java/jsonld-java");
                                 put("doap:description", new LinkedHashMap<String, Object>() {
                                     {
                                         put("@value",
