@@ -111,7 +111,8 @@ public class Context extends LinkedHashMap<String, Object> {
         }
         // 7)
         if (numberMembers == 1
-                && (!(valueValue instanceof String) || !this.containsKey("@language") || (getTermDefinition(
+                && (!(valueValue instanceof String) || !this.containsKey("@language") ||
+                        (termDefinitions.containsKey(activeProperty) && getTermDefinition(
                         activeProperty).containsKey("@language") && languageMapping == null))) {
             return valueValue;
         }
