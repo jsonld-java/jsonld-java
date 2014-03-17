@@ -572,7 +572,7 @@
     }, {
       "@id": "#t0071",
       "@type": ["jld:PositiveEvaluationTest", "jld:CompactTest"],
-      "name": "input has multiple @contexts, output has one",
+      "name": "Input has multiple @contexts, output has one",
       "purpose": "Expanding input with multiple @contexts and compacting with just one doesn't output undefined properties",
       "input": "compact-0071-in.jsonld",
       "context": "compact-0071-context.jsonld",
@@ -580,8 +580,8 @@
     }, {
       "@id": "#t0072",
       "@type": ["jld:PositiveEvaluationTest", "jld:CompactTest"],
-      "name": "@context has default @language",
-      "purpose": "Default @language in @context also works when a key is not explicitly mapped in the @context",
+      "name": "Default language and unmapped properties",
+      "purpose": "Ensure that the default language is handled correctly for unmapped properties",
       "input": "compact-0072-in.jsonld",
       "context": "compact-0072-context.jsonld",
       "expect": "compact-0072-out.jsonld"
