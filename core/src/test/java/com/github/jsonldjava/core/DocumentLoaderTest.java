@@ -1,6 +1,10 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -24,7 +27,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.cache.CacheResponseStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -32,8 +34,6 @@ import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-
-import uk.org.taverna.httpclient.jarcache.JarCacheStorage;
 
 public class DocumentLoaderTest {
 	

@@ -17,12 +17,11 @@ import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 
-import uk.org.taverna.httpclient.jarcache.JarCacheStorage;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
+import com.github.jsonldjava.utils.JarCacheStorage;
 
 public class DocumentLoader {
 
