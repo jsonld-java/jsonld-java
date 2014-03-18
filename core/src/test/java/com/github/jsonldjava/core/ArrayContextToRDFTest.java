@@ -33,7 +33,8 @@ public class ArrayContextToRDFTest {
 			}
 		};
 		options.setDocumentLoader(documentLoader);
-		JsonLdProcessor.toRDF(arrayContext, options);
+		Object rdf = JsonLdProcessor.toRDF(arrayContext, options);
+		System.out.println(rdf);
 		
 	}
 }

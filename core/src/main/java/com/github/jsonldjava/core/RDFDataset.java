@@ -395,7 +395,23 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
      * @param context
      *            The context to parse
      */
-    public void parseContext(Map<String, Object> context) {
+    public void parseContext(Object contextLike) {
+    	Map<String, Object> context;
+    	
+    	if (contextLike instanceof Map) {
+    		context = (Map<String, Object>) contextLike;
+    	} else if (contextLike instanceof List) {
+    		for (Object cntx : (List)contextLike) {
+    			parseContext(cntx);
+    		}
+    		return;
+    	} else if (contextLike instanceof String) {
+    		// FIXME: Ignore external contexts for now
+    		return;
+    	} else { 
+    		throw new RuntimeException("Can't handle context of type " + contextLike.getClass());
+    	}
+    	
         for (final String key : context.keySet()) {
             final Object val = context.get(key);
             if ("@vocab".equals(key)) {
@@ -407,7 +423,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                 }
             } else if ("@context".equals(key)) {
                 // go deeper!
-                parseContext((Map<String, Object>) context.get("@context"));
+                parseContext(context.get("@context"));
             } else if (!isKeyword(key)) {
                 // TODO: should we make sure val is a valid URI prefix (i.e. it
                 // ends with /# or ?)
