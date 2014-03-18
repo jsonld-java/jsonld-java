@@ -4,5 +4,5 @@
   	{ "ex2": "http://example.com/2/" }
   ],
   "@id": "ex2:a",
-  "ex:term2": "ex2:b"
+  "term2": "ex2:b"
 }
