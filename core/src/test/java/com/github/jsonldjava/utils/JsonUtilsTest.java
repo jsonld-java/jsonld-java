@@ -29,6 +29,7 @@ import org.apache.http.impl.client.cache.CachingHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -113,7 +114,7 @@ public class JsonUtilsTest {
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
-    // @Ignore("Integration test")
+    @Ignore("Integration test, purl.org is unstable")
     @Test
     public void fromURLredirect() throws Exception {
         final URL url = new URL("http://purl.org/wf4ever/ro-bundle/context.json");
