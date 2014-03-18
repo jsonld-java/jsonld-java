@@ -1,21 +1,20 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -25,12 +24,16 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.cache.CacheResponseStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.junit.After;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+
+import uk.org.taverna.httpclient.jarcache.JarCacheStorage;
 
 public class DocumentLoaderTest {
 	
@@ -209,5 +212,54 @@ public class DocumentLoaderTest {
 
         assertEquals(6, elems.length);
     }
+    
+    @Test
+	public void jarCacheHit() throws Exception {
+       	// If no cache, should fail-fast as nonexisting.example.com is not in DNS
+    	Object context = documentLoader.fromURL(new URL("http://nonexisting.example.com/context"));
+    	assertTrue(context instanceof Map);
+    	assertTrue(((Map)context).containsKey("@context"));
+	}
+    
+    
+    @Test(expected=IOException.class)
+   	public void jarCacheMiss404() throws Exception {
+       	// Should fail-fast as nonexisting.example.com is not in DNS
+       	Object context = documentLoader.fromURL(new URL("http://nonexisting.example.com/miss"));       	
+   	}
+    
 
+	@After
+	public void setContextClassLoader() {
+		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+	}
+
+    @Test(expected=IOException.class)
+   	public void jarCacheMissThreadCtx() throws Exception {
+		URLClassLoader findNothingCL = new URLClassLoader(new URL[] {}, null);
+		Thread.currentThread().setContextClassLoader(findNothingCL);
+		Object context = documentLoader.fromURL(new URL(
+				"http://nonexisting.example.com/context"));
+   	}
+
+	@Test
+	public void jarCacheHitThreadCtx() throws Exception {		
+		URL url = new URL(
+				"http://nonexisting.example.com/nested/hello");
+		URL nestedJar = getClass().getResource("/nested.jar");
+		try {
+			Object hello = documentLoader.fromURL(url);
+			fail("Should not be able to find nested/hello yet");
+		} catch (IOException ex) {
+			// expected
+		}
+		
+		ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
+		Thread.currentThread().setContextClassLoader(cl);
+		Object hello = documentLoader.fromURL(url);
+		assertTrue(hello instanceof Map);
+		assertEquals("World!", ((Map)hello).get("Hello"));
+		
+	}    
+    
 }

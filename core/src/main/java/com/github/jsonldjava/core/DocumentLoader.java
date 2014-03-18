@@ -1,10 +1,10 @@
 package com.github.jsonldjava.core;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.MappingJsonFactory;
-import com.github.jsonldjava.utils.JsonUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -19,11 +19,10 @@ import org.apache.http.impl.client.cache.CachingHttpClient;
 
 import uk.org.taverna.httpclient.jarcache.JarCacheStorage;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.MappingJsonFactory;
 
 public class DocumentLoader {
 
@@ -133,11 +132,11 @@ public class DocumentLoader {
                     cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
                     cacheConfig.setMaxCacheEntries(1000);
                     // and allow caching
-                    httpClient = new CachingHttpClient(client, cacheConfig);
+                    CachingHttpClient cachingClient = new CachingHttpClient(client, cacheConfig);
                     
-                    // Wrap with JAR cache
+                    // Wrap again with JAR cache
                     JarCacheStorage jarCache = new JarCacheStorage();
-                    httpClient = new CachingHttpClient(httpClient, jarCache, jarCache.getCacheConfig());
+                    httpClient = new CachingHttpClient(cachingClient, jarCache, jarCache.getCacheConfig());
                     
                     result = httpClient;
                 }
