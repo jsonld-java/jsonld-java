@@ -1,5 +1,6 @@
 package com.github.jsonldjava.core;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.net.URL;
@@ -33,8 +34,14 @@ public class ArrayContextToRDFTest {
 			}
 		};
 		options.setDocumentLoader(documentLoader);
-		Object rdf = JsonLdProcessor.toRDF(arrayContext, options);
-		System.out.println(rdf);
+		RDFDataset rdf = (RDFDataset) JsonLdProcessor.toRDF(arrayContext, options);
+		System.out.println(rdf.getNamespaces());
+		assertEquals("http://example.org/", rdf.getNamespace("ex"));
+		assertEquals("http://example.com/2/", rdf.getNamespace("ex2"));
+		// FIXME: Should this also be included?
+		assertEquals("http://example.org/term1", rdf.getNamespace("term1"));
+//		assertFalse(rdf.getNamespaces().containsKey("term1"));
+		
 		
 	}
 }
