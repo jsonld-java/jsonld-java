@@ -1,7 +1,6 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.net.URL;
 
@@ -38,9 +37,8 @@ public class ArrayContextToRDFTest {
 		System.out.println(rdf.getNamespaces());
 		assertEquals("http://example.org/", rdf.getNamespace("ex"));
 		assertEquals("http://example.com/2/", rdf.getNamespace("ex2"));
-		// FIXME: Should this also be included?
-		assertEquals("http://example.org/term1", rdf.getNamespace("term1"));
-//		assertFalse(rdf.getNamespaces().containsKey("term1"));
+		// Only 'proper' prefixes returned
+		assertFalse(rdf.getNamespaces().containsKey("term1"));
 		
 		
 	}
