@@ -57,6 +57,11 @@
 			<artifactId>sesame-rio-nquads</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>uk.org.taverna.httpclientjarcache</groupId>
+			<artifactId>httpclient-jarcache</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>
 

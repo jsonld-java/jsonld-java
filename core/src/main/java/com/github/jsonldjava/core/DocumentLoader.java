@@ -1,10 +1,10 @@
 package com.github.jsonldjava.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.MappingJsonFactory;
+import com.github.jsonldjava.utils.JsonUtils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -17,10 +17,13 @@ import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.MappingJsonFactory;
+import uk.org.taverna.httpclient.jarcache.JarCacheStorage;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 public class DocumentLoader {
 
@@ -131,6 +134,10 @@ public class DocumentLoader {
                     cacheConfig.setMaxCacheEntries(1000);
                     // and allow caching
                     httpClient = new CachingHttpClient(client, cacheConfig);
+                    
+                    // Wrap with JAR cache
+                    JarCacheStorage jarCache = new JarCacheStorage();
+                    httpClient = new CachingHttpClient(httpClient, jarCache, jarCache.getCacheConfig());
                     
                     result = httpClient;
                 }
