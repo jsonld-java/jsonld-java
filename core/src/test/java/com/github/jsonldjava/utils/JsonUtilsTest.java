@@ -35,6 +35,8 @@ import org.mockito.ArgumentCaptor;
 import com.github.jsonldjava.core.DocumentLoader;
 
 public class JsonUtilsTest {
+	
+	DocumentLoader documentLoader = new DocumentLoader();
 
     @SuppressWarnings("unchecked")
     @Test
@@ -65,7 +67,7 @@ public class JsonUtilsTest {
     public void fromURLTest0001() throws Exception {
         final URL contexttest = getClass().getResource("/custom/contexttest-0001.jsonld");
         assertNotNull(contexttest);
-        final Object context = DocumentLoader.fromURL(contexttest);
+        final Object context = documentLoader.fromURL(contexttest);
         assertTrue(context instanceof Map);
         final Map<String, Object> contextMap = (Map<String, Object>) context;
         assertEquals(1, contextMap.size());
@@ -81,7 +83,7 @@ public class JsonUtilsTest {
     public void fromURLTest0002() throws Exception {
         final URL contexttest = getClass().getResource("/custom/contexttest-0002.jsonld");
         assertNotNull(contexttest);
-        final Object context = DocumentLoader.fromURL(contexttest);
+        final Object context = documentLoader.fromURL(contexttest);
         assertTrue(context instanceof List);
         final List<Map<String, Object>> contextList = (List<Map<String, Object>>) context;
 
@@ -105,7 +107,7 @@ public class JsonUtilsTest {
     @Test
     public void fromURLredirectHTTPSToHTTP() throws Exception {
         final URL url = new URL("https://w3id.org/bundle/context");
-        final Object context = DocumentLoader.fromURL(url);
+        final Object context = documentLoader.fromURL(url);
         // Should not fail because of
         // http://stackoverflow.com/questions/1884230/java-doesnt-follow-redirect-in-urlconnection
         // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4620571
@@ -117,7 +119,7 @@ public class JsonUtilsTest {
     @Test
     public void fromURLredirect() throws Exception {
         final URL url = new URL("http://purl.org/wf4ever/ro-bundle/context.json");
-        final Object context = DocumentLoader.fromURL(url);
+        final Object context = documentLoader.fromURL(url);
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
@@ -125,11 +127,11 @@ public class JsonUtilsTest {
     @Test
     public void fromURLCache() throws Exception {
         final URL url = new URL("http://json-ld.org/contexts/person.jsonld");
-        DocumentLoader.fromURL(url);
+        documentLoader.fromURL(url);
 
         // Now try to get it again and ensure it is
         // cached
-        final HttpClient client = new CachingHttpClient(DocumentLoader.getHttpClient());
+        final HttpClient client = new CachingHttpClient(documentLoader.getHttpClient());
         final HttpUriRequest get = new HttpGet(url.toURI());
         get.setHeader("Accept", DocumentLoader.ACCEPT_HEADER);
         final HttpContext localContext = new BasicHttpContext();
@@ -165,7 +167,7 @@ public class JsonUtilsTest {
         };
         final URL url = new URL(null, "jsonldtest:context", handler);
         assertEquals(0, requests.get());
-        final Object context = DocumentLoader.fromURL(url);
+        final Object context = documentLoader.fromURL(url);
         assertEquals(1, requests.get());
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
@@ -192,12 +194,12 @@ public class JsonUtilsTest {
         final URL url = new URL("http://example.com/fake-jsonld-test");
         final ArgumentCaptor<HttpUriRequest> httpRequest = ArgumentCaptor
                 .forClass(HttpUriRequest.class);
-        DocumentLoader.setHttpClient(fakeHttpClient(httpRequest));
+        documentLoader.setHttpClient(fakeHttpClient(httpRequest));
         try {
-            final Object context = DocumentLoader.fromURL(url);
+            final Object context = documentLoader.fromURL(url);
             assertTrue(context instanceof Map);
         } finally {
-            DocumentLoader.setHttpClient(null);
+            documentLoader.setHttpClient(null);
         }
         assertEquals(1, httpRequest.getAllValues().size());
         final HttpUriRequest req = httpRequest.getValue();

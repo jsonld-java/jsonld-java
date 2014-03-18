@@ -1,10 +1,11 @@
 package com.github.jsonldjava.core;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.MappingJsonFactory;
-import com.github.jsonldjava.utils.JsonUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -16,11 +17,10 @@ import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.MappingJsonFactory;
 
 public class DocumentLoader {
 
@@ -38,7 +38,7 @@ public class DocumentLoader {
      * An HTTP Accept header that prefers JSONLD.
      */
     public static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
-    private static volatile HttpClient httpClient;
+    private volatile HttpClient httpClient;
 
     /**
      * Returns a Map, List, or String containing the contents of the JSON
@@ -53,7 +53,7 @@ public class DocumentLoader {
      * @throws IOException
      *             If there was an error resolving the resource.
      */
-    public static Object fromURL(java.net.URL url) throws JsonParseException, IOException {
+    public Object fromURL(java.net.URL url) throws JsonParseException, IOException {
 
         final MappingJsonFactory jsonFactory = new MappingJsonFactory();
         final InputStream in = openStreamFromURL(url);
@@ -90,7 +90,7 @@ public class DocumentLoader {
      * @throws IOException
      *             If there was an error resolving the {@link java.net.URL}.
      */
-    public static InputStream openStreamFromURL(java.net.URL url) throws IOException {
+    public InputStream openStreamFromURL(java.net.URL url) throws IOException {
         final String protocol = url.getProtocol();
         if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
             // Can't use the HTTP client for those!
@@ -111,10 +111,10 @@ public class DocumentLoader {
         return response.getEntity().getContent();
     }
 
-    public static HttpClient getHttpClient() {
+    public HttpClient getHttpClient() {
         HttpClient result = httpClient;
         if (result == null) {
-            synchronized (JsonUtils.class) {
+            synchronized (this) {
                 result = httpClient;
                 if (result == null) {
                     // Uses Apache SystemDefaultHttpClient rather than
@@ -131,6 +131,7 @@ public class DocumentLoader {
                     cacheConfig.setMaxCacheEntries(1000);
                     // and allow caching
                     httpClient = new CachingHttpClient(client, cacheConfig);
+                    
                     result = httpClient;
                 }
             }
@@ -138,9 +139,7 @@ public class DocumentLoader {
         return result;
     }
 
-    public static void setHttpClient(HttpClient nextHttpClient) {
-        synchronized (JsonUtils.class) {
-            httpClient = nextHttpClient;
-        }
+    public synchronized void setHttpClient(HttpClient nextHttpClient) {
+        httpClient = nextHttpClient;        
     }
 }
