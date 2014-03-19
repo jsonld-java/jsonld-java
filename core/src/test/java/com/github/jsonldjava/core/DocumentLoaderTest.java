@@ -1,10 +1,6 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +23,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.cache.CacheResponseStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -258,8 +255,26 @@ public class DocumentLoaderTest {
 		Thread.currentThread().setContextClassLoader(cl);
 		Object hello = documentLoader.fromURL(url);
 		assertTrue(hello instanceof Map);
-		assertEquals("World!", ((Map)hello).get("Hello"));
-		
+		assertEquals("World!", ((Map)hello).get("Hello"));	
 	}    
-    
+	
+	@Test
+	public void sharedHttpClient() throws Exception {
+		// Should be the same instance unless explicitly set
+		assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
+	}
+
+	
+	@Test
+	public void differentHttpClient() throws Exception {
+		// Custom http client
+		documentLoader.setHttpClient(new SystemDefaultHttpClient());
+		assertNotSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
+
+		// Use default again
+		documentLoader.setHttpClient(null);
+		assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
+	}
+
+	
 }

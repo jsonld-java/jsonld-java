@@ -25,7 +25,8 @@ import com.github.jsonldjava.utils.JarCacheStorage;
 
 public class DocumentLoader {
 
-    public RemoteDocument loadDocument(String url) throws JsonLdError {
+
+	public RemoteDocument loadDocument(String url) throws JsonLdError {
         RemoteDocument doc = new RemoteDocument(url, null);
         try {
             doc.setDocument(fromURL(new URL(url)));
@@ -39,6 +40,8 @@ public class DocumentLoader {
      * An HTTP Accept header that prefers JSONLD.
      */
     public static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
+
+    protected static volatile CachingHttpClient defaultHttpClient;
     private volatile HttpClient httpClient;
 
     /**
@@ -111,40 +114,45 @@ public class DocumentLoader {
         }
         return response.getEntity().getContent();
     }
-
-    public HttpClient getHttpClient() {
-        HttpClient result = httpClient;
-        if (result == null) {
-            synchronized (this) {
-                result = httpClient;
-                if (result == null) {
-                    // Uses Apache SystemDefaultHttpClient rather than
-                    // DefaultHttpClient, thus the normal proxy settings for the
-                    // JVM will be used
-
-                    final DefaultHttpClient client = new SystemDefaultHttpClient();
-                    // Support compressed data
-                    // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
-                    client.addRequestInterceptor(new RequestAcceptEncoding());
-                    client.addResponseInterceptor(new ResponseContentEncoding());
-                    final CacheConfig cacheConfig = new CacheConfig();
-                    cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
-                    cacheConfig.setMaxCacheEntries(1000);
-                    // and allow caching
-                    CachingHttpClient cachingClient = new CachingHttpClient(client, cacheConfig);
-                    
-                    // Wrap again with JAR cache
-                    JarCacheStorage jarCache = new JarCacheStorage();
-                    httpClient = new CachingHttpClient(cachingClient, jarCache, jarCache.getCacheConfig());
-                    
-                    result = httpClient;
-                }
-            }
+    
+    protected static HttpClient getDefaultHttpClient() {
+        HttpClient result = defaultHttpClient;
+        if (result != null) {
+        	return result;
         }
-        return result;
+        synchronized (DocumentLoader.class) {
+            if (defaultHttpClient == null) {
+                // Uses Apache SystemDefaultHttpClient rather than
+                // DefaultHttpClient, thus the normal proxy settings for the
+                // JVM will be used
+
+                final DefaultHttpClient client = new SystemDefaultHttpClient();
+                // Support compressed data
+                // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
+                client.addRequestInterceptor(new RequestAcceptEncoding());
+                client.addResponseInterceptor(new ResponseContentEncoding());
+                final CacheConfig cacheConfig = new CacheConfig();
+                cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
+                cacheConfig.setMaxCacheEntries(1000);
+                // and allow caching
+                CachingHttpClient cachingClient = new CachingHttpClient(client, cacheConfig);
+                
+                // Wrap again with JAR cache
+                JarCacheStorage jarCache = new JarCacheStorage();
+                defaultHttpClient = new CachingHttpClient(cachingClient, jarCache, jarCache.getCacheConfig());
+            }
+            return defaultHttpClient;
+        }
     }
 
-    public synchronized void setHttpClient(HttpClient nextHttpClient) {
+    public HttpClient getHttpClient() {
+    	if (httpClient == null) {
+    		return getDefaultHttpClient();
+    	}
+    	return httpClient;
+    }
+
+    public void setHttpClient(HttpClient nextHttpClient) {
         httpClient = nextHttpClient;        
     }
 }
