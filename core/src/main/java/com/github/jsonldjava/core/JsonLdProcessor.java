@@ -482,7 +482,7 @@ public class JsonLdProcessor {
             }
             for (final Map<String, Object> e : _input) {
                 if (e.containsKey("@context")) {
-                    dataset.parseContext((Map<String, Object>) e.get("@context"));
+                    dataset.parseContext(e.get("@context"));
                 }
             }
         }
