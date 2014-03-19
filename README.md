@@ -88,6 +88,8 @@ The syntax of `jarcache.json` is best explained by example:
       }
     ]
 
+(See also [core/src/test/resources/jarcache.json](core/src/test/resources/jarcache.json)).
+
 This will mean that any JSON-LD document trying to import the `@context` 
 `http://www.example.com/context` will instead be given
 `contexts/example.jsonld` loaded as a classpath resource. 
@@ -95,14 +97,15 @@ This will mean that any JSON-LD document trying to import the `@context`
 The `X-Classpath` location is an IRI reference resolved relative to the
 location of the `jarcache.json` - so if you have multiple JARs with a
 `jarcache.json` each, then the `X-Classpath` will be resolved within the
-corresponding JAR (minimizing any conclicts).
+corresponding JAR (minimizing any conflicts).
 
 Additional HTTP headers (such as `Content-Type` above) can be included,
 although these are generally ignored by JSONLD-Java. 
 
-Unless overridden, this `Cache-Control` header is injected, meaning that the
-resource loaded from the JAR will never expire (the real IRI will never be
-consulted by the Apache HTTP client):
+Unless overridden in `jarcache.json`, this `Cache-Control` header is
+autoamtically injected together with the current `Date`, meaning that the
+resource loaded from the JAR will effectively never expire (the real HTTP
+server will never be consulted by the Apache HTTP client):
 
     Date: Wed, 19 Mar 2014 13:25:08 GMT
     Cache-Control: max-age=2147483647
@@ -110,14 +113,16 @@ consulted by the Apache HTTP client):
 The mechanism for loading `jarcache.json` relies on 
 [Thread.currentThread().getContextClassLoader()](http://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html#getContextClassLoader%28%29)
 to locate resources from the classpath - if you are running on a command line,
-within a framework (e.g. OSGi) or Servlet container this should normally be
-set correctly. If not, try:
+within a framework (e.g. OSGi) or Servlet container (e.g. Tomcat) this should
+normally be set correctly. If not, try:
 
         ClassLoader oldContextCL = Thread.currentThread().getContextClassLoader();
         try { 
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             JsonLdProcessor.expand(input);   // or any other JsonLd operation
         } finally { 
+	    // Restore, in case the current thread was doing something else
+	    // with the context classloader before calling our method
             Thread.currentThread().setContextClassLoader(oldContextCL);
         }
 
@@ -126,11 +131,12 @@ set correctly. If not, try:
 ### Customizing the Apache HttpClient
 
 To customize the HTTP behaviour (e.g. to disable the cache or provide
-authentication credentials), you may want to create and configure your
-own `HttpClient` instance, which can be passed to a `DocumentLoader` instance using 
-`setHttpClient()`. This document loader can then be inserted into
-`JsonLdOptions` using `setDocumentLoader()` and passed as an argument to
-`JsonLdProcessor` arguments.  
+[authentication
+credentials)](https://hc.apache.org/httpcomponents-client-ga/tutorial/html/authentication.html),
+you may want to create and configure your own `HttpClient` instance, which can
+be passed to a `DocumentLoader` instance using `setHttpClient()`. This document
+loader can then be inserted into `JsonLdOptions` using `setDocumentLoader()`
+and passed as an argument to `JsonLdProcessor` arguments.  
 
 Example of inserting a credential provider (e.g. to load a `@context` protected
 by HTTP Basic Auth):
