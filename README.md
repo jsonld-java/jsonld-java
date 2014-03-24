@@ -219,6 +219,20 @@ Implementation Reports conforming to the [JSON-LD Implementation Report](http://
 
 Current possible values for `<format>` include JSON-LD (`application/ld+json` or `jsonld`), NQuads (`text/plain`, `nquads`, `ntriples`, `nq` or `nt`) and Turtle (`text/turtle`, `turtle` or `ttl`). `*` can be used to generate reports in all available formats.
 
+### Code style
+
+The JSONLD-Java project uses custom Eclipse formatting and cleanup style guides to ensure that Pull Requests are fairly simple to merge.
+
+These guides can be found in the /conf directory and can be installed in Eclipse using "Properties>Java Code Style>Formatter", followed by "Properties>Java Code Style>Clean Up" for each of the modules making up the JSONLD-Java project.
+
+If you don't use Eclipse, then don't worry, your pull requests can be cleaned up by a repository maintainer prior to merging, but it makes the initial check easier if the modified code uses the conventions.
+
+### Submitting Pull Requests
+
+Once you have made a change to fix a bug or add a new feature, you should commit and push the change to your fork.
+
+Then, you can open a pull request to merge your change into the master branch of the main repository.
+
 CHANGELOG
 =========
 
