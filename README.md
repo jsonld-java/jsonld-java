@@ -222,6 +222,11 @@ Current possible values for `<format>` include JSON-LD (`application/ld+json` or
 CHANGELOG
 =========
 
+### 2014-03-24
+* Allow loading remote @context from bundled JAR cache
+* Support JSON array in @context with toRDF 
+* Avoid exception on @context with default @language and unmapped key
+
 ### 2014-02-24
 * Javadoc some core classes, JsonLdProcessor, JsonLdApi, and JsonUtils
 * Rename some core classes for consistency, particularly JSONUtils to JsonUtils and JsonLdTripleCallback
