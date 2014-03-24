@@ -9,10 +9,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -42,7 +40,7 @@ public class JarCacheStorage implements HttpCacheStorage {
 
     private final Log log = LogFactory.getLog(getClass());
 
-    private CacheConfig cacheConfig = new CacheConfig();
+    private final CacheConfig cacheConfig = new CacheConfig();
     private ClassLoader classLoader;
 
     public ClassLoader getClassLoader() {
@@ -82,7 +80,7 @@ public class JarCacheStorage implements HttpCacheStorage {
         URI requestedUri;
         try {
             requestedUri = new URI(key);
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             return null;
         }
         if ((requestedUri.getScheme().equals("http") && requestedUri.getPort() == 80)
@@ -91,18 +89,18 @@ public class JarCacheStorage implements HttpCacheStorage {
             try {
                 requestedUri = new URI(requestedUri.getScheme(), requestedUri.getHost(),
                         requestedUri.getPath(), requestedUri.getFragment());
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
             }
         }
 
-        Enumeration<URL> jarcaches = getResources();
+        final Enumeration<URL> jarcaches = getResources();
         while (jarcaches.hasMoreElements()) {
-            URL url = jarcaches.nextElement();
+            final URL url = jarcaches.nextElement();
 
-            JsonNode tree = getJarCache(url);
+            final JsonNode tree = getJarCache(url);
             // TODO: Cache tree per URL
-            for (JsonNode node : tree) {
-                URI uri = URI.create(node.get("Content-Location").asText());
+            for (final JsonNode node : tree) {
+                final URI uri = URI.create(node.get("Content-Location").asText());
                 if (uri.equals(requestedUri)) {
                     return cacheEntry(requestedUri, url, node);
 
@@ -113,7 +111,7 @@ public class JarCacheStorage implements HttpCacheStorage {
     }
 
     private Enumeration<URL> getResources() throws IOException {
-        ClassLoader cl = getClassLoader();
+        final ClassLoader cl = getClassLoader();
         if (cl != null) {
             return cl.getResources(JARCACHE_JSON);
         } else {
@@ -134,15 +132,15 @@ public class JarCacheStorage implements HttpCacheStorage {
         URI uri;
         try {
             uri = url.toURI();
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new IllegalArgumentException("Invalid jarCache URI " + url, e);
         }
 
         // Check if we have one from before - we'll use SoftReference so that
         // the maps reference is not counted for garbage collection purposes
-        SoftReference<JsonNode> jarCacheRef = jarCaches.get(uri);
+        final SoftReference<JsonNode> jarCacheRef = jarCaches.get(uri);
         if (jarCacheRef != null) {
-            JsonNode jarCache = jarCacheRef.get();
+            final JsonNode jarCache = jarCacheRef.get();
             if (jarCache != null) {
                 return jarCache;
             } else {
@@ -151,13 +149,13 @@ public class JarCacheStorage implements HttpCacheStorage {
         }
 
         // Only parse again if the optimistic get failed
-        JsonNode tree = mapper.readTree(url);
+        final JsonNode tree = mapper.readTree(url);
         // Use putIfAbsent to ensure concurrent reads do not return different
         // JsonNode objects, for memory management purposes
-        SoftReference<JsonNode> putIfAbsent = jarCaches.putIfAbsent(uri,
+        final SoftReference<JsonNode> putIfAbsent = jarCaches.putIfAbsent(uri,
                 new SoftReference<JsonNode>(tree));
         if (putIfAbsent != null) {
-            JsonNode returnValue = putIfAbsent.get();
+            final JsonNode returnValue = putIfAbsent.get();
             if (returnValue != null) {
                 return returnValue;
             } else {
@@ -175,7 +173,7 @@ public class JarCacheStorage implements HttpCacheStorage {
         log.debug("Cache hit for " + requestedUri);
         log.trace(cacheNode);
 
-        List<Header> responseHeaders = new ArrayList<Header>();
+        final List<Header> responseHeaders = new ArrayList<Header>();
         if (!cacheNode.has(HTTP.DATE_HEADER)) {
             responseHeaders
                     .add(new BasicHeader(HTTP.DATE_HEADER, DateUtils.formatDate(new Date())));
@@ -184,11 +182,11 @@ public class JarCacheStorage implements HttpCacheStorage {
             responseHeaders.add(new BasicHeader(HeaderConstants.CACHE_CONTROL,
                     HeaderConstants.CACHE_CONTROL_MAX_AGE + "=" + Integer.MAX_VALUE));
         }
-        Resource resource = new JarCacheResource(classpath);
-        Iterator<String> fieldNames = cacheNode.fieldNames();
+        final Resource resource = new JarCacheResource(classpath);
+        final Iterator<String> fieldNames = cacheNode.fieldNames();
         while (fieldNames.hasNext()) {
-            String headerName = fieldNames.next();
-            JsonNode header = cacheNode.get(headerName);
+            final String headerName = fieldNames.next();
+            final JsonNode header = cacheNode.get(headerName);
             // TODO: Support multiple headers with []
             responseHeaders.add(new BasicHeader(headerName, header.asText()));
         }

@@ -1,6 +1,12 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -214,7 +220,8 @@ public class DocumentLoaderTest {
     public void jarCacheHit() throws Exception {
         // If no cache, should fail-fast as nonexisting.example.com is not in
         // DNS
-        Object context = documentLoader.fromURL(new URL("http://nonexisting.example.com/context"));
+        final Object context = documentLoader.fromURL(new URL(
+                "http://nonexisting.example.com/context"));
         assertTrue(context instanceof Map);
         assertTrue(((Map) context).containsKey("@context"));
     }
@@ -222,7 +229,8 @@ public class DocumentLoaderTest {
     @Test(expected = IOException.class)
     public void jarCacheMiss404() throws Exception {
         // Should fail-fast as nonexisting.example.com is not in DNS
-        Object context = documentLoader.fromURL(new URL("http://nonexisting.example.com/miss"));
+        final Object context = documentLoader
+                .fromURL(new URL("http://nonexisting.example.com/miss"));
     }
 
     @After
@@ -232,25 +240,26 @@ public class DocumentLoaderTest {
 
     @Test(expected = IOException.class)
     public void jarCacheMissThreadCtx() throws Exception {
-        URLClassLoader findNothingCL = new URLClassLoader(new URL[] {}, null);
+        final URLClassLoader findNothingCL = new URLClassLoader(new URL[] {}, null);
         Thread.currentThread().setContextClassLoader(findNothingCL);
-        Object context = documentLoader.fromURL(new URL("http://nonexisting.example.com/context"));
+        final Object context = documentLoader.fromURL(new URL(
+                "http://nonexisting.example.com/context"));
     }
 
     @Test
     public void jarCacheHitThreadCtx() throws Exception {
-        URL url = new URL("http://nonexisting.example.com/nested/hello");
-        URL nestedJar = getClass().getResource("/nested.jar");
+        final URL url = new URL("http://nonexisting.example.com/nested/hello");
+        final URL nestedJar = getClass().getResource("/nested.jar");
         try {
-            Object hello = documentLoader.fromURL(url);
+            final Object hello = documentLoader.fromURL(url);
             fail("Should not be able to find nested/hello yet");
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             // expected
         }
 
-        ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
+        final ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
         Thread.currentThread().setContextClassLoader(cl);
-        Object hello = documentLoader.fromURL(url);
+        final Object hello = documentLoader.fromURL(url);
         assertTrue(hello instanceof Map);
         assertEquals("World!", ((Map) hello).get("Hello"));
     }

@@ -32,12 +32,12 @@ public class TestUtils {
             filename = resource.substring(resource.lastIndexOf('/'));
             directory = resource.substring(0, resource.lastIndexOf('/'));
         }
-        File nextDirectory = new File(testDir, directory);
+        final File nextDirectory = new File(testDir, directory);
         nextDirectory.mkdirs();
-        File nextFile = new File(nextDirectory, filename);
+        final File nextFile = new File(nextDirectory, filename);
         nextFile.createNewFile();
 
-        InputStream inputStream = TestUtils.class.getResourceAsStream(resource);
+        final InputStream inputStream = TestUtils.class.getResourceAsStream(resource);
         assertNotNull("Missing test resource: " + resource, inputStream);
 
         IOUtils.copy(inputStream, new FileOutputStream(nextFile));

@@ -26,10 +26,10 @@ import com.github.jsonldjava.utils.JarCacheStorage;
 public class DocumentLoader {
 
     public RemoteDocument loadDocument(String url) throws JsonLdError {
-        RemoteDocument doc = new RemoteDocument(url, null);
+        final RemoteDocument doc = new RemoteDocument(url, null);
         try {
             doc.setDocument(fromURL(new URL(url)));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
         }
         return doc;
@@ -115,7 +115,7 @@ public class DocumentLoader {
     }
 
     protected static HttpClient getDefaultHttpClient() {
-        HttpClient result = defaultHttpClient;
+        final HttpClient result = defaultHttpClient;
         if (result != null) {
             return result;
         }
@@ -134,10 +134,10 @@ public class DocumentLoader {
                 cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
                 cacheConfig.setMaxCacheEntries(1000);
                 // and allow caching
-                CachingHttpClient cachingClient = new CachingHttpClient(client, cacheConfig);
+                final CachingHttpClient cachingClient = new CachingHttpClient(client, cacheConfig);
 
                 // Wrap again with JAR cache
-                JarCacheStorage jarCache = new JarCacheStorage();
+                final JarCacheStorage jarCache = new JarCacheStorage();
                 defaultHttpClient = new CachingHttpClient(cachingClient, jarCache,
                         jarCache.getCacheConfig());
             }

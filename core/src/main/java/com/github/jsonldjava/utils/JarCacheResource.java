@@ -15,7 +15,7 @@ public class JarCacheResource implements Resource {
 
     private final Log log = LogFactory.getLog(getClass());
 
-    private URLConnection connection;
+    private final URLConnection connection;
 
     public JarCacheResource(URL classpath) throws IOException {
         this.connection = classpath.openConnection();
@@ -35,7 +35,7 @@ public class JarCacheResource implements Resource {
     public void dispose() {
         try {
             connection.getInputStream().close();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("Can't close JarCacheResource input stream", e);
         }
     }

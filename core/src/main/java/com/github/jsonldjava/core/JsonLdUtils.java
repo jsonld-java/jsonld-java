@@ -1,7 +1,5 @@
 package com.github.jsonldjava.core;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,11 +7,9 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.JsonLdUrl;
+import com.github.jsonldjava.utils.Obj;
 
 public class JsonLdUtils {
 
@@ -760,7 +756,6 @@ public class JsonLdUtils {
         }
         return false;
     }
-
 
     /**
      * Finds all @context URLs in the given JSON-LD input.

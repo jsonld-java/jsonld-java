@@ -5,14 +5,13 @@ import static com.github.jsonldjava.core.JsonLdUtils.compareShortestLeast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.github.jsonldjava.core.JsonLdError.Error;
-import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.JsonLdUrl;
+import com.github.jsonldjava.utils.Obj;
 
 /**
  * A helper class which still stores all the values in a map but gives member
@@ -112,9 +111,9 @@ public class Context extends LinkedHashMap<String, Object> {
         }
         // 7)
         if (numberMembers == 1
-                && (!(valueValue instanceof String) || !this.containsKey("@language") ||
-                        (termDefinitions.containsKey(activeProperty) && getTermDefinition(
-                        activeProperty).containsKey("@language") && languageMapping == null))) {
+                && (!(valueValue instanceof String) || !this.containsKey("@language") || (termDefinitions
+                        .containsKey(activeProperty)
+                        && getTermDefinition(activeProperty).containsKey("@language") && languageMapping == null))) {
             return valueValue;
         }
         // 8)
@@ -770,16 +769,17 @@ public class Context extends LinkedHashMap<String, Object> {
      * @return A map from prefix string to IRI string
      */
     public Map<String, String> getPrefixes(boolean onlyCommonPrefixes) {
-        Map<String, String> prefixes = new LinkedHashMap<String, String>();
+        final Map<String, String> prefixes = new LinkedHashMap<String, String>();
         for (final String term : termDefinitions.keySet()) {
             if (term.contains(":")) {
                 continue;
             }
-            Map<String, Object> termDefinition = (Map<String, Object>) termDefinitions.get(term);
+            final Map<String, Object> termDefinition = (Map<String, Object>) termDefinitions
+                    .get(term);
             if (termDefinition == null) {
                 continue;
             }
-            String id = (String) termDefinition.get("@id");
+            final String id = (String) termDefinition.get("@id");
             if (id == null) {
                 continue;
             }

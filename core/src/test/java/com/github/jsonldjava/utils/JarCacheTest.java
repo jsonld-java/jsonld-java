@@ -1,6 +1,8 @@
 package com.github.jsonldjava.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -19,34 +21,34 @@ public class JarCacheTest {
 
     @Test
     public void cacheHit() throws Exception {
-        JarCacheStorage storage = new JarCacheStorage();
-        HttpClient httpClient = new CachingHttpClient(new SystemDefaultHttpClient(), storage,
+        final JarCacheStorage storage = new JarCacheStorage();
+        final HttpClient httpClient = new CachingHttpClient(new SystemDefaultHttpClient(), storage,
                 storage.getCacheConfig());
-        HttpGet get = new HttpGet("http://nonexisting.example.com/context");
-        HttpResponse resp = httpClient.execute(get);
+        final HttpGet get = new HttpGet("http://nonexisting.example.com/context");
+        final HttpResponse resp = httpClient.execute(get);
 
         assertEquals("application/ld+json", resp.getEntity().getContentType().getValue());
-        String str = IOUtils.toString(resp.getEntity().getContent(), "UTF-8");
+        final String str = IOUtils.toString(resp.getEntity().getContent(), "UTF-8");
         assertTrue(str.contains("ex:datatype"));
     }
 
     @Test(expected = IOException.class)
     public void cacheMiss() throws Exception {
-        JarCacheStorage storage = new JarCacheStorage();
-        HttpClient httpClient = new CachingHttpClient(new SystemDefaultHttpClient(), storage,
+        final JarCacheStorage storage = new JarCacheStorage();
+        final HttpClient httpClient = new CachingHttpClient(new SystemDefaultHttpClient(), storage,
                 storage.getCacheConfig());
-        HttpGet get = new HttpGet("http://nonexisting.example.com/notfound");
+        final HttpGet get = new HttpGet("http://nonexisting.example.com/notfound");
         // Should throw an IOException as the DNS name
         // nonexisting.example.com does not exist
-        HttpResponse resp = httpClient.execute(get);
+        final HttpResponse resp = httpClient.execute(get);
     }
 
     @Test
     public void doubleLoad() throws Exception {
-        JarCacheStorage storage = new JarCacheStorage();
-        HttpClient httpClient = new CachingHttpClient(new SystemDefaultHttpClient(), storage,
+        final JarCacheStorage storage = new JarCacheStorage();
+        final HttpClient httpClient = new CachingHttpClient(new SystemDefaultHttpClient(), storage,
                 storage.getCacheConfig());
-        HttpGet get = new HttpGet("http://nonexisting.example.com/context");
+        final HttpGet get = new HttpGet("http://nonexisting.example.com/context");
         HttpResponse resp = httpClient.execute(get);
         resp = httpClient.execute(get);
         // Ensure second load through the cached jarcache list works
@@ -55,36 +57,36 @@ public class JarCacheTest {
 
     @Test
     public void customClassPath() throws Exception {
-        URL nestedJar = getClass().getResource("/nested.jar");
-        ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
-        JarCacheStorage storage = new JarCacheStorage(cl);
+        final URL nestedJar = getClass().getResource("/nested.jar");
+        final ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
+        final JarCacheStorage storage = new JarCacheStorage(cl);
 
-        HttpClient httpClient = new CachingHttpClient(new SystemDefaultHttpClient(), storage,
+        final HttpClient httpClient = new CachingHttpClient(new SystemDefaultHttpClient(), storage,
                 storage.getCacheConfig());
-        HttpGet get = new HttpGet("http://nonexisting.example.com/nested/hello");
-        HttpResponse resp = httpClient.execute(get);
+        final HttpGet get = new HttpGet("http://nonexisting.example.com/nested/hello");
+        final HttpResponse resp = httpClient.execute(get);
 
         assertEquals("application/json", resp.getEntity().getContentType().getValue());
-        String str = IOUtils.toString(resp.getEntity().getContent(), "UTF-8");
+        final String str = IOUtils.toString(resp.getEntity().getContent(), "UTF-8");
         assertEquals("{ \"Hello\": \"World!\" }", str.trim());
     }
 
     @Test
     public void contextClassLoader() throws Exception {
-        URL nestedJar = getClass().getResource("/nested.jar");
+        final URL nestedJar = getClass().getResource("/nested.jar");
         assertNotNull(nestedJar);
-        ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
+        final ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
 
-        JarCacheStorage storage = new JarCacheStorage();
+        final JarCacheStorage storage = new JarCacheStorage();
         Thread.currentThread().setContextClassLoader(cl);
 
-        HttpClient httpClient = new CachingHttpClient(new SystemDefaultHttpClient(), storage,
+        final HttpClient httpClient = new CachingHttpClient(new SystemDefaultHttpClient(), storage,
                 storage.getCacheConfig());
-        HttpGet get = new HttpGet("http://nonexisting.example.com/nested/hello");
-        HttpResponse resp = httpClient.execute(get);
+        final HttpGet get = new HttpGet("http://nonexisting.example.com/nested/hello");
+        final HttpResponse resp = httpClient.execute(get);
 
         assertEquals("application/json", resp.getEntity().getContentType().getValue());
-        String str = IOUtils.toString(resp.getEntity().getContent(), "UTF-8");
+        final String str = IOUtils.toString(resp.getEntity().getContent(), "UTF-8");
         assertEquals("{ \"Hello\": \"World!\" }", str.trim());
     }
 
@@ -95,14 +97,14 @@ public class JarCacheTest {
 
     @Test
     public void systemClassLoader() throws Exception {
-        URL nestedJar = getClass().getResource("/nested.jar");
+        final URL nestedJar = getClass().getResource("/nested.jar");
         assertNotNull(nestedJar);
-        JarCacheStorage storage = new JarCacheStorage(null);
+        final JarCacheStorage storage = new JarCacheStorage(null);
 
-        HttpClient httpClient = new CachingHttpClient(new SystemDefaultHttpClient(), storage,
+        final HttpClient httpClient = new CachingHttpClient(new SystemDefaultHttpClient(), storage,
                 storage.getCacheConfig());
-        HttpGet get = new HttpGet("http://nonexisting.example.com/context");
-        HttpResponse resp = httpClient.execute(get);
+        final HttpGet get = new HttpGet("http://nonexisting.example.com/context");
+        final HttpResponse resp = httpClient.execute(get);
         assertEquals("application/ld+json", resp.getEntity().getContentType().getValue());
     }
 

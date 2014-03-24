@@ -11,8 +11,6 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.client.HttpClient;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;

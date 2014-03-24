@@ -31,7 +31,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -282,7 +281,7 @@ public class JsonLdProcessorTest {
             if (url.contains(":")) {
                 // check if the url is relative to the test base
                 if (url.startsWith(this.base)) {
-                    String classpath = url.substring(this.base.length());
+                    final String classpath = url.substring(this.base.length());
                     final ClassLoader cl = Thread.currentThread().getContextClassLoader();
                     final InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/"
                             + classpath);
@@ -318,8 +317,8 @@ public class JsonLdProcessorTest {
         }
     }
 
-    //@Rule
-    //public Timeout timeout = new Timeout(10000);
+    // @Rule
+    // public Timeout timeout = new Timeout(10000);
 
     @Rule
     public TemporaryFolder tempDir = new TemporaryFolder();
@@ -427,7 +426,7 @@ public class JsonLdProcessorTest {
         // OPTIONS SETUP
         final JsonLdOptions options = new JsonLdOptions("http://json-ld.org/test-suite/tests/"
                 + test.get("input"));
-        TestDocumentLoader testLoader = new TestDocumentLoader(
+        final TestDocumentLoader testLoader = new TestDocumentLoader(
                 "http://json-ld.org/test-suite/tests/");
         options.setDocumentLoader(testLoader);
         if (test.containsKey("option")) {
@@ -463,7 +462,7 @@ public class JsonLdProcessorTest {
             }
             if (test_opts.containsKey("httpLink")) {
                 if (test_opts.get("httpLink") instanceof List) {
-                    for (String nextLink : (List<String>) test_opts.get("httpLink")) {
+                    for (final String nextLink : (List<String>) test_opts.get("httpLink")) {
                         testLoader.addHttpLink(nextLink);
                     }
                 } else {
