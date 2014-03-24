@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,173 +38,178 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JarCacheStorage implements HttpCacheStorage {
 
-	private static final String JARCACHE_JSON = "jarcache.json";
+    private static final String JARCACHE_JSON = "jarcache.json";
 
-	private final Log log = LogFactory.getLog(getClass());
-	
-	private CacheConfig cacheConfig = new CacheConfig();
-	private ClassLoader classLoader;
+    private final Log log = LogFactory.getLog(getClass());
 
-	public ClassLoader getClassLoader() {
-		if (classLoader != null) { 
-			return classLoader;
-		}
-		return Thread.currentThread().getContextClassLoader();
-	}
+    private CacheConfig cacheConfig = new CacheConfig();
+    private ClassLoader classLoader;
 
-	public void setClassLoader(ClassLoader classLoader) {
-		this.classLoader = classLoader;
-	}
+    public ClassLoader getClassLoader() {
+        if (classLoader != null) {
+            return classLoader;
+        }
+        return Thread.currentThread().getContextClassLoader();
+    }
 
-	public JarCacheStorage() {
-		this(null);
-	}
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
-	public JarCacheStorage(ClassLoader classLoader) {
-		setClassLoader(classLoader);
-		cacheConfig.setMaxObjectSize(0);
-		cacheConfig.setMaxCacheEntries(0);
-		cacheConfig.setMaxUpdateRetries(0);
-		cacheConfig.getMaxCacheEntries();
-	}
+    public JarCacheStorage() {
+        this(null);
+    }
 
-	@Override
-	public void putEntry(String key, HttpCacheEntry entry) throws IOException {
-		// ignored
+    public JarCacheStorage(ClassLoader classLoader) {
+        setClassLoader(classLoader);
+        cacheConfig.setMaxObjectSize(0);
+        cacheConfig.setMaxCacheEntries(0);
+        cacheConfig.setMaxUpdateRetries(0);
+        cacheConfig.getMaxCacheEntries();
+    }
 
-	}
+    @Override
+    public void putEntry(String key, HttpCacheEntry entry) throws IOException {
+        // ignored
 
-	ObjectMapper mapper = new ObjectMapper();
+    }
 
-	@Override
-	public HttpCacheEntry getEntry(String key) throws IOException {
-		log.trace("Requesting " + key);
-		URI requestedUri;
-		try {
-			requestedUri = new URI(key);
-		} catch (URISyntaxException e) {
-			return null;
-		}
-		if ((requestedUri.getScheme().equals("http") && requestedUri.getPort() == 80)
-				|| (requestedUri.getScheme().equals("https") && requestedUri
-						.getPort() == 443)) {
-			// Strip away default http ports
-			try {
-				requestedUri = new URI(requestedUri.getScheme(),
-						requestedUri.getHost(), requestedUri.getPath(),
-						requestedUri.getFragment());
-			} catch (URISyntaxException e) {
-			}
-		}
+    ObjectMapper mapper = new ObjectMapper();
 
-		Enumeration<URL> jarcaches = getResources();
-		while (jarcaches.hasMoreElements()) {
-			URL url = jarcaches.nextElement();
-			
-			JsonNode tree = getJarCache(url);
-			// TODO: Cache tree per URL
-			for (JsonNode node : tree) {
-				URI uri = URI.create(node.get("Content-Location").asText());
-				if (uri.equals(requestedUri)) {
-					return cacheEntry(requestedUri, url, node);
+    @Override
+    public HttpCacheEntry getEntry(String key) throws IOException {
+        log.trace("Requesting " + key);
+        URI requestedUri;
+        try {
+            requestedUri = new URI(key);
+        } catch (URISyntaxException e) {
+            return null;
+        }
+        if ((requestedUri.getScheme().equals("http") && requestedUri.getPort() == 80)
+                || (requestedUri.getScheme().equals("https") && requestedUri.getPort() == 443)) {
+            // Strip away default http ports
+            try {
+                requestedUri = new URI(requestedUri.getScheme(), requestedUri.getHost(),
+                        requestedUri.getPath(), requestedUri.getFragment());
+            } catch (URISyntaxException e) {
+            }
+        }
 
-				}
-			}
-		}
-		return null;
-	}
+        Enumeration<URL> jarcaches = getResources();
+        while (jarcaches.hasMoreElements()) {
+            URL url = jarcaches.nextElement();
 
-	private Enumeration<URL> getResources() throws IOException {
-		ClassLoader cl = getClassLoader();
-		if (cl != null) { 
-			return cl.getResources(JARCACHE_JSON);
-		} else {
-			return ClassLoader.getSystemResources(JARCACHE_JSON);
-		}
-	}
+            JsonNode tree = getJarCache(url);
+            // TODO: Cache tree per URL
+            for (JsonNode node : tree) {
+                URI uri = URI.create(node.get("Content-Location").asText());
+                if (uri.equals(requestedUri)) {
+                    return cacheEntry(requestedUri, url, node);
 
-	/** Map from uri of jarcache.json (e.g. jar://blab.jar!jarcache.json)
-	* to a SoftReference to its content as JsonNode.
-	* 
-	* @see #getJarCache(URL)
-	*/
-	protected Map<URI, SoftReference<JsonNode>> jarCaches = new ConcurrentHashMap(new HashMap<URI, SoftReference<JsonNode>>());
-	
-	protected JsonNode getJarCache(URL url) throws IOException,
-			JsonProcessingException {
-		
-		URI uri;
-		try {
-			uri = url.toURI();
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException("Invalid jarCache URI " + url, e);
-		}
+                }
+            }
+        }
+        return null;
+    }
 
-		// Check if we have one from before - we'll use SoftReference so that
-		// 
-		SoftReference<JsonNode> jarCacheRef = jarCaches.get(uri);
-		if (jarCacheRef != null) {
-			JsonNode jarCache = jarCacheRef.get();
-			if (jarCache != null) {
-				return jarCache;
-			} else {
-				jarCaches.remove(uri);
-			}
-		}
-		
-		JsonNode tree = mapper.readTree(url);
-		jarCaches.put(uri, new SoftReference<JsonNode>(tree));
-		return tree;
-	}
+    private Enumeration<URL> getResources() throws IOException {
+        ClassLoader cl = getClassLoader();
+        if (cl != null) {
+            return cl.getResources(JARCACHE_JSON);
+        } else {
+            return ClassLoader.getSystemResources(JARCACHE_JSON);
+        }
+    }
 
-	protected HttpCacheEntry cacheEntry(URI requestedUri, URL baseURL, JsonNode cacheNode)
-			throws MalformedURLException, IOException {
-		final URL classpath = new URL(baseURL, cacheNode.get("X-Classpath")
-				.asText());
-		log.debug("Cache hit for " + requestedUri);
-		log.trace(cacheNode);
+    /**
+     * Map from uri of jarcache.json (e.g. jar://blab.jar!jarcache.json) to a
+     * SoftReference to its content as JsonNode.
+     * 
+     * @see #getJarCache(URL)
+     */
+    protected ConcurrentMap<URI, SoftReference<JsonNode>> jarCaches = new ConcurrentHashMap<URI, SoftReference<JsonNode>>();
 
-		List<Header> responseHeaders = new ArrayList<Header>();
-		if (!cacheNode.has(HTTP.DATE_HEADER)) {
-			responseHeaders.add(new BasicHeader(HTTP.DATE_HEADER,
-					DateUtils.formatDate(new Date())));
-		}
-		if (!cacheNode.has(HeaderConstants.CACHE_CONTROL)) {
-			responseHeaders.add(new BasicHeader(
-					HeaderConstants.CACHE_CONTROL,
-					HeaderConstants.CACHE_CONTROL_MAX_AGE + "="
-							+ Integer.MAX_VALUE));
-		}
-		Resource resource = new JarCacheResource(classpath);
-		Iterator<String> fieldNames = cacheNode.fieldNames();
-		while (fieldNames.hasNext()) {
-			String headerName = fieldNames.next();
-			JsonNode header = cacheNode.get(headerName);
-			// TODO: Support multiple headers with []
-			responseHeaders.add(new BasicHeader(headerName, header
-					.asText()));
-		}
+    protected JsonNode getJarCache(URL url) throws IOException, JsonProcessingException {
 
-		return new HttpCacheEntry(
-				new Date(),
-				new Date(),
-				new BasicStatusLine(HttpVersion.HTTP_1_1, 200, "OK"),
-				responseHeaders.toArray(new Header[0]), resource);
-	}
+        URI uri;
+        try {
+            uri = url.toURI();
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid jarCache URI " + url, e);
+        }
 
-	@Override
-	public void removeEntry(String key) throws IOException {
-		// Ignored
-	}
+        // Check if we have one from before - we'll use SoftReference so that
+        // the maps reference is not counted for garbage collection purposes
+        SoftReference<JsonNode> jarCacheRef = jarCaches.get(uri);
+        if (jarCacheRef != null) {
+            JsonNode jarCache = jarCacheRef.get();
+            if (jarCache != null) {
+                return jarCache;
+            } else {
+                jarCaches.remove(uri);
+            }
+        }
 
-	@Override
-	public void updateEntry(String key, HttpCacheUpdateCallback callback)
-			throws IOException, HttpCacheUpdateException {
-		// ignored
-	}
+        // Only parse again if the optimistic get failed
+        JsonNode tree = mapper.readTree(url);
+        // Use putIfAbsent to ensure concurrent reads do not return different
+        // JsonNode objects, for memory management purposes
+        SoftReference<JsonNode> putIfAbsent = jarCaches.putIfAbsent(uri,
+                new SoftReference<JsonNode>(tree));
+        if (putIfAbsent != null) {
+            JsonNode returnValue = putIfAbsent.get();
+            if (returnValue != null) {
+                return returnValue;
+            } else {
+                // Force update the reference if the existing reference had
+                // been garbage collected
+                jarCaches.put(uri, new SoftReference<JsonNode>(tree));
+            }
+        }
+        return tree;
+    }
 
-	public CacheConfig getCacheConfig() {
-		return cacheConfig;
-	}
+    protected HttpCacheEntry cacheEntry(URI requestedUri, URL baseURL, JsonNode cacheNode)
+            throws MalformedURLException, IOException {
+        final URL classpath = new URL(baseURL, cacheNode.get("X-Classpath").asText());
+        log.debug("Cache hit for " + requestedUri);
+        log.trace(cacheNode);
+
+        List<Header> responseHeaders = new ArrayList<Header>();
+        if (!cacheNode.has(HTTP.DATE_HEADER)) {
+            responseHeaders
+                    .add(new BasicHeader(HTTP.DATE_HEADER, DateUtils.formatDate(new Date())));
+        }
+        if (!cacheNode.has(HeaderConstants.CACHE_CONTROL)) {
+            responseHeaders.add(new BasicHeader(HeaderConstants.CACHE_CONTROL,
+                    HeaderConstants.CACHE_CONTROL_MAX_AGE + "=" + Integer.MAX_VALUE));
+        }
+        Resource resource = new JarCacheResource(classpath);
+        Iterator<String> fieldNames = cacheNode.fieldNames();
+        while (fieldNames.hasNext()) {
+            String headerName = fieldNames.next();
+            JsonNode header = cacheNode.get(headerName);
+            // TODO: Support multiple headers with []
+            responseHeaders.add(new BasicHeader(headerName, header.asText()));
+        }
+
+        return new HttpCacheEntry(new Date(), new Date(), new BasicStatusLine(HttpVersion.HTTP_1_1,
+                200, "OK"), responseHeaders.toArray(new Header[0]), resource);
+    }
+
+    @Override
+    public void removeEntry(String key) throws IOException {
+        // Ignored
+    }
+
+    @Override
+    public void updateEntry(String key, HttpCacheUpdateCallback callback) throws IOException,
+            HttpCacheUpdateException {
+        // ignored
+    }
+
+    public CacheConfig getCacheConfig() {
+        return cacheConfig;
+    }
 
 }

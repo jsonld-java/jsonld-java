@@ -7,7 +7,7 @@ import java.util.Map;
 import org.junit.Test;
 
 public class JsonUtilsTest {
-	
+
     @SuppressWarnings("unchecked")
     @Test
     public void fromStringTest() {

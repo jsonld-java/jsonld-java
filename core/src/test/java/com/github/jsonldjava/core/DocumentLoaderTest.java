@@ -33,8 +33,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class DocumentLoaderTest {
-	
-	DocumentLoader documentLoader = new DocumentLoader();
+
+    DocumentLoader documentLoader = new DocumentLoader();
 
     @SuppressWarnings("unchecked")
     @Test
@@ -209,72 +209,67 @@ public class DocumentLoaderTest {
 
         assertEquals(6, elems.length);
     }
-    
+
     @Test
-	public void jarCacheHit() throws Exception {
-       	// If no cache, should fail-fast as nonexisting.example.com is not in DNS
-    	Object context = documentLoader.fromURL(new URL("http://nonexisting.example.com/context"));
-    	assertTrue(context instanceof Map);
-    	assertTrue(((Map)context).containsKey("@context"));
-	}
-    
-    
-    @Test(expected=IOException.class)
-   	public void jarCacheMiss404() throws Exception {
-       	// Should fail-fast as nonexisting.example.com is not in DNS
-       	Object context = documentLoader.fromURL(new URL("http://nonexisting.example.com/miss"));       	
-   	}
-    
+    public void jarCacheHit() throws Exception {
+        // If no cache, should fail-fast as nonexisting.example.com is not in
+        // DNS
+        Object context = documentLoader.fromURL(new URL("http://nonexisting.example.com/context"));
+        assertTrue(context instanceof Map);
+        assertTrue(((Map) context).containsKey("@context"));
+    }
 
-	@After
-	public void setContextClassLoader() {
-		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-	}
+    @Test(expected = IOException.class)
+    public void jarCacheMiss404() throws Exception {
+        // Should fail-fast as nonexisting.example.com is not in DNS
+        Object context = documentLoader.fromURL(new URL("http://nonexisting.example.com/miss"));
+    }
 
-    @Test(expected=IOException.class)
-   	public void jarCacheMissThreadCtx() throws Exception {
-		URLClassLoader findNothingCL = new URLClassLoader(new URL[] {}, null);
-		Thread.currentThread().setContextClassLoader(findNothingCL);
-		Object context = documentLoader.fromURL(new URL(
-				"http://nonexisting.example.com/context"));
-   	}
+    @After
+    public void setContextClassLoader() {
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+    }
 
-	@Test
-	public void jarCacheHitThreadCtx() throws Exception {		
-		URL url = new URL(
-				"http://nonexisting.example.com/nested/hello");
-		URL nestedJar = getClass().getResource("/nested.jar");
-		try {
-			Object hello = documentLoader.fromURL(url);
-			fail("Should not be able to find nested/hello yet");
-		} catch (IOException ex) {
-			// expected
-		}
-		
-		ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
-		Thread.currentThread().setContextClassLoader(cl);
-		Object hello = documentLoader.fromURL(url);
-		assertTrue(hello instanceof Map);
-		assertEquals("World!", ((Map)hello).get("Hello"));	
-	}    
-	
-	@Test
-	public void sharedHttpClient() throws Exception {
-		// Should be the same instance unless explicitly set
-		assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
-	}
+    @Test(expected = IOException.class)
+    public void jarCacheMissThreadCtx() throws Exception {
+        URLClassLoader findNothingCL = new URLClassLoader(new URL[] {}, null);
+        Thread.currentThread().setContextClassLoader(findNothingCL);
+        Object context = documentLoader.fromURL(new URL("http://nonexisting.example.com/context"));
+    }
 
-	
-	@Test
-	public void differentHttpClient() throws Exception {
-		// Custom http client
-		documentLoader.setHttpClient(new SystemDefaultHttpClient());
-		assertNotSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
+    @Test
+    public void jarCacheHitThreadCtx() throws Exception {
+        URL url = new URL("http://nonexisting.example.com/nested/hello");
+        URL nestedJar = getClass().getResource("/nested.jar");
+        try {
+            Object hello = documentLoader.fromURL(url);
+            fail("Should not be able to find nested/hello yet");
+        } catch (IOException ex) {
+            // expected
+        }
 
-		// Use default again
-		documentLoader.setHttpClient(null);
-		assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
-	}
+        ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
+        Thread.currentThread().setContextClassLoader(cl);
+        Object hello = documentLoader.fromURL(url);
+        assertTrue(hello instanceof Map);
+        assertEquals("World!", ((Map) hello).get("Hello"));
+    }
 
-	
+    @Test
+    public void sharedHttpClient() throws Exception {
+        // Should be the same instance unless explicitly set
+        assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
+    }
+
+    @Test
+    public void differentHttpClient() throws Exception {
+        // Custom http client
+        documentLoader.setHttpClient(new SystemDefaultHttpClient());
+        assertNotSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
+
+        // Use default again
+        documentLoader.setHttpClient(null);
+        assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
+    }
+
 }

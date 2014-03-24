@@ -158,7 +158,7 @@ public class JsonUtils {
      *             If there was an IO error during parsing.
      */
     public static Object fromURL(java.net.URL url) throws JsonParseException, IOException {
-		return DOCUMENT_LOADER.fromURL(url);
+        return DOCUMENT_LOADER.fromURL(url);
     }
 
     /**

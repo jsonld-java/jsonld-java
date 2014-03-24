@@ -25,8 +25,7 @@ import com.github.jsonldjava.utils.JarCacheStorage;
 
 public class DocumentLoader {
 
-
-	public RemoteDocument loadDocument(String url) throws JsonLdError {
+    public RemoteDocument loadDocument(String url) throws JsonLdError {
         RemoteDocument doc = new RemoteDocument(url, null);
         try {
             doc.setDocument(fromURL(new URL(url)));
@@ -114,11 +113,11 @@ public class DocumentLoader {
         }
         return response.getEntity().getContent();
     }
-    
+
     protected static HttpClient getDefaultHttpClient() {
         HttpClient result = defaultHttpClient;
         if (result != null) {
-        	return result;
+            return result;
         }
         synchronized (DocumentLoader.class) {
             if (defaultHttpClient == null) {
@@ -136,23 +135,24 @@ public class DocumentLoader {
                 cacheConfig.setMaxCacheEntries(1000);
                 // and allow caching
                 CachingHttpClient cachingClient = new CachingHttpClient(client, cacheConfig);
-                
+
                 // Wrap again with JAR cache
                 JarCacheStorage jarCache = new JarCacheStorage();
-                defaultHttpClient = new CachingHttpClient(cachingClient, jarCache, jarCache.getCacheConfig());
+                defaultHttpClient = new CachingHttpClient(cachingClient, jarCache,
+                        jarCache.getCacheConfig());
             }
             return defaultHttpClient;
         }
     }
 
     public HttpClient getHttpClient() {
-    	if (httpClient == null) {
-    		return getDefaultHttpClient();
-    	}
-    	return httpClient;
+        if (httpClient == null) {
+            return getDefaultHttpClient();
+        }
+        return httpClient;
     }
 
     public void setHttpClient(HttpClient nextHttpClient) {
-        httpClient = nextHttpClient;        
+        httpClient = nextHttpClient;
     }
 }
