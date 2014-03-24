@@ -33,9 +33,6 @@ import org.openrdf.rio.helpers.JSONLDMode;
 import org.openrdf.rio.helpers.JSONLDSettings;
 import org.openrdf.rio.helpers.StatementCollector;
 
-import com.github.jsonldjava.sesame.SesameJSONLDParserFactory;
-import com.github.jsonldjava.sesame.SesameJSONLDWriterFactory;
-
 /**
  * @author Peter Ansell p_ansell@yahoo.com
  */

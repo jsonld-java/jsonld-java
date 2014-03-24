@@ -123,9 +123,9 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
     }
 
     private void importGraph(RDFDataset result, Graph graph, String graphName) {
-        ExtendedIterator<Triple> triples = graph.find(null, null, null);
+        final ExtendedIterator<Triple> triples = graph.find(null, null, null);
         while (triples.hasNext()) {
-            Triple t = triples.next();
+            final Triple t = triples.next();
             final String subj = getID(t.getSubject());
             final String prop = t.getPredicate().getURI();
             if (t.getObject().isLiteral()) {
@@ -146,11 +146,11 @@ public class JenaRDFParser implements com.github.jsonldjava.core.RDFParser {
 
         importGraph(result, input.getDefaultGraph(), "@default");
 
-        Iterator<Node> graphNodes = input.listGraphNodes();
+        final Iterator<Node> graphNodes = input.listGraphNodes();
         while (graphNodes.hasNext()) {
-            Node n = graphNodes.next();
-            Graph graph = input.getGraph(n);
-            String graphName = n.getURI();
+            final Node n = graphNodes.next();
+            final Graph graph = input.getGraph(n);
+            final String graphName = n.getURI();
 
             importGraph(result, graph, graphName);
         }

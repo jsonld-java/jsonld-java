@@ -1,6 +1,5 @@
 package com.github.jsonldjava.rdf2go;
 
-
 import java.util.Map;
 
 import org.ontoware.aifbcommons.collection.ClosableIterator;
@@ -18,8 +17,6 @@ import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdError.Error;
 import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.core.RDFParser;
-
-
 
 /**
  * Implementation of {@link RDFParser} which serializes the contents of a

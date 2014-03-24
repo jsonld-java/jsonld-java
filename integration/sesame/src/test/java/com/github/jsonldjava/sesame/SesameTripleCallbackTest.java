@@ -16,7 +16,6 @@ import org.openrdf.rio.helpers.StatementCollector;
 
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdProcessor;
-import com.github.jsonldjava.sesame.SesameTripleCallback;
 import com.github.jsonldjava.utils.JsonUtils;
 
 public class SesameTripleCallbackTest {

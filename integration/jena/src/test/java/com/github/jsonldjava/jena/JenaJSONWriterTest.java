@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.StringWriter;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.hp.hpl.jena.rdf.model.Model;

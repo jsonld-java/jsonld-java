@@ -1,6 +1,5 @@
 package com.github.jsonldjava.rdf2go;
 
-
 import java.util.List;
 
 import org.ontoware.rdf2go.RDF2Go;

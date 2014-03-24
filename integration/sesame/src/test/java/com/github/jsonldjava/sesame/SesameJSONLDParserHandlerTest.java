@@ -16,9 +16,6 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParser;
 import org.openrdf.rio.RDFWriter;
 
-import com.github.jsonldjava.sesame.SesameJSONLDParser;
-import com.github.jsonldjava.sesame.SesameJSONLDWriter;
-
 /**
  * Unit tests for {@link SesameJSONLDParser} related to handling of datatypes
  * and languages.

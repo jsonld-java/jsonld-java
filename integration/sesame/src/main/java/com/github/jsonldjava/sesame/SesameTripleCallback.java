@@ -173,10 +173,10 @@ public class SesameTripleCallback implements JsonLdTripleCallback {
 
     @Override
     public Object call(final RDFDataset dataset) {
-        for(Entry<String, String> nextNamespace : dataset.getNamespaces().entrySet()) {
+        for (final Entry<String, String> nextNamespace : dataset.getNamespaces().entrySet()) {
             try {
                 handler.handleNamespace(nextNamespace.getKey(), nextNamespace.getValue());
-            } catch (RDFHandlerException e) {
+            } catch (final RDFHandlerException e) {
                 throw new RuntimeException("Failed handling namespace", e);
             }
         }

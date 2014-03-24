@@ -14,10 +14,9 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.github.jsonldjava.core.JsonLdTripleCallback;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdProcessor;
-import com.github.jsonldjava.jena.JenaTripleCallback;
+import com.github.jsonldjava.core.JsonLdTripleCallback;
 import com.github.jsonldjava.utils.Obj;
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -75,8 +74,8 @@ public class JenaTripleCallbackTest {
         final List<String> result = new ArrayList<String>(Arrays.asList(w.getBuffer().toString()
                 .split("\n")));
         Collections.sort(result);
-//        System.out.println(expected);
-//        System.out.println(result);
+        // System.out.println(expected);
+        // System.out.println(result);
         assertTrue(Obj.equals(expected, result));
     }
 

@@ -18,8 +18,6 @@ import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.utils.Obj;
 
-
-
 /**
  * Unit tests for {@link RDF2GoRDFParser} containing a single test, including
  * literals with datatype and language.

@@ -39,7 +39,8 @@ public class SesameJSONLDParser extends RDFParserBase implements RDFParser {
      * Creates a Sesame JSONLD Parser using the given {@link ValueFactory} to
      * create new {@link Value}s.
      * 
-     * @param valueFactory The ValueFactory to use
+     * @param valueFactory
+     *            The ValueFactory to use
      */
     public SesameJSONLDParser(final ValueFactory valueFactory) {
         super(valueFactory);
@@ -56,9 +57,9 @@ public class SesameJSONLDParser extends RDFParserBase implements RDFParser {
         final SesameTripleCallback callback = new SesameTripleCallback(getRDFHandler(),
                 valueFactory, getParserConfig(), getParseErrorListener());
 
-        JsonLdOptions options = new JsonLdOptions(baseURI);
+        final JsonLdOptions options = new JsonLdOptions(baseURI);
         options.useNamespaces = true;
-        
+
         try {
             JsonLdProcessor.toRDF(JsonUtils.fromInputStream(in), callback, options);
         } catch (final JsonLdError e) {
@@ -77,9 +78,9 @@ public class SesameJSONLDParser extends RDFParserBase implements RDFParser {
         final SesameTripleCallback callback = new SesameTripleCallback(getRDFHandler(),
                 valueFactory, getParserConfig(), getParseErrorListener());
 
-        JsonLdOptions options = new JsonLdOptions(baseURI);
+        final JsonLdOptions options = new JsonLdOptions(baseURI);
         options.useNamespaces = true;
-        
+
         try {
             JsonLdProcessor.toRDF(JsonUtils.fromReader(reader), callback, options);
         } catch (final JsonLdError e) {

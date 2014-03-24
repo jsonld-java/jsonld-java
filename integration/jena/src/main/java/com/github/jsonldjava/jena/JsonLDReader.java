@@ -31,11 +31,10 @@ import org.apache.jena.riot.lang.LabelToNode;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.SyntaxLabels;
 
-import com.github.jsonldjava.core.JsonLdTripleCallback;
-import com.github.jsonldjava.core.JsonLdApi;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.core.JsonLdTripleCallback;
 import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.utils.JsonUtils;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
@@ -84,7 +83,7 @@ public class JsonLDReader implements ReaderRIOT {
                     return null;
                 }
             };
-            JsonLdOptions options = new JsonLdOptions(baseURI);
+            final JsonLdOptions options = new JsonLdOptions(baseURI);
             options.useNamespaces = true;
             JsonLdProcessor.toRDF(JsonUtils.fromInputStream(in), callback, options);
         } catch (final IOException e) {
