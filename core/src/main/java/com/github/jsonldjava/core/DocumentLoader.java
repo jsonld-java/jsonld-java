@@ -1,10 +1,11 @@
 package com.github.jsonldjava.core;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.MappingJsonFactory;
-import com.github.jsonldjava.utils.JsonUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -16,11 +17,11 @@ import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.MappingJsonFactory;
+import com.github.jsonldjava.utils.JarCacheStorage;
 
 public class DocumentLoader {
 
@@ -38,7 +39,9 @@ public class DocumentLoader {
      * An HTTP Accept header that prefers JSONLD.
      */
     public static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
-    private static volatile HttpClient httpClient;
+
+    protected static volatile CachingHttpClient defaultHttpClient;
+    private volatile HttpClient httpClient;
 
     /**
      * Returns a Map, List, or String containing the contents of the JSON
@@ -53,7 +56,7 @@ public class DocumentLoader {
      * @throws IOException
      *             If there was an error resolving the resource.
      */
-    public static Object fromURL(java.net.URL url) throws JsonParseException, IOException {
+    public Object fromURL(java.net.URL url) throws JsonParseException, IOException {
 
         final MappingJsonFactory jsonFactory = new MappingJsonFactory();
         final InputStream in = openStreamFromURL(url);
@@ -90,7 +93,7 @@ public class DocumentLoader {
      * @throws IOException
      *             If there was an error resolving the {@link java.net.URL}.
      */
-    public static InputStream openStreamFromURL(java.net.URL url) throws IOException {
+    public InputStream openStreamFromURL(java.net.URL url) throws IOException {
         final String protocol = url.getProtocol();
         if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
             // Can't use the HTTP client for those!
@@ -111,36 +114,45 @@ public class DocumentLoader {
         return response.getEntity().getContent();
     }
 
-    public static HttpClient getHttpClient() {
-        HttpClient result = httpClient;
-        if (result == null) {
-            synchronized (JsonUtils.class) {
-                result = httpClient;
-                if (result == null) {
-                    // Uses Apache SystemDefaultHttpClient rather than
-                    // DefaultHttpClient, thus the normal proxy settings for the
-                    // JVM will be used
-
-                    final DefaultHttpClient client = new SystemDefaultHttpClient();
-                    // Support compressed data
-                    // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
-                    client.addRequestInterceptor(new RequestAcceptEncoding());
-                    client.addResponseInterceptor(new ResponseContentEncoding());
-                    final CacheConfig cacheConfig = new CacheConfig();
-                    cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
-                    cacheConfig.setMaxCacheEntries(1000);
-                    // and allow caching
-                    httpClient = new CachingHttpClient(client, cacheConfig);
-                    result = httpClient;
-                }
-            }
+    protected static HttpClient getDefaultHttpClient() {
+        HttpClient result = defaultHttpClient;
+        if (result != null) {
+            return result;
         }
-        return result;
+        synchronized (DocumentLoader.class) {
+            if (defaultHttpClient == null) {
+                // Uses Apache SystemDefaultHttpClient rather than
+                // DefaultHttpClient, thus the normal proxy settings for the
+                // JVM will be used
+
+                final DefaultHttpClient client = new SystemDefaultHttpClient();
+                // Support compressed data
+                // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
+                client.addRequestInterceptor(new RequestAcceptEncoding());
+                client.addResponseInterceptor(new ResponseContentEncoding());
+                final CacheConfig cacheConfig = new CacheConfig();
+                cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
+                cacheConfig.setMaxCacheEntries(1000);
+                // and allow caching
+                CachingHttpClient cachingClient = new CachingHttpClient(client, cacheConfig);
+
+                // Wrap again with JAR cache
+                JarCacheStorage jarCache = new JarCacheStorage();
+                defaultHttpClient = new CachingHttpClient(cachingClient, jarCache,
+                        jarCache.getCacheConfig());
+            }
+            return defaultHttpClient;
+        }
     }
 
-    public static void setHttpClient(HttpClient nextHttpClient) {
-        synchronized (JsonUtils.class) {
-            httpClient = nextHttpClient;
+    public HttpClient getHttpClient() {
+        if (httpClient == null) {
+            return getDefaultHttpClient();
         }
+        return httpClient;
+    }
+
+    public void setHttpClient(HttpClient nextHttpClient) {
+        httpClient = nextHttpClient;
     }
 }

@@ -11,16 +11,7 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.RequestAcceptEncoding;
-import org.apache.http.client.protocol.ResponseContentEncoding;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.SystemDefaultHttpClient;
-import org.apache.http.impl.client.cache.CacheConfig;
-import org.apache.http.impl.client.cache.CachingHttpClient;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -29,6 +20,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jsonldjava.core.DocumentLoader;
 import com.github.jsonldjava.core.JsonLdApi;
 import com.github.jsonldjava.core.JsonLdProcessor;
 
@@ -46,6 +38,7 @@ public class JsonUtils {
     protected static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final JsonFactory JSON_FACTORY = new JsonFactory(JSON_MAPPER);
+    private static DocumentLoader DOCUMENT_LOADER = new DocumentLoader();
 
     static {
         // Disable default Jackson behaviour to close
@@ -57,8 +50,6 @@ public class JsonUtils {
         JSON_FACTORY.disable(JsonFactory.Feature.INTERN_FIELD_NAMES);
         JSON_FACTORY.disable(JsonFactory.Feature.CANONICALIZE_FIELD_NAMES);
     }
-
-    private static volatile HttpClient httpClient;
 
     /**
      * Parses a JSON-LD document from the given {@link InputStream} to an object
@@ -167,83 +158,7 @@ public class JsonUtils {
      *             If there was an IO error during parsing.
      */
     public static Object fromURL(java.net.URL url) throws JsonParseException, IOException {
-
-        InputStream in = null;
-        try {
-            in = openStreamFromURL(url);
-            return fromInputStream(in);
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-        }
-    }
-
-    /**
-     * Returns the internal {@link HttpClient} object used to resolve URLs.
-     * 
-     * @return The {@link HttpClient} we use to resolve URLs.
-     */
-    protected static HttpClient getHttpClient() {
-        if (httpClient == null) {
-            synchronized (JsonUtils.class) {
-                if (httpClient == null) {
-                    // Uses Apache SystemDefaultHttpClient rather than
-                    // DefaultHttpClient, thus the normal proxy settings for the
-                    // JVM will be used
-
-                    final DefaultHttpClient client = new SystemDefaultHttpClient();
-                    // Support compressed data
-                    // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
-                    client.addRequestInterceptor(new RequestAcceptEncoding());
-                    client.addResponseInterceptor(new ResponseContentEncoding());
-                    final CacheConfig cacheConfig = new CacheConfig();
-                    cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
-                    cacheConfig.setMaxCacheEntries(1000);
-                    // and allow caching
-                    httpClient = new CachingHttpClient(client, cacheConfig);
-                }
-            }
-        }
-        return httpClient;
-    }
-
-    /**
-     * Opens an {@link InputStream} for the given {@link JsonLdUrl}, including
-     * support for http and https URLs that are requested using Content
-     * Negotiation with application/ld+json as the preferred content type.
-     * 
-     * @param url
-     *            The JsonLdUrl identifying the source.
-     * @return An InputStream containing the contents of the source.
-     * @throws IOException
-     *             If there was an error resolving the JsonLdUrl.
-     */
-    protected static InputStream openStreamFromURL(java.net.URL url) throws IOException {
-        final String protocol = url.getProtocol();
-        if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
-            // Can't use the HTTP client for those!
-            // Fallback to Java's built-in JsonLdUrl handler. No need for
-            // Accept headers as it's likely to be file: or jar:
-            return url.openStream();
-        }
-        final HttpUriRequest request = new HttpGet(url.toExternalForm());
-        // We prefer application/ld+json, but fallback to application/json
-        // or whatever is available
-        request.addHeader("Accept", ACCEPT_HEADER);
-
-        final HttpResponse response = getHttpClient().execute(request);
-        final int status = response.getStatusLine().getStatusCode();
-        if (status != 200 && status != 203) {
-            throw new IOException("Can't retrieve " + url + ", status code: " + status);
-        }
-        return response.getEntity().getContent();
-    }
-
-    protected static void setHttpClient(HttpClient nextHttpClient) {
-        synchronized (JsonUtils.class) {
-            httpClient = nextHttpClient;
-        }
+        return DOCUMENT_LOADER.fromURL(url);
     }
 
     /**
