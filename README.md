@@ -34,7 +34,7 @@ Code example
     // Call whichever JSONLD function you want! (e.g. compact)
     Object compact = JsonLdProcessor.compact(jsonObject, context, options);
     // Print out the result (or don't, it's your call!)
-    System.out.println(JsonUtils.toPrettyString(normalized));
+    System.out.println(JsonUtils.toPrettyString(compact));
 
 Processor options
 -----------------
