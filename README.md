@@ -3,7 +3,7 @@ Note: this is the documentation for the current unstable development branch. [Fo
 JSONLD-JAVA
 ===========
 
-This is a Java implementation of the [JSON-LD specification](http://json-ld.org/).
+This is a Java implementation of the [JSON-LD specification](http://www.w3.org/TR/json-ld/) and the [JSON-LD-API specification](http://www.w3.org/TR/json-ld-api/).
 
 USAGE
 =====
@@ -38,7 +38,7 @@ Code example
 
 Processor options
 -----------------
-A
+
 The Options specified by the [JSON-LD API Specification](http://json-ld.org/spec/latest/json-ld-api/#jsonldoptions) are accessible via the `com.github.jsonldjava.core.JsonLdOptions` class, and each `JsonLdProcessor.*` function has an optional input to take an instance of this class.
 
 
