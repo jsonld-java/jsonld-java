@@ -398,20 +398,21 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
      * 
      * @param context
      *            The context to parse
-     * @throws JsonLdError If the context can't be parsed 
+     * @throws JsonLdError
+     *             If the context can't be parsed
      */
     public void parseContext(Object contextLike) throws JsonLdError {
-    	Context context;
-    	if (api != null) {
-    		context = new Context(api.opts);
-    	} else { 
-    		context = new Context();
-    	}
-    	// Context will do our recursive parsing and initial IRI resolution
-    	context = context.parse(contextLike);
-    	// And then leak to us the potential 'prefixes'
-    	Map<String, String> prefixes = context.getPrefixes(true);
-    	
+        Context context;
+        if (api != null) {
+            context = new Context(api.opts);
+        } else {
+            context = new Context();
+        }
+        // Context will do our recursive parsing and initial IRI resolution
+        context = context.parse(contextLike);
+        // And then leak to us the potential 'prefixes'
+        Map<String, String> prefixes = context.getPrefixes(true);
+
         for (final String key : prefixes.keySet()) {
             final String val = prefixes.get(key);
             if ("@vocab".equals(key)) {
@@ -420,7 +421,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                 } else {
                 }
             } else if (!isKeyword(key)) {
-            	setNamespace(key, val);
+                setNamespace(key, val);
                 // TODO: should we make sure val is a valid URI prefix (i.e. it
                 // ends with /# or ?)
                 // or is it ok that full URIs for terms are used?
