@@ -20,30 +20,6 @@
 		</developer>
 	</developers>
 
-	<repositories>
-		<repository>
-			<id>semweb4j-repo</id>
-			<name>Semweb4j.org maven repo</name>
-			<url>http://semweb4j.org/repo/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</repository>
-		<repository>
-			<id>semweb4j-snapshots</id>
-			<name>Semweb4j.org maven snapshot repo</name>
-			<url>http://semweb4j.org/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-		</repository>
-	</repositories>
-	
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -92,9 +68,9 @@
 		</dependency>
 		<dependency>
 			<groupId>org.semweb4j</groupId>
-			<artifactId>rdf2go.impl.sesame23</artifactId>
+			<artifactId>rdf2go.impl.sesame</artifactId>
 			<version>${rdf2go.version}</version>
-			<scope>runtime</scope>
+			<scope>test</scope>
 		</dependency>
 		
 	</dependencies>

@@ -236,6 +236,9 @@ Then, you can open a pull request to merge your change into the master branch of
 CHANGELOG
 =========
 
+### 2014-03-26
+* Bump RDF2GO to version 5.0.0
+
 ### 2014-03-24
 * Allow loading remote @context from bundled JAR cache
 * Support JSON array in @context with toRDF 
