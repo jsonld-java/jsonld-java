@@ -19,23 +19,23 @@ From Maven
 
 Code example
 ------------
-
-    // Open a valid json(-ld) input file
-    InputStream inputStream = new FileInputStream("input.json");
-    // Read the file into an Object (The type of this object will be a List, Map, String, Boolean,
-    // Number or null depending on the root object in the file).
-    Object jsonObject = JsonUtils.fromInputStream(inputStream);
-    // Create a context JSON map containing prefixes and definitions
-    Map context = new HashMap();
-    // Customise context...
-    // Create an instance of JsonLdOptions with the standard JSON-LD options
-    JsonLdOptions options = new JsonLdOptions();
-    // Customise options...
-    // Call whichever JSONLD function you want! (e.g. compact)
-    Object compact = JsonLdProcessor.compact(jsonObject, context, options);
-    // Print out the result (or don't, it's your call!)
-    System.out.println(JsonUtils.toPrettyString(compact));
-
+```java
+// Open a valid json(-ld) input file
+InputStream inputStream = new FileInputStream("input.json");
+// Read the file into an Object (The type of this object will be a List, Map, String, Boolean,
+// Number or null depending on the root object in the file).
+Object jsonObject = JsonUtils.fromInputStream(inputStream);
+// Create a context JSON map containing prefixes and definitions
+Map context = new HashMap();
+// Customise context...
+// Create an instance of JsonLdOptions with the standard JSON-LD options
+JsonLdOptions options = new JsonLdOptions();
+// Customise options...
+// Call whichever JSONLD function you want! (e.g. compact)
+Object compact = JsonLdProcessor.compact(jsonObject, context, options);
+// Print out the result (or don't, it's your call!)
+System.out.println(JsonUtils.toPrettyString(compact));
+```
 Processor options
 -----------------
 
@@ -74,20 +74,20 @@ classpath together with the JSON-LD contexts to embed. (Note that you might
 have to recursively embed any nested contexts).
 
 The syntax of `jarcache.json` is best explained by example:
-
-    [
-      {
-        "Content-Location": "http://www.example.com/context",
-        "X-Classpath": "contexts/example.jsonld",
-        "Content-Type": "application/ld+json"
-      },
-      {
-        "Content-Location": "http://data.example.net/other",
-        "X-Classpath": "contexts/other.jsonld",
-        "Content-Type": "application/ld+json"
-      }
-    ]
-
+```javascript
+[
+  {
+    "Content-Location": "http://www.example.com/context",
+    "X-Classpath": "contexts/example.jsonld",
+    "Content-Type": "application/ld+json"
+  },
+  {
+    "Content-Location": "http://data.example.net/other",
+    "X-Classpath": "contexts/other.jsonld",
+    "Content-Type": "application/ld+json"
+  }
+]
+```
 (See also [core/src/test/resources/jarcache.json](core/src/test/resources/jarcache.json)).
 
 This will mean that any JSON-LD document trying to import the `@context` 
