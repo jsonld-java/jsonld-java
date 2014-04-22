@@ -8,7 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.jsonld-java</groupId>
 	<artifactId>jsonld-java-parent</artifactId>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.4.1</version>
 	<name>JSONLD Java :: Parent</name>
 	<description>Json-LD Java Parent POM</description>
 	<packaging>pom</packaging>	
@@ -51,7 +51,7 @@
 		<jena.version>2.11.1</jena.version>
 		<junit.version>4.11</junit.version>
 		<rdf2go.version>5.0.0</rdf2go.version>
-		<sesame.version>2.7.12-SNAPSHOT</sesame.version>
+		<sesame.version>2.7.11</sesame.version>
 		<slf4j.version>1.7.7</slf4j.version>
 	</properties>
 	<prerequisites>
