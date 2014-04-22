@@ -21,6 +21,7 @@ import org.openrdf.rio.ParserConfig;
 import org.openrdf.rio.RDFParser;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.RDFWriterTest;
+import org.openrdf.rio.WriterConfig;
 import org.openrdf.rio.helpers.BasicParserSettings;
 import org.openrdf.rio.helpers.JSONLDMode;
 import org.openrdf.rio.helpers.JSONLDSettings;
@@ -35,6 +36,21 @@ public class SesameJSONLDWriterTest extends RDFWriterTest {
         super(new SesameJSONLDWriterFactory(), new SesameJSONLDParserFactory());
     }
 
+    /*
+     * TODO: Unignore tests when updating to Sesame-2.7.12
+     */
+    protected void setupWriterConfig(WriterConfig config) {
+        config.set(JSONLDSettings.JSONLD_MODE, JSONLDMode.COMPACT);
+    }
+
+    /*
+     * TODO: Unignore tests when updating to Sesame-2.7.12
+     */
+    protected void setupParserConfig(ParserConfig config) {
+        config.set(BasicParserSettings.FAIL_ON_UNKNOWN_DATATYPES, true);
+        config.set(BasicParserSettings.FAIL_ON_UNKNOWN_LANGUAGES, true);
+    }
+    
     @Test
     @Override
     @Ignore("Default RDFWriter.getWriterConfig doesn't use JSONLDMode.COMPACT, so namespaces are not preserved")
