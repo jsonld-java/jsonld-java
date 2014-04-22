@@ -47,12 +47,12 @@
 		
 		<clerezza.version>0.13</clerezza.version>
 		<httpclient.version>4.2.5</httpclient.version>
-		<jackson.version>2.3.2</jackson.version>
-		<jena.version>2.11.0</jena.version>
+		<jackson.version>2.3.3</jackson.version>
+		<jena.version>2.11.1</jena.version>
 		<junit.version>4.11</junit.version>
 		<rdf2go.version>5.0.0</rdf2go.version>
-		<sesame.version>2.7.10</sesame.version>
-		<slf4j.version>1.7.5</slf4j.version>
+		<sesame.version>2.7.12-SNAPSHOT</sesame.version>
+		<slf4j.version>1.7.7</slf4j.version>
 	</properties>
 	<prerequisites>
 		<maven>2.2.1</maven>
@@ -162,6 +162,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
 					<configuration>
 						<source>1.6</source>
 						<target>1.6</target>
@@ -201,7 +202,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.16</version>
+					<version>2.17</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
