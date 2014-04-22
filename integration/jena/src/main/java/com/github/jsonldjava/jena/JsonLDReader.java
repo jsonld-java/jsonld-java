@@ -20,6 +20,9 @@ package com.github.jsonldjava.jena;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +50,12 @@ import com.hp.hpl.jena.sparql.util.Context;
 public class JsonLDReader implements ReaderRIOT {
     @Override
     public void read(InputStream in, String baseURI, ContentType ct, final StreamRDF output,
+            Context context) {
+        read(new InputStreamReader(in, Charset.forName("UTF-8")), baseURI, ct, output, context);
+    }
+
+    @Override
+    public void read(Reader in, String baseURI, ContentType ct, final StreamRDF output,
             Context context) {
         try {
             final JsonLdTripleCallback callback = new JsonLdTripleCallback() {
@@ -85,7 +94,7 @@ public class JsonLDReader implements ReaderRIOT {
             };
             final JsonLdOptions options = new JsonLdOptions(baseURI);
             options.useNamespaces = true;
-            JsonLdProcessor.toRDF(JsonUtils.fromInputStream(in), callback, options);
+            JsonLdProcessor.toRDF(JsonUtils.fromReader(in), callback, options);
         } catch (final IOException e) {
             throw new RiotException("Could not read JSONLD: " + e, e);
         } catch (final JsonLdError e) {
