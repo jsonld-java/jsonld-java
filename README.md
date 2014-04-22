@@ -1,5 +1,3 @@
-Note: this is the documentation for the current unstable development branch. [For the stable release documentation see here](https://github.com/jsonld-java/jsonld-java/blob/v0.3/README.md)
-
 JSONLD-JAVA
 ===========
 
@@ -14,7 +12,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.4</version>
     </dependency>
 
 Code example
@@ -235,6 +233,12 @@ Then, you can open a pull request to merge your change into the master branch of
 
 CHANGELOG
 =========
+
+### 2014-04-22
+* Release version 0.4
+* Bump to Sesame-2.7.11
+* Bump to Jackson-2.3.3
+* Bump to Jena-2.11.1
 
 ### 2014-03-26
 * Bump RDF2GO to version 5.0.0
