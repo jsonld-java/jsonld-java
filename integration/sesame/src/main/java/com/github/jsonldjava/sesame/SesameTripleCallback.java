@@ -69,10 +69,12 @@ public class SesameTripleCallback implements JsonLdTripleCallback {
                     createResource(graph));
         }
 
-        try {
-            handler.handleStatement(result);
-        } catch (final RDFHandlerException e) {
-            throw new RuntimeException(e);
+        if (handler != null) {
+            try {
+                handler.handleStatement(result);
+            } catch (final RDFHandlerException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -115,10 +117,12 @@ public class SesameTripleCallback implements JsonLdTripleCallback {
             result = vf.createStatement(subject, predicate, object, createResource(graph));
         }
 
-        try {
-            handler.handleStatement(result);
-        } catch (final RDFHandlerException e) {
-            throw new RuntimeException(e);
+        if (handler != null) {
+            try {
+                handler.handleStatement(result);
+            } catch (final RDFHandlerException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -173,11 +177,13 @@ public class SesameTripleCallback implements JsonLdTripleCallback {
 
     @Override
     public Object call(final RDFDataset dataset) {
-        for (final Entry<String, String> nextNamespace : dataset.getNamespaces().entrySet()) {
-            try {
-                handler.handleNamespace(nextNamespace.getKey(), nextNamespace.getValue());
-            } catch (final RDFHandlerException e) {
-                throw new RuntimeException("Failed handling namespace", e);
+        if (handler != null) {
+            for (final Entry<String, String> nextNamespace : dataset.getNamespaces().entrySet()) {
+                try {
+                    handler.handleNamespace(nextNamespace.getKey(), nextNamespace.getValue());
+                } catch (final RDFHandlerException e) {
+                    throw new RuntimeException("Failed handling namespace", e);
+                }
             }
         }
         for (String graphName : dataset.keySet()) {
