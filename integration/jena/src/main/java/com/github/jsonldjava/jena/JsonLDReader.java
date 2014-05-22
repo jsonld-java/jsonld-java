@@ -25,6 +25,7 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.jena.atlas.lib.InternalErrorException;
 import org.apache.jena.atlas.web.ContentType;
@@ -61,8 +62,13 @@ public class JsonLDReader implements ReaderRIOT {
             final JsonLdTripleCallback callback = new JsonLdTripleCallback() {
 
                 @Override
-                // public Object call(Map<String, Object> dataset) {
                 public Object call(RDFDataset dataset) {
+                	// Copy across namespaces
+                	for (Entry<String, String> namespace : dataset.getNamespaces().entrySet()) {
+                		output.prefix(namespace.getKey(), namespace.getValue());
+                	}
+                	
+                	// Copy across triples and quads
                     for (final String gn : dataset.keySet()) {
                         final Object x = dataset.get(gn);
                         if ("@default".equals(gn)) {
@@ -158,5 +164,4 @@ public class JsonLDReader implements ReaderRIOT {
             // return null ;
         }
     }
-
 }
