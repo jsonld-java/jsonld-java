@@ -27,8 +27,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.jena.riot.RDFDataMgr;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -132,7 +135,7 @@ public class JenaRiotReadWriteTest {
         assertNotNull("Could not find resource on classpath: " + resource, url);
         return RDFDataMgr.loadModel(TestUtils.copyResourceToFile(testDir, resource));
     }
-
+    
     private void rtRJRds(String resource) throws Exception {
         final Dataset ds1 = loadDatasetFromClasspathResource("/com/github/jsonldjava/jena/"
                 + resource);
@@ -153,6 +156,22 @@ public class JenaRiotReadWriteTest {
 
         assertTrue("Input dataset " + resource + " not isomorphic with roundtrip dataset",
                 isIsomorphic(ds1, ds2));
+        
+        // Check namespaces in the parsed dataset match those in the original data
+    	checkNamespaces(ds2.getDefaultModel(), ds1.getDefaultModel().getNsPrefixMap());
+    	Iterator<String> graphNames = ds2.listNames();
+    	while (graphNames.hasNext()) {
+    		String gn = graphNames.next();
+    		checkNamespaces(ds2.getNamedModel(gn), ds1.getNamedModel(gn).getNsPrefixMap());
+    	}
+    }
+    
+    private void checkNamespaces(Model m, Map<String, String> namespaces) {
+    	if (namespaces == null) return;
+    	
+    	for (String prefix : namespaces.keySet()) {
+    		Assert.assertEquals("Model does contain expected namespace " + prefix + ": <" + namespaces.get(prefix) + ">", namespaces.get(prefix), m.getNsPrefixURI(prefix));
+    	}
     }
 
     private void rtRJRg(String filename) throws Exception {
@@ -174,5 +193,8 @@ public class JenaRiotReadWriteTest {
         if (!model.isIsomorphicWith(model2)) {
             System.out.println("## ---- DIFFERENT");
         }
+        
+        // Check namespaces in parsed graph match the original data
+        checkNamespaces(model2, model.getNsPrefixMap());
     }
 }
