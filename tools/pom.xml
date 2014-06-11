@@ -19,7 +19,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jsonld-java-jena</artifactId>
+			<artifactId>jsonld-java-sesame</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
