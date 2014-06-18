@@ -103,7 +103,7 @@ Additional HTTP headers (such as `Content-Type` above) can be included,
 although these are generally ignored by JSONLD-Java. 
 
 Unless overridden in `jarcache.json`, this `Cache-Control` header is
-autoamtically injected together with the current `Date`, meaning that the
+automatically injected together with the current `Date`, meaning that the
 resource loaded from the JAR will effectively never expire (the real HTTP
 server will never be consulted by the Apache HTTP client):
 
