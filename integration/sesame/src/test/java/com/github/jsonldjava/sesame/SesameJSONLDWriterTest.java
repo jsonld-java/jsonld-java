@@ -39,42 +39,34 @@ public class SesameJSONLDWriterTest extends RDFWriterTest {
         super(new SesameJSONLDWriterFactory(), new SesameJSONLDParserFactory());
     }
 
-    /*
-     * TODO: Unignore tests when updating to Sesame-2.7.12
-     */
+    @Override
     protected void setupWriterConfig(WriterConfig config) {
+        super.setupWriterConfig(config);
         config.set(JSONLDSettings.JSONLD_MODE, JSONLDMode.COMPACT);
     }
 
-    /*
-     * TODO: Unignore tests when updating to Sesame-2.7.12
-     */
+    @Override
     protected void setupParserConfig(ParserConfig config) {
+        super.setupParserConfig(config);
         config.set(BasicParserSettings.FAIL_ON_UNKNOWN_DATATYPES, true);
         config.set(BasicParserSettings.FAIL_ON_UNKNOWN_LANGUAGES, true);
-    }
-    
-    @Test
-    @Override
-    @Ignore("Default RDFWriter.getWriterConfig doesn't use JSONLDMode.COMPACT, so namespaces are not preserved")
-    public void testPerformance() throws Exception {
     }
 
     @Test
     @Override
-    @Ignore("Default RDFWriter.getWriterConfig doesn't use JSONLDMode.COMPACT, so namespaces are not preserved")
+    @Ignore("Sesame-2.7 does not support RDF-1.1, so string/langString literals cause this to fail.")
     public void testRoundTrip() throws Exception {
     }
 
     @Test
     @Override
-    @Ignore("Default RDFWriter.getWriterConfig doesn't use JSONLDMode.COMPACT, so namespaces are not preserved")
+    @Ignore("Sesame-2.7 does not support RDF-1.1, so string/langString literals cause this to fail.")
     public void testRoundTripPreserveBNodeIds() throws Exception {
     }
-
+    
     @Test
     @Override
-    @Ignore("Default RDFWriter.getWriterConfig doesn't use JSONLDMode.COMPACT, so namespaces are not preserved")
+    @Ignore("TODO: Determine why this test is breaking")
     public void testIllegalPrefix()
         throws RDFHandlerException, RDFParseException, IOException {
     }
