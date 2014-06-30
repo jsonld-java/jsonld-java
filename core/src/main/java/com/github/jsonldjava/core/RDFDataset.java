@@ -391,7 +391,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     /**
      * parses a context object and sets any namespaces found within it
      * 
-     * @param context
+     * @param contextLike
      *            The context to parse
      * @throws JsonLdError
      *             If the context can't be parsed
