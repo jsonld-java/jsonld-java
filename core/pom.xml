@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>jsonld-java-parent</artifactId>
 		<groupId>com.github.jsonld-java</groupId>
-		<version>0.5-patched</version>
+		<version>0.5-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jsonld-java</artifactId>
