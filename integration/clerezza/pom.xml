@@ -1,5 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<parent>
 		<artifactId>jsonld-java-integration</artifactId>
 		<groupId>com.github.jsonld-java</groupId>
@@ -9,7 +10,7 @@
 	<artifactId>jsonld-java-clerezza</artifactId>
 	<name>JSONLD Java :: Clerezza Integration</name>
 	<description>JSON-LD Java integration module for Clerezza</description>
-	<packaging>jar</packaging>		
+	<packaging>jar</packaging>
 
 	<developers>
 		<developer>
@@ -53,6 +54,13 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>animal-sniffer-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>
 
