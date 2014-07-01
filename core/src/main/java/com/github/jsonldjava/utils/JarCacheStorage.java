@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.cache.HeaderConstants;
@@ -29,6 +27,8 @@ import org.apache.http.impl.cookie.DateUtils;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.protocol.HTTP;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,7 +38,7 @@ public class JarCacheStorage implements HttpCacheStorage {
 
     private static final String JARCACHE_JSON = "jarcache.json";
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final CacheConfig cacheConfig = new CacheConfig();
     private ClassLoader classLoader;
@@ -171,7 +171,7 @@ public class JarCacheStorage implements HttpCacheStorage {
             throws MalformedURLException, IOException {
         final URL classpath = new URL(baseURL, cacheNode.get("X-Classpath").asText());
         log.debug("Cache hit for " + requestedUri);
-        log.trace(cacheNode);
+        log.trace("{}", cacheNode);
 
         final List<Header> responseHeaders = new ArrayList<Header>();
         if (!cacheNode.has(HTTP.DATE_HEADER)) {

@@ -5,15 +5,15 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.cache.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JarCacheResource implements Resource {
 
     private static final long serialVersionUID = -7101296464577357444L;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final URLConnection connection;
 
