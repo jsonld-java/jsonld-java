@@ -23,7 +23,8 @@ public class JarCacheResource implements Resource {
 
     @Override
     public long length() {
-        return connection.getContentLengthLong();
+    	// TODO should be getContentLengthLong() but this is not available in Java 6.
+        return connection.getContentLength();
     }
 
     @Override
