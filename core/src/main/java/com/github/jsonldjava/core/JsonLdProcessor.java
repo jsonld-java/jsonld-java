@@ -459,7 +459,10 @@ public class JsonLdProcessor {
      *            format to use to output a string: 'application/nquads' for
      *            N-Quads (default). [loadContext(url, callback(err, url,
      *            result))] the context loader.
-     * @return A JSON-LD object.
+     * @return The result of executing
+     *         {@link JsonLdTripleCallback#call(RDFDataset)} on the results, or
+     *         if {@link JsonLdOptions#format} is not null, a result in that
+     *         format if it is found, or otherwise the raw {@link RDFDataset}.
      * @throws JsonLdError
      *             If there is an error converting the dataset to JSON-LD.
      */
