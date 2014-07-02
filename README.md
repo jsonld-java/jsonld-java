@@ -236,6 +236,10 @@ Then, you can open a pull request to merge your change into the master branch of
 CHANGELOG
 =========
 
+### 2014-07-02
+* Fix use of Java-7 API so we are still Java-6 compatible
+* Ensure that Sesame RDFHandler endRDF and startRDF are called in SesameTripleCallback
+
 ### 2014-06-30
 * Release version 0.4.2
 * Bump to Sesame-2.7.12
