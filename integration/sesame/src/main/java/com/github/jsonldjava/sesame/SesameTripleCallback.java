@@ -178,12 +178,13 @@ public class SesameTripleCallback implements JsonLdTripleCallback {
     @Override
     public Object call(final RDFDataset dataset) {
         if (handler != null) {
-            for (final Entry<String, String> nextNamespace : dataset.getNamespaces().entrySet()) {
-                try {
+            try {
+                handler.startRDF();
+                for (final Entry<String, String> nextNamespace : dataset.getNamespaces().entrySet()) {
                     handler.handleNamespace(nextNamespace.getKey(), nextNamespace.getValue());
-                } catch (final RDFHandlerException e) {
-                    throw new RuntimeException("Failed handling namespace", e);
                 }
+            } catch (final RDFHandlerException e) {
+                throw new RuntimeException("Could not handle start of RDF", e);
             }
         }
         for (String graphName : dataset.keySet()) {
@@ -200,6 +201,13 @@ public class SesameTripleCallback implements JsonLdTripleCallback {
                     triple(quad.getSubject().getValue(), quad.getPredicate().getValue(), quad
                             .getObject().getValue(), graphName);
                 }
+            }
+        }
+        if (handler != null) {
+            try {
+                handler.endRDF();
+            } catch (final RDFHandlerException e) {
+                throw new RuntimeException("Could not handle end of RDF", e);
             }
         }
 
