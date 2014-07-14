@@ -1,5 +1,3 @@
-Note: this is the documentation for the current unstable development branch. [For the stable release documentation see here](https://github.com/jsonld-java/jsonld-java/blob/v0.4.2/README.md)
-
 JSONLD-JAVA
 ===========
 
@@ -14,7 +12,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.5-SNAPSHOT</version>
+        <version>0.5.0</version>
     </dependency>
 
 Code example
@@ -235,6 +233,10 @@ Then, you can open a pull request to merge your change into the master branch of
 
 CHANGELOG
 =========
+
+### 2014-07-14
+* Release version 0.5.0
+* Fix Jackson parse exceptions being propagated through Sesame without wrapping as RDFParseExceptions
 
 ### 2014-07-02
 * Fix use of Java-7 API so we are still Java-6 compatible
