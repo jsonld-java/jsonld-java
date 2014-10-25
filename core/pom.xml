@@ -77,12 +77,10 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<!-- embed jackson and slf4j so it's easy to include in other projects -->
-						<Embed-Dependency>jackson-core|jackson-databind|slf4j-api;scope=compile</Embed-Dependency>
 						<Import-Package>
-	    					com.fasterxml.jackson.annotation.*;resolution:=optional,
-	    					*
-						</Import-Package>
+              				org.slf4j.*; version="[1.0.0,2)",
+			              	*
+			            </Import-Package>
             		</instructions>
 				</configuration>
 			</plugin>
