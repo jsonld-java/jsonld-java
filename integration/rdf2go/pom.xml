@@ -10,7 +10,7 @@
 	<artifactId>jsonld-java-rdf2go</artifactId>
 	<name>JSONLD Java :: RDF2Go</name>
 	<description>JSON-LD Java integration module for RDF2Go</description>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 
 	<developers>
 		<developer>
@@ -73,6 +73,11 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
 			</plugin>
 		</plugins>
 	</build>

@@ -10,7 +10,7 @@
 	<artifactId>jsonld-java</artifactId>
 	<name>JSONLD Java :: Core</name>
 	<description>Json-LD core implementation</description>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 
 	<dependencies>
 		<dependency>
@@ -70,6 +70,25 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Import-Package>
+              				org.slf4j.*; version="[1.0.0,2)",
+			              	*
+			            </Import-Package>
+            		</instructions>
+				</configuration>
+			</plugin>
+			<!-- Use this test plugin as bnd don't generate test jar needed by sesame integration module-->
+			<!-- test jar generation is configured by default for this plugin in parent -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

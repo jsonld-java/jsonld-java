@@ -236,6 +236,10 @@ Then, you can open a pull request to merge your change into the master branch of
 CHANGELOG
 =========
 
+### 2014-10-29
+* Add OSGi metadata to Jar files
+* Bump to Sesame-2.7.13
+
 ### 2014-07-14
 * Release version 0.5.0
 * Fix Jackson parse exceptions being propagated through Sesame without wrapping as RDFParseExceptions
