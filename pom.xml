@@ -49,9 +49,9 @@
 		<clerezza.version>0.13</clerezza.version>
 		<httpclient.version>4.2.5</httpclient.version>
 		<jackson.version>2.3.3</jackson.version>
-		<junit.version>4.12-beta-1</junit.version>
+		<junit.version>4.12-beta-2</junit.version>
 		<rdf2go.version>5.0.0</rdf2go.version>
-		<sesame.version>2.7.12</sesame.version>
+		<sesame.version>2.7.13</sesame.version>
 		<slf4j.version>1.7.7</slf4j.version>
 	</properties>
 	<prerequisites>
