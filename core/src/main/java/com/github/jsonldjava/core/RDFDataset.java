@@ -190,9 +190,14 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                         } else if ("false".equals(value)) {
                             rval.put("@value", Boolean.FALSE);
                         }
-                    } else if ((XSD_INTEGER.equals(type) || XSD_DOUBLE.equals(type))
-                            && Pattern.matches(
-                                    "^[+-]?[0-9]+((?:\\.?[0-9]+((?:E?[+-]?[0-9]+)|)|))$", value)) {
+                    } else if (
+                    // http://www.w3.org/TR/xmlschema11-2/#integer
+                    (XSD_INTEGER.equals(type) && Pattern.matches("^[\\-+]?[0-9]+$", value))
+                            // http://www.w3.org/TR/xmlschema11-2/#nt-doubleRep
+                            || (XSD_DOUBLE.equals(type) && Pattern
+                                    .matches(
+                                            "^(\\+|-)?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([Ee](\\+|-)?[0-9]+)? |(\\+|-)?INF|NaN$",
+                                            value))) {
                         try {
                             final Double d = Double.parseDouble(value);
                             if (!Double.isNaN(d) && !Double.isInfinite(d)) {
