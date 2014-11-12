@@ -190,8 +190,9 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                         } else if ("false".equals(value)) {
                             rval.put("@value", Boolean.FALSE);
                         }
-                    } else if (Pattern.matches(
-                            "^[+-]?[0-9]+((?:\\.?[0-9]+((?:E?[+-]?[0-9]+)|)|))$", value)) {
+                    } else if ((XSD_INTEGER.equals(type) || XSD_DOUBLE.equals(type))
+                            && Pattern.matches(
+                                    "^[+-]?[0-9]+((?:\\.?[0-9]+((?:E?[+-]?[0-9]+)|)|))$", value)) {
                         try {
                             final Double d = Double.parseDouble(value);
                             if (!Double.isNaN(d) && !Double.isInfinite(d)) {
@@ -203,9 +204,8 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                                 } else if (XSD_DOUBLE.equals(type)) {
                                     rval.put("@value", d);
                                 } else {
-                                    // we don't know the type, so we should add
-                                    // it to the JSON-LD
-                                    rval.put("@type", type);
+                                    throw new RuntimeException(
+                                            "This should never happen as we checked the type was either integer or double");
                                 }
                             }
                         } catch (final NumberFormatException e) {
