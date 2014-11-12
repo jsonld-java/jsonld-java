@@ -189,6 +189,9 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                             rval.put("@value", Boolean.TRUE);
                         } else if ("false".equals(value)) {
                             rval.put("@value", Boolean.FALSE);
+                        } else {
+                            // Else do not replace the value, and add the boolean type in
+                            rval.put("@type", type);
                         }
                     } else if (
                     // http://www.w3.org/TR/xmlschema11-2/#integer
