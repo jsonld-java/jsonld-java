@@ -196,7 +196,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                             // http://www.w3.org/TR/xmlschema11-2/#nt-doubleRep
                             || (XSD_DOUBLE.equals(type) && Pattern
                                     .matches(
-                                            "^(\\+|-)?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([Ee](\\+|-)?[0-9]+)? |(\\+|-)?INF|NaN$",
+                                            "^(\\+|-)?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([Ee](\\+|-)?[0-9]+)?$",
                                             value))) {
                         try {
                             final Double d = Double.parseDouble(value);
