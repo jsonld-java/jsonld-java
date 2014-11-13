@@ -34,8 +34,15 @@ import java.util.regex.Pattern;
  * 
  */
 public class RDFDataset extends LinkedHashMap<String, Object> {
+    private static final long serialVersionUID = 2796344994239879165L;
+
+    private static final Pattern PATTERN_INTEGER = Pattern.compile("^[\\-+]?[0-9]+$");
+    private static final Pattern PATTERN_DOUBLE = Pattern
+            .compile("^(\\+|-)?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([Ee](\\+|-)?[0-9]+)?$");
 
     public static class Quad extends LinkedHashMap<String, Object> implements Comparable<Quad> {
+        private static final long serialVersionUID = -7021918051975883082L;
+
         public Quad(final String subject, final String predicate, final String object,
                 final String graph) {
             this(subject, predicate, object.startsWith("_:") ? new BlankNode(object) : new IRI(
@@ -104,6 +111,8 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
     public static abstract class Node extends LinkedHashMap<String, Object> implements
             Comparable<Node> {
+        private static final long serialVersionUID = 1460990331795672793L;
+
         public abstract boolean isLiteral();
 
         public abstract boolean isIRI();
@@ -189,9 +198,16 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                             rval.put("@value", Boolean.TRUE);
                         } else if ("false".equals(value)) {
                             rval.put("@value", Boolean.FALSE);
+                        } else {
+                            // Else do not replace the value, and add the
+                            // boolean type in
+                            rval.put("@type", type);
                         }
-                    } else if (Pattern.matches(
-                            "^[+-]?[0-9]+((?:\\.?[0-9]+((?:E?[+-]?[0-9]+)|)|))$", value)) {
+                    } else if (
+                    // http://www.w3.org/TR/xmlschema11-2/#integer
+                    (XSD_INTEGER.equals(type) && PATTERN_INTEGER.matcher(value).matches())
+                    // http://www.w3.org/TR/xmlschema11-2/#nt-doubleRep
+                            || (XSD_DOUBLE.equals(type) && PATTERN_DOUBLE.matcher(value).matches())) {
                         try {
                             final Double d = Double.parseDouble(value);
                             if (!Double.isNaN(d) && !Double.isInfinite(d)) {
@@ -203,9 +219,8 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                                 } else if (XSD_DOUBLE.equals(type)) {
                                     rval.put("@value", d);
                                 } else {
-                                    // we don't know the type, so we should add
-                                    // it to the JSON-LD
-                                    rval.put("@type", type);
+                                    throw new RuntimeException(
+                                            "This should never happen as we checked the type was either integer or double");
                                 }
                             }
                         } catch (final NumberFormatException e) {
@@ -227,6 +242,8 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     }
 
     public static class Literal extends Node {
+        private static final long serialVersionUID = 8124736271571220251L;
+
         public Literal(String value, String datatype, String language) {
             super();
             put("type", "literal");
@@ -282,6 +299,8 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     }
 
     public static class IRI extends Node {
+        private static final long serialVersionUID = 1540232072155490782L;
+
         public IRI(String iri) {
             super();
             put("type", "IRI");
@@ -305,6 +324,8 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     }
 
     public static class BlankNode extends Node {
+        private static final long serialVersionUID = -2842402820440697318L;
+
         public BlankNode(String attribute) {
             super();
             put("type", "blank node");

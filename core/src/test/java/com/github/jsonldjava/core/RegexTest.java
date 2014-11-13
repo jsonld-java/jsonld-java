@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 
@@ -207,5 +208,12 @@ public class RegexTest {
                 .unescape("http://a.example/AZaz\\u00c0\\u00d6\\u00d8\\u00f6\\u00f8\\u02ff\\u0370\\u037d\\u0384\\u1ffe\\u200c\\u200d\\u2070\\u2189\\u2c00\\u2fd5\\u3001\\ud7fb\\ufa0e\\ufdc7\\ufdf0\\uffef\\U00010000\\U000e01ef");
         assertTrue("http://a.example/AZaz\u00c0\u00d6\u00d8\u00f6\u00f8\u02ff\u0370\u037d\u0384\u1ffe\u200c\u200d\u2070\u2189\u2c00\u2fd5\u3001\ud7fb\ufa0e\ufdc7\ufdf0\uffef\uD800\uDC00\uDB40\uDDEF"
                 .equals(r));
+    }
+
+    @Test
+    public void testDoubleRegex() throws Exception {
+        assertTrue(Pattern.matches(
+                "^(\\+|-)?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([Ee](\\+|-)?[0-9]+)?$",
+                "1.1E-1"));
     }
 }
