@@ -236,6 +236,9 @@ Then, you can open a pull request to merge your change into the master branch of
 CHANGELOG
 =========
 
+### 2014-11-14
+* Fix identification of integer, boolean, and decimal in RDF-JSONLD with useNativeTypes
+
 ### 2014-10-29
 * Add OSGi metadata to Jar files
 * Bump to Sesame-2.7.13
