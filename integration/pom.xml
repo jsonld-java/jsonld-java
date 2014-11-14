@@ -14,6 +14,6 @@
 	<modules>
 		<module>sesame</module>
 		<module>clerezza</module>
-		<!-- Disabled again until RDF2GO removes the Aduna repository that is not functional module>rdf2go</module -->
+		<module>rdf2go</module>
 	</modules>
 </project>
