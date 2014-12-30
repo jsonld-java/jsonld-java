@@ -652,7 +652,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                         || XSD_DOUBLE.equals(datatype)) {
                     // canonical double representation
                     final DecimalFormat df = new DecimalFormat("0.0###############E0");
-                    df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
+                    df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
                     return new Literal(df.format(value), datatype == null ? XSD_DOUBLE
                             : (String) datatype, null);
                 } else {
