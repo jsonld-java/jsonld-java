@@ -236,7 +236,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>animal-sniffer-maven-plugin</artifactId>
-					<version>1.11</version>
+					<version>1.13</version>
 					<executions>
 						<execution>
 							<phase>test</phase>
@@ -256,7 +256,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>appassembler-maven-plugin</artifactId>
-					<version>1.8</version>
+					<version>1.9</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.felix</groupId>
