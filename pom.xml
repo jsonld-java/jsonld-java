@@ -46,13 +46,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<clerezza.version>0.13</clerezza.version>
+		<clerezza.version>0.14</clerezza.version>
 		<httpclient.version>4.2.5</httpclient.version>
 		<jackson.version>2.3.3</jackson.version>
-		<junit.version>4.12-beta-2</junit.version>
+		<junit.version>4.12</junit.version>
 		<rdf2go.version>5.0.1</rdf2go.version>
-		<sesame.version>2.7.13</sesame.version>
-		<slf4j.version>1.7.7</slf4j.version>
+		<sesame.version>2.7.14</sesame.version>
+		<slf4j.version>1.7.9</slf4j.version>
 	</properties>
 	<prerequisites>
 		<maven>2.2.1</maven>
@@ -135,16 +135,6 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.jena</groupId>
-				<artifactId>jena-core</artifactId>
-				<version>${jena.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.jena</groupId>
-				<artifactId>jena-arq</artifactId>
-				<version>${jena.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
 				<version>${httpclient.version}</version>
@@ -180,7 +170,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>1.9.5</version>
+				<version>1.10.17</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
