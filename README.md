@@ -236,6 +236,11 @@ Then, you can open a pull request to merge your change into the master branch of
 CHANGELOG
 =========
 
+### 2014-12-31
+* Fix locale sensitive serialisation of XSD double/decimal typed literals to always be Locale.US
+* Bump to Sesame-2.7.14
+* Bump to Clerezza-0.14
+
 ### 2014-11-14
 * Fix identification of integer, boolean, and decimal in RDF-JSONLD with useNativeTypes
 * Release 0.5.1

@@ -16,10 +16,12 @@ import static com.github.jsonldjava.core.JsonLdUtils.isString;
 import static com.github.jsonldjava.core.JsonLdUtils.isValue;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -650,6 +652,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                         || XSD_DOUBLE.equals(datatype)) {
                     // canonical double representation
                     final DecimalFormat df = new DecimalFormat("0.0###############E0");
+                    df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
                     return new Literal(df.format(value), datatype == null ? XSD_DOUBLE
                             : (String) datatype, null);
                 } else {
