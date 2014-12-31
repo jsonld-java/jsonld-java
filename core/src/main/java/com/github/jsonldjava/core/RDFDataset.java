@@ -14,6 +14,7 @@ import static com.github.jsonldjava.core.JsonLdUtils.isList;
 import static com.github.jsonldjava.core.JsonLdUtils.isObject;
 import static com.github.jsonldjava.core.JsonLdUtils.isString;
 import static com.github.jsonldjava.core.JsonLdUtils.isValue;
+import static com.github.jsonldjava.utils.Obj.newMap;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -168,20 +169,11 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
             // JSON object consisting
             // of a single member @id whose value is set to value.
             if (isIRI() || isBlankNode()) {
-                return new LinkedHashMap<String, Object>() {
-                    {
-                        put("@id", getValue());
-                    }
-                };
+                return newMap("@id", getValue());
             }
-            ;
 
             // convert literal object to JSON-LD
-            final Map<String, Object> rval = new LinkedHashMap<String, Object>() {
-                {
-                    put("@value", getValue());
-                }
-            };
+            final Map<String, Object> rval = newMap("@value", getValue());
 
             // add language
             if (getLanguage() != null) {
@@ -402,7 +394,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
      * @return The context map
      */
     public Map<String, Object> getContext() {
-        final Map<String, Object> rval = new LinkedHashMap<String, Object>();
+        final Map<String, Object> rval = newMap();
         rval.putAll(context);
         // replace "" with "@vocab"
         if (rval.containsKey("")) {

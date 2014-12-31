@@ -1,10 +1,11 @@
 package com.github.jsonldjava.core;
 
+import static com.github.jsonldjava.utils.Obj.newMap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -358,7 +359,7 @@ public class JsonLdUtils {
                 if (!isString(item)) {
                     throw new JsonLdError(JsonLdError.Error.SYNTAX_ERROR);
                 }
-                final Map<String, Object> tmp = new LinkedHashMap<String, Object>();
+                final Map<String, Object> tmp = newMap();
                 tmp.put("@value", item);
                 tmp.put("@language", key.toLowerCase());
                 rval.add(tmp);

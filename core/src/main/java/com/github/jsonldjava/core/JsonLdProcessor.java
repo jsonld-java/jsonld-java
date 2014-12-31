@@ -1,5 +1,7 @@
 package com.github.jsonldjava.core;
 
+import static com.github.jsonldjava.utils.Obj.newMap;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -61,9 +63,9 @@ public class JsonLdProcessor {
         // TODO: SPEC: the result result is a NON EMPTY array,
         if (compacted instanceof List) {
             if (((List<Object>) compacted).isEmpty()) {
-                compacted = new LinkedHashMap<String, Object>();
+                compacted = newMap();
             } else {
-                final Map<String, Object> tmp = new LinkedHashMap<String, Object>();
+                final Map<String, Object> tmp = newMap();
                 // TODO: SPEC: doesn't specify to use vocab = true here
                 tmp.put(activeCtx.compactIri("@graph", true), compacted);
                 compacted = tmp;
@@ -181,8 +183,8 @@ public class JsonLdProcessor {
         // http://json-ld.org/spec/latest/json-ld-api/#flattening-algorithm
 
         // 1)
-        final Map<String, Object> nodeMap = new LinkedHashMap<String, Object>();
-        nodeMap.put("@default", new LinkedHashMap<String, Object>());
+        final Map<String, Object> nodeMap = newMap();
+        nodeMap.put("@default", newMap());
         // 2)
         new JsonLdApi(opts).generateNodeMap(expanded, nodeMap);
         // 3)
@@ -193,7 +195,7 @@ public class JsonLdProcessor {
             // 4.1+4.2)
             Map<String, Object> entry;
             if (!defaultGraph.containsKey(graphName)) {
-                entry = new LinkedHashMap<String, Object>();
+                entry = newMap();
                 entry.put("@id", graphName);
                 defaultGraph.put(graphName, entry);
             } else {

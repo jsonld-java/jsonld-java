@@ -14,12 +14,15 @@ import static com.github.jsonldjava.core.JsonLdUtils.isList;
 import static com.github.jsonldjava.core.JsonLdUtils.isObject;
 import static com.github.jsonldjava.core.JsonLdUtils.isValue;
 import static com.github.jsonldjava.core.Regex.HEX;
+import static com.github.jsonldjava.utils.Obj.newMap;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,7 +57,7 @@ public class RDFDatasetUtils {
 
                 for (final Object item : (List<Object>) items) {
                     // RDF subjects
-                    final Map<String, Object> subject = new LinkedHashMap<String, Object>();
+                    final Map<String, Object> subject = newMap();
                     if (id.indexOf("_:") == 0) {
                         subject.put("type", "blank node");
                         subject.put("value", namer.getName(id));
@@ -64,7 +67,7 @@ public class RDFDatasetUtils {
                     }
 
                     // RDF predicates
-                    final Map<String, Object> predicate = new LinkedHashMap<String, Object>();
+                    final Map<String, Object> predicate = newMap();
                     predicate.put("type", "IRI");
                     predicate.put("value", property);
 
@@ -76,7 +79,7 @@ public class RDFDatasetUtils {
                     // convert value or node object to triple
                     else {
                         final Object object = objectToRDF(item, namer);
-                        final Map<String, Object> tmp = new LinkedHashMap<String, Object>();
+                        final Map<String, Object> tmp = newMap();
                         tmp.put("subject", subject);
                         tmp.put("predicate", predicate);
                         tmp.put("object", object);
@@ -106,23 +109,23 @@ public class RDFDatasetUtils {
      */
     private static void listToRDF(List<Object> list, UniqueNamer namer,
             Map<String, Object> subject, Map<String, Object> predicate, List<Object> triples) {
-        final Map<String, Object> first = new LinkedHashMap<String, Object>();
+        final Map<String, Object> first = newMap();
         first.put("type", "IRI");
         first.put("value", RDF_FIRST);
-        final Map<String, Object> rest = new LinkedHashMap<String, Object>();
+        final Map<String, Object> rest = newMap();
         rest.put("type", "IRI");
         rest.put("value", RDF_REST);
-        final Map<String, Object> nil = new LinkedHashMap<String, Object>();
+        final Map<String, Object> nil = newMap();
         nil.put("type", "IRI");
         nil.put("value", RDF_NIL);
 
         for (final Object item : list) {
-            final Map<String, Object> blankNode = new LinkedHashMap<String, Object>();
+            final Map<String, Object> blankNode = newMap();
             blankNode.put("type", "blank node");
             blankNode.put("value", namer.getName());
 
             {
-                final Map<String, Object> tmp = new LinkedHashMap<String, Object>();
+                final Map<String, Object> tmp = newMap();
                 tmp.put("subject", subject);
                 tmp.put("predicate", predicate);
                 tmp.put("object", blankNode);
@@ -134,7 +137,7 @@ public class RDFDatasetUtils {
             final Object object = objectToRDF(item, namer);
 
             {
-                final Map<String, Object> tmp = new LinkedHashMap<String, Object>();
+                final Map<String, Object> tmp = newMap();
                 tmp.put("subject", subject);
                 tmp.put("predicate", predicate);
                 tmp.put("object", object);
@@ -143,7 +146,7 @@ public class RDFDatasetUtils {
 
             predicate = rest;
         }
-        final Map<String, Object> tmp = new LinkedHashMap<String, Object>();
+        final Map<String, Object> tmp = newMap();
         tmp.put("subject", subject);
         tmp.put("predicate", predicate);
         tmp.put("object", nil);
@@ -162,7 +165,7 @@ public class RDFDatasetUtils {
      * @return the RDF literal or RDF resource.
      */
     private static Object objectToRDF(Object item, UniqueNamer namer) {
-        final Map<String, Object> object = new LinkedHashMap<String, Object>();
+        final Map<String, Object> object = newMap();
 
         // convert value object to RDF
         if (isValue(item)) {
@@ -179,6 +182,7 @@ public class RDFDatasetUtils {
                 } else if (value instanceof Double || value instanceof Float) {
                     // canonical double representation
                     final DecimalFormat df = new DecimalFormat("0.0###############E0");
+                    df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
                     object.put("value", df.format(value));
                     object.put("datatype", datatype == null ? XSD_DOUBLE : datatype);
                 } else {
