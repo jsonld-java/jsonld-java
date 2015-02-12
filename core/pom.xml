@@ -50,15 +50,15 @@
 			<artifactId>sesame-rio-nquads</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient-cache</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-		</dependency>
-		<!-- NOTE: Exclude this as a dependency if you are using slf4j-jcl. It 
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-osgi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore-osgi</artifactId>
+        </dependency>
+		<!-- NOTE: Exclude this as a dependency if you are using slf4j-jcl. It
 			is necessary here to avoid ClassNotFoundErrors in httpclient -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
