@@ -137,7 +137,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient-osgi</artifactId>
-                <version>4.2.5</version>
+                <version>${httpclient.version}</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
@@ -148,7 +148,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore-osgi</artifactId>
-                <version>4.2.5</version>
+                <version>${httpclient.version}</version>
             </dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
