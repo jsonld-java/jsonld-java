@@ -95,7 +95,8 @@ public class Playground {
                                 if(formats.containsKey(formatName)) {
                                    return formats.get(formatName);
                                 }
-                                throw new ValueConversionException("Format was not known: " + arg0);
+                                throw new ValueConversionException("Format was not known: " + arg0 + " (Valid values are: " + formats + ")"
+                                        );
                             }
 
                             @Override
@@ -109,7 +110,7 @@ public class Playground {
                             }
                         })
                         .describedAs(
-                                "The output file format to use. Defaults to nquads.");
+                                "The output file format to use. Defaults to nquads. Valid values are: " + formats);
         
         final OptionSpec<String> processingOption = parser.accepts("process")
                 .withRequiredArg()
@@ -121,7 +122,8 @@ public class Playground {
                         if(getProcessingOptions().contains(value.toLowerCase())) {
                             return value.toLowerCase();
                         }
-                        throw new ValueConversionException("Processing option was not known: " + value);
+                        throw new ValueConversionException("Processing option was not known: " + value 
+                                + " (Valid values are: " + getProcessingOptions() + ")");
                     }
 
                     @Override
@@ -134,7 +136,7 @@ public class Playground {
                         return null;
                     }
                 })
-                .describedAs("The processing to perform. One of: " + getProcessingOptions().toString());
+                .describedAs("The processing to perform. Valid values are: " + getProcessingOptions().toString());
         
         final OptionSpec<String> outputForm = parser.accepts("outputForm")
                 .withOptionalArg()
@@ -146,7 +148,7 @@ public class Playground {
                         if(outputForms.contains(value.toLowerCase())) {
                             return value.toLowerCase();
                         }
-                        throw new ValueConversionException("Output form was not known: " + value);
+                        throw new ValueConversionException("Output form was not known: " + value + " (Valid values are: " + outputForms + ")");
                     }
 
                     @Override
@@ -159,7 +161,7 @@ public class Playground {
                         return String.class;
                     }
                 })
-                .describedAs("The way to output the results from fromRDF. Defaults to expanded.");
+                .describedAs("The way to output the results from fromRDF. Defaults to expanded. Valid values are: " + outputForms);
 
         OptionSet options = null;
         
