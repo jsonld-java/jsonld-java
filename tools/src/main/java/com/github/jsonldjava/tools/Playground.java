@@ -95,7 +95,7 @@ public class Playground {
                                 if(formats.containsKey(formatName)) {
                                    return formats.get(formatName);
                                 }
-                                throw new ValueConversionException("Format was not known: " + arg0 + " (Valid values are: " + formats + ")"
+                                throw new ValueConversionException("Format was not known: " + arg0 + " (Valid values are: " + formats.keySet() + ")"
                                         );
                             }
 
@@ -110,7 +110,7 @@ public class Playground {
                             }
                         })
                         .describedAs(
-                                "The output file format to use. Defaults to nquads. Valid values are: " + formats);
+                                "The output file format to use. Defaults to nquads. Valid values are: " + formats.keySet());
         
         final OptionSpec<String> processingOption = parser.accepts("process")
                 .withRequiredArg()
