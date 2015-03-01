@@ -1,8 +1,33 @@
 package com.github.jsonldjava.utils;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Obj {
+
+    /**
+     * Helper function for creating maps and tuning them as necessary.
+     * 
+     * @return A new {@link Map} instance.
+     */
+    public static Map<String, Object> newMap() {
+        return new LinkedHashMap<String, Object>(2, 0.75f);
+    }
+
+    /**
+     * Helper function for creating maps and tuning them as necessary.
+     * 
+     * @param key
+     *            A key to add to the map on creation.
+     * @param value
+     *            A value to attach to the key in the new map.
+     * @return A new {@link Map} instance.
+     */
+    public static Map<String, Object> newMap(String key, Object value) {
+        Map<String, Object> result = newMap();
+        result.put(key, value);
+        return result;
+    }
 
     /**
      * Used to make getting values from maps embedded in maps embedded in maps

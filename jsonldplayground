@@ -7,8 +7,8 @@
 # run ./jsonldplayground for the usage
 
 if [ ! -d "tools/target/appassembler/bin" ]; then
-    mvn -quiet clean install
+    mvn -quiet clean install -DskipTests
 fi
 
 chmod u+x tools/target/appassembler/bin/*
-tools/target/appassembler/bin/jsonldplayground
+tools/target/appassembler/bin/jsonldplayground "$@"

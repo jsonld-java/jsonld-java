@@ -1,6 +1,7 @@
 package com.github.jsonldjava.core;
 
 import static com.github.jsonldjava.core.JsonLdUtils.compareShortestLeast;
+import static com.github.jsonldjava.utils.Obj.newMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,7 +57,7 @@ public class Context extends LinkedHashMap<String, Object> {
         if (options.getBase() != null) {
             this.put("@base", options.getBase());
         }
-        this.termDefinitions = new LinkedHashMap<String, Object>();
+        this.termDefinitions = newMap();
     }
 
     /**
@@ -288,9 +289,7 @@ public class Context extends LinkedHashMap<String, Object> {
         }
 
         if (value instanceof String) {
-            final Map<String, Object> tmp = new LinkedHashMap<String, Object>();
-            tmp.put("@id", value);
-            value = tmp;
+            value = newMap("@id", value);
         }
 
         if (!(value instanceof Map)) {
@@ -301,7 +300,7 @@ public class Context extends LinkedHashMap<String, Object> {
         final Map<String, Object> val = (Map<String, Object>) value;
 
         // 9) create a new term definition
-        final Map<String, Object> definition = new LinkedHashMap<String, Object>();
+        final Map<String, Object> definition = newMap();
 
         // 10)
         if (val.containsKey("@type")) {
@@ -828,7 +827,7 @@ public class Context extends LinkedHashMap<String, Object> {
         }
 
         // 1)
-        inverse = new LinkedHashMap<String, Object>();
+        inverse = newMap();
 
         // 2)
         String defaultLanguage = (String) this.get("@language");
@@ -865,16 +864,16 @@ public class Context extends LinkedHashMap<String, Object> {
             // 3.4 + 3.5)
             Map<String, Object> containerMap = (Map<String, Object>) inverse.get(iri);
             if (containerMap == null) {
-                containerMap = new LinkedHashMap<String, Object>();
+                containerMap = newMap();
                 inverse.put(iri, containerMap);
             }
 
             // 3.6 + 3.7)
             Map<String, Object> typeLanguageMap = (Map<String, Object>) containerMap.get(container);
             if (typeLanguageMap == null) {
-                typeLanguageMap = new LinkedHashMap<String, Object>();
-                typeLanguageMap.put("@language", new LinkedHashMap<String, Object>());
-                typeLanguageMap.put("@type", new LinkedHashMap<String, Object>());
+                typeLanguageMap = newMap();
+                typeLanguageMap.put("@language", newMap());
+                typeLanguageMap.put("@type", newMap());
                 containerMap.put(container, typeLanguageMap);
             }
 
@@ -1024,7 +1023,7 @@ public class Context extends LinkedHashMap<String, Object> {
     }
 
     public Object expandValue(String activeProperty, Object value) throws JsonLdError {
-        final Map<String, Object> rval = new LinkedHashMap<String, Object>();
+        final Map<String, Object> rval = newMap();
         final Map<String, Object> td = getTermDefinition(activeProperty);
         // 1)
         if (td != null && "@id".equals(td.get("@type"))) {
@@ -1068,7 +1067,7 @@ public class Context extends LinkedHashMap<String, Object> {
     }
 
     public Map<String, Object> serialize() {
-        final Map<String, Object> ctx = new LinkedHashMap<String, Object>();
+        final Map<String, Object> ctx = newMap();
         if (this.get("@base") != null && !this.get("@base").equals(options.getBase())) {
             ctx.put("@base", this.get("@base"));
         }
@@ -1088,7 +1087,7 @@ public class Context extends LinkedHashMap<String, Object> {
                 final String cid = this.compactIri((String) definition.get("@id"));
                 ctx.put(term, term.equals(cid) ? definition.get("@id") : cid);
             } else {
-                final Map<String, Object> defn = new LinkedHashMap<String, Object>();
+                final Map<String, Object> defn = newMap();
                 final String cid = this.compactIri((String) definition.get("@id"));
                 final Boolean reverseProperty = Boolean.TRUE.equals(definition.get("@reverse"));
                 if (!(term.equals(cid) && !reverseProperty)) {
@@ -1110,7 +1109,7 @@ public class Context extends LinkedHashMap<String, Object> {
             }
         }
 
-        final Map<String, Object> rval = new LinkedHashMap<String, Object>();
+        final Map<String, Object> rval = newMap();
         if (!(ctx == null || ctx.isEmpty())) {
             rval.put("@context", ctx);
         }
