@@ -8,4 +8,4 @@ notifications:
     - ansell.peter@gmail.com
     - tristan.king@gmail.com
 after_success:
-- mvn clean test jacoco:report coveralls:jacoco
+  - mvn clean test jacoco:report coveralls:jacoco
