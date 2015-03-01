@@ -38,6 +38,47 @@
 			<artifactId>jopt-simple</artifactId>
 			<version>4.6</version>
 		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-rio-nquads</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-rio-turtle</artifactId>
+			<version>${sesame.version}</version>			
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-rio-rdfxml</artifactId>
+			<version>${sesame.version}</version>			
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-rio-rdfjson</artifactId>
+			<version>${sesame.version}</version>			
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-rio-ntriples</artifactId>
+			<version>${sesame.version}</version>			
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-rio-trig</artifactId>
+			<version>${sesame.version}</version>			
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-rio-trix</artifactId>
+			<version>${sesame.version}</version>			
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

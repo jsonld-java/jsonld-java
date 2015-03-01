@@ -3,7 +3,10 @@ package com.github.jsonldjava.tools;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -14,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParserRegistry;
+import org.openrdf.rio.Rio;
 
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
@@ -25,18 +29,19 @@ import joptsimple.ValueConverter;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.sesame.SesameRDFParser;
+import com.github.jsonldjava.sesame.SesameTripleCallback;
 import com.github.jsonldjava.utils.JsonUtils;
 
 public class Playground {
 
-    private static boolean validOption(String opt) {
-        return "--expand".equals(opt) || "--compact".equals(opt)
-                || "--frame".equals(opt) || "--normalize".equals(opt) || "--simplify".equals(opt)
-                || "--flatten".equals(opt) || "--fromRDF".equals(opt) || "--toRDF".equals(opt);
+    private static Set<String> getProcessingOptions() {
+        return new LinkedHashSet<String>(Arrays.asList("expand", "compact",
+                "frame", "normalize", "flatten", "fromrdf", "tordf"));
     }
 
     private static boolean hasContext(String opt) {
-        return "--compact".equals(opt) || "--frame".equals(opt) || "--flatten".equals(opt);
+        return "compact".equals(opt) || "frame".equals(opt) || "flatten".equals(opt);
     }
 
     private static Map<String, RDFFormat> getOutputFormats() {
@@ -61,10 +66,14 @@ public class Playground {
         final OptionSpec<String> base = parser.accepts("base")
                         .withRequiredArg()
                         .ofType(String.class)
+                        .defaultsTo("")
                         .describedAs("base URI");
         
         final OptionSpec<File> inputFile =
-                parser.accepts("inputFile").withRequiredArg().ofType(File.class)
+                parser.accepts("inputFile")
+                        .withRequiredArg()
+                        .ofType(File.class)
+                        .required()
                         .describedAs("The input file");
         
         final OptionSpec<File> context =
@@ -75,7 +84,6 @@ public class Playground {
                 parser.accepts("format")
                         .withOptionalArg()
                         .ofType(String.class)
-                        .defaultsTo(RDFFormat.NQUADS.getName())
                         .withValuesConvertedBy(new ValueConverter<RDFFormat>() {
                             @Override
                             public RDFFormat convert(String arg0) {
@@ -107,7 +115,7 @@ public class Playground {
                 .withValuesConvertedBy(new ValueConverter<String>() {
                     @Override
                     public String convert(String value) {
-                        if(validOption(value.toLowerCase())) {
+                        if(getProcessingOptions().contains(value.toLowerCase())) {
                             return value.toLowerCase();
                         }
                         throw new ValueConversionException("Processing option was not known: " + value);
@@ -123,8 +131,7 @@ public class Playground {
                         return null;
                     }
                 })
-                
-                ;
+                .describedAs("The processing to perform. One of: " + getProcessingOptions().toString());
         
         final OptionSpec<String> outputForm = parser.accepts("outputForm")
                 .withOptionalArg()
@@ -149,7 +156,7 @@ public class Playground {
                         return String.class;
                     }
                 })
-                .describedAs("outputForm");
+                .describedAs("The way to output the results from fromRDF. Defaults to expanded.");
 
         OptionSet options = null;
         
@@ -173,163 +180,122 @@ public class Playground {
         final JsonLdOptions opts = new JsonLdOptions("");
         Object inobj = null;
         Object ctxobj = null;
-        String opt = null;
         
-        if(options.has(base)) {
-            opts.setBase(options.valueOf(base));
-        }
+        opts.setBase(options.valueOf(base));
+        opts.outputForm = options.valueOf(outputForm);
+        opts.format = options.has(outputFormat) ? options.valueOf(outputFormat).getDefaultMIMEType() : "application/nquads";
+        RDFFormat sesameOutputFormat = options.has(outputFormat) ? options.valueOf(outputFormat) : RDFFormat.NQUADS;
+                
+        String processingOptionValue = options.valueOf(processingOption);
         
-        if(options.has(outputForm)) {
-            opts.outputForm = options.valueOf(outputForm);
-        }
-        
-        if(options.has(outputFormat)) {
-            opts.format = options.valueOf(outputFormat).getDefaultMIMEType();
-        }
-        
-        
-            opt = args[i];
-            i++;
-            if (args.length <= i) {
-                System.out.println("Error: missing file names after argument "
-                        + args[i - 1]);
-                usage();
-                return;
-            }
-            File in = new File(args[i++]);
-            if (!in.exists()) {
-                System.out.println("Error: file \"" + args[i - 1] + "\" doesn't exist");
-                usage();
-                return;
-            }
-            // if base is currently null, set it
-            if (opts.getBase() == null || opts.getBase().equals("")) {
-                opts.setBase(in.toURI().toASCIIString());
-            }
-            if ("--fromRDF".equals(opt)) {
-                final BufferedReader buf = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(in), "UTF-8"));
-                inobj = "";
-                String line;
-                while ((line = buf.readLine()) != null) {
-                    line = line.trim();
-                    if (line.length() == 0 || line.charAt(0) == '#') {
-                        continue;
-                    }
-                    inobj = ((String) inobj) + line + "\n";
-                }
-
-            } else {
-                inobj = JsonUtils.fromInputStream(new FileInputStream(in));
-            }
-            if ("--fromRDF".equals(opt) || "--toRDF".equals(opt)
-                    || "--normalize".equals(opt)) {
-                // get format option
-                if (args.length > i && !args[i].startsWith("--")) {
-                    opts.format = args[i++];
-                    // remove any quotes
-                    if (Pattern.matches("^['\"`].*['\"`]$", opts.format)) {
-                        opts.format = opts.format
-                                .substring(1, opts.format.length() - 1);
-                    }
-                }
-                // default to nquads
-                if (opts.format == null || "null".equals(opts.format)) {
-                    opts.format = "application/nquads";
-                }
-            } else if (hasContext(opt)) {
-                if (args.length > i) {
-
-                    in = new File(args[i++]);
-                    if (!in.exists()) {
-                        if (args[i - 1].startsWith("--")) {
-                            // the frame is optional, so if it turns
-                            // out we have another option after the
-                            // --frame options
-                            // we have to make sure we process it
-                            i--;
-                        } else {
-                            System.out.println("Error: file \"" + args[i - 1]
-                                    + "\" doesn't exist");
-                            usage();
-                            return;
-                        }
-                    }
-                    ctxobj = JsonUtils.fromInputStream(new FileInputStream(in));
-                }
-            }
-        }
-
-        if (opt == null) {
-            System.out.println("Error: missing processing option");
-            usage();
+        if (!options.valueOf(inputFile).exists()) {
+            System.out.println("Error: input file \"" + options.valueOf(inputFile) + "\" doesn't exist");
+            parser.printHelpOn(System.out);
             return;
         }
-
+        // if base is currently null, set it
+        if (opts.getBase() == null || opts.getBase().equals("")) {
+            opts.setBase(options.valueOf(inputFile).toURI().toASCIIString());
+        }
+        
+        if ("fromrdf".equals(processingOptionValue)) {
+            inobj = readFile(options.valueOf(inputFile));
+        } else {
+            inobj = JsonUtils.fromInputStream(new FileInputStream(options.valueOf(inputFile)));
+        }
+        
+        if (hasContext(processingOptionValue) && options.has(context)) {
+            if (!options.valueOf(context).exists()) {
+                System.out.println("Error: context file \"" + options.valueOf(context)
+                        + "\" doesn't exist");
+                parser.printHelpOn(System.out);
+                return;
+            }
+            ctxobj = JsonUtils.fromInputStream(new FileInputStream(options.valueOf(context)));
+        }
+        
         Object outobj = null;
-        if ("--expand".equals(opt)) {
+        if ("fromrdf".equals(processingOptionValue)) {
+            outobj = JsonLdProcessor.fromRDF(inobj, opts);
+        } else if ("tordf".equals(processingOptionValue)) {
+            opts.useNamespaces = true;
+            outobj = JsonLdProcessor.toRDF(inobj, new SesameTripleCallback(Rio.createWriter(sesameOutputFormat, System.out)), opts);
+        } else if ("expand".equals(processingOptionValue)) {
             outobj = JsonLdProcessor.expand(inobj, opts);
-        } else if ("--compact".equals(opt)) {
+        } else if ("compact".equals(processingOptionValue)) {
             if (ctxobj == null) {
                 System.out.println("Error: The compaction context must not be null.");
-                usage();
+                parser.printHelpOn(System.out);
                 return;
             }
             outobj = JsonLdProcessor.compact(inobj, ctxobj, opts);
-        } else if ("--normalize".equals(opt)) {
+        } else if ("normalize".equals(processingOptionValue)) {
             outobj = JsonLdProcessor.normalize(inobj, opts);
-        } else if ("--frame".equals(opt)) {
+        } else if ("frame".equals(processingOptionValue)) {
             if (ctxobj != null && !(ctxobj instanceof Map)) {
                 System.out
                         .println("Invalid JSON-LD syntax; a JSON-LD frame must be a single object.");
-                usage();
+                parser.printHelpOn(System.out);
                 return;
             }
             outobj = JsonLdProcessor.frame(inobj, ctxobj, opts);
-        } else if ("--flatten".equals(opt)) {
+        } else if ("flatten".equals(processingOptionValue)) {
             outobj = JsonLdProcessor.flatten(inobj, ctxobj, opts);
-        } else if ("--toRDF".equals(opt)) {
-            opts.useNamespaces = true;
-            outobj = JsonLdProcessor.toRDF(inobj, opts);
-        } else if ("--fromRDF".equals(opt)) {
-            outobj = JsonLdProcessor.fromRDF(inobj, opts);
         } else {
-            System.out.println("Error: invalid option \"" + opt + "\"");
-            usage();
+            System.out.println("Error: invalid processing option \"" + processingOptionValue + "\"");
+            parser.printHelpOn(System.out);
             return;
         }
 
-        if ("--toRDF".equals(opt) || "--normalize".equals(opt)) {
+        if ("tordf".equals(processingOptionValue)) {
+            // Already serialised above
+        } else if("normalize".equals(processingOptionValue)) {
             System.out.println((String) outobj);
         } else {
             System.out.println(JsonUtils.toPrettyString(outobj));
         }
     }
 
-    private static void usage() {
-        System.out.println("Usage: jsonldplayground <options>");
-        System.out.println("\tinput: a filename or JsonLdUrl to the rdf input (in rdfxml or n3)");
-        System.out.println("\toptions:");
-        System.out
-                .println("\t\t--ignorekeys <keys to ignore> : a (space separated) list of keys to ignore (e.g. @geojson)");
-        System.out.println("\t\t--base <uri>: base URI");
-        System.out.println("\t\t--debug: Print out stack traces when errors occur");
-        System.out.println("\t\t--expand <input>: expand the input  JSON-LD");
-        System.out
-                .println("\t\t--compact <input> <context> : compact the input JSON-LD applying the optional context file");
-        System.out
-                .println("\t\t--normalize <input> <format> : normalize the input JSON-LD outputting as format (defaults to nquads)");
-        System.out
-                .println("\t\t--frame <input> <frame> : frame the input JSON-LD with the optional frame file");
-        System.out
-                .println("\t\t--flatten <input> <context> : flatten the input JSON-LD applying the optional context file");
-        System.out
-                .println("\t\t--fromRDF <input> <format> : generate JSON-LD from the input rdf (format defaults to nquads)");
-        System.out
-                .println("\t\t--toRDF <input> <format> : generate RDF from the input JSON-LD (format defaults to nquads)");
-        System.out
-                .println("\t\t--outputForm [compacted|expanded|flattened] : the way to output the results from fromRDF (defaults to expanded)");
-        System.out.println("\t\t--simplify : simplify the input JSON-LD");
-        System.exit(1);
+    private static String readFile(File in) throws IOException {
+        final BufferedReader buf = new BufferedReader(new InputStreamReader(
+                new FileInputStream(in), "UTF-8"));
+        String inobj = "";
+        try {
+            String line;
+            while ((line = buf.readLine()) != null) {
+                line = line.trim();
+                inobj = ((String) inobj) + line + "\n";
+            }
+        } finally {
+            buf.close();
+        }
+        return inobj;
     }
+
+//    private static void usage() {
+//        System.out.println("Usage: jsonldplayground <options>");
+//        System.out.println("\tinput: a filename or JsonLdUrl to the rdf input (in rdfxml or n3)");
+//        System.out.println("\toptions:");
+//        System.out
+//                .println("\t\t--ignorekeys <keys to ignore> : a (space separated) list of keys to ignore (e.g. @geojson)");
+//        System.out.println("\t\t--base <uri>: base URI");
+//        System.out.println("\t\t--debug: Print out stack traces when errors occur");
+//        System.out.println("\t\t--expand <input>: expand the input  JSON-LD");
+//        System.out
+//                .println("\t\t--compact <input> <context> : compact the input JSON-LD applying the optional context file");
+//        System.out
+//                .println("\t\t--normalize <input> <format> : normalize the input JSON-LD outputting as format (defaults to nquads)");
+//        System.out
+//                .println("\t\t--frame <input> <frame> : frame the input JSON-LD with the optional frame file");
+//        System.out
+//                .println("\t\t--flatten <input> <context> : flatten the input JSON-LD applying the optional context file");
+//        System.out
+//                .println("\t\t--fromRDF <input> <format> : generate JSON-LD from the input rdf (format defaults to nquads)");
+//        System.out
+//                .println("\t\t--toRDF <input> <format> : generate RDF from the input JSON-LD (format defaults to nquads)");
+//        System.out
+//                .println("\t\t--outputForm [compacted|expanded|flattened] : the way to output the results from fromRDF (defaults to expanded)");
+//        System.out.println("\t\t--simplify : simplify the input JSON-LD");
+//        System.exit(1);
+//    }
 }
