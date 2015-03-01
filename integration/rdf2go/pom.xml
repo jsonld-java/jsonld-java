@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>jsonld-java-integration</artifactId>
 		<groupId>com.github.jsonld-java</groupId>
-		<version>0.5.2-SNAPSHOT</version>
+		<version>0.6.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jsonld-java-rdf2go</artifactId>

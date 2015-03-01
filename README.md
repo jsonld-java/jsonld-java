@@ -14,7 +14,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.5.2-SNAPSHOT</version>
+        <version>0.6.0-SNAPSHOT</version>
     </dependency>
 
 Code example
@@ -239,6 +239,7 @@ CHANGELOG
 ### 2015-03-01
 * Use jopt-simple for the playground cli to simplify the coding and improve error messages
 * Allow RDF parsing and writing using all of the available Sesame Rio parsers through the playground cli
+* Make the httpclient dependency OSGi compliant
 
 ### 2014-12-31
 * Fix locale sensitive serialisation of XSD double/decimal typed literals to always be Locale.US
