@@ -236,6 +236,10 @@ Then, you can open a pull request to merge your change into the master branch of
 CHANGELOG
 =========
 
+### 2015-03-01
+* Use jopt-simple for the playground cli to simplify the coding and improve error messages
+* Allow RDF parsing and writing using all of the available Sesame Rio parsers through the playground cli
+
 ### 2014-12-31
 * Fix locale sensitive serialisation of XSD double/decimal typed literals to always be Locale.US
 * Bump to Sesame-2.7.14
