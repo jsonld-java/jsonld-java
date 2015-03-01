@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.openrdf.model.Model;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParserRegistry;
 import org.openrdf.rio.Rio;
@@ -29,6 +31,7 @@ import joptsimple.ValueConverter;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.core.RDFDataset;
 import com.github.jsonldjava.sesame.SesameRDFParser;
 import com.github.jsonldjava.sesame.SesameTripleCallback;
 import com.github.jsonldjava.utils.JsonUtils;
@@ -185,6 +188,7 @@ public class Playground {
         opts.outputForm = options.valueOf(outputForm);
         opts.format = options.has(outputFormat) ? options.valueOf(outputFormat).getDefaultMIMEType() : "application/nquads";
         RDFFormat sesameOutputFormat = options.has(outputFormat) ? options.valueOf(outputFormat) : RDFFormat.NQUADS;
+        RDFFormat sesameInputFormat = Rio.getParserFormatForFileName(options.valueOf(inputFile).getName(), RDFFormat.JSONLD);
                 
         String processingOptionValue = options.valueOf(processingOption);
         
@@ -216,7 +220,9 @@ public class Playground {
         
         Object outobj = null;
         if ("fromrdf".equals(processingOptionValue)) {
-            outobj = JsonLdProcessor.fromRDF(inobj, opts);
+            Model inModel = Rio.parse(new StringReader((String) inobj), opts.getBase(), sesameInputFormat);
+            
+            outobj = JsonLdProcessor.fromRDF(inModel, opts, new SesameRDFParser());
         } else if ("tordf".equals(processingOptionValue)) {
             opts.useNamespaces = true;
             outobj = JsonLdProcessor.toRDF(inobj, new SesameTripleCallback(Rio.createWriter(sesameOutputFormat, System.out)), opts);

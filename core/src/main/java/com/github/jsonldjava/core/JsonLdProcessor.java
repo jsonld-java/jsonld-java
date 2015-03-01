@@ -424,7 +424,7 @@ public class JsonLdProcessor {
             } else if ("flattened".equals(options.outputForm)) {
                 return flatten(rval, dataset.getContext(), options);
             } else {
-                throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR);
+                throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR, "Output form was unknown: " + options.outputForm);
             }
         }
         return rval;
