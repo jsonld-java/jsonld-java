@@ -5,6 +5,8 @@ JSONLD-JAVA
 
 This is a Java implementation of the [JSON-LD specification](http://www.w3.org/TR/json-ld/) and the [JSON-LD-API specification](http://www.w3.org/TR/json-ld-api/).
 
+[![Build Status](https://travis-ci.org/jsonld-java/jsonld-java.svg?branch=master)](https://travis-ci.org/jsonld-java/jsonld-java) [![Coverage Status](https://coveralls.io/repos/jsonld-java/jsonld-java/badge.svg?branch=master)](https://coveralls.io/r/jsonld-java/jsonld-java?branch=master)
+
 USAGE
 =====
 
