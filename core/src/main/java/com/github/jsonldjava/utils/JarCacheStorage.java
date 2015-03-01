@@ -122,7 +122,7 @@ public class JarCacheStorage implements HttpCacheStorage {
     /**
      * Map from uri of jarcache.json (e.g. jar://blab.jar!jarcache.json) to a
      * SoftReference to its content as JsonNode.
-     * 
+     *
      * @see #getJarCache(URL)
      */
     protected ConcurrentMap<URI, SoftReference<JsonNode>> jarCaches = new ConcurrentHashMap<URI, SoftReference<JsonNode>>();
@@ -176,7 +176,7 @@ public class JarCacheStorage implements HttpCacheStorage {
         final List<Header> responseHeaders = new ArrayList<Header>();
         if (!cacheNode.has(HTTP.DATE_HEADER)) {
             responseHeaders
-                    .add(new BasicHeader(HTTP.DATE_HEADER, DateUtils.formatDate(new Date())));
+            .add(new BasicHeader(HTTP.DATE_HEADER, DateUtils.formatDate(new Date())));
         }
         if (!cacheNode.has(HeaderConstants.CACHE_CONTROL)) {
             responseHeaders.add(new BasicHeader(HeaderConstants.CACHE_CONTROL,
@@ -202,7 +202,7 @@ public class JarCacheStorage implements HttpCacheStorage {
 
     @Override
     public void updateEntry(String key, HttpCacheUpdateCallback callback) throws IOException,
-            HttpCacheUpdateException {
+    HttpCacheUpdateException {
         // ignored
     }
 

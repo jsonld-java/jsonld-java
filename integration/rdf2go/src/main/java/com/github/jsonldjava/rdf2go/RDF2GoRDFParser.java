@@ -21,7 +21,7 @@ import com.github.jsonldjava.core.RDFParser;
 /**
  * Implementation of {@link RDFParser} which serializes the contents of a
  * {@link ModelSet} or {@link Model} into a JSON-LD document.
- * 
+ *
  * @author Ismael Rivera
  */
 public class RDF2GoRDFParser implements RDFParser {

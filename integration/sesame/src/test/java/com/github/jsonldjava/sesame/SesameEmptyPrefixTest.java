@@ -18,39 +18,39 @@ public class SesameEmptyPrefixTest {
 
     @Test
     public void testEmptyPrefixDefault() throws Exception {
-        String input = "@prefix :      <http://www.example.com/resource/100/v1#> ."
+        final String input = "@prefix :      <http://www.example.com/resource/100/v1#> ."
                 + "@prefix dc:    <http://purl.org/dc/elements/1.1/> ."
                 + " :G { "
                 + "  <http://www.example.com/archive/100/v1> dc:isVersionOf <http://www.example.com/resource/100>    .        }";
-        Model parse = Rio.parse(new StringReader(input), "", RDFFormat.TRIG);
+        final Model parse = Rio.parse(new StringReader(input), "", RDFFormat.TRIG);
 
-        StringWriter output = new StringWriter();
+        final StringWriter output = new StringWriter();
         Rio.write(parse, output, RDFFormat.JSONLD);
 
         System.out.println(output);
 
-        Model reparse = Rio.parse(new StringReader(output.toString()), "", RDFFormat.JSONLD);
+        final Model reparse = Rio.parse(new StringReader(output.toString()), "", RDFFormat.JSONLD);
 
         assertTrue(ModelUtil.equals(parse, reparse));
     }
 
     @Test
     public void testEmptyPrefixCompact() throws Exception {
-        String input = "@prefix :      <http://www.example.com/resource/100/v1#> ."
+        final String input = "@prefix :      <http://www.example.com/resource/100/v1#> ."
                 + "@prefix dc:    <http://purl.org/dc/elements/1.1/> ."
                 + " :G { "
                 + "  <http://www.example.com/archive/100/v1> dc:isVersionOf <http://www.example.com/resource/100>    .        }";
-        Model parse = Rio.parse(new StringReader(input), "", RDFFormat.TRIG);
+        final Model parse = Rio.parse(new StringReader(input), "", RDFFormat.TRIG);
 
-        WriterConfig config = new WriterConfig();
+        final WriterConfig config = new WriterConfig();
         config.set(JSONLDSettings.JSONLD_MODE, JSONLDMode.COMPACT);
 
-        StringWriter output = new StringWriter();
+        final StringWriter output = new StringWriter();
         Rio.write(parse, output, RDFFormat.JSONLD, config);
 
         System.out.println(output);
 
-        Model reparse = Rio.parse(new StringReader(output.toString()), "", RDFFormat.JSONLD);
+        final Model reparse = Rio.parse(new StringReader(output.toString()), "", RDFFormat.JSONLD);
 
         assertTrue(ModelUtil.equals(parse, reparse));
     }

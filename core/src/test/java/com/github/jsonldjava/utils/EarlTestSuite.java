@@ -32,7 +32,7 @@ public class EarlTestSuite {
 
     /**
      * Loads an earl test suite
-     * 
+     *
      * @param manifestURL
      *            the JsonLdUrl of the manifest file
      * @param cacheDir

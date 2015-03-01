@@ -20,9 +20,9 @@ import com.github.jsonldjava.impl.TurtleTripleCallback;
  * >JsonLdProcessor interface</a>, except that it does not currently support
  * asynchronous processing, and hence does not return Promises, instead directly
  * returning the results.
- * 
+ *
  * @author tristan
- * 
+ *
  */
 public class JsonLdProcessor {
 
@@ -30,7 +30,7 @@ public class JsonLdProcessor {
      * Compacts the given input using the context according to the steps in the
      * <a href="http://www.w3.org/TR/json-ld-api/#compaction-algorithm">
      * Compaction algorithm</a>.
-     * 
+     *
      * @param input
      *            The input JSON-LD object.
      * @param context
@@ -88,7 +88,7 @@ public class JsonLdProcessor {
      * Expands the given input according to the steps in the <a
      * href="http://www.w3.org/TR/json-ld-api/#expansion-algorithm">Expansion
      * algorithm</a>.
-     * 
+     *
      * @param input
      *            The input JSON-LD object.
      * @param opts
@@ -159,7 +159,7 @@ public class JsonLdProcessor {
      * Expands the given input according to the steps in the <a
      * href="http://www.w3.org/TR/json-ld-api/#expansion-algorithm">Expansion
      * algorithm</a>, using the default {@link JsonLdOptions}.
-     * 
+     *
      * @param input
      *            The input JSON-LD object.
      * @return The expanded JSON-LD document
@@ -253,7 +253,7 @@ public class JsonLdProcessor {
      * according to the steps in the <a
      * href="http://www.w3.org/TR/json-ld-api/#flattening-algorithm">Flattening
      * algorithm</a>:
-     * 
+     *
      * @param input
      *            The input JSON-LD object.
      * @param opts
@@ -271,7 +271,7 @@ public class JsonLdProcessor {
      * Frames the given input using the frame according to the steps in the <a
      * href="http://json-ld.org/spec/latest/json-ld-framing/#framing-algorithm">
      * Framing Algorithm</a>.
-     * 
+     *
      * @param input
      *            The input JSON-LD object.
      * @param frame
@@ -315,7 +315,7 @@ public class JsonLdProcessor {
     /**
      * A registry for RDF Parsers (in this case, JSONLDSerializers) used by
      * fromRDF if no specific serializer is specified and options.format is set.
-     * 
+     *
      * TODO: this would fit better in the document loader class
      */
     private static Map<String, RDFParser> rdfParsers = new LinkedHashMap<String, RDFParser>() {
@@ -336,7 +336,7 @@ public class JsonLdProcessor {
 
     /**
      * Converts an RDF dataset to JSON-LD.
-     * 
+     *
      * @param dataset
      *            a serialized string of RDF in a format specified by the format
      *            option or an RDF dataset to convert.
@@ -374,7 +374,7 @@ public class JsonLdProcessor {
     /**
      * Converts an RDF dataset to JSON-LD, using the default
      * {@link JsonLdOptions}.
-     * 
+     *
      * @param dataset
      *            a serialized string of RDF in a format specified by the format
      *            option or an RDF dataset to convert.
@@ -389,7 +389,7 @@ public class JsonLdProcessor {
     /**
      * Converts an RDF dataset to JSON-LD, using a specific instance of
      * {@link RDFParser}.
-     * 
+     *
      * @param input
      *            a serialized string of RDF in a format specified by the format
      *            option or an RDF dataset to convert.
@@ -424,7 +424,8 @@ public class JsonLdProcessor {
             } else if ("flattened".equals(options.outputForm)) {
                 return flatten(rval, dataset.getContext(), options);
             } else {
-                throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR, "Output form was unknown: " + options.outputForm);
+                throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR, "Output form was unknown: "
+                        + options.outputForm);
             }
         }
         return rval;
@@ -433,7 +434,7 @@ public class JsonLdProcessor {
     /**
      * Converts an RDF dataset to JSON-LD, using a specific instance of
      * {@link RDFParser}, and the default {@link JsonLdOptions}.
-     * 
+     *
      * @param input
      *            a serialized string of RDF in a format specified by the format
      *            option or an RDF dataset to convert.
@@ -450,7 +451,7 @@ public class JsonLdProcessor {
 
     /**
      * Outputs the RDF dataset found in the given JSON-LD object.
-     * 
+     *
      * @param input
      *            the JSON-LD input.
      * @param callback
@@ -510,7 +511,7 @@ public class JsonLdProcessor {
 
     /**
      * Outputs the RDF dataset found in the given JSON-LD object.
-     * 
+     *
      * @param input
      *            the JSON-LD input.
      * @param options
@@ -529,7 +530,7 @@ public class JsonLdProcessor {
     /**
      * Outputs the RDF dataset found in the given JSON-LD object, using the
      * default {@link JsonLdOptions}.
-     * 
+     *
      * @param input
      *            the JSON-LD input.
      * @param callback
@@ -546,7 +547,7 @@ public class JsonLdProcessor {
     /**
      * Outputs the RDF dataset found in the given JSON-LD object, using the
      * default {@link JsonLdOptions}.
-     * 
+     *
      * @param input
      *            the JSON-LD input.
      * @return A JSON-LD object.
@@ -560,7 +561,7 @@ public class JsonLdProcessor {
     /**
      * Performs RDF dataset normalization on the given JSON-LD input. The output
      * is an RDF dataset unless the 'format' option is used.
-     * 
+     *
      * @param input
      *            the JSON-LD input to normalize.
      * @param options
@@ -585,7 +586,7 @@ public class JsonLdProcessor {
      * Performs RDF dataset normalization on the given JSON-LD input. The output
      * is an RDF dataset unless the 'format' option is used. Uses the default
      * {@link JsonLdOptions}.
-     * 
+     *
      * @param input
      *            the JSON-LD input to normalize.
      * @return The JSON-LD object

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.github.jsonldjava.sesame;
 
@@ -19,7 +19,7 @@ import org.openrdf.rio.RDFWriter;
 /**
  * Unit tests for {@link SesameJSONLDParser} related to handling of datatypes
  * and languages.
- * 
+ *
  * @author Peter Ansell p_ansell@yahoo.com
  */
 public class SesameJSONLDParserHandlerTest extends AbstractParserHandlingTest {
@@ -54,7 +54,7 @@ public class SesameJSONLDParserHandlerTest extends AbstractParserHandlingTest {
     /**
      * Helper method to write the given model to JSON-LD and return an
      * InputStream containing the results.
-     * 
+     *
      * @param statements
      * @return An {@link InputStream} containing the results.
      * @throws RDFHandlerException

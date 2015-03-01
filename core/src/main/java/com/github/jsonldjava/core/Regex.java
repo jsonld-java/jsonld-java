@@ -4,8 +4,8 @@ import java.util.regex.Pattern;
 
 public class Regex {
     final public static Pattern TRICKY_UTF_CHARS = Pattern.compile(
-    // ("1.7".equals(System.getProperty("java.specification.version")) ?
-    // "[\\x{10000}-\\x{EFFFF}]" :
+            // ("1.7".equals(System.getProperty("java.specification.version")) ?
+            // "[\\x{10000}-\\x{EFFFF}]" :
             "[\uD800\uDC00-\uDB7F\uDFFF]" // this seems to work with jdk1.6
             );
     // for ttl

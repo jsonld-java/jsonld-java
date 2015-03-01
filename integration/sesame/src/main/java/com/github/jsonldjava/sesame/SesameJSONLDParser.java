@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.github.jsonldjava.sesame;
 
@@ -23,9 +23,9 @@ import com.github.jsonldjava.utils.JsonUtils;
 
 /**
  * An {@link RDFParser} that links to {@link SesameTripleCallback}.
- * 
+ *
  * @author Peter Ansell p_ansell@yahoo.com
- * 
+ *
  */
 public class SesameJSONLDParser extends RDFParserBase implements RDFParser {
 
@@ -39,7 +39,7 @@ public class SesameJSONLDParser extends RDFParserBase implements RDFParser {
     /**
      * Creates a Sesame JSONLD Parser using the given {@link ValueFactory} to
      * create new {@link Value}s.
-     * 
+     *
      * @param valueFactory
      *            The ValueFactory to use
      */
@@ -54,7 +54,7 @@ public class SesameJSONLDParser extends RDFParserBase implements RDFParser {
 
     @Override
     public void parse(final InputStream in, final String baseURI) throws IOException,
-            RDFParseException, RDFHandlerException {
+    RDFParseException, RDFHandlerException {
         final SesameTripleCallback callback = new SesameTripleCallback(getRDFHandler(),
                 valueFactory, getParserConfig(), getParseErrorListener());
 
@@ -77,7 +77,7 @@ public class SesameJSONLDParser extends RDFParserBase implements RDFParser {
 
     @Override
     public void parse(final Reader reader, final String baseURI) throws IOException,
-            RDFParseException, RDFHandlerException {
+    RDFParseException, RDFHandlerException {
         final SesameTripleCallback callback = new SesameTripleCallback(getRDFHandler(),
                 valueFactory, getParserConfig(), getParseErrorListener());
 

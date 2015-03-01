@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.github.jsonldjava.sesame;
 
@@ -36,7 +36,7 @@ import com.github.jsonldjava.utils.JsonUtils;
 
 /**
  * @author Peter Ansell p_ansell@yahoo.com
- * 
+ *
  */
 public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
 
@@ -48,7 +48,7 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
 
     /**
      * Create a SesameJSONLDWriter using a {@link java.io.OutputStream}
-     * 
+     *
      * @param outputStream
      *            The OutputStream to write to.
      */
@@ -58,7 +58,7 @@ public class SesameJSONLDWriter extends RDFWriterBase implements RDFWriter {
 
     /**
      * Create a SesameJSONLDWriter using a {@link java.io.Writer}
-     * 
+     *
      * @param writer
      *            The Writer to write to.
      */

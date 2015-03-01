@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.github.jsonldjava.utils;
 
@@ -16,7 +16,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * @author Peter Ansell p_ansell@yahoo.com
- * 
+ *
  */
 public class TestUtils {
 

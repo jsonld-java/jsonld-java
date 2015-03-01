@@ -108,10 +108,10 @@ public class TurtleRDFParserTest {
         };
 
         final Object json = null; /*
-                                   * JsonLdProcessor.fromRDF(input, new
-                                   * JsonLdOptions() { { format = "text/turtle";
-                                   * } }, new TurtleRDFParser());
-                                   */
+         * JsonLdProcessor.fromRDF(input, new
+         * JsonLdOptions() { { format = "text/turtle";
+         * } }, new TurtleRDFParser());
+         */
         assertTrue(Obj.equals(expected, json));
     }
 
@@ -203,7 +203,7 @@ public class TurtleRDFParserTest {
     /**
      * Compare datasets, normalizing the blank nodes and adding baseIRI to
      * relative IRIs
-     * 
+     *
      * @param result
      * @param expected
      * @return
@@ -409,7 +409,7 @@ public class TurtleRDFParserTest {
 
         /**
          * return either the locked mapping, or the highest matching
-         * 
+         *
          * @param b
          * @return
          */

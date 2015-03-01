@@ -15,7 +15,7 @@ import org.openrdf.rio.Rio;
 /**
  * Test for locale-insensitive numeric representations that match the XML Schema
  * Datatype specification.
- * 
+ *
  * @author Peter Ansell p_ansell@yahoo.com
  * @see <a href="https://github.com/jsonld-java/jsonld-java/issues/131">Github
  *      issue #133</a>
@@ -24,19 +24,20 @@ public class SesameLocaleNumericTest {
 
     @Test
     public void testLocaleUS() throws Exception {
-        Locale oldDefault = Locale.getDefault();
+        final Locale oldDefault = Locale.getDefault();
 
         try {
             Locale.setDefault(Locale.US);
-            String input = getTestString();
-            Model parse = Rio.parse(new StringReader(input), "", RDFFormat.JSONLD);
+            final String input = getTestString();
+            final Model parse = Rio.parse(new StringReader(input), "", RDFFormat.JSONLD);
 
-            StringWriter output = new StringWriter();
+            final StringWriter output = new StringWriter();
             Rio.write(parse, output, RDFFormat.JSONLD);
 
             System.out.println(output);
 
-            Model reparse = Rio.parse(new StringReader(output.toString()), "", RDFFormat.JSONLD);
+            final Model reparse = Rio.parse(new StringReader(output.toString()), "",
+                    RDFFormat.JSONLD);
 
             assertTrue(ModelUtil.equals(parse, reparse));
         } finally {
@@ -46,19 +47,20 @@ public class SesameLocaleNumericTest {
 
     @Test
     public void testLocaleFrench() throws Exception {
-        Locale oldDefault = Locale.getDefault();
+        final Locale oldDefault = Locale.getDefault();
 
         try {
             Locale.setDefault(Locale.FRANCE);
-            String input = getTestString();
-            Model parse = Rio.parse(new StringReader(input), "", RDFFormat.JSONLD);
+            final String input = getTestString();
+            final Model parse = Rio.parse(new StringReader(input), "", RDFFormat.JSONLD);
 
-            StringWriter output = new StringWriter();
+            final StringWriter output = new StringWriter();
             Rio.write(parse, output, RDFFormat.JSONLD);
 
             System.out.println(output);
 
-            Model reparse = Rio.parse(new StringReader(output.toString()), "", RDFFormat.JSONLD);
+            final Model reparse = Rio.parse(new StringReader(output.toString()), "",
+                    RDFFormat.JSONLD);
 
             assertTrue(ModelUtil.equals(parse, reparse));
         } finally {

@@ -19,9 +19,9 @@ public class RegexTest {
             final char[] u1 = Character.toChars(i);
             // char[] u2 = Character.toChars(0xeffff);
             final String test = Character.toString(u1[0]) + Character.toString(u1[1]);// +
-                                                                                      // Character.toString(u2[0])
-                                                                                      // +
-                                                                                      // Character.toString(u2[1]);
+            // Character.toString(u2[0])
+            // +
+            // Character.toString(u2[1]);
             // Matcher matcher = Regex.TRICKY_UTF_CHARS.matcher(test);
             // while (matcher.find()) {
             // String s = matcher.group(0);
@@ -212,8 +212,7 @@ public class RegexTest {
 
     @Test
     public void testDoubleRegex() throws Exception {
-        assertTrue(Pattern.matches(
-                "^(\\+|-)?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([Ee](\\+|-)?[0-9]+)?$",
+        assertTrue(Pattern.matches("^(\\+|-)?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([Ee](\\+|-)?[0-9]+)?$",
                 "1.1E-1"));
     }
 }

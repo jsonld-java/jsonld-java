@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.github.jsonldjava.sesame;
 
@@ -13,7 +13,7 @@ import org.openrdf.rio.RDFWriterFactory;
 /**
  * An {@link RDFWriterFactory} that creates instances of
  * {@link SesameJSONLDWriter}.
- * 
+ *
  * @author Peter Ansell p_ansell@yahoo.com
  */
 public class SesameJSONLDWriterFactory implements RDFWriterFactory {

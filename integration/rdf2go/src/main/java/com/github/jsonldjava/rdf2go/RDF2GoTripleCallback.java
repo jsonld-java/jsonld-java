@@ -14,7 +14,7 @@ import com.github.jsonldjava.core.RDFDataset;
 /**
  * Implementation of {@link JsonLdTripleCallback} which serializes JSONLD
  * datasets into a {@link ModelSet} object.
- * 
+ *
  * @author Ismael Rivera
  */
 public class RDF2GoTripleCallback implements JsonLdTripleCallback {

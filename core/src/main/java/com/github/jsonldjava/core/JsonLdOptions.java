@@ -4,9 +4,9 @@ package com.github.jsonldjava.core;
  * The JsonLdOptions type as specified in the <a
  * href="http://www.w3.org/TR/json-ld-api/#the-jsonldoptions-type">JSON-LD-API
  * specification</a>.
- * 
+ *
  * @author tristan
- * 
+ *
  */
 public class JsonLdOptions {
 
@@ -19,7 +19,7 @@ public class JsonLdOptions {
 
     /**
      * Constructs an instance of JsonLdOptions using the given base.
-     * 
+     *
      * @param base
      *            The base IRI for the document.
      */

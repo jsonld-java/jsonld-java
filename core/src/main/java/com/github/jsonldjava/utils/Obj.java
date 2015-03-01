@@ -7,7 +7,7 @@ public class Obj {
 
     /**
      * Helper function for creating maps and tuning them as necessary.
-     * 
+     *
      * @return A new {@link Map} instance.
      */
     public static Map<String, Object> newMap() {
@@ -16,7 +16,7 @@ public class Obj {
 
     /**
      * Helper function for creating maps and tuning them as necessary.
-     * 
+     *
      * @param key
      *            A key to add to the map on creation.
      * @param value
@@ -24,7 +24,7 @@ public class Obj {
      * @return A new {@link Map} instance.
      */
     public static Map<String, Object> newMap(String key, Object value) {
-        Map<String, Object> result = newMap();
+        final Map<String, Object> result = newMap();
         result.put(key, value);
         return result;
     }
@@ -32,7 +32,7 @@ public class Obj {
     /**
      * Used to make getting values from maps embedded in maps embedded in maps
      * easier TODO: roll out the loops for efficiency
-     * 
+     *
      * @param map
      *            The map to get a key from
      * @param keys
@@ -93,7 +93,7 @@ public class Obj {
 
     /**
      * A null-safe equals check using v1.equals(v2) if they are both not null.
-     * 
+     *
      * @param v1
      *            The source object for the equals check.
      * @param v2

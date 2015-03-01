@@ -28,7 +28,7 @@ import com.github.jsonldjava.utils.Obj;
  * A container object to maintain state relating to JsonLdOptions and the
  * current Context, and push these into the relevant algorithms in
  * JsonLdProcessor as necessary.
- * 
+ *
  * @author tristan
  */
 public class JsonLdApi {
@@ -50,7 +50,7 @@ public class JsonLdApi {
     /**
      * Constructs a JsonLdApi object using the given object as the initial
      * JSON-LD object, and the given JsonLdOptions.
-     * 
+     *
      * @param input
      *            The initial JSON-LD object.
      * @param opts
@@ -67,7 +67,7 @@ public class JsonLdApi {
     /**
      * Constructs a JsonLdApi object using the given object as the initial
      * JSON-LD object, the given context, and the given JsonLdOptions.
-     * 
+     *
      * @param input
      *            The initial JSON-LD object.
      * @param context
@@ -88,7 +88,7 @@ public class JsonLdApi {
      * without initialization. <br>
      * If the JsonLdOptions parameter is null, then the default options are
      * used.
-     * 
+     *
      * @param opts
      *            The JsonLdOptions to use.
      */
@@ -104,7 +104,7 @@ public class JsonLdApi {
      * Initializes this object by cloning the input object using
      * {@link JsonLdUtils#clone(Object)}, and by parsing the context using
      * {@link Context#parse(Object)}.
-     * 
+     *
      * @param input
      *            The initial object, which is to be cloned and used in
      *            operations.
@@ -137,9 +137,9 @@ public class JsonLdApi {
 
     /**
      * Compaction Algorithm
-     * 
+     *
      * http://json-ld.org/spec/latest/json-ld-api/#compaction-algorithm
-     * 
+     *
      * @param activeCtx
      *            The Active Context
      * @param activeProperty
@@ -266,7 +266,7 @@ public class JsonLdApi {
                                 }
                                 if (value instanceof List) {
                                     ((List<Object>) result.get(property))
-                                            .addAll((List<Object>) value);
+                                    .addAll((List<Object>) value);
                                 } else {
                                     ((List<Object>) result.get(property)).add(value);
                                 }
@@ -414,7 +414,7 @@ public class JsonLdApi {
                         // 7.6.6.1)
                         final Boolean check = (!compactArrays || "@set".equals(container)
                                 || "@list".equals(container) || "@list".equals(expandedProperty) || "@graph"
-                                    .equals(expandedProperty))
+                                .equals(expandedProperty))
                                 && (!(compactedItem instanceof List));
                         if (check) {
                             final List<Object> tmp = new ArrayList<Object>();
@@ -431,7 +431,7 @@ public class JsonLdApi {
                             }
                             if (compactedItem instanceof List) {
                                 ((List<Object>) result.get(itemActiveProperty))
-                                        .addAll((List<Object>) compactedItem);
+                                .addAll((List<Object>) compactedItem);
                             } else {
                                 ((List<Object>) result.get(itemActiveProperty)).add(compactedItem);
                             }
@@ -450,9 +450,9 @@ public class JsonLdApi {
 
     /**
      * Compaction Algorithm
-     * 
+     *
      * http://json-ld.org/spec/latest/json-ld-api/#compaction-algorithm
-     * 
+     *
      * @param activeCtx
      *            The Active Context
      * @param activeProperty
@@ -478,9 +478,9 @@ public class JsonLdApi {
 
     /**
      * Expansion Algorithm
-     * 
+     *
      * http://json-ld.org/spec/latest/json-ld-api/#expansion-algorithm
-     * 
+     *
      * @param activeCtx
      *            The Active Context
      * @param activeProperty
@@ -683,7 +683,7 @@ public class JsonLdApi {
                                 // 7.4.11.2.2)
                                 if (item instanceof List) {
                                     ((List<Object>) result.get(property))
-                                            .addAll((List<Object>) item);
+                                    .addAll((List<Object>) item);
                                 } else {
                                     ((List<Object>) result.get(property)).add(item);
                                 }
@@ -850,7 +850,7 @@ public class JsonLdApi {
                         // 7.10.4.3)
                         if (item instanceof List) {
                             ((List<Object>) reverseMap.get(expandedProperty))
-                                    .addAll((List<Object>) item);
+                            .addAll((List<Object>) item);
                         } else {
                             ((List<Object>) reverseMap.get(expandedProperty)).add(item);
                         }
@@ -865,7 +865,7 @@ public class JsonLdApi {
                     // 7.11.2)
                     if (expandedValue instanceof List) {
                         ((List<Object>) result.get(expandedProperty))
-                                .addAll((List<Object>) expandedValue);
+                        .addAll((List<Object>) expandedValue);
                     } else {
                         ((List<Object>) result.get(expandedProperty)).add(expandedValue);
                     }
@@ -943,7 +943,7 @@ public class JsonLdApi {
                 // 12.1)
                 if (result != null
                         && (result.size() == 0 || result.containsKey("@value") || result
-                                .containsKey("@list"))) {
+                        .containsKey("@list"))) {
                     result = null;
                 }
                 // 12.2)
@@ -966,9 +966,9 @@ public class JsonLdApi {
 
     /**
      * Expansion Algorithm
-     * 
+     *
      * http://json-ld.org/spec/latest/json-ld-api/#expansion-algorithm
-     * 
+     *
      * @param activeCtx
      *            The Active Context
      * @param element
@@ -1000,7 +1000,7 @@ public class JsonLdApi {
 
     void generateNodeMap(Object element, Map<String, Object> nodeMap, String activeGraph,
             Object activeSubject, String activeProperty, Map<String, Object> list)
-            throws JsonLdError {
+                    throws JsonLdError {
         // 1)
         if (element instanceof List) {
             // 1.1)
@@ -1176,14 +1176,14 @@ public class JsonLdApi {
 
     /**
      * Blank Node identifier map specified in:
-     * 
+     *
      * http://www.w3.org/TR/json-ld-api/#generate-blank-node-identifier
      */
     private final Map<String, String> blankNodeIdentifierMap = new LinkedHashMap<String, String>();
 
     /**
      * Counter specified in:
-     * 
+     *
      * http://www.w3.org/TR/json-ld-api/#generate-blank-node-identifier
      */
     private int blankNodeCounter = 0;
@@ -1191,9 +1191,9 @@ public class JsonLdApi {
     /**
      * Generates a blank node identifier for the given key using the algorithm
      * specified in:
-     * 
+     *
      * http://www.w3.org/TR/json-ld-api/#generate-blank-node-identifier
-     * 
+     *
      * @param id
      *            The id, or null to generate a fresh, unused, blank node
      *            identifier.
@@ -1214,9 +1214,9 @@ public class JsonLdApi {
     /**
      * Generates a fresh, unused, blank node identifier using the algorithm
      * specified in:
-     * 
+     *
      * http://www.w3.org/TR/json-ld-api/#generate-blank-node-identifier
-     * 
+     *
      * @return A fresh, unused, blank node identifier.
      */
     String generateBlankNodeIdentifier() {
@@ -1270,7 +1270,7 @@ public class JsonLdApi {
     /**
      * Performs JSON-LD <a
      * href="http://json-ld.org/spec/latest/json-ld-framing/">framing</a>.
-     * 
+     *
      * @param input
      *            the expanded JSON-LD to frame.
      * @param frame
@@ -1301,7 +1301,7 @@ public class JsonLdApi {
 
     /**
      * Frames subjects according to the given frame.
-     * 
+     *
      * @param state
      *            the current framing state.
      * @param subjects
@@ -1429,7 +1429,7 @@ public class JsonLdApi {
                                     tmp.put(itemid, this.nodeMap.get(itemid));
                                     frame(state, tmp,
                                             (Map<String, Object>) ((List<Object>) frame.get(prop))
-                                                    .get(0), list, "@list");
+                                            .get(0), list, "@list");
                                 } else {
                                     // include other values automatcially (TODO:
                                     // may need JsonLdUtils.clone(n))
@@ -1468,26 +1468,26 @@ public class JsonLdApi {
                     final List<Object> pf = (List<Object>) frame.get(prop);
                     Map<String, Object> propertyFrame = pf.size() > 0 ? (Map<String, Object>) pf
                             .get(0) : null;
-                    if (propertyFrame == null) {
-                        propertyFrame = newMap();
-                    }
-                    final boolean omitDefaultOn = getFrameFlag(propertyFrame, "@omitDefault",
-                            state.omitDefault);
-                    if (!omitDefaultOn && !output.containsKey(prop)) {
-                        Object def = "@null";
-                        if (propertyFrame.containsKey("@default")) {
-                            def = JsonLdUtils.clone(propertyFrame.get("@default"));
-                        }
-                        if (!(def instanceof List)) {
-                            final List<Object> tmp = new ArrayList<Object>();
-                            tmp.add(def);
-                            def = tmp;
-                        }
-                        final Map<String, Object> tmp1 = newMap("@preserve", def);
-                        final List<Object> tmp2 = new ArrayList<Object>();
-                        tmp2.add(tmp1);
-                        output.put(prop, tmp2);
-                    }
+                            if (propertyFrame == null) {
+                                propertyFrame = newMap();
+                            }
+                            final boolean omitDefaultOn = getFrameFlag(propertyFrame, "@omitDefault",
+                                    state.omitDefault);
+                            if (!omitDefaultOn && !output.containsKey(prop)) {
+                                Object def = "@null";
+                                if (propertyFrame.containsKey("@default")) {
+                                    def = JsonLdUtils.clone(propertyFrame.get("@default"));
+                                }
+                                if (!(def instanceof List)) {
+                                    final List<Object> tmp = new ArrayList<Object>();
+                                    tmp.add(def);
+                                    def = tmp;
+                                }
+                                final Map<String, Object> tmp1 = newMap("@preserve", def);
+                                final List<Object> tmp2 = new ArrayList<Object>();
+                                tmp2.add(tmp1);
+                                output.put(prop, tmp2);
+                            }
                 }
 
                 // add output to parent
@@ -1514,7 +1514,7 @@ public class JsonLdApi {
 
     /**
      * Removes an existing embed.
-     * 
+     *
      * @param state
      *            the current framing state.
      * @param id
@@ -1615,7 +1615,7 @@ public class JsonLdApi {
 
     /**
      * Adds framing output to the given parent.
-     * 
+     *
      * @param state
      *            the current framing state.
      * @param parent
@@ -1642,7 +1642,7 @@ public class JsonLdApi {
     /**
      * Embeds values for the given subject and property into the given output
      * during the framing algorithm.
-     * 
+     *
      * @param state
      *            the current framing state.
      * @param element
@@ -1706,7 +1706,7 @@ public class JsonLdApi {
 
     /**
      * Helper class for node usages
-     * 
+     *
      * @author tristan
      */
     private class UsagesNode {
@@ -1772,7 +1772,7 @@ public class JsonLdApi {
 
     /**
      * Converts RDF statements into JSON-LD.
-     * 
+     *
      * @param dataset
      *            the RDF statements.
      * @return A list of JSON-LD objects found in the given dataset.
@@ -1843,7 +1843,7 @@ public class JsonLdApi {
                 if (object.isBlankNode() || object.isIRI()) {
                     // 3.5.8.1-3)
                     nodeMap.get(object.getValue()).usages
-                            .add(new UsagesNode(node, predicate, value));
+                    .add(new UsagesNode(node, predicate, value));
                 }
             }
         }
@@ -1958,7 +1958,7 @@ public class JsonLdApi {
     /**
      * Adds RDF triples for each graph in the current node map to an RDF
      * dataset.
-     * 
+     *
      * @return the RDF dataset.
      * @throws JsonLdError
      *             If there was an error converting from JSON-LD to RDF.
@@ -1996,7 +1996,7 @@ public class JsonLdApi {
 
     /**
      * Performs RDF normalization on the given JSON-LD input.
-     * 
+     *
      * @param dataset
      *            the expanded JSON-LD object to normalize.
      * @return The normalized JSON-LD object
@@ -2044,7 +2044,7 @@ public class JsonLdApi {
                             });
                         }
                         ((List<Object>) ((Map<String, Object>) bnodes.get(id)).get("quads"))
-                                .add(quad);
+                        .add(quad);
                     }
                 }
             }

@@ -46,7 +46,7 @@ public class DocumentLoader {
     /**
      * Returns a Map, List, or String containing the contents of the JSON
      * resource resolved from the JsonLdUrl.
-     * 
+     *
      * @param url
      *            The JsonLdUrl to resolve
      * @return The Map, List, or String that represent the JSON resource
@@ -86,7 +86,7 @@ public class DocumentLoader {
      * including support for http and https URLs that are requested using
      * Content Negotiation with application/ld+json as the preferred content
      * type.
-     * 
+     *
      * @param url
      *            The {@link java.net.URL} identifying the source.
      * @return An InputStream containing the contents of the source.

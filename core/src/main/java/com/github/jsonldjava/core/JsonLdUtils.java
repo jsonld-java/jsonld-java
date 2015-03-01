@@ -18,11 +18,11 @@ public class JsonLdUtils {
 
     /**
      * Returns whether or not the given value is a keyword (or a keyword alias).
-     * 
+     *
      * @param v
      *            the value to check.
      * @param [ctx] the active context to check against.
-     * 
+     *
      * @return true if the value is a keyword, false if not.
      */
     static boolean isKeyword(Object key) {
@@ -145,10 +145,10 @@ public class JsonLdUtils {
 
     /**
      * Returns true if the given value is a subject with properties.
-     * 
+     *
      * @param v
      *            the value to check.
-     * 
+     *
      * @return true if the value is a subject with properties, false if not.
      */
     static boolean isNode(Object v) {
@@ -166,10 +166,10 @@ public class JsonLdUtils {
 
     /**
      * Returns true if the given value is a subject reference.
-     * 
+     *
      * @param v
      *            the value to check.
-     * 
+     *
      * @return true if the value is a subject reference, false if not.
      */
     static boolean isNodeReference(Object v) {
@@ -193,11 +193,11 @@ public class JsonLdUtils {
     /**
      * Adds a value to a subject. If the value is an array, all values in the
      * array will be added.
-     * 
+     *
      * Note: If the value is a subject that already exists as a property of the
      * given subject, this method makes no attempt to deeply merge properties.
      * Instead, the value will not be added.
-     * 
+     *
      * @param subject
      *            the subject to add the value to.
      * @param property
@@ -258,14 +258,14 @@ public class JsonLdUtils {
 
     /**
      * Prepends a base IRI to the given relative IRI.
-     * 
+     *
      * @param base
      *            the base IRI.
      * @param iri
      *            the relative IRI.
-     * 
+     *
      * @return the absolute IRI.
-     * 
+     *
      *         TODO: the JsonLdUrl class isn't as forgiving as the Node.js url
      *         parser, we may need to re-implement the parser here to support
      *         the flexibility required
@@ -336,10 +336,10 @@ public class JsonLdUtils {
 
     /**
      * Expands a language map.
-     * 
+     *
      * @param languageMap
      *            the language map to expand.
-     * 
+     *
      * @return the expanded language map.
      * @throws JsonLdError
      */
@@ -371,7 +371,7 @@ public class JsonLdUtils {
 
     /**
      * Throws an exception if the given value is not a valid @type value.
-     * 
+     *
      * @param v
      *            the value to check.
      * @throws JsonLdError
@@ -409,12 +409,12 @@ public class JsonLdUtils {
 
     /**
      * Removes a base IRI from the given absolute IRI.
-     * 
+     *
      * @param base
      *            the base IRI.
      * @param iri
      *            the absolute IRI.
-     * 
+     *
      * @return the relative IRI if relative to base, otherwise the absolute IRI.
      */
     private static String removeBase(Object baseobj, String iri) {
@@ -493,14 +493,14 @@ public class JsonLdUtils {
 
     /**
      * Removes the @preserve keywords as the last step of the framing algorithm.
-     * 
+     *
      * @param ctx
      *            the active context used to compact the input.
      * @param input
      *            the framed, compacted output.
      * @param options
      *            the compaction options used.
-     * 
+     *
      * @return the resulting output.
      * @throws JsonLdError
      */
@@ -553,7 +553,7 @@ public class JsonLdUtils {
 
     /**
      * replicate javascript .join because i'm too lazy to keep doing it manually
-     * 
+     *
      * @param iriSegments
      * @param string
      * @return
@@ -572,7 +572,7 @@ public class JsonLdUtils {
     /**
      * replicates the functionality of javascript .split, which has different
      * results to java's String.split if there is a trailing /
-     * 
+     *
      * @param string
      * @param delim
      * @return
@@ -589,12 +589,12 @@ public class JsonLdUtils {
 
     /**
      * Compares two strings first based on length and then lexicographically.
-     * 
+     *
      * @param a
      *            the first string.
      * @param b
      *            the second string.
-     * 
+     *
      * @return -1 if a < b, 1 if a > b, 0 if a == b.
      */
     static int compareShortestLeast(String a, String b) {
@@ -608,14 +608,14 @@ public class JsonLdUtils {
 
     /**
      * Determines if the given value is a property of the given subject.
-     * 
+     *
      * @param subject
      *            the subject to check.
      * @param property
      *            the property to check.
      * @param value
      *            the value to check.
-     * 
+     *
      * @return true if the value exists, false if not.
      */
     static boolean hasValue(Map<String, Object> subject, String property, Object value) {
@@ -652,16 +652,16 @@ public class JsonLdUtils {
     /**
      * Compares two JSON-LD values for equality. Two JSON-LD values will be
      * considered equal if:
-     * 
+     *
      * 1. They are both primitives of the same type and value. 2. They are both @values
      * with the same @value, @type, and @language, OR 3. They both have @ids
      * they are the same.
-     * 
+     *
      * @param v1
      *            the first value.
      * @param v2
      *            the second value.
-     * 
+     *
      * @return true if v1 and v2 are considered equal, false if not.
      */
     static boolean compareValues(Object v1, Object v2) {
@@ -673,12 +673,12 @@ public class JsonLdUtils {
                 && isValue(v2)
                 && Obj.equals(((Map<String, Object>) v1).get("@value"),
                         ((Map<String, Object>) v2).get("@value"))
-                && Obj.equals(((Map<String, Object>) v1).get("@type"),
-                        ((Map<String, Object>) v2).get("@type"))
-                && Obj.equals(((Map<String, Object>) v1).get("@language"),
-                        ((Map<String, Object>) v2).get("@language"))
-                && Obj.equals(((Map<String, Object>) v1).get("@index"),
-                        ((Map<String, Object>) v2).get("@index"))) {
+                        && Obj.equals(((Map<String, Object>) v1).get("@type"),
+                                ((Map<String, Object>) v2).get("@type"))
+                                && Obj.equals(((Map<String, Object>) v1).get("@language"),
+                                        ((Map<String, Object>) v2).get("@language"))
+                                        && Obj.equals(((Map<String, Object>) v1).get("@index"),
+                                                ((Map<String, Object>) v2).get("@index"))) {
             return true;
         }
 
@@ -694,7 +694,7 @@ public class JsonLdUtils {
 
     /**
      * Removes a value from a subject.
-     * 
+     *
      * @param subject
      *            the subject.
      * @param property
@@ -735,10 +735,10 @@ public class JsonLdUtils {
 
     /**
      * Returns true if the given value is a blank node.
-     * 
+     *
      * @param v
      *            the value to check.
-     * 
+     *
      * @return true if the value is a blank node, false if not.
      */
     static boolean isBlankNode(Object v) {
@@ -760,7 +760,7 @@ public class JsonLdUtils {
 
     /**
      * Finds all @context URLs in the given JSON-LD input.
-     * 
+     *
      * @param input
      *            the JSON-LD input.
      * @param urls
@@ -768,7 +768,7 @@ public class JsonLdUtils {
      * @param replace
      *            true to replace the URLs in the given input with the
      * @contexts from the urls map, false not to.
-     * 
+     *
      * @return true if new URLs to resolve were found, false if not.
      */
     private static boolean findContextUrls(Object input, Map<String, Object> urls, Boolean replace) {
@@ -862,7 +862,7 @@ public class JsonLdUtils {
 
     /**
      * Returns true if the given value is a JSON-LD Array
-     * 
+     *
      * @param v
      *            the value to check.
      * @return
@@ -873,7 +873,7 @@ public class JsonLdUtils {
 
     /**
      * Returns true if the given value is a JSON-LD List
-     * 
+     *
      * @param v
      *            the value to check.
      * @return
@@ -884,7 +884,7 @@ public class JsonLdUtils {
 
     /**
      * Returns true if the given value is a JSON-LD Object
-     * 
+     *
      * @param v
      *            the value to check.
      * @return
@@ -895,7 +895,7 @@ public class JsonLdUtils {
 
     /**
      * Returns true if the given value is a JSON-LD value
-     * 
+     *
      * @param v
      *            the value to check.
      * @return
@@ -906,7 +906,7 @@ public class JsonLdUtils {
 
     /**
      * Returns true if the given value is a JSON-LD string
-     * 
+     *
      * @param v
      *            the value to check.
      * @return

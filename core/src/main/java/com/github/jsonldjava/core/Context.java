@@ -17,9 +17,9 @@ import com.github.jsonldjava.utils.Obj;
 /**
  * A helper class which still stores all the values in a map but gives member
  * variables easily access certain keys
- * 
+ *
  * @author tristan
- * 
+ *
  */
 public class Context extends LinkedHashMap<String, Object> {
 
@@ -62,9 +62,9 @@ public class Context extends LinkedHashMap<String, Object> {
 
     /**
      * Value Compaction Algorithm
-     * 
+     *
      * http://json-ld.org/spec/latest/json-ld-api/#value-compaction
-     * 
+     *
      * @param activeProperty
      *            The Active Property
      * @param value
@@ -123,9 +123,9 @@ public class Context extends LinkedHashMap<String, Object> {
 
     /**
      * Context Processing Algorithm
-     * 
+     *
      * http://json-ld.org/spec/latest/json-ld-api/#context-processing-algorithms
-     * 
+     *
      * @param localContext
      *            The Local Context object.
      * @param remoteContexts
@@ -254,9 +254,9 @@ public class Context extends LinkedHashMap<String, Object> {
 
     /**
      * Create Term Definition Algorithm
-     * 
+     *
      * http://json-ld.org/spec/latest/json-ld-api/#create-term-definition
-     * 
+     *
      * @param result
      * @param context
      * @param key
@@ -433,9 +433,9 @@ public class Context extends LinkedHashMap<String, Object> {
 
     /**
      * IRI Expansion Algorithm
-     * 
+     *
      * http://json-ld.org/spec/latest/json-ld-api/#iri-expansion
-     * 
+     *
      * @param value
      * @param relative
      * @param vocab
@@ -504,12 +504,12 @@ public class Context extends LinkedHashMap<String, Object> {
 
     /**
      * IRI Compaction Algorithm
-     * 
+     *
      * http://json-ld.org/spec/latest/json-ld-api/#iri-compaction
-     * 
+     *
      * Compacts an IRI or keyword into a term or prefix if it can be. If the IRI
      * has an associated value it may be passed.
-     * 
+     *
      * @param iri
      *            the IRI to compact.
      * @param value
@@ -519,7 +519,7 @@ public class Context extends LinkedHashMap<String, Object> {
      * @vocab, false not to.
      * @param reverse
      *            true if a reverse property is being compacted, false if not.
-     * 
+     *
      * @return the compacted term, prefix, keyword alias, or the original IRI.
      */
     String compactIri(String iri, Object value, boolean relativeToVocab, boolean reverse) {
@@ -757,14 +757,14 @@ public class Context extends LinkedHashMap<String, Object> {
      * <p>
      * No guarantees of the prefixes are given, beyond that it will not contain
      * ":".
-     * 
+     *
      * @param onlyCommonPrefixes
      *            If <code>true</code>, the result will not include
      *            "not so useful" prefixes, such as "term1":
      *            "http://example.com/term1", e.g. all IRIs will end with "/" or
      *            "#". If <code>false</code>, all potential prefixes are
      *            returned.
-     * 
+     *
      * @return A map from prefix string to IRI string
      */
     public Map<String, String> getPrefixes(boolean onlyCommonPrefixes) {
@@ -811,12 +811,12 @@ public class Context extends LinkedHashMap<String, Object> {
 
     /**
      * Inverse Context Creation
-     * 
+     *
      * http://json-ld.org/spec/latest/json-ld-api/#inverse-context-creation
-     * 
+     *
      * Generates an inverse context for use in the compaction algorithm, if not
      * already generated for the given active context.
-     * 
+     *
      * @return the inverse context.
      */
     public Map<String, Object> getInverse() {
@@ -930,15 +930,15 @@ public class Context extends LinkedHashMap<String, Object> {
 
     /**
      * Term Selection
-     * 
+     *
      * http://json-ld.org/spec/latest/json-ld-api/#term-selection
-     * 
+     *
      * This algorithm, invoked via the IRI Compaction algorithm, makes use of an
      * active context's inverse context to find the term that is best used to
      * compact an IRI. Other information about a value associated with the IRI
      * is given, including which container mappings and which type mapping or
      * language mapping would be best used to express the value.
-     * 
+     *
      * @return the selected term.
      */
     private String selectTerm(String iri, List<String> containers, String typeLanguage,
@@ -974,7 +974,7 @@ public class Context extends LinkedHashMap<String, Object> {
 
     /**
      * Retrieve container mapping.
-     * 
+     *
      * @param property
      *            The Property to get a container mapping for.
      * @return The container mapping

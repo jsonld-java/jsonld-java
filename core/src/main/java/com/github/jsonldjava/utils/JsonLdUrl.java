@@ -104,7 +104,7 @@ public class JsonLdUrl {
 
     /**
      * Removes dot segments from a JsonLdUrl path.
-     * 
+     *
      * @param path
      *            the path to remove dot segments from.
      * @param hasAuthority
@@ -286,7 +286,7 @@ public class JsonLdUrl {
 
     /**
      * Parses the authority for the pre-parsed given JsonLdUrl.
-     * 
+     *
      * @param parsed
      *            the pre-parsed JsonLdUrl.
      */

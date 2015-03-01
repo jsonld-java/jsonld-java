@@ -156,7 +156,7 @@ public class JsonLdProcessorTest {
 
     @AfterClass
     public static void writeReport() throws JsonGenerationException, JsonMappingException,
-            IOException, JsonLdError {
+    IOException, JsonLdError {
 
         // Only write reports if "-Dreport.format=..." is set
         String reportFormat = System.getProperty("report.format");
@@ -581,7 +581,7 @@ public class JsonLdProcessorTest {
                     {
                         put("@id",
                                 "http://json-ld.org/test-suite/tests/error-expand-manifest.jsonld"
-                                        .equals(manifest) ? "earl:semiAuto" : "earl:automatic");
+                                .equals(manifest) ? "earl:semiAuto" : "earl:automatic");
                     }
                 });
             }

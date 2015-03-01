@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.github.jsonldjava.core;
 
@@ -13,16 +13,16 @@ import org.junit.Test;
 import com.github.jsonldjava.utils.JsonUtils;
 
 /**
- * 
+ *
  * @author Peter Ansell p_ansell@yahoo.com
  */
 public class JsonLdPerformanceTest {
 
     /**
      * Test performance parsing using test data from:
-     * 
+     *
      * https://dl.dropboxusercontent.com/s/yha7x0paj8zvvz5/2000007922.jsonld.gz
-     * 
+     *
      * @throws Exception
      */
     @Ignore("Enable as necessary for manual testing, particularly to test that it fails due to irregular URIs")

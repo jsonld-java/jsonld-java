@@ -32,9 +32,9 @@ import java.util.regex.Pattern;
  * dataset store. Currently each item just wraps a Map based on the old format
  * so everything doesn't break. Will phase this out once everything is using the
  * new format.
- * 
+ *
  * @author Tristan
- * 
+ *
  */
 public class RDFDataset extends LinkedHashMap<String, Object> {
     private static final long serialVersionUID = 2796344994239879165L;
@@ -113,7 +113,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     }
 
     public static abstract class Node extends LinkedHashMap<String, Object> implements
-            Comparable<Node> {
+    Comparable<Node> {
         private static final long serialVersionUID = 1460990331795672793L;
 
         public abstract boolean isLiteral();
@@ -155,12 +155,12 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
         /**
          * Converts an RDF triple object to a JSON-LD object.
-         * 
+         *
          * @param o
          *            the RDF triple object to convert.
          * @param useNativeTypes
          *            true to output native types, false not to.
-         * 
+         *
          * @return the JSON-LD object.
          * @throws JsonLdError
          */
@@ -198,9 +198,9 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                             rval.put("@type", type);
                         }
                     } else if (
-                    // http://www.w3.org/TR/xmlschema11-2/#integer
-                    (XSD_INTEGER.equals(type) && PATTERN_INTEGER.matcher(value).matches())
-                    // http://www.w3.org/TR/xmlschema11-2/#nt-doubleRep
+                            // http://www.w3.org/TR/xmlschema11-2/#integer
+                            (XSD_INTEGER.equals(type) && PATTERN_INTEGER.matcher(value).matches())
+                            // http://www.w3.org/TR/xmlschema11-2/#nt-doubleRep
                             || (XSD_DOUBLE.equals(type) && PATTERN_DOUBLE.matcher(value).matches())) {
                         try {
                             final Double d = Double.parseDouble(value);
@@ -361,7 +361,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     /*
      * public RDFDataset(String blankNodePrefix) { this(new
      * UniqueNamer(blankNodePrefix)); }
-     * 
+     *
      * public RDFDataset(UniqueNamer namer) { this(); this.namer = namer; }
      */
     public RDFDataset(JsonLdApi jsonLdApi) {
@@ -390,7 +390,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
     /**
      * Returns a valid context containing any namespaces set
-     * 
+     *
      * @return The context map
      */
     public Map<String, Object> getContext() {
@@ -405,7 +405,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
     /**
      * parses a context object and sets any namespaces found within it
-     * 
+     *
      * @param contextLike
      *            The context to parse
      * @throws JsonLdError
@@ -441,7 +441,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
     /**
      * Adds a triple to the @default graph of this dataset
-     * 
+     *
      * @param subject
      *            the subject for the triple
      * @param predicate
@@ -461,7 +461,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
     /**
      * Adds a triple to the specified graph of this dataset
-     * 
+     *
      * @param s
      *            the subject for the triple
      * @param p
@@ -489,7 +489,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
     /**
      * Adds a triple to the default graph of this dataset
-     * 
+     *
      * @param subject
      *            the subject for the triple
      * @param predicate
@@ -503,7 +503,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
     /**
      * Adds a triple to the specified graph of this dataset
-     * 
+     *
      * @param subject
      *            the subject for the triple
      * @param predicate
@@ -526,7 +526,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
     /**
      * Creates an array of RDF triples for the given graph.
-     * 
+     *
      * @param graphName
      *            The graph URI
      * @param graph
@@ -623,7 +623,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     /**
      * Converts a JSON-LD value object to an RDF literal or a JSON-LD string or
      * node object to an RDF resource.
-     * 
+     *
      * @param item
      *            the JSON-LD value or node object.
      * @return the RDF literal or RDF resource.

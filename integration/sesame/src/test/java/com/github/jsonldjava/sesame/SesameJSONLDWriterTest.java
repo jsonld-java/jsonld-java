@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.github.jsonldjava.sesame;
 
@@ -63,39 +63,38 @@ public class SesameJSONLDWriterTest extends RDFWriterTest {
     @Ignore("Sesame-2.7 does not support RDF-1.1, so string/langString literals cause this to fail.")
     public void testRoundTripPreserveBNodeIds() throws Exception {
     }
-    
+
     @Test
     @Override
     @Ignore("TODO: Determine why this test is breaking")
-    public void testIllegalPrefix()
-        throws RDFHandlerException, RDFParseException, IOException {
+    public void testIllegalPrefix() throws RDFHandlerException, RDFParseException, IOException {
     }
-    
+
     @Test
     public void testRoundTripNamespaces() throws Exception {
-        String exNs = "http://example.org/";
-        URI uri1 = vf.createURI(exNs, "uri1");
-        URI uri2 = vf.createURI(exNs, "uri2");
-        Literal plainLit = vf.createLiteral("plain", XMLSchema.STRING);
+        final String exNs = "http://example.org/";
+        final URI uri1 = vf.createURI(exNs, "uri1");
+        final URI uri2 = vf.createURI(exNs, "uri2");
+        final Literal plainLit = vf.createLiteral("plain", XMLSchema.STRING);
 
-        Statement st1 = vf.createStatement(uri1, uri2, plainLit);
+        final Statement st1 = vf.createStatement(uri1, uri2, plainLit);
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        RDFWriter rdfWriter = rdfWriterFactory.getWriter(out);
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final RDFWriter rdfWriter = rdfWriterFactory.getWriter(out);
         rdfWriter.getWriterConfig().set(JSONLDSettings.JSONLD_MODE, JSONLDMode.COMPACT);
         rdfWriter.handleNamespace("ex", exNs);
         rdfWriter.startRDF();
         rdfWriter.handleStatement(st1);
         rdfWriter.endRDF();
 
-        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        RDFParser rdfParser = rdfParserFactory.getParser();
-        ParserConfig config = new ParserConfig();
+        final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+        final RDFParser rdfParser = rdfParserFactory.getParser();
+        final ParserConfig config = new ParserConfig();
         config.set(BasicParserSettings.FAIL_ON_UNKNOWN_DATATYPES, true);
         config.set(BasicParserSettings.FAIL_ON_UNKNOWN_LANGUAGES, true);
         rdfParser.setParserConfig(config);
         rdfParser.setValueFactory(vf);
-        Model model = new LinkedHashModel();
+        final Model model = new LinkedHashModel();
         rdfParser.setRDFHandler(new StatementCollector(model));
 
         rdfParser.parse(in, "foo:bar");

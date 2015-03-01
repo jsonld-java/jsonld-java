@@ -27,8 +27,8 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
     private static final int MAX_LINE_LENGTH = 160;
     private static final int TAB_SPACES = 4;
     private static final String COLS_KEY = "..cols.."; // this shouldn't be a
-                                                       // valid iri/bnode i
-                                                       // hope!
+    // valid iri/bnode i
+    // hope!
     final Map<String, String> availableNamespaces = new LinkedHashMap<String, String>() {
         {
             // TODO: fill with default namespaces
@@ -330,7 +330,7 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
             if (!isObject) {
                 rval += " .\n";
                 if (subjIter.hasNext()) { // add blank space if we have another
-                                          // object below this
+                    // object below this
                     rval += "\n";
                 }
             }
@@ -351,7 +351,7 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
     /**
      * checks the URI for a prefix, and if one is found, set used prefixes to
      * true
-     * 
+     *
      * @param predicate
      * @return
      */

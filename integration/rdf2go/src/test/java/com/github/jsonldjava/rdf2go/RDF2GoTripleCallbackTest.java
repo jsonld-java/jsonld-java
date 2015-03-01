@@ -16,7 +16,7 @@ import com.github.jsonldjava.utils.JsonUtils;
 
 /**
  * Unit tests for {@link RDF2GoTripleCallback}.
- * 
+ *
  * @author Ismael Rivera
  */
 public class RDF2GoTripleCallbackTest {
