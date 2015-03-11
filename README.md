@@ -238,6 +238,10 @@ Then, you can open a pull request to merge your change into the master branch of
 CHANGELOG
 =========
 
+### 2015-03-12
+* Compact context arrays if they contain a single element during compaction
+* Bump to Sesame-2.7.15
+
 ### 2015-03-01
 * Use jopt-simple for the playground cli to simplify the coding and improve error messages
 * Allow RDF parsing and writing using all of the available Sesame Rio parsers through the playground cli

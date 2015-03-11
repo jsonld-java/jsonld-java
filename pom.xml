@@ -51,7 +51,7 @@
 		<jackson.version>2.3.3</jackson.version>
 		<junit.version>4.12</junit.version>
 		<rdf2go.version>5.0.1</rdf2go.version>
-		<sesame.version>2.7.14</sesame.version>
+		<sesame.version>2.7.15</sesame.version>
 		<slf4j.version>1.7.9</slf4j.version>
 	</properties>
 	<prerequisites>
