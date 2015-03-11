@@ -77,7 +77,8 @@ public class JsonLdProcessor {
             if ((context instanceof Map && !((Map<String, Object>) context).isEmpty())
                     || (context instanceof List && !((List<Object>) context).isEmpty())) {
 
-                if (context instanceof List && ((List<Object>) context).size() == 1) {
+                if (context instanceof List && ((List<Object>) context).size() == 1
+                        && opts.getCompactArrays()) {
                     ((Map<String, Object>) compacted).put("@context",
                             ((List<Object>) context).get(0));
                 } else {
