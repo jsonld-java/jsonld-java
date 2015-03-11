@@ -76,7 +76,13 @@ public class JsonLdProcessor {
             // the keySet
             if ((context instanceof Map && !((Map<String, Object>) context).isEmpty())
                     || (context instanceof List && !((List<Object>) context).isEmpty())) {
-                ((Map<String, Object>) compacted).put("@context", context);
+
+                if (context instanceof List && ((List<Object>) context).size() == 1) {
+                    ((Map<String, Object>) compacted).put("@context",
+                            ((List<Object>) context).get(0));
+                } else {
+                    ((Map<String, Object>) compacted).put("@context", context);
+                }
             }
         }
 
