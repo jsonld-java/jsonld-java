@@ -70,6 +70,6 @@ public class SesameLocaleNumericTest {
 
     private String getTestString() {
         return "{" + "\"@id\": \"http://www.ex.com/product\"," + "\"http://schema.org/price\": {"
-                + "\"@value\": 100.00" + "}}}";
+                + "\"@value\": 100.00" + "}}";
     }
 }
