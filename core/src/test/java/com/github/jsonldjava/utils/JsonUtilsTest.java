@@ -2,7 +2,10 @@ package com.github.jsonldjava.utils;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException ;
 import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonParseException ;
 
 import org.junit.Test;
 
@@ -30,5 +33,33 @@ public class JsonUtilsTest {
         } catch (final Exception e) {
             assertTrue(true);
         }
+    }
+    
+    @Test
+    public void trailingContent_1() throws JsonParseException, IOException { trailingContent("{}") ; }
+
+    @Test
+    public void trailingContent_2() throws JsonParseException, IOException { trailingContent("{}  \t  \r \n  \r\n   ") ; }
+
+    @Test(expected=JsonParseException.class)
+    public void trailingContent_3() throws JsonParseException, IOException { trailingContent("{}x") ; }
+
+    @Test(expected=JsonParseException.class)
+    public void trailingContent_4() throws JsonParseException, IOException { trailingContent("{}   x") ; }
+
+    @Test(expected=JsonParseException.class)
+    public void trailingContent_5() throws JsonParseException, IOException { trailingContent("{} \"x\"") ; }
+
+    @Test(expected=JsonParseException.class)
+    public void trailingContent_6() throws JsonParseException, IOException { trailingContent("{} {}") ; }
+
+    @Test(expected=JsonParseException.class)
+    public void trailingContent_7() throws JsonParseException, IOException { trailingContent("{},{}") ; }
+
+    @Test(expected=JsonParseException.class)
+    public void trailingContent_8() throws JsonParseException, IOException { trailingContent("{},[]") ; }
+
+    private void trailingContent(String string) throws JsonParseException, IOException {
+            JsonUtils.fromString(string) ;
     }
 }

@@ -103,7 +103,7 @@ public class JsonUtils {
      */
     public static Object fromReader(Reader reader) throws IOException {
         final JsonParser jp = JSON_FACTORY.createParser(reader);
-        Object rval = null;
+        Object rval ;
         final JsonToken initialToken = jp.nextToken();
 
         if (initialToken == JsonToken.START_ARRAY) {
@@ -123,6 +123,16 @@ public class JsonUtils {
             throw new JsonParseException("document doesn't start with a valid json element : "
                     + initialToken, jp.getCurrentLocation());
         }
+        
+        JsonToken t ;
+        try { t = jp.nextToken(); }
+        catch (JsonParseException ex) {
+            throw new JsonParseException("Document contains more content after json-ld element - (possible mismatched {}?)",
+                                         jp.getCurrentLocation());
+        }
+        if ( t != null )
+            throw new JsonParseException("Document contains possible json content after the json-ld element - (possible mismatched {}?)",
+                                             jp.getCurrentLocation());
         return rval;
     }
 
