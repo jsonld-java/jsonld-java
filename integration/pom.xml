@@ -12,7 +12,7 @@
 	<packaging>pom</packaging>
 	
 	<modules>
-		<module>sesame</module>
+		<!-- module>sesame</module DISABLED as Sesame-2.7.x is not being maintained further and users should be using sesame-rio-jsonld instead -->
 		<module>clerezza</module>
 		<module>rdf2go</module>
 	</modules>

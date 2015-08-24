@@ -7,8 +7,8 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jsonld-java-sesame</artifactId>
-	<name>JSONLD Java :: Sesame Integration</name>
-	<description>JSON-LD Java integration module for Sesame</description>
+	<name>JSONLD Java :: Sesame-2.7 Integration</name>
+	<description>JSON-LD Java integration module for Sesame-2.7</description>
 	<packaging>bundle</packaging>	
 
 	<dependencies>
