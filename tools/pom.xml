@@ -12,15 +12,14 @@
 	<description>JSON-LD Java tools</description>
 	<packaging>jar</packaging>
 
+	<properties>
+		<sesame.version>2.8.5</sesame.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>jsonld-java</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jsonld-java-sesame</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -40,7 +39,24 @@
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-model</artifactId>
+			<version>${sesame.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-rio-api</artifactId>
+			<version>${sesame.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-rio-jsonld</artifactId>
+			<version>${sesame.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-rio-nquads</artifactId>
+			<version>${sesame.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>

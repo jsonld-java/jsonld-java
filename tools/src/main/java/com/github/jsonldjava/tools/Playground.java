@@ -26,8 +26,6 @@ import org.openrdf.rio.Rio;
 
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
-import com.github.jsonldjava.sesame.SesameRDFParser;
-import com.github.jsonldjava.sesame.SesameTripleCallback;
 import com.github.jsonldjava.utils.JsonUtils;
 
 public class Playground {
