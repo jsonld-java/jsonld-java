@@ -238,6 +238,10 @@ Then, you can open a pull request to merge your change into the master branch of
 CHANGELOG
 =========
 
+### 2015-08-25
+* Deprecate Sesame-2.7 module in favour of sesame-rio-jsonld for Sesame-2.8 and 4.0
+* Fix bug where parsing did not fail if content was present after the end of a full JSON top level element
+
 ### 2015-03-12
 * Compact context arrays if they contain a single element during compaction
 * Bump to Sesame-2.7.15
