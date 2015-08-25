@@ -172,7 +172,9 @@ disable the JAR Cache (see above), unless reinitiated:
 RDF implementation specific code
 --------------------------------
 
-All code specific to various RDF implementations (e.g. jena, sesame, etc) are stored in the [integration modules](./integration). Readmes for how to use these modules should be present in their respective folders.
+All code specific to various RDF implementations are stored in the [integration modules](./integration). Readmes for how to use these modules should be present in their respective folders.
+
+The implementation specific integration classes for both Sesame and Jena have been moved into their respective codebases.
 
 PLAYGROUND
 ----------
@@ -187,14 +189,14 @@ This is a simple application which provides command line access to JSON-LD funct
 
 run the following to get usage details:
 
-    ./jsonldplayground
+    ./jsonldplayground --help
 
 For Developers
 --------------
 
 ### Compiling & Packaging
 
-`jsonld-java` uses maven to compile. From the base `jsonld-java` module run `mvn install -DskipTests=true` to install the jar into your local maven repository.
+`jsonld-java` uses maven to compile. From the base `jsonld-java` module run `mvn clean install` to install the jar into your local maven repository.
 
 
 ### Running tests
@@ -239,7 +241,7 @@ CHANGELOG
 =========
 
 ### 2015-08-25
-* Deprecate Sesame-2.7 module in favour of sesame-rio-jsonld for Sesame-2.8 and 4.0
+* Remove Sesame-2.7 module in favour of sesame-rio-jsonld for Sesame-2.8 and 4.0
 * Fix bug where parsing did not fail if content was present after the end of a full JSON top level element
 
 ### 2015-03-12
