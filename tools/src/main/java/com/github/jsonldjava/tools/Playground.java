@@ -220,11 +220,11 @@ public class Playground {
             final Model inModel = Rio.parse(new StringReader((String) inobj), opts.getBase(),
                     sesameInputFormat);
 
-            outobj = JsonLdProcessor.fromRDF(inModel, opts, new SesameRDFParser());
+            outobj = JsonLdProcessor.fromRDF(inModel, opts, new SesameJSONLDRDFParser());
         } else if ("tordf".equals(processingOptionValue)) {
             opts.useNamespaces = true;
             outobj = JsonLdProcessor.toRDF(inobj,
-                    new SesameTripleCallback(Rio.createWriter(sesameOutputFormat, System.out)),
+                    new SesameJSONLDTripleCallback(Rio.createWriter(sesameOutputFormat, System.out)),
                     opts);
         } else if ("expand".equals(processingOptionValue)) {
             outobj = JsonLdProcessor.expand(inobj, opts);
