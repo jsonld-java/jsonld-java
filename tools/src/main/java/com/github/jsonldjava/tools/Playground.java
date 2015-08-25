@@ -96,6 +96,7 @@ public class Playground {
                         return RDFFormat.class;
                     }
                 })
+                .defaultsTo(RDFFormat.NQUADS)
                 .describedAs(
                         "The output file format to use. Defaults to nquads. Valid values are: "
                                 + formats.keySet());
@@ -181,8 +182,7 @@ public class Playground {
         opts.outputForm = options.valueOf(outputForm);
         opts.format = options.has(outputFormat) ? options.valueOf(outputFormat)
                 .getDefaultMIMEType() : "application/nquads";
-        final RDFFormat sesameOutputFormat = options.has(outputFormat) ? options
-                .valueOf(outputFormat) : RDFFormat.NQUADS;
+        final RDFFormat sesameOutputFormat = options.valueOf(outputFormat);
         final RDFFormat sesameInputFormat = Rio.getParserFormatForFileName(
                 options.valueOf(inputFile).getName(), RDFFormat.JSONLD);
 
@@ -223,9 +223,10 @@ public class Playground {
             outobj = JsonLdProcessor.fromRDF(inModel, opts, new SesameJSONLDRDFParser());
         } else if ("tordf".equals(processingOptionValue)) {
             opts.useNamespaces = true;
-            outobj = JsonLdProcessor.toRDF(inobj,
-                    new SesameJSONLDTripleCallback(Rio.createWriter(sesameOutputFormat, System.out)),
-                    opts);
+            outobj = JsonLdProcessor
+                    .toRDF(inobj,
+                            new SesameJSONLDTripleCallback(Rio.createWriter(sesameOutputFormat,
+                                    System.out)), opts);
         } else if ("expand".equals(processingOptionValue)) {
             outobj = JsonLdProcessor.expand(inobj, opts);
         } else if ("compact".equals(processingOptionValue)) {
@@ -240,7 +241,7 @@ public class Playground {
         } else if ("frame".equals(processingOptionValue)) {
             if (ctxobj != null && !(ctxobj instanceof Map)) {
                 System.out
-                .println("Invalid JSON-LD syntax; a JSON-LD frame must be a single object.");
+                        .println("Invalid JSON-LD syntax; a JSON-LD frame must be a single object.");
                 parser.printHelpOn(System.out);
                 return;
             }
