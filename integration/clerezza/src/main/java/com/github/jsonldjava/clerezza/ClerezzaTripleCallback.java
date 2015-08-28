@@ -20,6 +20,8 @@ import com.github.jsonldjava.core.RDFDataset;
 
 public class ClerezzaTripleCallback implements JsonLdTripleCallback {
 
+    private static String RDF_LANG_STRING = "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString";
+    
     private MGraph mGraph = new SimpleMGraph();
     private Map<String, BNode> bNodeMap = new HashMap<String, BNode>();
 
@@ -52,10 +54,10 @@ public class ClerezzaTripleCallback implements JsonLdTripleCallback {
         if (language != null) {
             object = new PlainLiteralImpl(value, new Language(language));
         } else {
-            if (datatype != null) {
-                object = new TypedLiteralImpl(value, new UriRef(datatype));
-            } else {
+            if(datatype == null || RDF_LANG_STRING.equals(datatype)){
                 object = new PlainLiteralImpl(value);
+            } else {
+                object = new TypedLiteralImpl(value, new UriRef(datatype));
             }
         }
 
