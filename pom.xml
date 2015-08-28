@@ -78,6 +78,11 @@
 				<artifactId>rdf.core</artifactId>
 				<version>${clerezza.version}</version>
 			</dependency>
+			<dependency> <!-- used in tests only -->
+				<groupId>org.apache.clerezza</groupId>
+				<artifactId>rdf.ontologies</artifactId>
+				<version>0.12</version>
+			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -132,6 +137,12 @@
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>2.4</version>
+			</dependency>
+			<!-- OSGI component and service annotations for the clerezza integration -->
+			<dependency>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>org.apache.felix.scr.annotations</artifactId>
+				<version>1.9.12</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -262,6 +273,50 @@
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.felix</groupId>
+					<artifactId>maven-bundle-plugin</artifactId>
+					<version>2.5.4</version>
+					<inherited>true</inherited>
+					<configuration>
+						<instructions>
+							<Bundle-DocURL>https://github.com/jsonld-java/jsonld-java</Bundle-DocURL>
+							<Bundle-Vendor>JSONLD-JAVA</Bundle-Vendor>
+							<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+							<_versionpolicy>$${version;===;${@}}</_versionpolicy>
+							<_provider-policy>[$(version;===;$(@)),$(version;=+;$(@)))</_provider-policy>
+							<_consumer-policy>[$(version;===;$(@)),$(version;+;$(@)))</_consumer-policy>
+						</instructions>
+					</configuration>
+				</plugin>
+				<!-- maven-scr-plugin is used by the Clerezza Integration only -->
+				<plugin>
+					<groupId>org.apache.felix</groupId>
+					<artifactId>maven-scr-plugin</artifactId>
+					<version>1.21.0</version>
+					<!-- slf4j impl is needed when QDox inspects/loads classes that use a
+					 static field for the logger, so that those classes can be loaded. -->
+					<dependencies>
+						<dependency>
+							<groupId>org.slf4j</groupId>
+							<artifactId>slf4j-simple</artifactId>
+							<version>${slf4j.version}</version>
+						</dependency>
+					</dependencies>
+					<executions>
+						<execution>
+							<id>generate-scr-scrdescriptor</id>
+							<goals>
+								<goal>scr</goal>
+							</goals>
+							<configuration>
+								<properties>
+									<service.vendor>JSONLD-JAVA</service.vendor>
+								</properties>
+							</configuration>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
