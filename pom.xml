@@ -38,19 +38,15 @@
 
 	<modules>
 		<module>core</module>
-		<module>integration</module>
-		<module>tools</module>
 	</modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<clerezza.version>0.14</clerezza.version>
 		<httpclient.version>4.2.5</httpclient.version>
 		<jackson.version>2.3.3</jackson.version>
 		<junit.version>4.12</junit.version>
-		<rdf2go.version>5.0.1</rdf2go.version>
 		<slf4j.version>1.7.9</slf4j.version>
 	</properties>
 	<prerequisites>
