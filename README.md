@@ -389,6 +389,9 @@ Once you've `commit`ted your code, and `push`ed it into your github fork you can
 CHANGELOG
 =========
 
+### 2015-09-27
+* Move Tools, Clerezza and RDF2GO modules out to separate repositories. The Tools repository had a circular build dependency with Sesame, while the other modules are best located and managed in separate repositories
+
 ### 2015-08-25
 * Remove Sesame-2.7 module in favour of sesame-rio-jsonld for Sesame-2.8 and 4.0
 * Fix bug where parsing did not fail if content was present after the end of a full JSON top level element
