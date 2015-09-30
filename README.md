@@ -1,5 +1,3 @@
-Note: this is the documentation for the current unstable development branch. [For the stable release documentation see here](https://github.com/jsonld-java/jsonld-java/blob/v0.6.0/README.md)
-
 JSONLD-JAVA
 ===========
 
@@ -16,7 +14,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.6.1-SNAPSHOT</version>
+        <version>0.7.1-SNAPSHOT</version>
     </dependency>
 
 Code example
@@ -388,6 +386,9 @@ Once you've `commit`ted your code, and `push`ed it into your github fork you can
 
 CHANGELOG
 =========
+
+### 2015-09-30
+* Release 0.7.0
 
 ### 2015-09-27
 * Move Tools, Clerezza and RDF2GO modules out to separate repositories. The Tools repository had a circular build dependency with Sesame, while the other modules are best located and managed in separate repositories
