@@ -1,0 +1,9 @@
+{
+  "@context": {
+    "aat" : "http://vocab.getty.edu/aat/",
+    "aat_rev" : "http://vocab.getty.edu/aat/rev/"
+  }, 
+	"@id" : "aat_rev:5001065997",
+	"@type": "aat_rev:datatype",
+	"used" : "aat:300016954"
+}
