@@ -728,13 +728,7 @@ public class Context extends LinkedHashMap<String, Object> {
             final String candidate = term + ":"
                     + iri.substring(((String) termDefinition.get("@id")).length());
             // 5.4)
-            if ((compactIRI == null || compareShortestLeast(candidate, compactIRI) < 0)
-                    && (!termDefinitions.containsKey(candidate) || (iri
-                            .equals(((Map<String, Object>) termDefinitions.get(candidate))
-                                    .get("@id")) && value == null))) {
-                compactIRI = candidate;
-            }
-
+            compactIRI = _iriCompactionStep5point4(iri, value, compactIRI, candidate, termDefinitions);
         }
 
         // 6)
@@ -749,6 +743,21 @@ public class Context extends LinkedHashMap<String, Object> {
 
         // 8)
         return iri;
+    }
+
+    public static String _iriCompactionStep5point4(String iri, Object value, String compactIRI,
+            final String candidate, Map<String, Object> termDefinitions) {
+        
+        boolean condition1 = (compactIRI == null || compareShortestLeast(candidate, compactIRI) < 0);
+        
+        boolean condition2 = (!termDefinitions.containsKey(candidate) || (iri
+                .equals(((Map<String, Object>) termDefinitions.get(candidate))
+                        .get("@id")) && value == null));
+        
+        if (condition1 && condition2) {
+            compactIRI = candidate;
+        }
+        return compactIRI;
     }
 
     /**
