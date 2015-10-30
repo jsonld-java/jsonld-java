@@ -745,6 +745,9 @@ public class Context extends LinkedHashMap<String, Object> {
         return iri;
     }
 
+    /**
+     * This method is only visible for testing.
+     */
     public static String _iriCompactionStep5point4(String iri, Object value, String compactIRI,
             final String candidate, Map<String, Object> termDefinitions) {
         
