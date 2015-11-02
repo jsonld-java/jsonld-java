@@ -14,7 +14,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.7.1-SNAPSHOT</version>
+        <version>0.7.0</version>
     </dependency>
 
 Code example
