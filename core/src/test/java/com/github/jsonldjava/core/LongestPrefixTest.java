@@ -63,7 +63,7 @@ public class LongestPrefixTest {
         String toJSONLD = JsonUtils.toPrettyString(fromRDF);
         System.out.println(toJSONLD);
         
-        assertTrue("The lexicographically shortest URI was not chosen", toJSONLD.contains("aat:rev/"));
+        assertFalse("The lexicographically shortest URI was not chosen", toJSONLD.contains("aat:rev/"));
 
         final RDFDataset rdf = (RDFDataset) JsonLdProcessor.toRDF(fromRDF, options);
         System.out.println(rdf.getNamespaces());

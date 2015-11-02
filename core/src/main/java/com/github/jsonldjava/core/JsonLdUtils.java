@@ -602,7 +602,12 @@ public class JsonLdUtils {
             return -1;
         } else if (b.length() < a.length()) {
             return 1;
+        } else if (a.indexOf(":") != b.indexOf(":")){
+            // Attempt to disambiguate to get the longest prefix, 
+            // by looking for the highest position for ":"
+            return a.indexOf(":") < b.indexOf(":") ? 1 : -1;
         }
+        
         return Integer.signum(a.compareTo(b));
     }
 
