@@ -1,0 +1,8 @@
+{
+  "@context": {
+        "dbc": "http://dbpedia.org/resource/Category:",
+        "dbr": "http://dbpedia.org/resource/"
+  }, 
+	"@id" : "dbc:Food_and_drink",
+	"@type": "dbr:Food"
+}
