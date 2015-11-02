@@ -39,10 +39,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<httpclient.version>4.2.5</httpclient.version>
-		<jackson.version>2.3.3</jackson.version>
+		<httpclient.version>4.2.6</httpclient.version>
+		<jackson.version>2.3.5</jackson.version>
 		<junit.version>4.12</junit.version>
-		<slf4j.version>1.7.9</slf4j.version>
+		<slf4j.version>1.7.12</slf4j.version>
 	</properties>
 	<prerequisites>
 		<maven>3.0.0</maven>
@@ -112,7 +112,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>1.10.17</version>
+				<version>1.10.19</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
@@ -128,7 +128,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.1</version>
+					<version>3.3</version>
 					<configuration>
 						<source>1.6</source>
 						<target>1.6</target>
@@ -137,7 +137,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.4</version>
+					<version>2.6</version>
 					<executions>
 						<execution>
 							<goals>
@@ -149,7 +149,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>2.2.1</version>
+					<version>2.4</version>
 					<executions>
 						<execution>
 							<id>attach-source</id>
@@ -168,12 +168,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.17</version>
+					<version>2.19</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>animal-sniffer-maven-plugin</artifactId>
-					<version>1.13</version>
+					<version>1.14</version>
 					<executions>
 						<execution>
 							<phase>test</phase>
@@ -193,23 +193,23 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>appassembler-maven-plugin</artifactId>
-					<version>1.9</version>
+					<version>1.10</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.felix</groupId>
 					<artifactId>maven-bundle-plugin</artifactId>
-					<version>2.5.4</version>
+					<version>3.0.0</version>
 				</plugin>
 				<!-- Create code coverage reports and submit them to coveralls.io. -->
 				<plugin>
 					<groupId>org.eluder.coveralls</groupId>
 					<artifactId>coveralls-maven-plugin</artifactId>
-					<version>3.0.1</version>
+					<version>4.0.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.7.2.201409121644</version>
+					<version>0.7.5.201505241946</version>
 					<executions>
 						<execution>
 							<id>prepare-agent</id>
@@ -289,7 +289,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
-						<version>2.1.2</version>
+						<version>2.4</version>
 						<executions>
 							<execution>
 								<id>attach-sources</id>
@@ -315,7 +315,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.1</version>
+						<version>1.6</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
