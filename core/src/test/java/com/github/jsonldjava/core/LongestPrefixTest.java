@@ -43,7 +43,10 @@ public class LongestPrefixTest {
         final RDFDataset rdf = (RDFDataset) JsonLdProcessor.toRDF(context, options);
         System.out.println(rdf.getNamespaces());
         assertEquals("http://dbpedia.org/resource/", rdf.getNamespace("dbr"));
-        assertEquals("http://dbpedia.org/resource/Category:", rdf.getNamespace("dbc"));
+        // This namespace may not be persisted due to the use of expansion as the first step of the "toRDF" algorithm 
+        // http://www.w3.org/TR/json-ld-api/#deserialize-json-ld-to-rdf-algorithm
+        // Specifically, step 1 is to use the Expansion algorithm that expands the IRIs, and which will not recognise this
+        //assertEquals("http://dbpedia.org/resource/Category:", rdf.getNamespace("dbc"));
     }
 
     @Test
