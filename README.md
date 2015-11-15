@@ -387,6 +387,9 @@ Once you've `commit`ted your code, and `push`ed it into your github fork you can
 CHANGELOG
 =========
 
+### 2015-11-16
+* Bump dependencies to latest versions, particularly HTTPClient that is seeing more use on 4.5/4.4 than the 4.2 series that we have used so far
+
 ### 2015-09-30
 * Release 0.7.0
 
