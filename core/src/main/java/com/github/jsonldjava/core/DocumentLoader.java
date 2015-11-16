@@ -25,12 +25,24 @@ import com.github.jsonldjava.utils.JarCacheStorage;
 
 public class DocumentLoader {
 
+    /**
+     * Identifies a system property that can be set to "true" in order to
+     * disallow remote context loading.
+     */
+    public static final String DISALLOW_REMOTE_CONTEXT_LOADING = "com.github.jsonldjava.disallowRemoteContextLoading";
+
     public RemoteDocument loadDocument(String url) throws JsonLdError {
+        String disallowRemote = System.getProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING);
+
+        if ("true".equalsIgnoreCase(disallowRemote)) {
+            throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
+        }
+
         final RemoteDocument doc = new RemoteDocument(url, null);
         try {
             doc.setDocument(fromURL(new URL(url)));
         } catch (final Exception e) {
-            new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
+            throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
         }
         return doc;
     }
@@ -123,7 +135,7 @@ public class DocumentLoader {
                     // Uses Apache SystemDefaultHttpClient rather than
                     // DefaultHttpClient, thus the normal proxy settings for the
                     // JVM will be used
-    
+
                     final DefaultHttpClient client = new SystemDefaultHttpClient();
                     // Support compressed data
                     // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
@@ -133,8 +145,9 @@ public class DocumentLoader {
                     cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
                     cacheConfig.setMaxCacheEntries(1000);
                     // and allow caching
-                    final CachingHttpClient cachingClient = new CachingHttpClient(client, cacheConfig);
-    
+                    final CachingHttpClient cachingClient = new CachingHttpClient(client,
+                            cacheConfig);
+
                     // Wrap again with JAR cache
                     final JarCacheStorage jarCache = new JarCacheStorage();
                     result = defaultHttpClient = new CachingHttpClient(cachingClient, jarCache,

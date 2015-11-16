@@ -38,11 +38,11 @@ import org.junit.After;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+@SuppressWarnings("unchecked")
 public class DocumentLoaderTest {
 
     DocumentLoader documentLoader = new DocumentLoader();
 
-    @SuppressWarnings("unchecked")
     @Test
     public void fromURLTest0001() throws Exception {
         final URL contexttest = getClass().getResource("/custom/contexttest-0001.jsonld");
@@ -58,7 +58,6 @@ public class DocumentLoaderTest {
         assertEquals("ex:term1", term1.get("@id"));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void fromURLTest0002() throws Exception {
         final URL contexttest = getClass().getResource("/custom/contexttest-0002.jsonld");
@@ -281,4 +280,29 @@ public class DocumentLoaderTest {
         assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
     }
 
+    @Test
+    public void testDisallowRemoteContexts() throws Exception {
+        String testUrl = "http://json-ld.org/contexts/person.jsonld";
+        Object test = documentLoader.loadDocument(testUrl);
+
+        assertNotNull(
+                "Was not able to fetch from URL before testing disallow remote contexts loading",
+                test);
+
+        String disallowProperty = System
+                .getProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING);
+        try {
+            System.setProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING, "true");
+            documentLoader.loadDocument(testUrl);
+            fail("Expected exception to occur");
+        } catch (JsonLdError e) {
+            assertEquals(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, e.getType());
+        } finally {
+            if (disallowProperty == null) {
+                System.clearProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING);
+            } else {
+                System.setProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING, disallowProperty);
+            }
+        }
+    }
 }
