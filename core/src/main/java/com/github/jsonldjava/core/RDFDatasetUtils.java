@@ -252,7 +252,7 @@ public class RDFDatasetUtils {
             escape(s.getValue(), output);
             output.append(">");
         }
-        // normalization mode
+        // normalization mode 
         else if (bnode != null) {
             output.append(bnode.equals(s.getValue()) ? "_:a" : "_:z");
         }

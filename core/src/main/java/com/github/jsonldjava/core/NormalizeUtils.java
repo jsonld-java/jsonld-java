@@ -31,7 +31,7 @@ class NormalizeUtils {
         this.namer = namer;
     }
 
-    // generates unique and duplicate hashes for bnodes
+    // generates unique and duplicate hashes for bnodes 
     public Object hashBlankNodes(Collection<String> unnamed_) throws JsonLdError {
         List<String> unnamed = new ArrayList<String>(unnamed_);
         List<String> nextUnnamed = new ArrayList<String>();
