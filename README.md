@@ -389,6 +389,7 @@ CHANGELOG
 
 ### 2015-11-16
 * Bump dependencies to latest versions, particularly HTTPClient that is seeing more use on 4.5/4.4 than the 4.2 series that we have used so far
+* Performance improvements for serialisation to N-Quads by replacing string append and replace with StringBuilder
 
 ### 2015-09-30
 * Release 0.7.0
