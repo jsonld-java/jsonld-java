@@ -115,34 +115,34 @@ public class DocumentLoader {
     }
 
     protected static HttpClient getDefaultHttpClient() {
-        final HttpClient result = defaultHttpClient;
-        if (result != null) {
-            return result;
-        }
-        synchronized (DocumentLoader.class) {
-            if (defaultHttpClient == null) {
-                // Uses Apache SystemDefaultHttpClient rather than
-                // DefaultHttpClient, thus the normal proxy settings for the
-                // JVM will be used
-
-                final DefaultHttpClient client = new SystemDefaultHttpClient();
-                // Support compressed data
-                // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
-                client.addRequestInterceptor(new RequestAcceptEncoding());
-                client.addResponseInterceptor(new ResponseContentEncoding());
-                final CacheConfig cacheConfig = new CacheConfig();
-                cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
-                cacheConfig.setMaxCacheEntries(1000);
-                // and allow caching
-                final CachingHttpClient cachingClient = new CachingHttpClient(client, cacheConfig);
-
-                // Wrap again with JAR cache
-                final JarCacheStorage jarCache = new JarCacheStorage();
-                defaultHttpClient = new CachingHttpClient(cachingClient, jarCache,
-                        jarCache.getCacheConfig());
+        HttpClient result = defaultHttpClient;
+        if (result == null) {
+            synchronized (DocumentLoader.class) {
+                result = defaultHttpClient;
+                if (result == null) {
+                    // Uses Apache SystemDefaultHttpClient rather than
+                    // DefaultHttpClient, thus the normal proxy settings for the
+                    // JVM will be used
+    
+                    final DefaultHttpClient client = new SystemDefaultHttpClient();
+                    // Support compressed data
+                    // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
+                    client.addRequestInterceptor(new RequestAcceptEncoding());
+                    client.addResponseInterceptor(new ResponseContentEncoding());
+                    final CacheConfig cacheConfig = new CacheConfig();
+                    cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
+                    cacheConfig.setMaxCacheEntries(1000);
+                    // and allow caching
+                    final CachingHttpClient cachingClient = new CachingHttpClient(client, cacheConfig);
+    
+                    // Wrap again with JAR cache
+                    final JarCacheStorage jarCache = new JarCacheStorage();
+                    result = defaultHttpClient = new CachingHttpClient(cachingClient, jarCache,
+                            jarCache.getCacheConfig());
+                }
             }
-            return defaultHttpClient;
         }
+        return result;
     }
 
     public HttpClient getHttpClient() {
