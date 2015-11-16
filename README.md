@@ -126,7 +126,16 @@ normally be set correctly. If not, try:
             Thread.currentThread().setContextClassLoader(oldContextCL);
         }
 
+To disable all remote document fetching, when using the default DocumentLoader, set the 
+following Java System Property to "true" using:
 
+    System.setProperty("com.github.jsonldjava.disallowRemoteContextLoading", "true");
+
+You can also use the constant provided in DocumentLoader for the same purpose:
+
+    System.setProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING, "true");
+
+Note that if you override DocumentLoader you should also support this setting for consistency.
 
 ### Customizing the Apache HttpClient
 
@@ -390,6 +399,7 @@ CHANGELOG
 ### 2015-11-16
 * Bump dependencies to latest versions, particularly HTTPClient that is seeing more use on 4.5/4.4 than the 4.2 series that we have used so far
 * Performance improvements for serialisation to N-Quads by replacing string append and replace with StringBuilder
+* Support setting a system property, com.github.jsonldjava.disallowRemoteContextLoading, to "true" to disable remote context loading.
 
 ### 2015-09-30
 * Release 0.7.0
