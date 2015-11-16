@@ -30,51 +30,78 @@ public class LongestPrefixTest {
 
     @Test
     public void fromRdfWithNamespaceLexicographicallyShortestChosen() throws Exception {
-        
+
         RDFDataset inputRdf = new RDFDataset();
         inputRdf.setNamespace("aat", "http://vocab.getty.edu/aat/");
         inputRdf.setNamespace("aat_rev", "http://vocab.getty.edu/aat/rev/");
-        
-        inputRdf.addTriple("http://vocab.getty.edu/aat/rev/5001065997", JsonLdConsts.RDF_TYPE, "http://vocab.getty.edu/aat/datatype");
-        
+
+        inputRdf.addTriple("http://vocab.getty.edu/aat/rev/5001065997", JsonLdConsts.RDF_TYPE,
+                "http://vocab.getty.edu/aat/datatype");
+
         final JsonLdOptions options = new JsonLdOptions();
         options.useNamespaces = true;
-        
-        Object fromRDF = JsonLdProcessor.compact(new JsonLdApi(options).fromRDF(inputRdf),inputRdf.getContext(), options);
-        
+
+        Object fromRDF = JsonLdProcessor.compact(new JsonLdApi(options).fromRDF(inputRdf),
+                inputRdf.getContext(), options);
+
         final RDFDataset rdf = (RDFDataset) JsonLdProcessor.toRDF(fromRDF, options);
         System.out.println(rdf.getNamespaces());
         assertEquals("http://vocab.getty.edu/aat/", rdf.getNamespace("aat"));
         assertEquals("http://vocab.getty.edu/aat/rev/", rdf.getNamespace("aat_rev"));
-        
+
         String toJSONLD = JsonUtils.toPrettyString(fromRDF);
         System.out.println(toJSONLD);
-        
-        assertTrue("The lexicographically shortest URI was not chosen", toJSONLD.contains("aat:rev/"));
+
+        assertTrue("The lexicographically shortest URI was not chosen",
+                toJSONLD.contains("aat:rev/"));
     }
 
     @Test
     public void fromRdfWithNamespaceLexicographicallyShortestChosen2() throws Exception {
-        
+
         RDFDataset inputRdf = new RDFDataset();
         inputRdf.setNamespace("aat", "http://vocab.getty.edu/aat/");
         inputRdf.setNamespace("aatrev", "http://vocab.getty.edu/aat/rev/");
-        
-        inputRdf.addTriple("http://vocab.getty.edu/aat/rev/5001065997", JsonLdConsts.RDF_TYPE, "http://vocab.getty.edu/aat/datatype");
-        
+
+        inputRdf.addTriple("http://vocab.getty.edu/aat/rev/5001065997", JsonLdConsts.RDF_TYPE,
+                "http://vocab.getty.edu/aat/datatype");
+
         final JsonLdOptions options = new JsonLdOptions();
         options.useNamespaces = true;
-        
-        Object fromRDF = JsonLdProcessor.compact(new JsonLdApi(options).fromRDF(inputRdf),inputRdf.getContext(), options);
-        
+
+        Object fromRDF = JsonLdProcessor.compact(new JsonLdApi(options).fromRDF(inputRdf),
+                inputRdf.getContext(), options);
+
         final RDFDataset rdf = (RDFDataset) JsonLdProcessor.toRDF(fromRDF, options);
         System.out.println(rdf.getNamespaces());
         assertEquals("http://vocab.getty.edu/aat/", rdf.getNamespace("aat"));
         assertEquals("http://vocab.getty.edu/aat/rev/", rdf.getNamespace("aatrev"));
-        
+
         String toJSONLD = JsonUtils.toPrettyString(fromRDF);
         System.out.println(toJSONLD);
-        
-        assertFalse("The lexicographically shortest URI was not chosen", toJSONLD.contains("aat:rev/"));
+
+        assertFalse("The lexicographically shortest URI was not chosen",
+                toJSONLD.contains("aat:rev/"));
     }
+
+    @Test
+    public void prefixUsedToShortenPredicate() throws Exception {
+        final RDFDataset inputRdf = new RDFDataset();
+        inputRdf.setNamespace("ex", "http://www.a.com/foo/");
+        inputRdf.addTriple("http://www.a.com/foo/s", "http://www.a.com/foo/p",
+                "http://www.a.com/foo/o");
+        assertEquals("http://www.a.com/foo/", inputRdf.getNamespace("ex"));
+
+        final JsonLdOptions options = new JsonLdOptions();
+        options.useNamespaces = true;
+
+        Object fromRDF = JsonLdProcessor.compact(new JsonLdApi(options).fromRDF(inputRdf),
+                inputRdf.getContext(), options);
+        String toJSONLD = JsonUtils.toPrettyString(fromRDF);
+        System.out.println(toJSONLD);
+
+        assertFalse("The lexicographically shortest URI was not chosen",
+                toJSONLD.contains("http://www.a.com/foo/p"));
+    }
+
 }
