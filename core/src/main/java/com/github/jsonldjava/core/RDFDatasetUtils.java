@@ -215,6 +215,11 @@ public class RDFDatasetUtils {
     }
 
     public static String toNQuads(RDFDataset dataset) {
+        StringBuilder output = new StringBuilder(256);
+        toNQuads(dataset, output);
+        return output.toString();
+    }
+    public static void toNQuads(RDFDataset dataset, StringBuilder output) {
         final List<String> quads = new ArrayList<String>();
         for (String graphName : dataset.graphNames()) {
             final List<RDFDataset.Quad> triples = dataset.getQuads(graphName);
@@ -226,77 +231,90 @@ public class RDFDatasetUtils {
             }
         }
         Collections.sort(quads);
-        String rval = "";
         for (final String quad : quads) {
-            rval += quad;
+            output.append(quad);
         }
-        return rval;
     }
 
     static String toNQuad(RDFDataset.Quad triple, String graphName, String bnode) {
+        StringBuilder output = new StringBuilder(256);
+        toNQuad(triple, graphName, bnode, output);
+        return output.toString();
+    }
+    static void toNQuad(RDFDataset.Quad triple, String graphName, String bnode, StringBuilder output) {
         final RDFDataset.Node s = triple.getSubject();
         final RDFDataset.Node p = triple.getPredicate();
         final RDFDataset.Node o = triple.getObject();
 
-        String quad = "";
-
         // subject is an IRI or bnode
         if (s.isIRI()) {
-            quad += "<" + escape(s.getValue()) + ">";
+            output.append("<");
+            escape(s.getValue(), output);
+            output.append(">");
         }
         // normalization mode
         else if (bnode != null) {
-            quad += bnode.equals(s.getValue()) ? "_:a" : "_:z";
+            output.append(bnode.equals(s.getValue()) ? "_:a" : "_:z");
         }
         // normal mode
         else {
-            quad += s.getValue();
+            output.append(s.getValue());
         }
 
         if (p.isIRI()) {
-            quad += " <" + escape(p.getValue()) + "> ";
+            output.append(" <");
+            escape(p.getValue(), output);
+            output.append("> ");
         }
         // otherwise it must be a bnode (TODO: can we only allow this if the
         // flag is set in options?)
         else {
-            quad += " " + escape(p.getValue()) + " ";
+            output.append(" ");
+            escape(p.getValue(), output);
+            output.append(" ");
         }
 
         // object is IRI, bnode or literal
         if (o.isIRI()) {
-            quad += "<" + escape(o.getValue()) + ">";
+            output.append("<");
+            escape(o.getValue(), output);
+            output.append(">");
         } else if (o.isBlankNode()) {
             // normalization mode
             if (bnode != null) {
-                quad += bnode.equals(o.getValue()) ? "_:a" : "_:z";
+                output.append(bnode.equals(o.getValue()) ? "_:a" : "_:z");
             }
             // normal mode
             else {
-                quad += o.getValue();
+                output.append(o.getValue());
             }
         } else {
-            final String escaped = escape(o.getValue());
-            quad += "\"" + escaped + "\"";
+            output.append("\"");
+            escape(o.getValue(), output);
+            output.append("\"");
             if (RDF_LANGSTRING.equals(o.getDatatype())) {
-                quad += "@" + o.getLanguage();
+                output.append("@").append(o.getLanguage());
             } else if (!XSD_STRING.equals(o.getDatatype())) {
-                quad += "^^<" + escape(o.getDatatype()) + ">";
+                output.append("^^<");
+                escape(o.getDatatype(), output);
+                output.append(">");
             }
         }
 
         // graph
         if (graphName != null) {
             if (graphName.indexOf("_:") != 0) {
-                quad += " <" + escape(graphName) + ">";
+                output.append(" <");
+                escape(graphName, output);
+                output.append(">");
             } else if (bnode != null) {
-                quad += " _:g";
+                output.append(" _:g");
             } else {
-                quad += " " + graphName;
+                output.append(" ").append(graphName);
             }
         }
 
-        quad += " .\n";
-        return quad;
+        output.append(" .\n");
     }
 
     static String toNQuad(RDFDataset.Quad triple, String graphName) {
@@ -373,8 +391,24 @@ public class RDFDatasetUtils {
         return rval;
     }
 
+    /**
+     * Escapes the given string according to the N-Quads escape rules
+     * @param str The string to escape
+     * @return The escaped string
+     * @deprecated Use {@link #escape(String, StringBuilder)} instead.
+     */
     public static String escape(String str) {
-        String rval = "";
+        StringBuilder rval = new StringBuilder();
+        escape(str, rval);
+        return rval.toString();
+    }
+    
+    /**
+     * Escapes the given string according to the N-Quads escape rules
+     * @param str The string to escape
+     * @param rval The {@link StringBuilder} to append to.
+     */
+    public static void escape(String str, StringBuilder rval) {
         for (int i = 0; i < str.length(); i++) {
             final char hi = str.charAt(i);
             if (hi <= 0x8 || hi == 0xB || hi == 0xC || (hi >= 0xE && hi <= 0x1F)
@@ -389,46 +423,46 @@ public class RDFDatasetUtils {
                     // fall outside these ranges, this is one example from the
                     // json-ld tests
                             )) {
-                rval += String.format("\\u%04x", (int) hi);
+                rval.append(String.format("\\u%04x", (int) hi));
             } else if (Character.isHighSurrogate(hi)) {
                 final char lo = str.charAt(++i);
                 final int c = (hi << 10) + lo + (0x10000 - (0xD800 << 10) - 0xDC00);
-                rval += String.format("\\U%08x", c);
+                rval.append(String.format("\\U%08x", c));
             } else {
                 switch (hi) {
                 case '\b':
-                    rval += "\\b";
+                    rval.append("\\b");
                     break;
                 case '\n':
-                    rval += "\\n";
+                    rval.append("\\n");
                     break;
                 case '\t':
-                    rval += "\\t";
+                    rval.append("\\t");
                     break;
                 case '\f':
-                    rval += "\\f";
+                    rval.append("\\f");
                     break;
                 case '\r':
-                    rval += "\\r";
+                    rval.append("\\r");
                     break;
                     // case '\'':
                     // rval += "\\'";
                     // break;
                 case '\"':
-                    rval += "\\\"";
+                    rval.append("\\\"");
                     // rval += "\\u0022";
                     break;
                 case '\\':
-                    rval += "\\\\";
+                    rval.append("\\\\");
                     break;
                 default:
                     // just put the char as is
-                    rval += hi;
+                    rval.append(hi);
                     break;
                 }
             }
         }
-        return rval;
+        //return rval;
     }
 
     private static class Regex {

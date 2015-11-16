@@ -119,21 +119,21 @@ class NormalizeUtils {
                             // handle output format
                             if (options.format != null) {
                                 if ("application/nquads".equals(options.format)) {
-                                    String rval = "";
+                                    StringBuilder rval = new StringBuilder();
                                     for (final String n : normalized) {
-                                        rval += n;
+                                        rval.append(n);
                                     }
-                                    return rval;
+                                    return rval.toString();
                                 } else {
                                     throw new JsonLdError(JsonLdError.Error.UNKNOWN_FORMAT,
                                             options.format);
                                 }
                             }
-                            String rval = "";
+                            StringBuilder rval = new StringBuilder();
                             for (final String n : normalized) {
-                                rval += n;
+                                rval.append(n);
                             }
-                            return parseNQuads(rval);
+                            return parseNQuads(rval.toString());
                         }
 
                         // name each group member
