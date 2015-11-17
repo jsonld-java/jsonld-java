@@ -27,12 +27,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.cache.CacheResponseStatus;
+import org.apache.http.client.cache.HttpCacheContext;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.SystemDefaultHttpClient;
-import org.apache.http.impl.client.cache.CachingHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Test;
@@ -110,17 +110,16 @@ public class DocumentLoaderTest {
 
         // Now try to get it again and ensure it is
         // cached
-        final HttpClient client = new CachingHttpClient(documentLoader.getHttpClient());
+        final HttpClient client = documentLoader.getHttpClient();
         final HttpUriRequest get = new HttpGet(url.toURI());
         get.setHeader("Accept", DocumentLoader.ACCEPT_HEADER);
-        final HttpContext localContext = new BasicHttpContext();
+        final HttpCacheContext localContext = HttpCacheContext.create();
         final HttpResponse respo = client.execute(get, localContext);
         EntityUtils.consume(respo.getEntity());
 
         // Check cache status
         // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/caching.html
-        final CacheResponseStatus responseStatus = (CacheResponseStatus) localContext
-                .getAttribute(CachingHttpClient.CACHE_RESPONSE_STATUS);
+        final CacheResponseStatus responseStatus = localContext.getCacheResponseStatus();
         assertFalse(CacheResponseStatus.CACHE_MISS.equals(responseStatus));
     }
 
@@ -152,10 +151,10 @@ public class DocumentLoaderTest {
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
-    protected HttpClient fakeHttpClient(ArgumentCaptor<HttpUriRequest> httpRequest)
+    protected CloseableHttpClient fakeHttpClient(ArgumentCaptor<HttpUriRequest> httpRequest)
             throws IllegalStateException, IOException {
-        final HttpClient httpClient = mock(HttpClient.class);
-        final HttpResponse fakeResponse = mock(HttpResponse.class);
+        final CloseableHttpClient httpClient = mock(CloseableHttpClient.class);
+        final CloseableHttpResponse fakeResponse = mock(CloseableHttpResponse.class);
         final StatusLine statusCode = mock(StatusLine.class);
         when(statusCode.getStatusCode()).thenReturn(200);
         when(fakeResponse.getStatusLine()).thenReturn(statusCode);

@@ -6,16 +6,14 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.RequestAcceptEncoding;
 import org.apache.http.client.protocol.ResponseContentEncoding;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.SystemDefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
-import org.apache.http.impl.client.cache.CachingHttpClient;
+import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -52,8 +50,8 @@ public class DocumentLoader {
      */
     public static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
 
-    protected static volatile CachingHttpClient defaultHttpClient;
-    private volatile HttpClient httpClient;
+    protected static volatile CloseableHttpClient defaultHttpClient;
+    private volatile CloseableHttpClient httpClient;
 
     /**
      * Returns a Map, List, or String containing the contents of the JSON
@@ -118,54 +116,55 @@ public class DocumentLoader {
         // or whatever is available
         request.addHeader("Accept", ACCEPT_HEADER);
 
-        final HttpResponse response = getHttpClient().execute(request);
+        final CloseableHttpResponse response = getHttpClient().execute(request);
         final int status = response.getStatusLine().getStatusCode();
         if (status != 200 && status != 203) {
+            response.close();
             throw new IOException("Can't retrieve " + url + ", status code: " + status);
         }
         return response.getEntity().getContent();
     }
 
-    protected static HttpClient getDefaultHttpClient() {
-        HttpClient result = defaultHttpClient;
+    protected static CloseableHttpClient getDefaultHttpClient() {
+        CloseableHttpClient result = defaultHttpClient;
         if (result == null) {
             synchronized (DocumentLoader.class) {
                 result = defaultHttpClient;
                 if (result == null) {
-                    // Uses Apache SystemDefaultHttpClient rather than
-                    // DefaultHttpClient, thus the normal proxy settings for the
-                    // JVM will be used
-
-                    final DefaultHttpClient client = new SystemDefaultHttpClient();
-                    // Support compressed data
-                    // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
-                    client.addRequestInterceptor(new RequestAcceptEncoding());
-                    client.addResponseInterceptor(new ResponseContentEncoding());
-                    final CacheConfig cacheConfig = new CacheConfig();
-                    cacheConfig.setMaxObjectSize(1024 * 128); // 128 kB
-                    cacheConfig.setMaxCacheEntries(1000);
-                    // and allow caching
-                    final CachingHttpClient cachingClient = new CachingHttpClient(client,
-                            cacheConfig);
-
-                    // Wrap again with JAR cache
-                    final JarCacheStorage jarCache = new JarCacheStorage();
-                    result = defaultHttpClient = new CachingHttpClient(cachingClient, jarCache,
-                            jarCache.getCacheConfig());
+                    result = defaultHttpClient = createDefaultHttpClient();
                 }
             }
         }
         return result;
     }
 
-    public HttpClient getHttpClient() {
+    protected static CloseableHttpClient createDefaultHttpClient() {
+        return CachingHttpClientBuilder
+                .create()
+                // allow caching
+                .setCacheConfig(
+                        CacheConfig
+                        .custom()
+                        .setMaxCacheEntries(1000)
+                        .setMaxObjectSize(1024 * 128).build())
+                // TODO: enable wrapping with JAR cache: .setHttpCacheStorage(new JarCacheStorage())
+                // Support compressed data
+                // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
+                .addInterceptorFirst(new RequestAcceptEncoding())
+                .addInterceptorFirst(new ResponseContentEncoding())
+                // use system defaults for proxy etc.
+                .useSystemProperties()
+                .build();
+    }
+
+    public CloseableHttpClient getHttpClient() {
         if (httpClient == null) {
             return getDefaultHttpClient();
         }
         return httpClient;
     }
 
-    public void setHttpClient(HttpClient nextHttpClient) {
+    public void setHttpClient(CloseableHttpClient nextHttpClient) {
         httpClient = nextHttpClient;
     }
 }
