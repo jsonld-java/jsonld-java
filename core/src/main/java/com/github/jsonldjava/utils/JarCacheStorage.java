@@ -51,6 +51,16 @@ public class JarCacheStorage implements HttpCacheStorage {
      */
     private HttpCacheStorage delegate;
 
+    ObjectMapper mapper = new ObjectMapper();
+
+    /**
+     * Map from uri of jarcache.json (e.g. jar://blab.jar!jarcache.json) to a
+     * SoftReference to its content as JsonNode.
+     *
+     * @see #getJarCache(URL)
+     */
+    protected ConcurrentMap<URI, SoftReference<JsonNode>> jarCaches = new ConcurrentHashMap<URI, SoftReference<JsonNode>>();
+
     public ClassLoader getClassLoader() {
         if (classLoader != null) {
             return classLoader;
@@ -102,8 +112,6 @@ public class JarCacheStorage implements HttpCacheStorage {
         delegate.putEntry(key, entry);
     }
 
-    ObjectMapper mapper = new ObjectMapper();
-
     @Override
     public HttpCacheEntry getEntry(String key) throws IOException {
         log.trace("Requesting " + key);
@@ -150,14 +158,6 @@ public class JarCacheStorage implements HttpCacheStorage {
             return ClassLoader.getSystemResources(JARCACHE_JSON);
         }
     }
-
-    /**
-     * Map from uri of jarcache.json (e.g. jar://blab.jar!jarcache.json) to a
-     * SoftReference to its content as JsonNode.
-     *
-     * @see #getJarCache(URL)
-     */
-    protected ConcurrentMap<URI, SoftReference<JsonNode>> jarCaches = new ConcurrentHashMap<URI, SoftReference<JsonNode>>();
 
     protected JsonNode getJarCache(URL url) throws IOException, JsonProcessingException {
 
