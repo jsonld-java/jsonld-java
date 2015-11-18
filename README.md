@@ -142,7 +142,7 @@ Note that if you override DocumentLoader you should also support this setting fo
 To customize the HTTP behaviour (e.g. to disable the cache or provide
 [authentication
 credentials)](https://hc.apache.org/httpcomponents-client-ga/tutorial/html/authentication.html),
-you may want to create and configure your own `HttpClient` instance, which can
+you may want to create and configure your own `CloseableHttpClient` instance, which can
 be passed to a `DocumentLoader` instance using `setHttpClient()`. This document
 loader can then be inserted into `JsonLdOptions` using `setDocumentLoader()`
 and passed as an argument to `JsonLdProcessor` arguments.  
@@ -158,8 +158,24 @@ by HTTP Basic Auth):
                 new AuthScope("localhost", 443),
                 new UsernamePasswordCredentials("username", "password"));
         
-        DefaultHttpClient httpClient = new SystemDefaultHttpClient();
-        httpClient.setCredentialsProvider(credsProvider);
+        CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
+                .setMaxObjectSize(1024 * 128).build();
+
+        CloseableHttpClient httpClient = CachingHttpClientBuilder
+                .create()
+                // allow caching
+                .setCacheConfig(cacheConfig)
+                // Wrap the local JarCacheStorage around a BasicHttpCacheStorage
+                .setHttpCacheStorage(
+                        new JarCacheStorage(null, cacheConfig, new BasicHttpCacheStorage(
+                                cacheConfig)))....
+		
+		// Add in the credentials provider
+		.setDefaultCredentialsProvider(credsProvider);
+
+
+		// When you are finished setting the properties, call build
+		.build();
 
         documentLoader.setHttpClient(httpClient);
         
@@ -167,14 +183,6 @@ by HTTP Basic Auth):
         options.setDocumentLoader(documentLoader);
         // .. and any other options        
         Object rdf = JsonLdProcessor.toRDF(input, options);
-
-Note that if you override the DocumentLoader HTTP Client, this would also
-disable the JAR Cache (see above), unless reinitiated:
-
-	JarCacheStorage jarCache = new JarCacheStorage();
-	httpClient = new CachingHttpClient(httpClient, jarCache, jarCache.getCacheConfig());
-        documentLoader.setHttpClient(httpClient);
-
 
 RDF implementation specific code
 --------------------------------
@@ -395,6 +403,11 @@ Once you've `commit`ted your code, and `push`ed it into your github fork you can
 
 CHANGELOG
 =========
+
+### 2015-11-19
+* Replace deprecated HTTPClient code with the new builder pattern
+* Chain JarCacheStorage to any other HttpCacheStorage to simplify the way local caching is performed
+* Bump version to 0.8.0-SNAPSHOT as some interface method parameters changed, particularly, DocumentLoader.setHttpClient changed to require CloseableHttpClient that was introduced in HttpClient-4.3
 
 ### 2015-11-16
 * Bump dependencies to latest versions, particularly HTTPClient that is seeing more use on 4.5/4.4 than the 4.2 series that we have used so far
