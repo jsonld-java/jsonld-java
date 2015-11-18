@@ -117,12 +117,17 @@ public class DocumentLoader {
         request.addHeader("Accept", ACCEPT_HEADER);
 
         final CloseableHttpResponse response = getHttpClient().execute(request);
-        final int status = response.getStatusLine().getStatusCode();
-        if (status != 200 && status != 203) {
-            response.close();
-            throw new IOException("Can't retrieve " + url + ", status code: " + status);
+        try {
+            final int status = response.getStatusLine().getStatusCode();
+            if (status != 200 && status != 203) {
+                throw new IOException("Can't retrieve " + url + ", status code: " + status);
+            }
+            return response.getEntity().getContent();
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return response.getEntity().getContent();
     }
 
     protected static CloseableHttpClient getDefaultHttpClient() {
@@ -143,18 +148,16 @@ public class DocumentLoader {
                 .create()
                 // allow caching
                 .setCacheConfig(
-                        CacheConfig
-                        .custom()
-                        .setMaxCacheEntries(1000)
-                        .setMaxObjectSize(1024 * 128).build())
-                // TODO: enable wrapping with JAR cache: .setHttpCacheStorage(new JarCacheStorage())
+                        CacheConfig.custom().setMaxCacheEntries(1000).setMaxObjectSize(1024 * 128)
+                                .build())
+                // TODO: enable wrapping with JAR cache:
+                .setHttpCacheStorage(new JarCacheStorage())
                 // Support compressed data
                 // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
                 .addInterceptorFirst(new RequestAcceptEncoding())
                 .addInterceptorFirst(new ResponseContentEncoding())
                 // use system defaults for proxy etc.
-                .useSystemProperties()
-                .build();
+                .useSystemProperties().build();
     }
 
     public CloseableHttpClient getHttpClient() {
