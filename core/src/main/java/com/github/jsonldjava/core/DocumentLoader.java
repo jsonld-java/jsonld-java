@@ -12,6 +12,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.RequestAcceptEncoding;
 import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
 
@@ -144,20 +145,27 @@ public class DocumentLoader {
     }
 
     protected static CloseableHttpClient createDefaultHttpClient() {
-        return CachingHttpClientBuilder
+        // Common CacheConfig for both the JarCacheStorage and the underlying
+        // BasicHttpCacheStorage
+        final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
+                .setMaxObjectSize(1024 * 128).build();
+
+        CloseableHttpClient result = CachingHttpClientBuilder
                 .create()
                 // allow caching
-                .setCacheConfig(
-                        CacheConfig.custom().setMaxCacheEntries(1000).setMaxObjectSize(1024 * 128)
-                                .build())
-                // TODO: enable wrapping with JAR cache:
-                .setHttpCacheStorage(new JarCacheStorage())
+                .setCacheConfig(cacheConfig)
+                // Wrap the local JarCacheStorage around a BasicHttpCacheStorage
+                .setHttpCacheStorage(
+                        new JarCacheStorage(null, cacheConfig, new BasicHttpCacheStorage(
+                                cacheConfig)))
                 // Support compressed data
                 // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
                 .addInterceptorFirst(new RequestAcceptEncoding())
                 .addInterceptorFirst(new ResponseContentEncoding())
                 // use system defaults for proxy etc.
                 .useSystemProperties().build();
+
+        return result;
     }
 
     public CloseableHttpClient getHttpClient() {
