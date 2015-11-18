@@ -2,6 +2,7 @@ package com.github.jsonldjava.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
@@ -27,12 +28,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.cache.CacheResponseStatus;
+import org.apache.http.client.cache.HttpCacheContext;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.SystemDefaultHttpClient;
-import org.apache.http.impl.client.cache.CachingHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Test;
@@ -110,18 +111,18 @@ public class DocumentLoaderTest {
 
         // Now try to get it again and ensure it is
         // cached
-        final HttpClient client = new CachingHttpClient(documentLoader.getHttpClient());
-        final HttpUriRequest get = new HttpGet(url.toURI());
-        get.setHeader("Accept", DocumentLoader.ACCEPT_HEADER);
-        final HttpContext localContext = new BasicHttpContext();
-        final HttpResponse respo = client.execute(get, localContext);
-        EntityUtils.consume(respo.getEntity());
+        final HttpClient clientCached = documentLoader.getHttpClient();
+        final HttpUriRequest getCached = new HttpGet(url.toURI());
+        getCached.setHeader("Accept", DocumentLoader.ACCEPT_HEADER);
+        final HttpCacheContext localContextCached = HttpCacheContext.create();
+        final HttpResponse respoCached = clientCached.execute(getCached, localContextCached);
+        EntityUtils.consume(respoCached.getEntity());
 
         // Check cache status
         // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/caching.html
-        final CacheResponseStatus responseStatus = (CacheResponseStatus) localContext
-                .getAttribute(CachingHttpClient.CACHE_RESPONSE_STATUS);
-        assertFalse(CacheResponseStatus.CACHE_MISS.equals(responseStatus));
+        final CacheResponseStatus responseStatusCached = localContextCached
+                .getCacheResponseStatus();
+        assertNotEquals(CacheResponseStatus.CACHE_MISS, responseStatusCached);
     }
 
     @Test
@@ -152,10 +153,10 @@ public class DocumentLoaderTest {
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
-    protected HttpClient fakeHttpClient(ArgumentCaptor<HttpUriRequest> httpRequest)
+    protected CloseableHttpClient fakeHttpClient(ArgumentCaptor<HttpUriRequest> httpRequest)
             throws IllegalStateException, IOException {
-        final HttpClient httpClient = mock(HttpClient.class);
-        final HttpResponse fakeResponse = mock(HttpResponse.class);
+        final CloseableHttpClient httpClient = mock(CloseableHttpClient.class);
+        final CloseableHttpResponse fakeResponse = mock(CloseableHttpResponse.class);
         final StatusLine statusCode = mock(StatusLine.class);
         when(statusCode.getStatusCode()).thenReturn(200);
         when(fakeResponse.getStatusLine()).thenReturn(statusCode);
