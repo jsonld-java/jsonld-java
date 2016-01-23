@@ -184,13 +184,6 @@ by HTTP Basic Auth):
         // .. and any other options        
         Object rdf = JsonLdProcessor.toRDF(input, options);
 
-RDF implementation specific code
---------------------------------
-
-All code specific to various RDF implementations are stored in the [integration modules](./integration). Readmes for how to use these modules should be present in their respective folders.
-
-The implementation specific integration classes for both Sesame and Jena have been moved into their respective codebases.
-
 PLAYGROUND
 ----------
 
