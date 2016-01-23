@@ -280,7 +280,7 @@ Here is the basic outline for what your module's pom.xml should look like
 		<parent>
 			<artifactId>jsonld-java-integration</artifactId>
 			<groupId>com.github.jsonld-java-parent</groupId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.8.0-SNAPSHOT</version>
 		</parent>
 		<modelVersion>4.0.0</modelVersion>
 		<artifactId>jsonld-java-{your module}</artifactId>
@@ -291,6 +291,7 @@ Here is the basic outline for what your module's pom.xml should look like
 		<developers>
 			<developer>
 				<name>{YOU}</name>
+				<email>{YOUR EMAIL ADDRESS}</email>
 			</developer>
 		</developers>
 
@@ -300,7 +301,7 @@ Here is the basic outline for what your module's pom.xml should look like
 				<artifactId>jsonld-java</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type> 
-					 <scope>compile</scope> 
+				<scope>compile</scope> 
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
@@ -320,7 +321,7 @@ Here is the basic outline for what your module's pom.xml should look like
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
-		</project>
+	</project>
 
 Make sure you edit the following:
  * `project/artifactId` : set this to `jsonld-java-{module id}`, where `{module id}` usually represents the RDF library you're integrating (e.g. `jsonld-java-jena`)
@@ -375,8 +376,8 @@ Integrate with your framework
 -----------------------------
 Your framework might have its own system of readers and writers, where
 you should register JSON-LD as a supported format. Remember that here
-the "parse" direction is opposite of above, a 'reader' in e.g. Jena will
-be a class that can parse JSON-LD and populate a Jena model.
+the "parse" direction is opposite of above, a 'reader' may be a class 
+that can parse JSON-LD and populate an RDF Graph.
 
 Write Tests
 -----------
@@ -393,6 +394,7 @@ Submit your module
 
 Once you've `commit`ted your code, and `push`ed it into your github fork you can issue a [Pull Request](https://help.github.com/articles/using-pull-requests) so that we can add a reference to your module in this README file.
 
+Alternatively, we can also host your repository in the jsonld-java organisation to give it more visibility.
 
 CHANGELOG
 =========
