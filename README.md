@@ -14,7 +14,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.7.0</version>
+        <version>0.8.0</version>
     </dependency>
 
 Code example
@@ -280,7 +280,7 @@ Here is the basic outline for what your module's pom.xml should look like
 		<parent>
 			<artifactId>jsonld-java-integration</artifactId>
 			<groupId>com.github.jsonld-java-parent</groupId>
-			<version>0.8.0-SNAPSHOT</version>
+			<version>0.8.1-SNAPSHOT</version>
 		</parent>
 		<modelVersion>4.0.0</modelVersion>
 		<artifactId>jsonld-java-{your module}</artifactId>
@@ -398,6 +398,9 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 
 CHANGELOG
 =========
+
+### 2016-02-10
+* Release version 0.8.0
 
 ### 2015-11-19
 * Replace deprecated HTTPClient code with the new builder pattern
