@@ -187,7 +187,7 @@ by HTTP Basic Auth):
 PLAYGROUND
 ----------
 
-The jsonld-java-tools repository contains a simple application which provides command line access to JSON-LD functions
+The [jsonld-java-tools](https://github.com/jsonld-java/jsonld-java-tools) repository contains a simple application which provides command line access to JSON-LD functions
 
 ### Initial clone and setup
 
