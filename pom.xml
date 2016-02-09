@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.jsonld-java</groupId>
 	<artifactId>jsonld-java-parent</artifactId>
-	<version>0.8.0</version>
+	<version>0.8.1-SNAPSHOT</version>
 	<name>JSONLD Java :: Parent</name>
 	<description>Json-LD Java Parent POM</description>
 	<packaging>pom</packaging>
