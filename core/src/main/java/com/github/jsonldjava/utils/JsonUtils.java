@@ -254,6 +254,15 @@ public class JsonUtils {
         jw.writeObject(jsonObject);
     }
 
+    /**
+     * Attempts to open an {@link InputStream} that will contain the content of the URL, as resolved by the given HTTP Client.
+     * 
+     * If the URL is not an HTTP or HTTPS URL it is resolved using the default {@link java.net.URL#openStream()} method.
+     * @param url The URL to resolve.
+     * @param httpClient The CloseableHttpClient to use to resolve the URL.
+     * @return An InputStream containing the contents of the resolved URL.
+     * @throws IOException If there are any IO exceptions while resolving the URL.
+     */
     public static InputStream openStreamForURL(java.net.URL url, CloseableHttpClient httpClient) throws IOException {
         final String protocol = url.getProtocol();
         if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
