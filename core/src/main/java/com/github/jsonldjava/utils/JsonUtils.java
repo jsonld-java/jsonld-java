@@ -173,7 +173,9 @@ public class JsonUtils {
      *             If there was a JSON related error during parsing.
      * @throws IOException
      *             If there was an IO error during parsing.
+     * @deprecated Use {@link #fromURL(java.net.URL, CloseableHttpClient)} instead.
      */
+    @Deprecated
     public static Object fromURL(java.net.URL url) throws JsonParseException, IOException {
         return fromURL(url, getDefaultHttpClient());
     }
@@ -279,6 +281,21 @@ public class JsonUtils {
         }
     }
 
+    /**
+     * Parses a JSON-LD document, from the contents of the JSON resource
+     * resolved from the JsonLdUrl, to an object that can be used as input for
+     * the {@link JsonLdApi} and {@link JsonLdProcessor} methods.
+     *
+     * @param url
+     *            The JsonLdUrl to resolve
+     * @param httpClient 
+     *            The {@link CloseableHttpClient} to use to resolve the URL.
+     * @return A JSON Object.
+     * @throws JsonParseException
+     *             If there was a JSON related error during parsing.
+     * @throws IOException
+     *             If there was an IO error during parsing.
+     */
     public static Object fromURL(java.net.URL url, CloseableHttpClient httpClient) throws JsonParseException, IOException {
         final InputStream in = openStreamForURL(url, httpClient);
         try {
