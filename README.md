@@ -14,7 +14,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.8.0</version>
+        <version>0.8.1</version>
     </dependency>
 
 Code example
@@ -398,6 +398,10 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 
 CHANGELOG
 =========
+
+### 2016-02-17
+* Release version 0.8.1
+* Refactor JSONUtils and DocumentLoader to move most of the static logic into JSONUtils, and deprecate the DocumentLoader versions
 
 ### 2016-02-10
 * Release version 0.8.0
