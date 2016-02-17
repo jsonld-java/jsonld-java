@@ -14,7 +14,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.8.1</version>
+        <version>0.8.2</version>
     </dependency>
 
 Code example
@@ -400,6 +400,7 @@ CHANGELOG
 =========
 
 ### 2016-02-17
+* Re-release version 0.8.2 with the refactoring work actually in it. 0.8.1 is identical in functionality to 0.8.0
 * Release version 0.8.1
 * Refactor JSONUtils and DocumentLoader to move most of the static logic into JSONUtils, and deprecate the DocumentLoader versions
 
