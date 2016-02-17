@@ -17,7 +17,7 @@ public class LongestPrefixTest {
 
         final URL contextUrl = getClass().getResource("/custom/contexttest-0003.jsonld");
         assertNotNull(contextUrl);
-        final Object context = JsonUtils.fromURL(contextUrl);
+        final Object context = JsonUtils.fromURL(contextUrl, JsonUtils.getDefaultHttpClient());
         assertNotNull(context);
 
         final JsonLdOptions options = new JsonLdOptions();
