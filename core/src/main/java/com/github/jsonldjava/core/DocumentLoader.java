@@ -3,24 +3,11 @@ package com.github.jsonldjava.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.RequestAcceptEncoding;
-import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
-import org.apache.http.impl.client.cache.CacheConfig;
-import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.MappingJsonFactory;
-import com.github.jsonldjava.utils.JarCacheStorage;
+import com.github.jsonldjava.utils.JsonUtils;
 
 public class DocumentLoader {
 
@@ -48,10 +35,11 @@ public class DocumentLoader {
 
     /**
      * An HTTP Accept header that prefers JSONLD.
+     * @deprecated Use {@link JsonUtils#ACCEPT_HEADER} instead.
      */
-    public static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
+    @Deprecated
+    public static final String ACCEPT_HEADER = JsonUtils.ACCEPT_HEADER;
 
-    protected static volatile CloseableHttpClient defaultHttpClient;
     private volatile CloseableHttpClient httpClient;
 
     /**
@@ -68,30 +56,9 @@ public class DocumentLoader {
      *             If there was an error resolving the resource.
      */
     public Object fromURL(java.net.URL url) throws JsonParseException, IOException {
-
-        final MappingJsonFactory jsonFactory = new MappingJsonFactory();
-        final InputStream in = openStreamFromURL(url);
-        try {
-            final JsonParser parser = jsonFactory.createParser(in);
-            try {
-                final JsonToken token = parser.nextToken();
-                Class<?> type;
-                if (token == JsonToken.START_OBJECT) {
-                    type = Map.class;
-                } else if (token == JsonToken.START_ARRAY) {
-                    type = List.class;
-                } else {
-                    type = String.class;
-                }
-                return parser.readValueAs(type);
-            } finally {
-                parser.close();
-            }
-        } finally {
-            in.close();
-        }
+        return JsonUtils.fromURL(url, getHttpClient());
     }
-
+    
     /**
      * Opens an {@link InputStream} for the given {@link java.net.URL},
      * including support for http and https URLs that are requested using
@@ -105,74 +72,20 @@ public class DocumentLoader {
      *             If there was an error resolving the {@link java.net.URL}.
      */
     public InputStream openStreamFromURL(java.net.URL url) throws IOException {
-        final String protocol = url.getProtocol();
-        if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
-            // Can't use the HTTP client for those!
-            // Fallback to Java's built-in JsonLdUrl handler. No need for
-            // Accept headers as it's likely to be file: or jar:
-            return url.openStream();
-        }
-        final HttpUriRequest request = new HttpGet(url.toExternalForm());
-        // We prefer application/ld+json, but fallback to application/json
-        // or whatever is available
-        request.addHeader("Accept", ACCEPT_HEADER);
-
-        final CloseableHttpResponse response = getHttpClient().execute(request);
-        try {
-            final int status = response.getStatusLine().getStatusCode();
-            if (status != 200 && status != 203) {
-                throw new IOException("Can't retrieve " + url + ", status code: " + status);
-            }
-            return response.getEntity().getContent();
-        } finally {
-            if (response != null) {
-                response.close();
-            }
-        }
+        return JsonUtils.openStreamForURL(url, getHttpClient());
     }
-
-    protected static CloseableHttpClient getDefaultHttpClient() {
-        CloseableHttpClient result = defaultHttpClient;
+    
+    public CloseableHttpClient getHttpClient() {
+        CloseableHttpClient result = httpClient;
         if (result == null) {
-            synchronized (DocumentLoader.class) {
-                result = defaultHttpClient;
-                if (result == null) {
-                    result = defaultHttpClient = createDefaultHttpClient();
+            synchronized(DocumentLoader.class) {
+                result = httpClient;
+                if(result == null) {
+                    result = httpClient = JsonUtils.getDefaultHttpClient();
                 }
             }
         }
         return result;
-    }
-
-    protected static CloseableHttpClient createDefaultHttpClient() {
-        // Common CacheConfig for both the JarCacheStorage and the underlying
-        // BasicHttpCacheStorage
-        final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
-                .setMaxObjectSize(1024 * 128).build();
-
-        CloseableHttpClient result = CachingHttpClientBuilder
-                .create()
-                // allow caching
-                .setCacheConfig(cacheConfig)
-                // Wrap the local JarCacheStorage around a BasicHttpCacheStorage
-                .setHttpCacheStorage(
-                        new JarCacheStorage(null, cacheConfig, new BasicHttpCacheStorage(
-                                cacheConfig)))
-                // Support compressed data
-                // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
-                .addInterceptorFirst(new RequestAcceptEncoding())
-                .addInterceptorFirst(new ResponseContentEncoding())
-                // use system defaults for proxy etc.
-                .useSystemProperties().build();
-
-        return result;
-    }
-
-    public CloseableHttpClient getHttpClient() {
-        if (httpClient == null) {
-            return getDefaultHttpClient();
-        }
-        return httpClient;
     }
 
     public void setHttpClient(CloseableHttpClient nextHttpClient) {
