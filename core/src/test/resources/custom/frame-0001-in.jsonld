@@ -1,0 +1,19 @@
+{
+    "@context": {
+        "net": "http://www.example.net/",
+        "org": "http://example.org/",
+        "com": "http://example.com/",
+
+        "org:p3": { "@type": "@id" }
+    },
+    "com:p1":[
+      {
+        "org:p3": "_:b2",
+        "net:p2": {}
+      },
+      {
+        "@id": "_:b2",
+        "net:p2": {}
+      }
+    ]
+}
