@@ -399,6 +399,9 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2016-02-29
+* Fix ConcurrentModificationException in the implementation of the Framing API
+
 ### 2016-02-17
 * Re-release version 0.8.2 with the refactoring work actually in it. 0.8.1 is identical in functionality to 0.8.0
 * Release version 0.8.1
