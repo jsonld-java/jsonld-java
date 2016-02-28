@@ -1551,7 +1551,7 @@ public class JsonLdApi {
 
     private static void removeDependents(Map<String, EmbedNode> embeds, String id) {
         // get embed keys as a separate array to enable deleting keys in map
-        for (final String id_dep : embeds.keySet()) {
+        for (final String id_dep : new HashSet<String>(embeds.keySet())) {
             final EmbedNode e = embeds.get(id_dep);
             final Object p = e.parent != null ? e.parent : newMap();
             if (!(p instanceof Map)) {

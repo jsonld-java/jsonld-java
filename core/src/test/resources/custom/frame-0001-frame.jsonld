@@ -1,0 +1,10 @@
+{
+    "@context": {
+        "net": "http://www.example.net/",
+        "org": "http://example.org/",
+        "com": "http://example.com/",
+
+        "org:p3": { "@type": "@id" }
+    },
+    "com:p1": {}
+}
