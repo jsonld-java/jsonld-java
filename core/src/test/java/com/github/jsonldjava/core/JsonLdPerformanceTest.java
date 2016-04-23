@@ -49,8 +49,9 @@ public class JsonLdPerformanceTest {
     }
 
     @Test
-    public final void testSerialisationPerformance() throws Exception {
+    public final void testPerformance() throws Exception {
         Random prng = new Random();
+        int rounds = 2000;
 
         String exNs = "http://example.org/";
 
@@ -123,9 +124,10 @@ public class JsonLdPerformanceTest {
             }
         }
 
+        System.out
+                .println("RDF triples to JSON-LD (internal objects, not parsed from a document)...");
         JsonLdOptions options = new JsonLdOptions();
         JsonLdApi jsonLdApi = new JsonLdApi(options);
-        int rounds = 10000;
         int[] hashCodes = new int[rounds];
         LongSummaryStatistics statsFirst5000 = new LongSummaryStatistics();
         LongSummaryStatistics stats = new LongSummaryStatistics();
@@ -153,5 +155,93 @@ public class JsonLdPerformanceTest {
         System.out.println("Maximum: " + stats.getMax() / 100000);
         System.out.println("Minimum: " + stats.getMin() / 100000);
         System.out.println("Count: " + stats.getCount());
+
+        System.out.println("Non-pretty print benchmarking...");
+        JsonLdOptions options2 = new JsonLdOptions();
+        JsonLdApi jsonLdApi2 = new JsonLdApi(options2);
+        LongSummaryStatistics statsFirst5000Part2 = new LongSummaryStatistics();
+        LongSummaryStatistics statsPart2 = new LongSummaryStatistics();
+        Object fromRDF2 = jsonLdApi2.fromRDF(testData);
+        for (int i = 0; i < rounds; i++) {
+            long start = System.nanoTime();
+            JsonUtils.toString(fromRDF2);
+            if (i < 5000) {
+                statsFirst5000Part2.accept(System.nanoTime() - start);
+            } else {
+                statsPart2.accept(System.nanoTime() - start);
+            }
+        }
+        System.out.println("First 5000 out of " + rounds);
+        System.out.println("Average: " + statsFirst5000Part2.getAverage() / 100000);
+        System.out.println("Sum: " + statsFirst5000Part2.getSum() / 100000);
+        System.out.println("Maximum: " + statsFirst5000Part2.getMax() / 100000);
+        System.out.println("Minimum: " + statsFirst5000Part2.getMin() / 100000);
+        System.out.println("Count: " + statsFirst5000Part2.getCount());
+
+        System.out.println("Post 5000 out of " + rounds);
+        System.out.println("Average: " + statsPart2.getAverage() / 100000);
+        System.out.println("Sum: " + statsPart2.getSum() / 100000);
+        System.out.println("Maximum: " + statsPart2.getMax() / 100000);
+        System.out.println("Minimum: " + statsPart2.getMin() / 100000);
+        System.out.println("Count: " + statsPart2.getCount());
+
+        System.out.println("Pretty print benchmarking...");
+        JsonLdOptions options3 = new JsonLdOptions();
+        JsonLdApi jsonLdApi3 = new JsonLdApi(options3);
+        LongSummaryStatistics statsFirst5000Part3 = new LongSummaryStatistics();
+        LongSummaryStatistics statsPart3 = new LongSummaryStatistics();
+        Object fromRDF3 = jsonLdApi3.fromRDF(testData);
+        for (int i = 0; i < rounds; i++) {
+            long start = System.nanoTime();
+            JsonUtils.toPrettyString(fromRDF3);
+            if (i < 5000) {
+                statsFirst5000Part3.accept(System.nanoTime() - start);
+            } else {
+                statsPart3.accept(System.nanoTime() - start);
+            }
+        }
+        System.out.println("First 5000 out of " + rounds);
+        System.out.println("Average: " + statsFirst5000Part3.getAverage() / 100000);
+        System.out.println("Sum: " + statsFirst5000Part3.getSum() / 100000);
+        System.out.println("Maximum: " + statsFirst5000Part3.getMax() / 100000);
+        System.out.println("Minimum: " + statsFirst5000Part3.getMin() / 100000);
+        System.out.println("Count: " + statsFirst5000Part3.getCount());
+
+        System.out.println("Post 5000 out of " + rounds);
+        System.out.println("Average: " + statsPart3.getAverage() / 100000);
+        System.out.println("Sum: " + statsPart3.getSum() / 100000);
+        System.out.println("Maximum: " + statsPart3.getMax() / 100000);
+        System.out.println("Minimum: " + statsPart3.getMin() / 100000);
+        System.out.println("Count: " + statsPart3.getCount());
+
+        System.out.println("Expansion benchmarking...");
+        JsonLdOptions options4 = new JsonLdOptions();
+        JsonLdApi jsonLdApi4 = new JsonLdApi(options4);
+        LongSummaryStatistics statsFirst5000Part4 = new LongSummaryStatistics();
+        LongSummaryStatistics statsPart4 = new LongSummaryStatistics();
+        Object fromRDF4 = jsonLdApi4.fromRDF(testData);
+        for (int i = 0; i < rounds; i++) {
+            long start = System.nanoTime();
+            JsonLdProcessor.expand(fromRDF4, options4);
+            if (i < 5000) {
+                statsFirst5000Part4.accept(System.nanoTime() - start);
+            } else {
+                statsPart4.accept(System.nanoTime() - start);
+            }
+        }
+        System.out.println("First 5000 out of " + rounds);
+        System.out.println("Average: " + statsFirst5000Part4.getAverage() / 100000);
+        System.out.println("Sum: " + statsFirst5000Part4.getSum() / 100000);
+        System.out.println("Maximum: " + statsFirst5000Part4.getMax() / 100000);
+        System.out.println("Minimum: " + statsFirst5000Part4.getMin() / 100000);
+        System.out.println("Count: " + statsFirst5000Part4.getCount());
+
+        System.out.println("Post 5000 out of " + rounds);
+        System.out.println("Average: " + statsPart4.getAverage() / 100000);
+        System.out.println("Sum: " + statsPart4.getSum() / 100000);
+        System.out.println("Maximum: " + statsPart4.getMax() / 100000);
+        System.out.println("Minimum: " + statsPart4.getMin() / 100000);
+        System.out.println("Count: " + statsPart4.getCount());
+
     }
 }
