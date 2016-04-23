@@ -1029,7 +1029,7 @@ public class JsonLdApi {
             if (elem.get("@type") instanceof List) {
                 oldTypes = (List<String>) elem.get("@type");
             } else {
-                oldTypes = new ArrayList<String>();
+                oldTypes = new ArrayList<String>(4);
                 oldTypes.add((String) elem.get("@type"));
             }
             for (final String item : oldTypes) {
@@ -1061,7 +1061,7 @@ public class JsonLdApi {
         // 5)
         else if (elem.containsKey("@list")) {
             // 5.1)
-            final Map<String, Object> result = newMap("@list", new ArrayList<Object>());
+            final Map<String, Object> result = newMap("@list", new ArrayList<Object>(4));
             // 5.2)
             // for (final Object item : (List<Object>) elem.get("@list")) {
             // generateNodeMap(item, nodeMap, activeGraph, activeSubject,
@@ -1166,7 +1166,7 @@ public class JsonLdApi {
                 }
                 // 6.11.2)
                 if (!node.containsKey(property)) {
-                    node.put(property, new ArrayList<Object>());
+                    node.put(property, new ArrayList<Object>(4));
                 }
                 // 6.11.3)
                 generateNodeMap(value, nodeMap, activeGraph, id, property, null);
@@ -1739,7 +1739,7 @@ public class JsonLdApi {
     }
 
     private class NodeMapNode extends LinkedHashMap<String, Object> {
-        public List<UsagesNode> usages = new ArrayList();
+        public List<UsagesNode> usages = new ArrayList(4);
 
         public NodeMapNode(String id) {
             super();
@@ -1798,9 +1798,9 @@ public class JsonLdApi {
      */
     public List<Object> fromRDF(final RDFDataset dataset) throws JsonLdError {
         // 1)
-        final Map<String, NodeMapNode> defaultGraph = new LinkedHashMap<String, NodeMapNode>();
+        final Map<String, NodeMapNode> defaultGraph = new LinkedHashMap<String, NodeMapNode>(4);
         // 2)
-        final Map<String, Map<String, NodeMapNode>> graphMap = new LinkedHashMap<String, Map<String, NodeMapNode>>();
+        final Map<String, Map<String, NodeMapNode>> graphMap = new LinkedHashMap<String, Map<String, NodeMapNode>>(4);
         graphMap.put("@default", defaultGraph);
 
         // 3/3.1)
@@ -1883,8 +1883,8 @@ public class JsonLdApi {
                 String property = usage.property;
                 Map<String, Object> head = usage.value;
                 // 4.3.2)
-                final List<Object> list = new ArrayList<Object>();
-                final List<String> listNodes = new ArrayList<String>();
+                final List<Object> list = new ArrayList<Object>(4);
+                final List<String> listNodes = new ArrayList<String>(4);
                 // 4.3.3)
                 while (RDF_REST.equals(property) && node.isWellFormedListNode()) {
                     // 4.3.3.1)
@@ -1931,7 +1931,7 @@ public class JsonLdApi {
         }
 
         // 5)
-        final List<Object> result = new ArrayList<Object>();
+        final List<Object> result = new ArrayList<Object>(4);
         // 6)
         final List<String> ids = new ArrayList<String>(defaultGraph.keySet());
         Collections.sort(ids);
@@ -1940,7 +1940,7 @@ public class JsonLdApi {
             // 6.1)
             if (graphMap.containsKey(subject)) {
                 // 6.1.1)
-                node.put("@graph", new ArrayList<Object>());
+                node.put("@graph", new ArrayList<Object>(4));
                 // 6.1.2)
                 final List<String> keys = new ArrayList<String>(graphMap.get(subject).keySet());
                 Collections.sort(keys);
