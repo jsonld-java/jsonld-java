@@ -48,6 +48,7 @@ public class JsonLdPerformanceTest {
         System.out.printf("Compaction time: %d", (compactEnd - compactStart));
     }
 
+    @Ignore("Disable performance tests by default")
     @Test
     public final void testPerformance() throws Exception {
         Random prng = new Random();
