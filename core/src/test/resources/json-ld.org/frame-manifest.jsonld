@@ -152,5 +152,13 @@
       "input": "frame-0021-in.jsonld",
       "frame": "frame-0021-frame.jsonld",
       "expect": "frame-0021-out.jsonld"
-    }]
+    }
+    , {
+          "@id": "#t0022",
+          "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+          "name": "Default inside sets",
+          "input": "frame-0022-in.jsonld",
+          "frame": "frame-0022-frame.jsonld",
+          "expect": "frame-0022-out.jsonld"
+        }]
 }
