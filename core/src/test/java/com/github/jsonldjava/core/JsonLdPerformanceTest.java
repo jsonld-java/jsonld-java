@@ -3,8 +3,12 @@
  */
 package com.github.jsonldjava.core;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.DoubleSummaryStatistics;
@@ -13,8 +17,12 @@ import java.util.LongSummaryStatistics;
 import java.util.Random;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import com.github.jsonldjava.core.RDFDataset.Quad;
 import com.github.jsonldjava.utils.JsonUtils;
@@ -25,6 +33,16 @@ import com.github.jsonldjava.utils.JsonUtils;
  */
 public class JsonLdPerformanceTest {
 
+    @Rule
+    public TemporaryFolder tempDir = new TemporaryFolder();
+
+    private File testDir;
+
+    @Before
+    public void setUp() throws Exception {
+        testDir = tempDir.newFolder("jsonld-perf-tests-");
+    }
+
     /**
      * Test performance parsing using test data from:
      *
@@ -34,23 +52,70 @@ public class JsonLdPerformanceTest {
      */
     @Ignore("Enable as necessary for manual testing, particularly to test that it fails due to irregular URIs")
     @Test
-    public final void test() throws Exception {
-        final long parseStart = System.currentTimeMillis();
-        final Object inputObject = JsonUtils.fromInputStream(new GZIPInputStream(
-                new FileInputStream(new File("/home/ans025/Downloads/2000007922.jsonld.gz"))));
-        final long parseEnd = System.currentTimeMillis();
-        System.out.printf("Parse time: %d", (parseEnd - parseStart));
-        final JsonLdOptions opts = new JsonLdOptions("urn:test:");
+    public final void testPerformance1() throws Exception {
+        testCompaction("Long", new GZIPInputStream(
+                new FileInputStream(new File("/home/peter/Downloads/2000007922.jsonld.gz"))));
+    }
 
-        final long compactStart = System.currentTimeMillis();
-        JsonLdProcessor.compact(inputObject, null, opts);
-        final long compactEnd = System.currentTimeMillis();
-        System.out.printf("Compaction time: %d", (compactEnd - compactStart));
+    /**
+     * Test performance parsing using test data from:
+     *
+     * https://github.com/jsonld-java/jsonld-java/files/245372/jsonldperfs.zip
+     *
+     * @throws Exception
+     */
+    @Ignore("Enable as necessary to test performance")
+    @Test
+    public final void testLaxMergeValuesPerfFast() throws Exception {
+        testCompaction("Fast",
+                new FileInputStream(new File("/home/peter/Downloads/jsonldperfs/fast.jsonld")));
+    }
+
+    /**
+     * Test performance parsing using test data from:
+     *
+     * https://github.com/jsonld-java/jsonld-java/files/245372/jsonldperfs.zip
+     *
+     * @throws Exception
+     */
+    @Ignore("Enable as necessary to test performance")
+    @Test
+    public final void testLaxMergeValuesPerfSlow() throws Exception {
+        testCompaction("Slow",
+                new FileInputStream(new File("/home/peter/Downloads/jsonldperfs/slow.jsonld")));
+    }
+
+    private void testCompaction(String label, InputStream nextInputStream)
+            throws IOException, FileNotFoundException, JsonLdError {
+        File testFile = File.createTempFile("jsonld-perf-source-", ".jsonld", testDir);
+        FileUtils.copyInputStreamToFile(nextInputStream, testFile);
+
+        LongSummaryStatistics parseStats = new LongSummaryStatistics();
+        LongSummaryStatistics compactStats = new LongSummaryStatistics();
+
+        for (int i = 0; i < 1000; i++) {
+            InputStream testInput = new BufferedInputStream(new FileInputStream(testFile));
+            try {
+                final long parseStart = System.currentTimeMillis();
+                final Object inputObject = JsonUtils.fromInputStream(testInput);
+                parseStats.accept(System.currentTimeMillis() - parseStart);
+                final JsonLdOptions opts = new JsonLdOptions("urn:test:");
+
+                final long compactStart = System.currentTimeMillis();
+                JsonLdProcessor.compact(inputObject, null, opts);
+                compactStats.accept(System.currentTimeMillis() - compactStart);
+            } finally {
+                testInput.close();
+            }
+        }
+
+        System.out.println("(" + label + ") Parse average : " + parseStats.getAverage());
+        System.out.println("(" + label + ") Compact average : " + compactStats.getAverage());
     }
 
     @Ignore("Disable performance tests by default")
     @Test
-    public final void testPerformance() throws Exception {
+    public final void testPerformanceRandom() throws Exception {
         Random prng = new Random();
         int rounds = 2000;
 
@@ -72,8 +137,8 @@ public class JsonLdPerformanceTest {
             potentialSubjects.add("_:a" + Integer.toHexString(i).toUpperCase());
         }
         for (int i = 0; i < 200; i++) {
-            potentialSubjects.add(exNs + Integer.toHexString(i) + "/z"
-                    + Integer.toOctalString(i % 20));
+            potentialSubjects
+                    .add(exNs + Integer.toHexString(i) + "/z" + Integer.toOctalString(i % 20));
         }
         Collections.shuffle(potentialSubjects, prng);
 
@@ -125,8 +190,8 @@ public class JsonLdPerformanceTest {
             }
         }
 
-        System.out
-                .println("RDF triples to JSON-LD (internal objects, not parsed from a document)...");
+        System.out.println(
+                "RDF triples to JSON-LD (internal objects, not parsed from a document)...");
         JsonLdOptions options = new JsonLdOptions();
         JsonLdApi jsonLdApi = new JsonLdApi(options);
         int[] hashCodes = new int[rounds];

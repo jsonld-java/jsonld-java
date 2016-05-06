@@ -1855,7 +1855,8 @@ public class JsonLdApi {
 
                 // 3.5.6+7)
                 JsonLdUtils.mergeValue(node, predicate, value);
-
+                // JsonLdUtils.laxMergeValue(node, predicate, value);
+                
                 // 3.5.8)
                 if (object.isBlankNode() || object.isIRI()) {
                     // 3.5.8.1-3)
