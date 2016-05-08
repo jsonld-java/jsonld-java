@@ -118,6 +118,18 @@ public class JsonLdUtils {
         }
     }
 
+    static void mergeValue_lax(Map<String, Object> obj, String key, Object value) {
+      if (obj == null) {
+          return;
+      }
+      List<Object> values = (List<Object>) obj.get(key);
+      if (values == null) {
+          values = new ArrayList<Object>();
+          obj.put(key, values);
+      }
+      values.add(value);
+    }
+
     static void mergeCompactedValue(Map<String, Object> obj, String key, Object value) {
         if (obj == null) {
             return;
