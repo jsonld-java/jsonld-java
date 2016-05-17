@@ -55,7 +55,7 @@ public class Context extends LinkedHashMap<String, Object> {
     private void init(JsonLdOptions options) {
         this.options = options;
         if (options.getBase() != null) {
-            this.put("@base", options.getBase());
+            this.put(JsonLdConsts.BASE, options.getBase());
         }
         this.termDefinitions = newMap();
     }
@@ -75,7 +75,7 @@ public class Context extends LinkedHashMap<String, Object> {
         // 1)
         int numberMembers = value.size();
         // 2)
-        if (value.containsKey("@index") && "@index".equals(this.getContainer(activeProperty))) {
+        if (value.containsKey(JsonLdConsts.INDEX) && JsonLdConsts.INDEX.equals(this.getContainer(activeProperty))) {
             numberMembers--;
         }
         // 3)
@@ -85,36 +85,36 @@ public class Context extends LinkedHashMap<String, Object> {
         // 4)
         final String typeMapping = getTypeMapping(activeProperty);
         final String languageMapping = getLanguageMapping(activeProperty);
-        if (value.containsKey("@id")) {
+        if (value.containsKey(JsonLdConsts.ID)) {
             // 4.1)
-            if (numberMembers == 1 && "@id".equals(typeMapping)) {
-                return compactIri((String) value.get("@id"));
+            if (numberMembers == 1 && JsonLdConsts.ID.equals(typeMapping)) {
+                return compactIri((String) value.get(JsonLdConsts.ID));
             }
             // 4.2)
-            if (numberMembers == 1 && "@vocab".equals(typeMapping)) {
-                return compactIri((String) value.get("@id"), true);
+            if (numberMembers == 1 && JsonLdConsts.VOCAB.equals(typeMapping)) {
+                return compactIri((String) value.get(JsonLdConsts.ID), true);
             }
             // 4.3)
             return value;
         }
-        final Object valueValue = value.get("@value");
+        final Object valueValue = value.get(JsonLdConsts.VALUE);
         // 5)
-        if (value.containsKey("@type") && Obj.equals(value.get("@type"), typeMapping)) {
+        if (value.containsKey(JsonLdConsts.TYPE) && Obj.equals(value.get(JsonLdConsts.TYPE), typeMapping)) {
             return valueValue;
         }
         // 6)
-        if (value.containsKey("@language")) {
+        if (value.containsKey(JsonLdConsts.LANGUAGE)) {
             // TODO: SPEC: doesn't specify to check default language as well
-            if (Obj.equals(value.get("@language"), languageMapping)
-                    || Obj.equals(value.get("@language"), this.get("@language"))) {
+            if (Obj.equals(value.get(JsonLdConsts.LANGUAGE), languageMapping)
+                    || Obj.equals(value.get(JsonLdConsts.LANGUAGE), this.get(JsonLdConsts.LANGUAGE))) {
                 return valueValue;
             }
         }
         // 7)
         if (numberMembers == 1
-                && (!(valueValue instanceof String) || !this.containsKey("@language") || (termDefinitions
+                && (!(valueValue instanceof String) || !this.containsKey(JsonLdConsts.LANGUAGE) || (termDefinitions
                         .containsKey(activeProperty)
-                        && getTermDefinition(activeProperty).containsKey("@language") && languageMapping == null))) {
+                        && getTermDefinition(activeProperty).containsKey(JsonLdConsts.LANGUAGE) && languageMapping == null))) {
             return valueValue;
         }
         // 8)
@@ -157,7 +157,7 @@ public class Context extends LinkedHashMap<String, Object> {
             }
             // 3.2)
             else if (context instanceof String) {
-                String uri = (String) result.get("@base");
+                String uri = (String) result.get(JsonLdConsts.BASE);
                 uri = JsonLdUrl.resolve(uri, (String) context);
                 // 3.2.2
                 if (remoteContexts.contains(uri)) {
@@ -169,12 +169,12 @@ public class Context extends LinkedHashMap<String, Object> {
                 final RemoteDocument rd = this.options.getDocumentLoader().loadDocument(uri);
                 final Object remoteContext = rd.document;
                 if (!(remoteContext instanceof Map)
-                        || !((Map<String, Object>) remoteContext).containsKey("@context")) {
+                        || !((Map<String, Object>) remoteContext).containsKey(JsonLdConsts.CONTEXT)) {
                     // If the dereferenced document has no top-level JSON object
                     // with an @context member
                     throw new JsonLdError(Error.INVALID_REMOTE_CONTEXT, context);
                 }
-                context = ((Map<String, Object>) remoteContext).get("@context");
+                context = ((Map<String, Object>) remoteContext).get(JsonLdConsts.CONTEXT);
 
                 // 3.2.4
                 result = result.parse(context, remoteContexts);
@@ -186,19 +186,19 @@ public class Context extends LinkedHashMap<String, Object> {
             }
 
             // 3.4
-            if (remoteContexts.isEmpty() && ((Map<String, Object>) context).containsKey("@base")) {
-                final Object value = ((Map<String, Object>) context).get("@base");
+            if (remoteContexts.isEmpty() && ((Map<String, Object>) context).containsKey(JsonLdConsts.BASE)) {
+                final Object value = ((Map<String, Object>) context).get(JsonLdConsts.BASE);
                 if (value == null) {
-                    result.remove("@base");
+                    result.remove(JsonLdConsts.BASE);
                 } else if (value instanceof String) {
                     if (JsonLdUtils.isAbsoluteIri((String) value)) {
-                        result.put("@base", value);
+                        result.put(JsonLdConsts.BASE, value);
                     } else {
-                        final String baseUri = (String) result.get("@base");
+                        final String baseUri = (String) result.get(JsonLdConsts.BASE);
                         if (!JsonLdUtils.isAbsoluteIri(baseUri)) {
                             throw new JsonLdError(Error.INVALID_BASE_IRI, baseUri);
                         }
-                        result.put("@base", JsonLdUrl.resolve(baseUri, (String) value));
+                        result.put(JsonLdConsts.BASE, JsonLdUrl.resolve(baseUri, (String) value));
                     }
                 } else {
                     throw new JsonLdError(JsonLdError.Error.INVALID_BASE_IRI,
@@ -207,13 +207,13 @@ public class Context extends LinkedHashMap<String, Object> {
             }
 
             // 3.5
-            if (((Map<String, Object>) context).containsKey("@vocab")) {
-                final Object value = ((Map<String, Object>) context).get("@vocab");
+            if (((Map<String, Object>) context).containsKey(JsonLdConsts.VOCAB)) {
+                final Object value = ((Map<String, Object>) context).get(JsonLdConsts.VOCAB);
                 if (value == null) {
-                    result.remove("@vocab");
+                    result.remove(JsonLdConsts.VOCAB);
                 } else if (value instanceof String) {
                     if (JsonLdUtils.isAbsoluteIri((String) value)) {
-                        result.put("@vocab", value);
+                        result.put(JsonLdConsts.VOCAB, value);
                     } else {
                         throw new JsonLdError(Error.INVALID_VOCAB_MAPPING,
                                 "@value must be an absolute IRI");
@@ -225,12 +225,12 @@ public class Context extends LinkedHashMap<String, Object> {
             }
 
             // 3.6
-            if (((Map<String, Object>) context).containsKey("@language")) {
-                final Object value = ((Map<String, Object>) context).get("@language");
+            if (((Map<String, Object>) context).containsKey(JsonLdConsts.LANGUAGE)) {
+                final Object value = ((Map<String, Object>) context).get(JsonLdConsts.LANGUAGE);
                 if (value == null) {
-                    result.remove("@language");
+                    result.remove(JsonLdConsts.LANGUAGE);
                 } else if (value instanceof String) {
-                    result.put("@language", ((String) value).toLowerCase());
+                    result.put(JsonLdConsts.LANGUAGE, ((String) value).toLowerCase());
                 } else {
                     throw new JsonLdError(Error.INVALID_DEFAULT_LANGUAGE, value);
                 }
@@ -239,7 +239,7 @@ public class Context extends LinkedHashMap<String, Object> {
             // 3.7
             final Map<String, Boolean> defined = new LinkedHashMap<String, Boolean>();
             for (final String key : ((Map<String, Object>) context).keySet()) {
-                if ("@base".equals(key) || "@vocab".equals(key) || "@language".equals(key)) {
+                if (JsonLdConsts.BASE.equals(key) || JsonLdConsts.VOCAB.equals(key) || JsonLdConsts.LANGUAGE.equals(key)) {
                     continue;
                 }
                 result.createTermDefinition((Map<String, Object>) context, key, defined);
@@ -281,15 +281,15 @@ public class Context extends LinkedHashMap<String, Object> {
         this.termDefinitions.remove(term);
         Object value = context.get(term);
         if (value == null
-                || (value instanceof Map && ((Map<String, Object>) value).containsKey("@id") && ((Map<String, Object>) value)
-                        .get("@id") == null)) {
+                || (value instanceof Map && ((Map<String, Object>) value).containsKey(JsonLdConsts.ID) && ((Map<String, Object>) value)
+                        .get(JsonLdConsts.ID) == null)) {
             this.termDefinitions.put(term, null);
             defined.put(term, true);
             return;
         }
 
         if (value instanceof String) {
-            value = newMap("@id", value);
+            value = newMap(JsonLdConsts.ID, value);
         }
 
         if (!(value instanceof Map)) {
@@ -303,13 +303,13 @@ public class Context extends LinkedHashMap<String, Object> {
         final Map<String, Object> definition = newMap();
 
         // 10)
-        if (val.containsKey("@type")) {
-            if (!(val.get("@type") instanceof String)) {
-                throw new JsonLdError(Error.INVALID_TYPE_MAPPING, val.get("@type"));
+        if (val.containsKey(JsonLdConsts.TYPE)) {
+            if (!(val.get(JsonLdConsts.TYPE) instanceof String)) {
+                throw new JsonLdError(Error.INVALID_TYPE_MAPPING, val.get(JsonLdConsts.TYPE));
             }
-            String type = (String) val.get("@type");
+            String type = (String) val.get(JsonLdConsts.TYPE);
             try {
-                type = this.expandIri((String) val.get("@type"), false, true, context, defined);
+                type = this.expandIri((String) val.get(JsonLdConsts.TYPE), false, true, context, defined);
             } catch (final JsonLdError error) {
                 if (error.getType() != Error.INVALID_IRI_MAPPING) {
                     throw error;
@@ -318,64 +318,64 @@ public class Context extends LinkedHashMap<String, Object> {
             }
             // TODO: fix check for absoluteIri (blank nodes shouldn't count, at
             // least not here!)
-            if ("@id".equals(type) || "@vocab".equals(type)
-                    || (!type.startsWith("_:") && JsonLdUtils.isAbsoluteIri(type))) {
-                definition.put("@type", type);
+            if (JsonLdConsts.ID.equals(type) || JsonLdConsts.VOCAB.equals(type)
+                    || (!type.startsWith(JsonLdConsts.BLANK_NODE_PREFIX) && JsonLdUtils.isAbsoluteIri(type))) {
+                definition.put(JsonLdConsts.TYPE, type);
             } else {
                 throw new JsonLdError(Error.INVALID_TYPE_MAPPING, type);
             }
         }
 
         // 11)
-        if (val.containsKey("@reverse")) {
-            if (val.containsKey("@id")) {
+        if (val.containsKey(JsonLdConsts.REVERSE)) {
+            if (val.containsKey(JsonLdConsts.ID)) {
                 throw new JsonLdError(Error.INVALID_REVERSE_PROPERTY, val);
             }
-            if (!(val.get("@reverse") instanceof String)) {
+            if (!(val.get(JsonLdConsts.REVERSE) instanceof String)) {
                 throw new JsonLdError(Error.INVALID_IRI_MAPPING,
                         "Expected String for @reverse value. got "
-                                + (val.get("@reverse") == null ? "null" : val.get("@reverse")
+                                + (val.get(JsonLdConsts.REVERSE) == null ? "null" : val.get(JsonLdConsts.REVERSE)
                                         .getClass()));
             }
-            final String reverse = this.expandIri((String) val.get("@reverse"), false, true,
+            final String reverse = this.expandIri((String) val.get(JsonLdConsts.REVERSE), false, true,
                     context, defined);
             if (!JsonLdUtils.isAbsoluteIri(reverse)) {
                 throw new JsonLdError(Error.INVALID_IRI_MAPPING, "Non-absolute @reverse IRI: "
                         + reverse);
             }
-            definition.put("@id", reverse);
-            if (val.containsKey("@container")) {
-                final String container = (String) val.get("@container");
-                if (container == null || "@set".equals(container) || "@index".equals(container)) {
-                    definition.put("@container", container);
+            definition.put(JsonLdConsts.ID, reverse);
+            if (val.containsKey(JsonLdConsts.CONTAINER)) {
+                final String container = (String) val.get(JsonLdConsts.CONTAINER);
+                if (container == null || JsonLdConsts.SET.equals(container) || JsonLdConsts.INDEX.equals(container)) {
+                    definition.put(JsonLdConsts.CONTAINER, container);
                 } else {
                     throw new JsonLdError(Error.INVALID_REVERSE_PROPERTY,
                             "reverse properties only support set- and index-containers");
                 }
             }
-            definition.put("@reverse", true);
+            definition.put(JsonLdConsts.REVERSE, true);
             this.termDefinitions.put(term, definition);
             defined.put(term, true);
             return;
         }
 
         // 12)
-        definition.put("@reverse", false);
+        definition.put(JsonLdConsts.REVERSE, false);
 
         // 13)
-        if (val.get("@id") != null && !term.equals(val.get("@id"))) {
-            if (!(val.get("@id") instanceof String)) {
+        if (val.get(JsonLdConsts.ID) != null && !term.equals(val.get(JsonLdConsts.ID))) {
+            if (!(val.get(JsonLdConsts.ID) instanceof String)) {
                 throw new JsonLdError(Error.INVALID_IRI_MAPPING,
                         "expected value of @id to be a string");
             }
 
-            final String res = this.expandIri((String) val.get("@id"), false, true, context,
+            final String res = this.expandIri((String) val.get(JsonLdConsts.ID), false, true, context,
                     defined);
             if (JsonLdUtils.isKeyword(res) || JsonLdUtils.isAbsoluteIri(res)) {
-                if ("@context".equals(res)) {
+                if (JsonLdConsts.CONTEXT.equals(res)) {
                     throw new JsonLdError(Error.INVALID_KEYWORD_ALIAS, "cannot alias @context");
                 }
-                definition.put("@id", res);
+                definition.put(JsonLdConsts.ID, res);
             } else {
                 throw new JsonLdError(Error.INVALID_IRI_MAPPING,
                         "resulting IRI mapping should be a keyword, absolute IRI or blank node");
@@ -391,35 +391,35 @@ public class Context extends LinkedHashMap<String, Object> {
                 this.createTermDefinition(context, prefix, defined);
             }
             if (termDefinitions.containsKey(prefix)) {
-                definition.put("@id",
-                        ((Map<String, Object>) termDefinitions.get(prefix)).get("@id") + suffix);
+                definition.put(JsonLdConsts.ID,
+                        ((Map<String, Object>) termDefinitions.get(prefix)).get(JsonLdConsts.ID) + suffix);
             } else {
-                definition.put("@id", term);
+                definition.put(JsonLdConsts.ID, term);
             }
             // 15)
-        } else if (this.containsKey("@vocab")) {
-            definition.put("@id", this.get("@vocab") + term);
+        } else if (this.containsKey(JsonLdConsts.VOCAB)) {
+            definition.put(JsonLdConsts.ID, this.get(JsonLdConsts.VOCAB) + term);
         } else {
             throw new JsonLdError(Error.INVALID_IRI_MAPPING,
                     "relative term definition without vocab mapping");
         }
 
         // 16)
-        if (val.containsKey("@container")) {
-            final String container = (String) val.get("@container");
-            if (!"@list".equals(container) && !"@set".equals(container)
-                    && !"@index".equals(container) && !"@language".equals(container)) {
+        if (val.containsKey(JsonLdConsts.CONTAINER)) {
+            final String container = (String) val.get(JsonLdConsts.CONTAINER);
+            if (!JsonLdConsts.LIST.equals(container) && !JsonLdConsts.SET.equals(container)
+                    && !JsonLdConsts.INDEX.equals(container) && !JsonLdConsts.LANGUAGE.equals(container)) {
                 throw new JsonLdError(Error.INVALID_CONTAINER_MAPPING,
                         "@container must be either @list, @set, @index, or @language");
             }
-            definition.put("@container", container);
+            definition.put(JsonLdConsts.CONTAINER, container);
         }
 
         // 17)
-        if (val.containsKey("@language") && !val.containsKey("@type")) {
-            if (val.get("@language") == null || val.get("@language") instanceof String) {
-                final String language = (String) val.get("@language");
-                definition.put("@language", language != null ? language.toLowerCase() : null);
+        if (val.containsKey(JsonLdConsts.LANGUAGE) && !val.containsKey(JsonLdConsts.TYPE)) {
+            if (val.get(JsonLdConsts.LANGUAGE) == null || val.get(JsonLdConsts.LANGUAGE) instanceof String) {
+                final String language = (String) val.get(JsonLdConsts.LANGUAGE);
+                definition.put(JsonLdConsts.LANGUAGE, language != null ? language.toLowerCase() : null);
             } else {
                 throw new JsonLdError(Error.INVALID_LANGUAGE_MAPPING,
                         "@language must be a string or null");
@@ -460,7 +460,7 @@ public class Context extends LinkedHashMap<String, Object> {
             final Map<String, Object> td = (LinkedHashMap<String, Object>) this.termDefinitions
                     .get(value);
             if (td != null) {
-                return (String) td.get("@id");
+                return (String) td.get(JsonLdConsts.ID);
             } else {
                 return null;
             }
@@ -483,18 +483,18 @@ public class Context extends LinkedHashMap<String, Object> {
             // 4.4)
             if (this.termDefinitions.containsKey(prefix)) {
                 return (String) ((LinkedHashMap<String, Object>) this.termDefinitions.get(prefix))
-                        .get("@id") + suffix;
+                        .get(JsonLdConsts.ID) + suffix;
             }
             // 4.5)
             return value;
         }
         // 5)
-        if (vocab && this.containsKey("@vocab")) {
-            return this.get("@vocab") + value;
+        if (vocab && this.containsKey(JsonLdConsts.VOCAB)) {
+            return this.get(JsonLdConsts.VOCAB) + value;
         }
         // 6)
         else if (relative) {
-            return JsonLdUrl.resolve((String) this.get("@base"), value);
+            return JsonLdUrl.resolve((String) this.get(JsonLdConsts.BASE), value);
         } else if (context != null && JsonLdUtils.isRelativeIri(value)) {
             throw new JsonLdError(Error.INVALID_IRI_MAPPING, "not an absolute IRI: " + value);
         }
@@ -531,62 +531,62 @@ public class Context extends LinkedHashMap<String, Object> {
         // 2)
         if (relativeToVocab && getInverse().containsKey(iri)) {
             // 2.1)
-            String defaultLanguage = (String) this.get("@language");
+            String defaultLanguage = (String) this.get(JsonLdConsts.LANGUAGE);
             if (defaultLanguage == null) {
-                defaultLanguage = "@none";
+                defaultLanguage = JsonLdConsts.NONE;
             }
 
             // 2.2)
             final List<String> containers = new ArrayList<String>();
             // 2.3)
-            String typeLanguage = "@language";
-            String typeLanguageValue = "@null";
+            String typeLanguage = JsonLdConsts.LANGUAGE;
+            String typeLanguageValue = JsonLdConsts.NULL;
 
             // 2.4)
-            if (value instanceof Map && ((Map<String, Object>) value).containsKey("@index")) {
-                containers.add("@index");
+            if (value instanceof Map && ((Map<String, Object>) value).containsKey(JsonLdConsts.INDEX)) {
+                containers.add(JsonLdConsts.INDEX);
             }
 
             // 2.5)
             if (reverse) {
-                typeLanguage = "@type";
-                typeLanguageValue = "@reverse";
-                containers.add("@set");
+                typeLanguage = JsonLdConsts.TYPE;
+                typeLanguageValue = JsonLdConsts.REVERSE;
+                containers.add(JsonLdConsts.SET);
             }
             // 2.6)
-            else if (value instanceof Map && ((Map<String, Object>) value).containsKey("@list")) {
+            else if (value instanceof Map && ((Map<String, Object>) value).containsKey(JsonLdConsts.LIST)) {
                 // 2.6.1)
-                if (!((Map<String, Object>) value).containsKey("@index")) {
-                    containers.add("@list");
+                if (!((Map<String, Object>) value).containsKey(JsonLdConsts.INDEX)) {
+                    containers.add(JsonLdConsts.LIST);
                 }
                 // 2.6.2)
-                final List<Object> list = (List<Object>) ((Map<String, Object>) value).get("@list");
+                final List<Object> list = (List<Object>) ((Map<String, Object>) value).get(JsonLdConsts.LIST);
                 // 2.6.3)
                 String commonLanguage = (list.size() == 0) ? defaultLanguage : null;
                 String commonType = null;
                 // 2.6.4)
                 for (final Object item : list) {
                     // 2.6.4.1)
-                    String itemLanguage = "@none";
-                    String itemType = "@none";
+                    String itemLanguage = JsonLdConsts.NONE;
+                    String itemType = JsonLdConsts.NONE;
                     // 2.6.4.2)
                     if (JsonLdUtils.isValue(item)) {
                         // 2.6.4.2.1)
-                        if (((Map<String, Object>) item).containsKey("@language")) {
-                            itemLanguage = (String) ((Map<String, Object>) item).get("@language");
+                        if (((Map<String, Object>) item).containsKey(JsonLdConsts.LANGUAGE)) {
+                            itemLanguage = (String) ((Map<String, Object>) item).get(JsonLdConsts.LANGUAGE);
                         }
                         // 2.6.4.2.2)
-                        else if (((Map<String, Object>) item).containsKey("@type")) {
-                            itemType = (String) ((Map<String, Object>) item).get("@type");
+                        else if (((Map<String, Object>) item).containsKey(JsonLdConsts.TYPE)) {
+                            itemType = (String) ((Map<String, Object>) item).get(JsonLdConsts.TYPE);
                         }
                         // 2.6.4.2.3)
                         else {
-                            itemLanguage = "@null";
+                            itemLanguage = JsonLdConsts.NULL;
                         }
                     }
                     // 2.6.4.3)
                     else {
-                        itemType = "@id";
+                        itemType = JsonLdConsts.ID;
                     }
                     // 2.6.4.4)
                     if (commonLanguage == null) {
@@ -594,7 +594,7 @@ public class Context extends LinkedHashMap<String, Object> {
                     }
                     // 2.6.4.5)
                     else if (!commonLanguage.equals(itemLanguage) && JsonLdUtils.isValue(item)) {
-                        commonLanguage = "@none";
+                        commonLanguage = JsonLdConsts.NONE;
                     }
                     // 2.6.4.6)
                     if (commonType == null) {
@@ -602,20 +602,20 @@ public class Context extends LinkedHashMap<String, Object> {
                     }
                     // 2.6.4.7)
                     else if (!commonType.equals(itemType)) {
-                        commonType = "@none";
+                        commonType = JsonLdConsts.NONE;
                     }
                     // 2.6.4.8)
-                    if ("@none".equals(commonLanguage) && "@none".equals(commonType)) {
+                    if (JsonLdConsts.NONE.equals(commonLanguage) && JsonLdConsts.NONE.equals(commonType)) {
                         break;
                     }
                 }
                 // 2.6.5)
-                commonLanguage = (commonLanguage != null) ? commonLanguage : "@none";
+                commonLanguage = (commonLanguage != null) ? commonLanguage : JsonLdConsts.NONE;
                 // 2.6.6)
-                commonType = (commonType != null) ? commonType : "@none";
+                commonType = (commonType != null) ? commonType : JsonLdConsts.NONE;
                 // 2.6.7)
-                if (!"@none".equals(commonType)) {
-                    typeLanguage = "@type";
+                if (!JsonLdConsts.NONE.equals(commonType)) {
+                    typeLanguage = JsonLdConsts.TYPE;
                     typeLanguageValue = commonType;
                 }
                 // 2.6.8)
@@ -626,64 +626,64 @@ public class Context extends LinkedHashMap<String, Object> {
             // 2.7)
             else {
                 // 2.7.1)
-                if (value instanceof Map && ((Map<String, Object>) value).containsKey("@value")) {
+                if (value instanceof Map && ((Map<String, Object>) value).containsKey(JsonLdConsts.VALUE)) {
                     // 2.7.1.1)
-                    if (((Map<String, Object>) value).containsKey("@language")
-                            && !((Map<String, Object>) value).containsKey("@index")) {
-                        containers.add("@language");
-                        typeLanguageValue = (String) ((Map<String, Object>) value).get("@language");
+                    if (((Map<String, Object>) value).containsKey(JsonLdConsts.LANGUAGE)
+                            && !((Map<String, Object>) value).containsKey(JsonLdConsts.INDEX)) {
+                        containers.add(JsonLdConsts.LANGUAGE);
+                        typeLanguageValue = (String) ((Map<String, Object>) value).get(JsonLdConsts.LANGUAGE);
                     }
                     // 2.7.1.2)
-                    else if (((Map<String, Object>) value).containsKey("@type")) {
-                        typeLanguage = "@type";
-                        typeLanguageValue = (String) ((Map<String, Object>) value).get("@type");
+                    else if (((Map<String, Object>) value).containsKey(JsonLdConsts.TYPE)) {
+                        typeLanguage = JsonLdConsts.TYPE;
+                        typeLanguageValue = (String) ((Map<String, Object>) value).get(JsonLdConsts.TYPE);
                     }
                 }
                 // 2.7.2)
                 else {
-                    typeLanguage = "@type";
-                    typeLanguageValue = "@id";
+                    typeLanguage = JsonLdConsts.TYPE;
+                    typeLanguageValue = JsonLdConsts.ID;
                 }
                 // 2.7.3)
-                containers.add("@set");
+                containers.add(JsonLdConsts.SET);
             }
 
             // 2.8)
-            containers.add("@none");
+            containers.add(JsonLdConsts.NONE);
             // 2.9)
             if (typeLanguageValue == null) {
-                typeLanguageValue = "@null";
+                typeLanguageValue = JsonLdConsts.NULL;
             }
             // 2.10)
             final List<String> preferredValues = new ArrayList<String>();
             // 2.11)
-            if ("@reverse".equals(typeLanguageValue)) {
-                preferredValues.add("@reverse");
+            if (JsonLdConsts.REVERSE.equals(typeLanguageValue)) {
+                preferredValues.add(JsonLdConsts.REVERSE);
             }
             // 2.12)
-            if (("@reverse".equals(typeLanguageValue) || "@id".equals(typeLanguageValue))
-                    && (value instanceof Map) && ((Map<String, Object>) value).containsKey("@id")) {
+            if ((JsonLdConsts.REVERSE.equals(typeLanguageValue) || JsonLdConsts.ID.equals(typeLanguageValue))
+                    && (value instanceof Map) && ((Map<String, Object>) value).containsKey(JsonLdConsts.ID)) {
                 // 2.12.1)
                 final String result = this.compactIri(
-                        (String) ((Map<String, Object>) value).get("@id"), null, true, true);
+                        (String) ((Map<String, Object>) value).get(JsonLdConsts.ID), null, true, true);
                 if (termDefinitions.containsKey(result)
-                        && ((Map<String, Object>) termDefinitions.get(result)).containsKey("@id")
-                        && ((Map<String, Object>) value).get("@id").equals(
-                                ((Map<String, Object>) termDefinitions.get(result)).get("@id"))) {
-                    preferredValues.add("@vocab");
-                    preferredValues.add("@id");
+                        && ((Map<String, Object>) termDefinitions.get(result)).containsKey(JsonLdConsts.ID)
+                        && ((Map<String, Object>) value).get(JsonLdConsts.ID).equals(
+                                ((Map<String, Object>) termDefinitions.get(result)).get(JsonLdConsts.ID))) {
+                    preferredValues.add(JsonLdConsts.VOCAB);
+                    preferredValues.add(JsonLdConsts.ID);
                 }
                 // 2.12.2)
                 else {
-                    preferredValues.add("@id");
-                    preferredValues.add("@vocab");
+                    preferredValues.add(JsonLdConsts.ID);
+                    preferredValues.add(JsonLdConsts.VOCAB);
                 }
             }
             // 2.13)
             else {
                 preferredValues.add(typeLanguageValue);
             }
-            preferredValues.add("@none");
+            preferredValues.add(JsonLdConsts.NONE);
 
             // 2.14)
             final String term = selectTerm(iri, containers, typeLanguage, preferredValues);
@@ -694,9 +694,9 @@ public class Context extends LinkedHashMap<String, Object> {
         }
 
         // 3)
-        if (relativeToVocab && this.containsKey("@vocab")) {
+        if (relativeToVocab && this.containsKey(JsonLdConsts.VOCAB)) {
             // determine if vocab is a prefix of the iri
-            final String vocab = (String) this.get("@vocab");
+            final String vocab = (String) this.get(JsonLdConsts.VOCAB);
             // 3.1)
             if (iri.indexOf(vocab) == 0 && !iri.equals(vocab)) {
                 // use suffix as relative iri if it is not a term in the
@@ -719,14 +719,14 @@ public class Context extends LinkedHashMap<String, Object> {
                 continue;
             }
             // 5.2)
-            if (termDefinition == null || iri.equals(termDefinition.get("@id"))
-                    || !iri.startsWith((String) termDefinition.get("@id"))) {
+            if (termDefinition == null || iri.equals(termDefinition.get(JsonLdConsts.ID))
+                    || !iri.startsWith((String) termDefinition.get(JsonLdConsts.ID))) {
                 continue;
             }
 
             // 5.3)
             final String candidate = term + ":"
-                    + iri.substring(((String) termDefinition.get("@id")).length());
+                    + iri.substring(((String) termDefinition.get(JsonLdConsts.ID)).length());
             // 5.4)
             compactIRI = _iriCompactionStep5point4(iri, value, compactIRI, candidate, termDefinitions);
         }
@@ -738,7 +738,7 @@ public class Context extends LinkedHashMap<String, Object> {
 
         // 7)
         if (!relativeToVocab) {
-            return JsonLdUrl.removeBase(this.get("@base"), iri);
+            return JsonLdUrl.removeBase(this.get(JsonLdConsts.BASE), iri);
         }
 
         // 8)
@@ -755,7 +755,7 @@ public class Context extends LinkedHashMap<String, Object> {
         
         boolean condition2 = (!termDefinitions.containsKey(candidate) || (iri
                 .equals(((Map<String, Object>) termDefinitions.get(candidate))
-                        .get("@id")) && value == null));
+                        .get(JsonLdConsts.ID)) && value == null));
         
         if (condition1 && condition2) {
             compactIRI = candidate;
@@ -790,7 +790,7 @@ public class Context extends LinkedHashMap<String, Object> {
             if (termDefinition == null) {
                 continue;
             }
-            final String id = (String) termDefinition.get("@id");
+            final String id = (String) termDefinition.get(JsonLdConsts.ID);
             if (id == null) {
                 continue;
             }
@@ -842,9 +842,9 @@ public class Context extends LinkedHashMap<String, Object> {
         inverse = newMap();
 
         // 2)
-        String defaultLanguage = (String) this.get("@language");
+        String defaultLanguage = (String) this.get(JsonLdConsts.LANGUAGE);
         if (defaultLanguage == null) {
-            defaultLanguage = "@none";
+            defaultLanguage = JsonLdConsts.NONE;
         }
 
         // create term selections for each mapping in the context, ordererd by
@@ -865,13 +865,13 @@ public class Context extends LinkedHashMap<String, Object> {
             }
 
             // 3.2)
-            String container = (String) definition.get("@container");
+            String container = (String) definition.get(JsonLdConsts.CONTAINER);
             if (container == null) {
-                container = "@none";
+                container = JsonLdConsts.NONE;
             }
 
             // 3.3)
-            final String iri = (String) definition.get("@id");
+            final String iri = (String) definition.get(JsonLdConsts.ID);
 
             // 3.4 + 3.5)
             Map<String, Object> containerMap = (Map<String, Object>) inverse.get(iri);
@@ -884,32 +884,32 @@ public class Context extends LinkedHashMap<String, Object> {
             Map<String, Object> typeLanguageMap = (Map<String, Object>) containerMap.get(container);
             if (typeLanguageMap == null) {
                 typeLanguageMap = newMap();
-                typeLanguageMap.put("@language", newMap());
-                typeLanguageMap.put("@type", newMap());
+                typeLanguageMap.put(JsonLdConsts.LANGUAGE, newMap());
+                typeLanguageMap.put(JsonLdConsts.TYPE, newMap());
                 containerMap.put(container, typeLanguageMap);
             }
 
             // 3.8)
-            if (Boolean.TRUE.equals(definition.get("@reverse"))) {
+            if (Boolean.TRUE.equals(definition.get(JsonLdConsts.REVERSE))) {
                 final Map<String, Object> typeMap = (Map<String, Object>) typeLanguageMap
-                        .get("@type");
-                if (!typeMap.containsKey("@reverse")) {
-                    typeMap.put("@reverse", term);
+                        .get(JsonLdConsts.TYPE);
+                if (!typeMap.containsKey(JsonLdConsts.REVERSE)) {
+                    typeMap.put(JsonLdConsts.REVERSE, term);
                 }
                 // 3.9)
-            } else if (definition.containsKey("@type")) {
+            } else if (definition.containsKey(JsonLdConsts.TYPE)) {
                 final Map<String, Object> typeMap = (Map<String, Object>) typeLanguageMap
-                        .get("@type");
-                if (!typeMap.containsKey(definition.get("@type"))) {
-                    typeMap.put((String) definition.get("@type"), term);
+                        .get(JsonLdConsts.TYPE);
+                if (!typeMap.containsKey(definition.get(JsonLdConsts.TYPE))) {
+                    typeMap.put((String) definition.get(JsonLdConsts.TYPE), term);
                 }
                 // 3.10)
-            } else if (definition.containsKey("@language")) {
+            } else if (definition.containsKey(JsonLdConsts.LANGUAGE)) {
                 final Map<String, Object> languageMap = (Map<String, Object>) typeLanguageMap
-                        .get("@language");
-                String language = (String) definition.get("@language");
+                        .get(JsonLdConsts.LANGUAGE);
+                String language = (String) definition.get(JsonLdConsts.LANGUAGE);
                 if (language == null) {
-                    language = "@null";
+                    language = JsonLdConsts.NULL;
                 }
                 if (!languageMap.containsKey(language)) {
                     languageMap.put(language, term);
@@ -918,21 +918,21 @@ public class Context extends LinkedHashMap<String, Object> {
             } else {
                 // 3.11.1)
                 final Map<String, Object> languageMap = (Map<String, Object>) typeLanguageMap
-                        .get("@language");
+                        .get(JsonLdConsts.LANGUAGE);
                 // 3.11.2)
-                if (!languageMap.containsKey("@language")) {
-                    languageMap.put("@language", term);
+                if (!languageMap.containsKey(JsonLdConsts.LANGUAGE)) {
+                    languageMap.put(JsonLdConsts.LANGUAGE, term);
                 }
                 // 3.11.3)
-                if (!languageMap.containsKey("@none")) {
-                    languageMap.put("@none", term);
+                if (!languageMap.containsKey(JsonLdConsts.NONE)) {
+                    languageMap.put(JsonLdConsts.NONE, term);
                 }
                 // 3.11.4)
                 final Map<String, Object> typeMap = (Map<String, Object>) typeLanguageMap
-                        .get("@type");
+                        .get(JsonLdConsts.TYPE);
                 // 3.11.5)
-                if (!typeMap.containsKey("@none")) {
-                    typeMap.put("@none", term);
+                if (!typeMap.containsKey(JsonLdConsts.NONE)) {
+                    typeMap.put(JsonLdConsts.NONE, term);
                 }
             }
         }
@@ -992,8 +992,8 @@ public class Context extends LinkedHashMap<String, Object> {
      * @return The container mapping
      */
     public String getContainer(String property) {
-        if ("@graph".equals(property)) {
-            return "@set";
+        if (JsonLdConsts.GRAPH.equals(property)) {
+            return JsonLdConsts.SET;
         }
         if (JsonLdUtils.isKeyword(property)) {
             return property;
@@ -1002,7 +1002,7 @@ public class Context extends LinkedHashMap<String, Object> {
         if (td == null) {
             return null;
         }
-        return (String) td.get("@container");
+        return (String) td.get(JsonLdConsts.CONTAINER);
     }
 
     public Boolean isReverseProperty(String property) {
@@ -1010,7 +1010,7 @@ public class Context extends LinkedHashMap<String, Object> {
         if (td == null) {
             return false;
         }
-        final Object reverse = td.get("@reverse");
+        final Object reverse = td.get(JsonLdConsts.REVERSE);
         return reverse != null && (Boolean) reverse;
     }
 
@@ -1019,7 +1019,7 @@ public class Context extends LinkedHashMap<String, Object> {
         if (td == null) {
             return null;
         }
-        return (String) td.get("@type");
+        return (String) td.get(JsonLdConsts.TYPE);
     }
 
     private String getLanguageMapping(String property) {
@@ -1027,7 +1027,7 @@ public class Context extends LinkedHashMap<String, Object> {
         if (td == null) {
             return null;
         }
-        return (String) td.get("@language");
+        return (String) td.get(JsonLdConsts.LANGUAGE);
     }
 
     Map<String, Object> getTermDefinition(String key) {
@@ -1038,36 +1038,36 @@ public class Context extends LinkedHashMap<String, Object> {
         final Map<String, Object> rval = newMap();
         final Map<String, Object> td = getTermDefinition(activeProperty);
         // 1)
-        if (td != null && "@id".equals(td.get("@type"))) {
+        if (td != null && JsonLdConsts.ID.equals(td.get(JsonLdConsts.TYPE))) {
             // TODO: i'm pretty sure value should be a string if the @type is
             // @id
-            rval.put("@id", expandIri(value.toString(), true, false, null, null));
+            rval.put(JsonLdConsts.ID, expandIri(value.toString(), true, false, null, null));
             return rval;
         }
         // 2)
-        if (td != null && "@vocab".equals(td.get("@type"))) {
+        if (td != null && JsonLdConsts.VOCAB.equals(td.get(JsonLdConsts.TYPE))) {
             // TODO: same as above
-            rval.put("@id", expandIri(value.toString(), true, true, null, null));
+            rval.put(JsonLdConsts.ID, expandIri(value.toString(), true, true, null, null));
             return rval;
         }
         // 3)
-        rval.put("@value", value);
+        rval.put(JsonLdConsts.VALUE, value);
         // 4)
-        if (td != null && td.containsKey("@type")) {
-            rval.put("@type", td.get("@type"));
+        if (td != null && td.containsKey(JsonLdConsts.TYPE)) {
+            rval.put(JsonLdConsts.TYPE, td.get(JsonLdConsts.TYPE));
         }
         // 5)
         else if (value instanceof String) {
             // 5.1)
-            if (td != null && td.containsKey("@language")) {
-                final String lang = (String) td.get("@language");
+            if (td != null && td.containsKey(JsonLdConsts.LANGUAGE)) {
+                final String lang = (String) td.get(JsonLdConsts.LANGUAGE);
                 if (lang != null) {
-                    rval.put("@language", lang);
+                    rval.put(JsonLdConsts.LANGUAGE, lang);
                 }
             }
             // 5.2)
-            else if (this.get("@language") != null) {
-                rval.put("@language", this.get("@language"));
+            else if (this.get(JsonLdConsts.LANGUAGE) != null) {
+                rval.put(JsonLdConsts.LANGUAGE, this.get(JsonLdConsts.LANGUAGE));
             }
         }
         return rval;
@@ -1080,42 +1080,42 @@ public class Context extends LinkedHashMap<String, Object> {
 
     public Map<String, Object> serialize() {
         final Map<String, Object> ctx = newMap();
-        if (this.get("@base") != null && !this.get("@base").equals(options.getBase())) {
-            ctx.put("@base", this.get("@base"));
+        if (this.get(JsonLdConsts.BASE) != null && !this.get(JsonLdConsts.BASE).equals(options.getBase())) {
+            ctx.put(JsonLdConsts.BASE, this.get(JsonLdConsts.BASE));
         }
-        if (this.get("@language") != null) {
-            ctx.put("@language", this.get("@language"));
+        if (this.get(JsonLdConsts.LANGUAGE) != null) {
+            ctx.put(JsonLdConsts.LANGUAGE, this.get(JsonLdConsts.LANGUAGE));
         }
-        if (this.get("@vocab") != null) {
-            ctx.put("@vocab", this.get("@vocab"));
+        if (this.get(JsonLdConsts.VOCAB) != null) {
+            ctx.put(JsonLdConsts.VOCAB, this.get(JsonLdConsts.VOCAB));
         }
         for (final String term : termDefinitions.keySet()) {
             final Map<String, Object> definition = (Map<String, Object>) termDefinitions.get(term);
-            if (definition.get("@language") == null
-                    && definition.get("@container") == null
-                    && definition.get("@type") == null
-                    && (definition.get("@reverse") == null || Boolean.FALSE.equals(definition
-                            .get("@reverse")))) {
-                final String cid = this.compactIri((String) definition.get("@id"));
-                ctx.put(term, term.equals(cid) ? definition.get("@id") : cid);
+            if (definition.get(JsonLdConsts.LANGUAGE) == null
+                    && definition.get(JsonLdConsts.CONTAINER) == null
+                    && definition.get(JsonLdConsts.TYPE) == null
+                    && (definition.get(JsonLdConsts.REVERSE) == null || Boolean.FALSE.equals(definition
+                            .get(JsonLdConsts.REVERSE)))) {
+                final String cid = this.compactIri((String) definition.get(JsonLdConsts.ID));
+                ctx.put(term, term.equals(cid) ? definition.get(JsonLdConsts.ID) : cid);
             } else {
                 final Map<String, Object> defn = newMap();
-                final String cid = this.compactIri((String) definition.get("@id"));
-                final Boolean reverseProperty = Boolean.TRUE.equals(definition.get("@reverse"));
+                final String cid = this.compactIri((String) definition.get(JsonLdConsts.ID));
+                final Boolean reverseProperty = Boolean.TRUE.equals(definition.get(JsonLdConsts.REVERSE));
                 if (!(term.equals(cid) && !reverseProperty)) {
-                    defn.put(reverseProperty ? "@reverse" : "@id", cid);
+                    defn.put(reverseProperty ? JsonLdConsts.REVERSE : JsonLdConsts.ID, cid);
                 }
-                final String typeMapping = (String) definition.get("@type");
+                final String typeMapping = (String) definition.get(JsonLdConsts.TYPE);
                 if (typeMapping != null) {
-                    defn.put("@type", JsonLdUtils.isKeyword(typeMapping) ? typeMapping
+                    defn.put(JsonLdConsts.TYPE, JsonLdUtils.isKeyword(typeMapping) ? typeMapping
                             : compactIri(typeMapping, true));
                 }
-                if (definition.get("@container") != null) {
-                    defn.put("@container", definition.get("@container"));
+                if (definition.get(JsonLdConsts.CONTAINER) != null) {
+                    defn.put(JsonLdConsts.CONTAINER, definition.get(JsonLdConsts.CONTAINER));
                 }
-                final Object lang = definition.get("@language");
-                if (definition.get("@language") != null) {
-                    defn.put("@language", Boolean.FALSE.equals(lang) ? null : lang);
+                final Object lang = definition.get(JsonLdConsts.LANGUAGE);
+                if (definition.get(JsonLdConsts.LANGUAGE) != null) {
+                    defn.put(JsonLdConsts.LANGUAGE, Boolean.FALSE.equals(lang) ? null : lang);
                 }
                 ctx.put(term, defn);
             }
@@ -1123,7 +1123,7 @@ public class Context extends LinkedHashMap<String, Object> {
 
         final Map<String, Object> rval = newMap();
         if (!(ctx == null || ctx.isEmpty())) {
-            rval.put("@context", ctx);
+            rval.put(JsonLdConsts.CONTEXT, ctx);
         }
         return rval;
     }

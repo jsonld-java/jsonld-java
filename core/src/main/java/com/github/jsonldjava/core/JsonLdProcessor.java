@@ -50,8 +50,8 @@ public class JsonLdProcessor {
         // 2-6) NOTE: these are all the same steps as in expand
         final Object expanded = expand(input, opts);
         // 7)
-        if (context instanceof Map && ((Map<String, Object>) context).containsKey("@context")) {
-            context = ((Map<String, Object>) context).get("@context");
+        if (context instanceof Map && ((Map<String, Object>) context).containsKey(JsonLdConsts.CONTEXT)) {
+            context = ((Map<String, Object>) context).get(JsonLdConsts.CONTEXT);
         }
         Context activeCtx = new Context(opts);
         activeCtx = activeCtx.parse(context);
@@ -67,7 +67,7 @@ public class JsonLdProcessor {
             } else {
                 final Map<String, Object> tmp = newMap();
                 // TODO: SPEC: doesn't specify to use vocab = true here
-                tmp.put(activeCtx.compactIri("@graph", true), compacted);
+                tmp.put(activeCtx.compactIri(JsonLdConsts.GRAPH, true), compacted);
                 compacted = tmp;
             }
         }
@@ -79,10 +79,10 @@ public class JsonLdProcessor {
 
                 if (context instanceof List && ((List<Object>) context).size() == 1
                         && opts.getCompactArrays()) {
-                    ((Map<String, Object>) compacted).put("@context",
+                    ((Map<String, Object>) compacted).put(JsonLdConsts.CONTEXT,
                             ((List<Object>) context).get(0));
                 } else {
-                    ((Map<String, Object>) compacted).put("@context", context);
+                    ((Map<String, Object>) compacted).put(JsonLdConsts.CONTEXT, context);
                 }
             }
         }
@@ -132,8 +132,8 @@ public class JsonLdProcessor {
         // 4)
         if (opts.getExpandContext() != null) {
             Object exCtx = opts.getExpandContext();
-            if (exCtx instanceof Map && ((Map<String, Object>) exCtx).containsKey("@context")) {
-                exCtx = ((Map<String, Object>) exCtx).get("@context");
+            if (exCtx instanceof Map && ((Map<String, Object>) exCtx).containsKey(JsonLdConsts.CONTEXT)) {
+                exCtx = ((Map<String, Object>) exCtx).get(JsonLdConsts.CONTEXT);
             }
             activeCtx = activeCtx.parse(exCtx);
         }
@@ -146,9 +146,9 @@ public class JsonLdProcessor {
         Object expanded = new JsonLdApi(opts).expand(activeCtx, input);
 
         // final step of Expansion Algorithm
-        if (expanded instanceof Map && ((Map) expanded).containsKey("@graph")
+        if (expanded instanceof Map && ((Map) expanded).containsKey(JsonLdConsts.GRAPH)
                 && ((Map) expanded).size() == 1) {
-            expanded = ((Map<String, Object>) expanded).get("@graph");
+            expanded = ((Map<String, Object>) expanded).get(JsonLdConsts.GRAPH);
         } else if (expanded == null) {
             expanded = new ArrayList<Object>();
         }
@@ -182,8 +182,8 @@ public class JsonLdProcessor {
         // 2-6) NOTE: these are all the same steps as in expand
         final Object expanded = expand(input, opts);
         // 7)
-        if (context instanceof Map && ((Map<String, Object>) context).containsKey("@context")) {
-            context = ((Map<String, Object>) context).get("@context");
+        if (context instanceof Map && ((Map<String, Object>) context).containsKey(JsonLdConsts.CONTEXT)) {
+            context = ((Map<String, Object>) context).get(JsonLdConsts.CONTEXT);
         }
         // 8) NOTE: blank node generation variables are members of JsonLdApi
         // 9) NOTE: the next block is the Flattening Algorithm described in
@@ -191,11 +191,11 @@ public class JsonLdProcessor {
 
         // 1)
         final Map<String, Object> nodeMap = newMap();
-        nodeMap.put("@default", newMap());
+        nodeMap.put(JsonLdConsts.DEFAULT, newMap());
         // 2)
         new JsonLdApi(opts).generateNodeMap(expanded, nodeMap);
         // 3)
-        final Map<String, Object> defaultGraph = (Map<String, Object>) nodeMap.remove("@default");
+        final Map<String, Object> defaultGraph = (Map<String, Object>) nodeMap.remove(JsonLdConsts.DEFAULT);
         // 4)
         for (final String graphName : nodeMap.keySet()) {
             final Map<String, Object> graph = (Map<String, Object>) nodeMap.get(graphName);
@@ -203,7 +203,7 @@ public class JsonLdProcessor {
             Map<String, Object> entry;
             if (!defaultGraph.containsKey(graphName)) {
                 entry = newMap();
-                entry.put("@id", graphName);
+                entry.put(JsonLdConsts.ID, graphName);
                 defaultGraph.put(graphName, entry);
             } else {
                 entry = (Map<String, Object>) defaultGraph.get(graphName);
@@ -211,15 +211,15 @@ public class JsonLdProcessor {
             // 4.3)
             // TODO: SPEC doesn't specify that this should only be added if it
             // doesn't exists
-            if (!entry.containsKey("@graph")) {
-                entry.put("@graph", new ArrayList<Object>());
+            if (!entry.containsKey(JsonLdConsts.GRAPH)) {
+                entry.put(JsonLdConsts.GRAPH, new ArrayList<Object>());
             }
             final List<String> keys = new ArrayList<String>(graph.keySet());
             Collections.sort(keys);
             for (final String id : keys) {
                 final Map<String, Object> node = (Map<String, Object>) graph.get(id);
-                if (!(node.containsKey("@id") && node.size() == 1)) {
-                    ((List<Object>) entry.get("@graph")).add(node);
+                if (!(node.containsKey(JsonLdConsts.ID) && node.size() == 1)) {
+                    ((List<Object>) entry.get(JsonLdConsts.GRAPH)).add(node);
                 }
             }
 
@@ -231,7 +231,7 @@ public class JsonLdProcessor {
         Collections.sort(keys);
         for (final String id : keys) {
             final Map<String, Object> node = (Map<String, Object>) defaultGraph.get(id);
-            if (!(node.containsKey("@id") && node.size() == 1)) {
+            if (!(node.containsKey(JsonLdConsts.ID) && node.size() == 1)) {
                 flattened.add(node);
             }
         }
@@ -247,7 +247,7 @@ public class JsonLdProcessor {
                 tmp.add(compacted);
                 compacted = tmp;
             }
-            final String alias = activeCtx.compactIri("@graph");
+            final String alias = activeCtx.compactIri(JsonLdConsts.GRAPH);
             final Map<String, Object> rval = activeCtx.serialize();
             rval.put(alias, compacted);
             return rval;
@@ -304,7 +304,7 @@ public class JsonLdProcessor {
 
         final JsonLdApi api = new JsonLdApi(expandedInput, opts);
         final List<Object> framed = api.frame(expandedInput, expandedFrame);
-        final Context activeCtx = api.context.parse(((Map<String, Object>) frame).get("@context"));
+        final Context activeCtx = api.context.parse(((Map<String, Object>) frame).get(JsonLdConsts.CONTEXT));
 
         Object compacted = api.compact(activeCtx, null, framed);
         if (!(compacted instanceof List)) {
@@ -312,7 +312,7 @@ public class JsonLdProcessor {
             tmp.add(compacted);
             compacted = tmp;
         }
-        final String alias = activeCtx.compactIri("@graph");
+        final String alias = activeCtx.compactIri(JsonLdConsts.GRAPH);
         final Map<String, Object> rval = activeCtx.serialize();
         rval.put(alias, compacted);
         JsonLdUtils.removePreserve(activeCtx, rval, opts);
@@ -328,8 +328,8 @@ public class JsonLdProcessor {
     private static Map<String, RDFParser> rdfParsers = new LinkedHashMap<String, RDFParser>() {
         {
             // automatically register nquad serializer
-            put("application/nquads", new NQuadRDFParser());
-            put("text/turtle", new TurtleRDFParser());
+            put(JsonLdConsts.APPLICATION_NQUADS, new NQuadRDFParser());
+            put(JsonLdConsts.TEXT_TURTLE, new TurtleRDFParser());
         }
     };
 
@@ -365,7 +365,7 @@ public class JsonLdProcessor {
 
         if (options.format == null && dataset instanceof String) {
             // attempt to parse the input as nquads
-            options.format = "application/nquads";
+            options.format = JsonLdConsts.APPLICATION_NQUADS;
         }
 
         if (rdfParsers.containsKey(options.format)) {
@@ -424,11 +424,11 @@ public class JsonLdProcessor {
 
         // re-process using the generated context if outputForm is set
         if (options.outputForm != null) {
-            if ("expanded".equals(options.outputForm)) {
+            if (JsonLdConsts.EXPANDED.equals(options.outputForm)) {
                 return rval;
-            } else if ("compacted".equals(options.outputForm)) {
+            } else if (JsonLdConsts.COMPACTED.equals(options.outputForm)) {
                 return compact(rval, dataset.getContext(), options);
-            } else if ("flattened".equals(options.outputForm)) {
+            } else if (JsonLdConsts.FLATTENED.equals(options.outputForm)) {
                 return flatten(rval, dataset.getContext(), options);
             } else {
                 throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR, "Output form was unknown: "
@@ -494,8 +494,8 @@ public class JsonLdProcessor {
                 _input.add((Map<String, Object>) input);
             }
             for (final Map<String, Object> e : _input) {
-                if (e.containsKey("@context")) {
-                    dataset.parseContext(e.get("@context"));
+                if (e.containsKey(JsonLdConsts.CONTEXT)) {
+                    dataset.parseContext(e.get(JsonLdConsts.CONTEXT));
                 }
             }
         }
@@ -505,9 +505,9 @@ public class JsonLdProcessor {
         }
 
         if (options.format != null) {
-            if ("application/nquads".equals(options.format)) {
+            if (JsonLdConsts.APPLICATION_NQUADS.equals(options.format)) {
                 return new NQuadTripleCallback().call(dataset);
-            } else if ("text/turtle".equals(options.format)) {
+            } else if (JsonLdConsts.TEXT_TURTLE.equals(options.format)) {
                 return new TurtleTripleCallback().call(dataset);
             } else {
                 throw new JsonLdError(JsonLdError.Error.UNKNOWN_FORMAT, options.format);
