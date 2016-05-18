@@ -134,6 +134,7 @@ public class Context extends LinkedHashMap<String, Object> {
      * @throws JsonLdError
      *             If there is an error parsing the contexts.
      */
+    @SuppressWarnings("unchecked")
     public Context parse(Object localContext, List<String> remoteContexts) throws JsonLdError {
         if (remoteContexts == null) {
             remoteContexts = new ArrayList<String>();
@@ -187,13 +188,17 @@ public class Context extends LinkedHashMap<String, Object> {
 
             // 3.4
             if (remoteContexts.isEmpty() && ((Map<String, Object>) context).containsKey(JsonLdConsts.BASE)) {
+                // 3.4.1
                 final Object value = ((Map<String, Object>) context).get(JsonLdConsts.BASE);
+                // 3.4.2
                 if (value == null) {
                     result.remove(JsonLdConsts.BASE);
                 } else if (value instanceof String) {
+                    // 3.4.3
                     if (JsonLdUtils.isAbsoluteIri((String) value)) {
                         result.put(JsonLdConsts.BASE, value);
                     } else {
+                        // 3.4.4
                         final String baseUri = (String) result.get(JsonLdConsts.BASE);
                         if (!JsonLdUtils.isAbsoluteIri(baseUri)) {
                             throw new JsonLdError(Error.INVALID_BASE_IRI, baseUri);
@@ -201,6 +206,7 @@ public class Context extends LinkedHashMap<String, Object> {
                         result.put(JsonLdConsts.BASE, JsonLdUrl.resolve(baseUri, (String) value));
                     }
                 } else {
+                    // 3.4.5
                     throw new JsonLdError(JsonLdError.Error.INVALID_BASE_IRI,
                             "@base must be a string");
                 }
