@@ -14,7 +14,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.8.2</version>
+        <version>0.8.3</version>
     </dependency>
 
 Code example
@@ -401,6 +401,7 @@ CHANGELOG
 =========
 
 ### 2016-05-18
+* Release 0.8.3
 * Fix @base in remote contexts corrupting the local context
 
 ### 2016-04-23
