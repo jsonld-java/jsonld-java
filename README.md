@@ -207,6 +207,7 @@ For Developers
 
 `jsonld-java` uses maven to compile. From the base `jsonld-java` module run `mvn clean install` to install the jar into your local maven repository.
 
+The tests require Java-8 to compile, while the rest of the codebase is still compatible and built using the Java-6 APIs.
 
 ### Running tests
 
