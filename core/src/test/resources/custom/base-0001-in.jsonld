@@ -1,0 +1,16 @@
+{
+    "@context": [ 
+"https://raw.githubusercontent.com/monarch-initiative/monarch-app/master/conf/monarch-context.jsonld",
+        {
+            "@base": "http://example.org/base/",
+            "ex": "http://example.org/",
+            "ex:friendOf": {
+                "@type": "@id"
+            }
+        }
+    ],
+    "@id": "3456",
+    "ex:name": "Jim",
+    "ex:friendOf": "1234",
+    "@type": "Person"
+}
