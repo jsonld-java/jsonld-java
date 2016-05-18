@@ -1797,6 +1797,24 @@ public class JsonLdApi {
      *             If there was an error during conversion from RDF to JSON-LD.
      */
     public List<Object> fromRDF(final RDFDataset dataset) throws JsonLdError {
+    	// by default, don't change anything to current way of doing things
+    	return fromRDF(dataset, false);
+    }
+    
+    /**
+     * Converts RDF statements into JSON-LD.
+     *
+     * @param dataset
+     *            the RDF statements.
+     * @param noDupsInDataset
+     *            if you know that dataset doesn't contain duplicated triples, and only in this case,
+     *            pass true in noDupsInDataset to improve the performance of this call.
+     *            
+     * @return A list of JSON-LD objects found in the given dataset.
+     * @throws JsonLdError
+     *             If there was an error during conversion from RDF to JSON-LD.
+     */
+    public List<Object> fromRDF(final RDFDataset dataset, boolean noDupsInDataset) throws JsonLdError {
         // 1)
         final Map<String, NodeMapNode> defaultGraph = new LinkedHashMap<String, NodeMapNode>();
         // 2)
@@ -1854,7 +1872,11 @@ public class JsonLdApi {
                 final Map<String, Object> value = object.toObject(opts.getUseNativeTypes());
 
                 // 3.5.6+7)
-                JsonLdUtils.mergeValue(node, predicate, value);
+                if (noDupsInDataset) {
+                	JsonLdUtils.mergeValue_lax(node, predicate, value);
+                } else {
+                	JsonLdUtils.mergeValue(node, predicate, value);
+                }
 
                 // 3.5.8)
                 if (object.isBlankNode() || object.isIRI()) {
