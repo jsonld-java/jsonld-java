@@ -1,0 +1,10 @@
+[ {
+  "@id" : "http://example.org/base/3456",
+  "@type" : [ "http://example.org/base/Person" ],
+  "http://example.org/friendOf" : [ {
+    "@id" : "http://example.org/base/1234"
+  } ],
+  "http://example.org/name" : [ {
+    "@value" : "Jim"
+  } ]
+} ]

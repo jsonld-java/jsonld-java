@@ -27,4 +27,34 @@ public final class JsonLdConsts {
     public static final String RDF_OBJECT = RDF_SYNTAX_NS + "object";
     public static final String RDF_LANGSTRING = RDF_SYNTAX_NS + "langString";
     public static final String RDF_LIST = RDF_SYNTAX_NS + "List";
+    
+    public static final String TEXT_TURTLE = "text/turtle";
+    public static final String APPLICATION_NQUADS = "application/nquads";
+    
+    public static final String FLATTENED = "flattened";
+    public static final String COMPACTED = "compacted";
+    public static final String EXPANDED = "expanded";
+    
+    public static final String ID = "@id";
+    public static final String DEFAULT = "@default";
+    public static final String GRAPH = "@graph";
+    public static final String CONTEXT = "@context";
+    public static final String PRESERVE = "@preserve";
+    public static final String EXPLICIT = "@explicit";
+    public static final String OMIT_DEFAULT = "@omitDefault";
+    public static final String EMBED_CHILDREN = "@embedChildren";
+    public static final String EMBED = "@embed";
+    public static final String LIST = "@list";
+    public static final String LANGUAGE = "@language";
+    public static final String INDEX = "@index";
+    public static final String SET = "@set";
+    public static final String TYPE = "@type";
+    public static final String REVERSE = "@reverse";
+    public static final String VALUE = "@value";
+    public static final String NULL = "@null";
+    public static final String NONE = "@none";
+    public static final String CONTAINER = "@container";
+    public static final String BLANK_NODE_PREFIX = "_:";
+    public static final String VOCAB = "@vocab";
+    public static final String BASE = "@base";
 }

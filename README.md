@@ -399,6 +399,9 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2016-05-18
+* Fix @base in remote contexts corrupting the local context
+
 ### 2016-02-29
 * Fix ConcurrentModificationException in the implementation of the Framing API
 
