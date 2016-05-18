@@ -127,12 +127,12 @@ public class JsonLdUtils {
             values = new ArrayList<Object>();
             obj.put(key, values);
         }
-        if ("@list".equals(key)
-                || (value instanceof Map && ((Map<String, Object>) value).containsKey("@list"))
+        //if ("@list".equals(key)
+        //        || (value instanceof Map && ((Map<String, Object>) value).containsKey("@list"))
                 //|| !deepContains(values, value)
-                ) {
+        //        ) {
             values.add(value);
-        }
+        //}
     }
 
     static void mergeCompactedValue(Map<String, Object> obj, String key, Object value) {
