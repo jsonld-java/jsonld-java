@@ -114,7 +114,7 @@ public class JsonLdPerformanceTest {
         System.out.println("(" + label + ") Compact average : " + compactStats.getAverage());
     }
 
-    // @Ignore("Disable performance tests by default")
+    @Ignore("Disable performance tests by default")
     @Test
     public final void testPerformanceRandom() throws Exception {
         Random prng = new Random();
@@ -349,6 +349,7 @@ public class JsonLdPerformanceTest {
      * 
      * @author fpservant
      */
+    @Ignore("Disable performance tests by default")
     @Test
     public final void slowVsFast5Predicates() throws Exception {
 
@@ -383,6 +384,7 @@ public class JsonLdPerformanceTest {
      * 
      * @author fpservant
      */
+    @Ignore("Disable performance tests by default")
     @Test
     public final void slowVsFast2Predicates() throws Exception {
 
@@ -417,6 +419,7 @@ public class JsonLdPerformanceTest {
      * 
      * @author fpservant
      */
+    @Ignore("Disable performance tests by default")
     @Test
     public final void slowVsFast1Predicate() throws Exception {
 
@@ -447,6 +450,76 @@ public class JsonLdPerformanceTest {
     }
 
     /**
+     * many triples with same subject and prop: current implementation is slow
+     * 
+     * @author fpservant
+     */
+    @Ignore("Disable performance tests by default")    
+    @Test
+    public final void slowVsFastMultipleSubjects1Predicate() throws Exception {
+
+        final String ns = "http://www.example.com/foo/";
+
+        Function<Integer, String> subjectGenerator = new Function<Integer, String>() {
+            public String apply(Integer index) {
+                return ns + "s" + Integer.toString(index % 100);
+            }
+        };
+        Function<Integer, String> predicateGenerator = new Function<Integer, String>() {
+            public String apply(Integer index) {
+                return ns + "p";
+            }
+        };
+        Function<Integer, String> objectGenerator = new Function<Integer, String>() {
+            public String apply(Integer index) {
+                return ns + "o" + Integer.toString(index);
+            }
+        };
+        int tripleCount = 2000;
+        int warmingRounds = 200;
+        int rounds = 1000;
+
+        runLaxVersusSlowToRDFTest("100 subjects and 1 predicate", ns, subjectGenerator, predicateGenerator,
+                objectGenerator, tripleCount, warmingRounds, rounds);
+
+    }
+
+    /**
+     * many triples with same subject and prop: current implementation is slow
+     * 
+     * @author fpservant
+     */
+    @Ignore("Disable performance tests by default")
+    @Test
+    public final void slowVsFastMultipleSubjects5Predicates() throws Exception {
+
+        final String ns = "http://www.example.com/foo/";
+
+        Function<Integer, String> subjectGenerator = new Function<Integer, String>() {
+            public String apply(Integer index) {
+                return ns + "s" + Integer.toString(index % 1000);
+            }
+        };
+        Function<Integer, String> predicateGenerator = new Function<Integer, String>() {
+            public String apply(Integer index) {
+                return ns + "p" + Integer.toString(index % 5);
+            }
+        };
+        Function<Integer, String> objectGenerator = new Function<Integer, String>() {
+            public String apply(Integer index) {
+                return ns + "o" + Integer.toString(index);
+            }
+        };
+        int tripleCount = 2000;
+        int warmingRounds = 200;
+        int rounds = 1000;
+
+        runLaxVersusSlowToRDFTest("1000 subjects and 5 predicates", ns, subjectGenerator, predicateGenerator,
+                objectGenerator, tripleCount, warmingRounds, rounds);
+
+    }
+
+    /**
      * Run a test on lax versus slow methods for toRDF.
      * 
      * @param ns
@@ -466,7 +539,7 @@ public class JsonLdPerformanceTest {
      * @throws JsonLdError
      *             If there is an error with the JSONLD processing.
      */
-    public void runLaxVersusSlowToRDFTest(final String label, final String ns,
+    private void runLaxVersusSlowToRDFTest(final String label, final String ns,
             Function<Integer, String> subjectGenerator,
             Function<Integer, String> predicateGenerator, Function<Integer, String> objectGenerator,
             int tripleCount, int warmingRounds, int rounds) throws JsonLdError {
@@ -496,7 +569,7 @@ public class JsonLdPerformanceTest {
             // true));
         }
 
-        System.out.println("Average time to parse a dataset containing one subject with "
+        System.out.println("Average time to parse a dataset containing "
                 + tripleCount + " different triples:");
         long startLax = System.currentTimeMillis();
         for (int i = 0; i < rounds; i++) {
