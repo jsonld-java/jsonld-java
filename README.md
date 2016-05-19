@@ -400,6 +400,9 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2016-05-20
+* Fix reported NPE in JsonLdApi.removeDependents
+
 ### 2016-05-18
 * Release 0.8.3
 * Fix @base in remote contexts corrupting the local context
