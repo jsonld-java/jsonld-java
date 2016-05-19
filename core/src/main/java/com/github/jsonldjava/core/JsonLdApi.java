@@ -1572,11 +1572,10 @@ public class JsonLdApi {
         // get embed keys as a separate array to enable deleting keys in map
         for (final String id_dep : new HashSet<String>(embeds.keySet())) {
             final EmbedNode e = embeds.get(id_dep);
-            final Object p = e.parent != null ? e.parent : newMap();
-            if (!(p instanceof Map)) {
+            if (e == null || e.parent == null || !(e.parent instanceof Map)) {
                 continue;
             }
-            final String pid = (String) ((Map<String, Object>) p).get(JsonLdConsts.ID);
+            final String pid = (String) ((Map<String, Object>) e.parent).get(JsonLdConsts.ID);
             if (Obj.equals(id, pid)) {
                 embeds.remove(id_dep);
                 removeDependents(embeds, id_dep);
@@ -1823,19 +1822,24 @@ public class JsonLdApi {
     }
 
     /**
-     * Converts RDF statements into JSON-LD, presuming that there are no duplicates in the dataset.
+     * Converts RDF statements into JSON-LD, presuming that there are no
+     * duplicates in the dataset.
      *
      * @param dataset
      *            the RDF statements.
-     * @param noDuplicatesInDataset 
-     *              True if there are no duplicates in the dataset and false otherwise.
+     * @param noDuplicatesInDataset
+     *            True if there are no duplicates in the dataset and false
+     *            otherwise.
      * @return A list of JSON-LD objects found in the given dataset.
      * @throws JsonLdError
      *             If there was an error during conversion from RDF to JSON-LD.
-     * @deprecated Experimental method, only use if you are sure you need to use this method. Most users will need to use {@link #fromRDF(RDFDataset)}.
+     * @deprecated Experimental method, only use if you are sure you need to use
+     *             this method. Most users will need to use
+     *             {@link #fromRDF(RDFDataset)}.
      */
     @Deprecated
-    public List<Object> fromRDF(final RDFDataset dataset, boolean noDuplicatesInDataset) throws JsonLdError {
+    public List<Object> fromRDF(final RDFDataset dataset, boolean noDuplicatesInDataset)
+            throws JsonLdError {
         // 1)
         final Map<String, NodeMapNode> defaultGraph = new LinkedHashMap<String, NodeMapNode>(4);
         // 2)
@@ -1894,7 +1898,7 @@ public class JsonLdApi {
                 final Map<String, Object> value = object.toObject(opts.getUseNativeTypes());
 
                 // 3.5.6+7)
-                if(noDuplicatesInDataset) {
+                if (noDuplicatesInDataset) {
                     JsonLdUtils.laxMergeValue(node, predicate, value);
                 } else {
                     JsonLdUtils.mergeValue(node, predicate, value);
