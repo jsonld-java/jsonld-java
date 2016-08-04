@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -17,6 +18,7 @@ import com.github.jsonldjava.utils.JsonUtils;
 
 public class ContextCompactionTest {
 
+    @Ignore("Disable until schema.org is fixed")
     @Test
     public void testCompaction() throws Exception {
 
