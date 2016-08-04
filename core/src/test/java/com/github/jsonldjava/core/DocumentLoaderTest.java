@@ -36,13 +36,19 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 @SuppressWarnings("unchecked")
 public class DocumentLoaderTest {
 
-    DocumentLoader documentLoader = new DocumentLoader();
+    private DocumentLoader documentLoader = new DocumentLoader();
+
+    @After
+    public void setContextClassLoader() {
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+    }
 
     @Test
     public void fromURLTest0001() throws Exception {
@@ -100,6 +106,33 @@ public class DocumentLoaderTest {
     public void fromURLredirect() throws Exception {
         final URL url = new URL("http://purl.org/wf4ever/ro-bundle/context.json");
         final Object context = documentLoader.fromURL(url);
+        assertTrue(context instanceof Map);
+        assertFalse(((Map<?, ?>) context).isEmpty());
+    }
+
+    // @Ignore("Integration test")
+    @Test
+    public void loadDocumentWf4ever() throws Exception {
+        final RemoteDocument document = documentLoader.loadDocument("http://purl.org/wf4ever/ro-bundle/context.json");
+        Object context = document.getDocument();
+        assertTrue(context instanceof Map);
+        assertFalse(((Map<?, ?>) context).isEmpty());
+    }
+
+    @Ignore("Integration test")
+    @Test
+    public void fromURLSchemaOrg() throws Exception {
+        final URL url = new URL("http://schema.org/");
+        final Object context = documentLoader.fromURL(url);
+        assertTrue(context instanceof Map);
+        assertFalse(((Map<?, ?>) context).isEmpty());
+    }
+
+    @Ignore("Integration test")
+    @Test
+    public void loadDocumentSchemaOrg() throws Exception {
+        final RemoteDocument document = documentLoader.loadDocument("http://schema.org/");
+        Object context = document.getDocument();
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
@@ -231,11 +264,6 @@ public class DocumentLoaderTest {
         // Should fail-fast as nonexisting.example.com is not in DNS
         final Object context = documentLoader
                 .fromURL(new URL("http://nonexisting.example.com/miss"));
-    }
-
-    @After
-    public void setContextClassLoader() {
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
     }
 
     @Test(expected = IOException.class)
