@@ -60,7 +60,7 @@ public class DocumentLoaderTest {
     public void fromURLTest0001() throws Exception {
         final URL contexttest = getClass().getResource("/custom/contexttest-0001.jsonld");
         assertNotNull(contexttest);
-        final Object context = documentLoader.fromURL(contexttest);
+        final Object context = JsonUtils.fromURL(contexttest, documentLoader.getHttpClient());
         assertTrue(context instanceof Map);
         final Map<String, Object> contextMap = (Map<String, Object>) context;
         assertEquals(1, contextMap.size());
@@ -75,7 +75,7 @@ public class DocumentLoaderTest {
     public void fromURLTest0002() throws Exception {
         final URL contexttest = getClass().getResource("/custom/contexttest-0002.jsonld");
         assertNotNull(contexttest);
-        final Object context = documentLoader.fromURL(contexttest);
+        final Object context = JsonUtils.fromURL(contexttest, documentLoader.getHttpClient());
         assertTrue(context instanceof List);
         final List<Map<String, Object>> contextList = (List<Map<String, Object>>) context;
 
@@ -99,7 +99,7 @@ public class DocumentLoaderTest {
     @Test
     public void fromURLredirectHTTPSToHTTP() throws Exception {
         final URL url = new URL("https://w3id.org/bundle/context");
-        final Object context = documentLoader.fromURL(url);
+        final Object context = JsonUtils.fromURL(url, documentLoader.getHttpClient());
         // Should not fail because of
         // http://stackoverflow.com/questions/1884230/java-doesnt-follow-redirect-in-urlconnection
         // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4620571
@@ -111,7 +111,7 @@ public class DocumentLoaderTest {
     @Test
     public void fromURLredirect() throws Exception {
         final URL url = new URL("http://purl.org/wf4ever/ro-bundle/context.json");
-        final Object context = documentLoader.fromURL(url);
+        final Object context = JsonUtils.fromURL(url, documentLoader.getHttpClient());
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
@@ -126,16 +126,6 @@ public class DocumentLoaderTest {
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
-    // @Ignore("Broken at server side")
-    @Test
-    public void fromURLSchemaOrg() throws Exception {
-        final URL url = new URL("http://schema.org/");
-        final Object context = documentLoader.fromURL(url);
-        assertTrue(context instanceof Map);
-        assertFalse(((Map<?, ?>) context).isEmpty());
-    }
-
-    // @Ignore("Integration test")
     @Test
     public void fromURLSchemaOrgNoApacheHttpClient() throws Exception {
         final URL url = new URL("http://schema.org/");
@@ -156,7 +146,6 @@ public class DocumentLoaderTest {
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
-    // @Ignore("Integration test")
     @Test
     public void loadDocumentSchemaOrg() throws Exception {
         final RemoteDocument document = documentLoader.loadDocument("http://schema.org/");
@@ -168,13 +157,13 @@ public class DocumentLoaderTest {
     @Test
     public void fromURLCache() throws Exception {
         final URL url = new URL("http://json-ld.org/contexts/person.jsonld");
-        documentLoader.fromURL(url);
+        JsonUtils.fromURL(url, documentLoader.getHttpClient());
 
         // Now try to get it again and ensure it is
         // cached
         final HttpClient clientCached = documentLoader.getHttpClient();
         final HttpUriRequest getCached = new HttpGet(url.toURI());
-        getCached.setHeader("Accept", DocumentLoader.ACCEPT_HEADER);
+        getCached.setHeader("Accept", JsonUtils.ACCEPT_HEADER);
         final HttpCacheContext localContextCached = HttpCacheContext.create();
         final HttpResponse respoCached = clientCached.execute(getCached, localContextCached);
         EntityUtils.consume(respoCached.getEntity());
@@ -208,7 +197,7 @@ public class DocumentLoaderTest {
         };
         final URL url = new URL(null, "jsonldtest:context", handler);
         assertEquals(0, requests.get());
-        final Object context = documentLoader.fromURL(url);
+        final Object context = JsonUtils.fromURL(url, documentLoader.getHttpClient());
         assertEquals(1, requests.get());
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
@@ -237,7 +226,7 @@ public class DocumentLoaderTest {
                 .forClass(HttpUriRequest.class);
         documentLoader.setHttpClient(fakeHttpClient(httpRequest));
         try {
-            final Object context = documentLoader.fromURL(url);
+            final Object context = JsonUtils.fromURL(url, documentLoader.getHttpClient());
             assertTrue(context instanceof Map);
         } finally {
             documentLoader.setHttpClient(null);
@@ -248,7 +237,7 @@ public class DocumentLoaderTest {
 
         final Header[] accept = req.getHeaders("Accept");
         assertEquals(1, accept.length);
-        assertEquals(DocumentLoader.ACCEPT_HEADER, accept[0].getValue());
+        assertEquals(JsonUtils.ACCEPT_HEADER, accept[0].getValue());
         // Test that this header parses correctly
         final HeaderElement[] elems = accept[0].getElements();
         assertEquals("application/ld+json", elems[0].getName());
@@ -281,8 +270,7 @@ public class DocumentLoaderTest {
     public void jarCacheHit() throws Exception {
         // If no cache, should fail-fast as nonexisting.example.com is not in
         // DNS
-        final Object context = documentLoader
-                .fromURL(new URL("http://nonexisting.example.com/context"));
+        final Object context = JsonUtils.fromURL(new URL("http://nonexisting.example.com/context"), documentLoader.getHttpClient());
         assertTrue(context instanceof Map);
         assertTrue(((Map) context).containsKey("@context"));
     }
@@ -290,16 +278,14 @@ public class DocumentLoaderTest {
     @Test(expected = IOException.class)
     public void jarCacheMiss404() throws Exception {
         // Should fail-fast as nonexisting.example.com is not in DNS
-        final Object context = documentLoader
-                .fromURL(new URL("http://nonexisting.example.com/miss"));
+        JsonUtils.fromURL(new URL("http://nonexisting.example.com/miss"), documentLoader.getHttpClient());
     }
 
     @Test(expected = IOException.class)
     public void jarCacheMissThreadCtx() throws Exception {
         final URLClassLoader findNothingCL = new URLClassLoader(new URL[] {}, null);
         Thread.currentThread().setContextClassLoader(findNothingCL);
-        final Object context = documentLoader
-                .fromURL(new URL("http://nonexisting.example.com/context"));
+        JsonUtils.fromURL(new URL("http://nonexisting.example.com/context"), documentLoader.getHttpClient());
     }
 
     @Test
@@ -307,7 +293,7 @@ public class DocumentLoaderTest {
         final URL url = new URL("http://nonexisting.example.com/nested/hello");
         final URL nestedJar = getClass().getResource("/nested.jar");
         try {
-            final Object hello = documentLoader.fromURL(url);
+            JsonUtils.fromURL(url, documentLoader.getHttpClient());
             fail("Should not be able to find nested/hello yet");
         } catch (final IOException ex) {
             // expected
@@ -315,7 +301,7 @@ public class DocumentLoaderTest {
 
         final ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
         Thread.currentThread().setContextClassLoader(cl);
-        final Object hello = documentLoader.fromURL(url);
+        final Object hello = JsonUtils.fromURL(url, documentLoader.getHttpClient());
         assertTrue(hello instanceof Map);
         assertEquals("World!", ((Map) hello).get("Hello"));
     }

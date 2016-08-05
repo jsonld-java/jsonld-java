@@ -173,26 +173,6 @@ public class JsonUtils {
     }
 
     /**
-     * Parses a JSON-LD document, from the contents of the JSON resource
-     * resolved from the JsonLdUrl, to an object that can be used as input for
-     * the {@link JsonLdApi} and {@link JsonLdProcessor} methods.
-     *
-     * @param url
-     *            The JsonLdUrl to resolve
-     * @return A JSON Object.
-     * @throws JsonParseException
-     *             If there was a JSON related error during parsing.
-     * @throws IOException
-     *             If there was an IO error during parsing.
-     * @deprecated Use {@link #fromURL(java.net.URL, CloseableHttpClient)}
-     *             instead.
-     */
-    @Deprecated
-    public static Object fromURL(java.net.URL url) throws JsonParseException, IOException {
-        return fromURL(url, getDefaultHttpClient());
-    }
-
-    /**
      * Writes the given JSON-LD Object out to a String, using indentation and
      * new lines to improve readability.
      *
@@ -281,7 +261,7 @@ public class JsonUtils {
      * @throws IOException
      *             If there are any IO exceptions while resolving the URL.
      */
-    public static InputStream openStreamForURL(java.net.URL url, CloseableHttpClient httpClient)
+    private static InputStream openStreamForURL(java.net.URL url, CloseableHttpClient httpClient)
             throws IOException {
         final String protocol = url.getProtocol();
         if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
@@ -296,17 +276,11 @@ public class JsonUtils {
         request.addHeader("Accept", ACCEPT_HEADER);
 
         final CloseableHttpResponse response = httpClient.execute(request);
-        try {
-            final int status = response.getStatusLine().getStatusCode();
-            if (status != 200 && status != 203) {
-                throw new IOException("Can't retrieve " + url + ", status code: " + status);
-            }
-            return response.getEntity().getContent();
-        } finally {
-            if (response != null) {
-                response.close();
-            }
+        final int status = response.getStatusLine().getStatusCode();
+        if (status != 200 && status != 203) {
+            throw new IOException("Can't retrieve " + url + ", status code: " + status);
         }
+        return response.getEntity().getContent();
     }
 
     /**

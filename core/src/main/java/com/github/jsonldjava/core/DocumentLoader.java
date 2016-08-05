@@ -48,43 +48,6 @@ public class DocumentLoader {
 
     private volatile CloseableHttpClient httpClient;
 
-    /**
-     * Returns a Map, List, or String containing the contents of the JSON
-     * resource resolved from the JsonLdUrl.
-     *
-     * @param url
-     *            The JsonLdUrl to resolve
-     * @return The Map, List, or String that represent the JSON resource
-     *         resolved from the JsonLdUrl
-     * @throws JsonParseException
-     *             If the JSON was not valid.
-     * @throws IOException
-     *             If there was an error resolving the resource.
-     * @deprecated Since 0.8.4, use {@link #loadDocument(String)} instead.
-     */
-    @Deprecated
-    public Object fromURL(java.net.URL url) throws JsonParseException, IOException {
-        return JsonUtils.fromURL(url, getHttpClient());
-    }
-
-    /**
-     * Opens an {@link InputStream} for the given {@link java.net.URL},
-     * including support for http and https URLs that are requested using
-     * Content Negotiation with application/ld+json as the preferred content
-     * type.
-     *
-     * @param url
-     *            The {@link java.net.URL} identifying the source.
-     * @return An InputStream containing the contents of the source.
-     * @throws IOException
-     *             If there was an error resolving the {@link java.net.URL}.
-     * @deprecated Since 0.8.4, use {@link #loadDocument(String)} instead.
-     */
-    @Deprecated
-    public InputStream openStreamFromURL(java.net.URL url) throws IOException {
-        return JsonUtils.openStreamForURL(url, getHttpClient());
-    }
-
     public CloseableHttpClient getHttpClient() {
         CloseableHttpClient result = httpClient;
         if (result == null) {
