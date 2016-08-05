@@ -1,9 +1,9 @@
 package com.github.jsonldjava.core;
 
 /**
- * The JsonLdOptions type as specified in the <a
- * href="http://www.w3.org/TR/json-ld-api/#the-jsonldoptions-type">JSON-LD-API
- * specification</a>.
+ * The JsonLdOptions type as specified in the
+ * <a href="http://www.w3.org/TR/json-ld-api/#the-jsonldoptions-type">JSON-LD-
+ * API specification</a>.
  *
  * @author tristan
  *

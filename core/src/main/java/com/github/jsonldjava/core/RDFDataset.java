@@ -48,8 +48,8 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
         public Quad(final String subject, final String predicate, final String object,
                 final String graph) {
-            this(subject, predicate, object.startsWith("_:") ? new BlankNode(object) : new IRI(
-                    object), graph);
+            this(subject, predicate,
+                    object.startsWith("_:") ? new BlankNode(object) : new IRI(object), graph);
         };
 
         public Quad(final String subject, final String predicate, final String value,
@@ -59,11 +59,12 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
         private Quad(final String subject, final String predicate, final Node object,
                 final String graph) {
-            this(subject.startsWith("_:") ? new BlankNode(subject) : new IRI(subject), new IRI(
-                    predicate), object, graph);
+            this(subject.startsWith("_:") ? new BlankNode(subject) : new IRI(subject),
+                    new IRI(predicate), object, graph);
         };
 
-        public Quad(final Node subject, final Node predicate, final Node object, final String graph) {
+        public Quad(final Node subject, final Node predicate, final Node object,
+                final String graph) {
             super();
             put("subject", subject);
             put("predicate", predicate);
@@ -112,8 +113,8 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
         }
     }
 
-    public static abstract class Node extends LinkedHashMap<String, Object> implements
-    Comparable<Node> {
+    public static abstract class Node extends LinkedHashMap<String, Object>
+            implements Comparable<Node> {
         private static final long serialVersionUID = 1460990331795672793L;
 
         public abstract boolean isLiteral();
@@ -198,10 +199,11 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                             rval.put("@type", type);
                         }
                     } else if (
-                            // http://www.w3.org/TR/xmlschema11-2/#integer
-                            (XSD_INTEGER.equals(type) && PATTERN_INTEGER.matcher(value).matches())
+                    // http://www.w3.org/TR/xmlschema11-2/#integer
+                    (XSD_INTEGER.equals(type) && PATTERN_INTEGER.matcher(value).matches())
                             // http://www.w3.org/TR/xmlschema11-2/#nt-doubleRep
-                            || (XSD_DOUBLE.equals(type) && PATTERN_DOUBLE.matcher(value).matches())) {
+                            || (XSD_DOUBLE.equals(type)
+                                    && PATTERN_DOUBLE.matcher(value).matches())) {
                         try {
                             final Double d = Double.parseDouble(value);
                             if (!Double.isNaN(d) && !Double.isInfinite(d)) {
@@ -638,26 +640,27 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
             if (value instanceof Boolean || value instanceof Number) {
                 // convert to XSD datatype
                 if (value instanceof Boolean) {
-                    return new Literal(value.toString(), datatype == null ? XSD_BOOLEAN
-                            : (String) datatype, null);
+                    return new Literal(value.toString(),
+                            datatype == null ? XSD_BOOLEAN : (String) datatype, null);
                 } else if (value instanceof Double || value instanceof Float
                         || XSD_DOUBLE.equals(datatype)) {
                     // canonical double representation
                     final DecimalFormat df = new DecimalFormat("0.0###############E0");
                     df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
-                    return new Literal(df.format(value), datatype == null ? XSD_DOUBLE
-                            : (String) datatype, null);
+                    return new Literal(df.format(value),
+                            datatype == null ? XSD_DOUBLE : (String) datatype, null);
                 } else {
                     final DecimalFormat df = new DecimalFormat("0");
-                    return new Literal(df.format(value), datatype == null ? XSD_INTEGER
-                            : (String) datatype, null);
+                    return new Literal(df.format(value),
+                            datatype == null ? XSD_INTEGER : (String) datatype, null);
                 }
             } else if (((Map<String, Object>) item).containsKey("@language")) {
-                return new Literal((String) value, datatype == null ? RDF_LANGSTRING
-                        : (String) datatype, (String) ((Map<String, Object>) item).get("@language"));
+                return new Literal((String) value,
+                        datatype == null ? RDF_LANGSTRING : (String) datatype,
+                        (String) ((Map<String, Object>) item).get("@language"));
             } else {
-                return new Literal((String) value, datatype == null ? XSD_STRING
-                        : (String) datatype, null);
+                return new Literal((String) value,
+                        datatype == null ? XSD_STRING : (String) datatype, null);
             }
         }
         // convert string/node object to RDF

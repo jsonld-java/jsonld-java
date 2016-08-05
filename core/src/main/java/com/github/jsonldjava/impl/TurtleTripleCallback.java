@@ -220,8 +220,8 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
             } else if (dt != null) {
                 // TODO: this probably isn't an exclusive list of all the
                 // datatype literals that can be represented as native types
-                if (!(XSD_DOUBLE.equals(dt) || XSD_INTEGER.equals(dt) || XSD_FLOAT.equals(dt) || XSD_BOOLEAN
-                        .equals(dt))) {
+                if (!(XSD_DOUBLE.equals(dt) || XSD_INTEGER.equals(dt) || XSD_FLOAT.equals(dt)
+                        || XSD_BOOLEAN.equals(dt))) {
                     obj = "\"" + obj + "\"";
                     if (!XSD_STRING.equals(dt)) {
                         obj += "^^" + getURI(dt);
@@ -240,7 +240,8 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
         final int idxofcr = obj.indexOf("\n");
         // check if output will fix in the max line length (factor in comma if
         // not the last item, current line length and length to the next CR)
-        if ((hasNext ? 1 : 0) + lineLength + (idxofcr != -1 ? idxofcr : obj.length()) > MAX_LINE_LENGTH) {
+        if ((hasNext ? 1 : 0) + lineLength
+                + (idxofcr != -1 ? idxofcr : obj.length()) > MAX_LINE_LENGTH) {
             rval += "\n" + tabs(indentation + 1);
             lineLength = (indentation + 1) * TAB_SPACES;
         }

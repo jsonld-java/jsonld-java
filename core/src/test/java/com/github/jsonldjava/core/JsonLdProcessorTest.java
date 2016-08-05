@@ -155,8 +155,8 @@ public class JsonLdProcessorTest {
     private static final String reportOutputFile = "reports/report";
 
     @AfterClass
-    public static void writeReport() throws JsonGenerationException, JsonMappingException,
-    IOException, JsonLdError {
+    public static void writeReport()
+            throws JsonGenerationException, JsonMappingException, IOException, JsonLdError {
 
         // Only write reports if "-Dreport.format=..." is set
         String reportFormat = System.getProperty("report.format");
@@ -169,8 +169,9 @@ public class JsonLdProcessorTest {
         if ("application/ld+json".equals(reportFormat) || "jsonld".equals(reportFormat)
                 || "*".equals(reportFormat)) {
             System.out.println("Generating JSON-LD Report");
-            JsonUtils.writePrettyPrint(new OutputStreamWriter(new FileOutputStream(reportOutputFile
-                    + ".jsonld")), REPORT);
+            JsonUtils.writePrettyPrint(
+                    new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".jsonld")),
+                    REPORT);
         }
 
         if ("text/plain".equals(reportFormat) || "nquads".equals(reportFormat)
@@ -183,8 +184,8 @@ public class JsonLdProcessorTest {
                 }
             };
             final String rdf = (String) JsonLdProcessor.toRDF(REPORT, options);
-            final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(
-                    reportOutputFile + ".nq"));
+            final OutputStreamWriter writer = new OutputStreamWriter(
+                    new FileOutputStream(reportOutputFile + ".nq"));
             writer.write(rdf);
             writer.close();
         }
@@ -200,8 +201,8 @@ public class JsonLdProcessorTest {
             };
             final String rdf = (String) JsonLdProcessor.toRDF(REPORT, new TurtleTripleCallback(),
                     options);
-            final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(
-                    reportOutputFile + ".ttl"));
+            final OutputStreamWriter writer = new OutputStreamWriter(
+                    new FileOutputStream(reportOutputFile + ".ttl"));
             writer.write(rdf);
             writer.close();
         }
@@ -283,8 +284,8 @@ public class JsonLdProcessorTest {
                 if (url.startsWith(this.base)) {
                     final String classpath = url.substring(this.base.length());
                     final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                    final InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/"
-                            + classpath);
+                    final InputStream inputStream = cl
+                            .getResourceAsStream(TEST_DIR + "/" + classpath);
                     try {
                         return new RemoteDocument(url, JsonUtils.fromInputStream(inputStream));
                     } catch (final IOException e) {
@@ -328,7 +329,8 @@ public class JsonLdProcessorTest {
     private final String group;
     private final Map<String, Object> test;
 
-    public JsonLdProcessorTest(final String group, final String id, final Map<String, Object> test) {
+    public JsonLdProcessorTest(final String group, final String id,
+            final Map<String, Object> test) {
         this.group = group;
         this.test = test;
     }
@@ -356,8 +358,8 @@ public class JsonLdProcessorTest {
             input = JsonUtils.fromInputStream(inputStream);
         } else if (inputType.equals("nt") || inputType.equals("nq")) {
             final List<String> inputLines = new ArrayList<String>();
-            final BufferedReader buf = new BufferedReader(new InputStreamReader(inputStream,
-                    "UTF-8"));
+            final BufferedReader buf = new BufferedReader(
+                    new InputStreamReader(inputStream, "UTF-8"));
             String line;
             while ((line = buf.readLine()) != null) {
                 line = line.trim();
@@ -389,8 +391,8 @@ public class JsonLdProcessorTest {
                     expect = JsonUtils.fromInputStream(expectStream);
                 } else if (expectType.equals("nt") || expectType.equals("nq")) {
                     final List<String> expectLines = new ArrayList<String>();
-                    final BufferedReader buf = new BufferedReader(new InputStreamReader(
-                            expectStream, "UTF-8"));
+                    final BufferedReader buf = new BufferedReader(
+                            new InputStreamReader(expectStream, "UTF-8"));
                     String line;
                     while ((line = buf.readLine()) != null) {
                         line = line.trim();
@@ -409,8 +411,8 @@ public class JsonLdProcessorTest {
         } else if (sparqlFile != null) {
             final InputStream sparqlStream = cl.getResourceAsStream(TEST_DIR + "/" + sparqlFile);
             assertNotNull("unable to find expect file: " + sparqlFile, sparqlStream);
-            final BufferedReader buf = new BufferedReader(new InputStreamReader(sparqlStream,
-                    "UTF-8"));
+            final BufferedReader buf = new BufferedReader(
+                    new InputStreamReader(sparqlStream, "UTF-8"));
             String buffer = null;
             while ((buffer = buf.readLine()) != null) {
                 sparql += buffer + "\n";
@@ -424,8 +426,8 @@ public class JsonLdProcessorTest {
         Object result = null;
 
         // OPTIONS SETUP
-        final JsonLdOptions options = new JsonLdOptions("http://json-ld.org/test-suite/tests/"
-                + test.get("input"));
+        final JsonLdOptions options = new JsonLdOptions(
+                "http://json-ld.org/test-suite/tests/" + test.get("input"));
         final TestDocumentLoader testLoader = new TestDocumentLoader(
                 "http://json-ld.org/test-suite/tests/");
         options.setDocumentLoader(testLoader);
@@ -435,8 +437,8 @@ public class JsonLdProcessorTest {
                 options.setBase((String) test_opts.get("base"));
             }
             if (test_opts.containsKey("expandContext")) {
-                final InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/"
-                        + test_opts.get("expandContext"));
+                final InputStream contextStream = cl
+                        .getResourceAsStream(TEST_DIR + "/" + test_opts.get("expandContext"));
                 options.setExpandContext(JsonUtils.fromInputStream(contextStream));
             }
             if (test_opts.containsKey("compactArrays")) {
@@ -476,22 +478,22 @@ public class JsonLdProcessorTest {
             if (testType.contains("jld:ExpandTest")) {
                 result = JsonLdProcessor.expand(input, options);
             } else if (testType.contains("jld:CompactTest")) {
-                final InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/"
-                        + test.get("context"));
+                final InputStream contextStream = cl
+                        .getResourceAsStream(TEST_DIR + "/" + test.get("context"));
                 final Object contextJson = JsonUtils.fromInputStream(contextStream);
                 result = JsonLdProcessor.compact(input, contextJson, options);
             } else if (testType.contains("jld:FlattenTest")) {
                 if (test.containsKey("context")) {
-                    final InputStream contextStream = cl.getResourceAsStream(TEST_DIR + "/"
-                            + test.get("context"));
+                    final InputStream contextStream = cl
+                            .getResourceAsStream(TEST_DIR + "/" + test.get("context"));
                     final Object contextJson = JsonUtils.fromInputStream(contextStream);
                     result = JsonLdProcessor.flatten(input, contextJson, options);
                 } else {
                     result = JsonLdProcessor.flatten(input, options);
                 }
             } else if (testType.contains("jld:FrameTest")) {
-                final InputStream frameStream = cl.getResourceAsStream(TEST_DIR + "/"
-                        + test.get("frame"));
+                final InputStream frameStream = cl
+                        .getResourceAsStream(TEST_DIR + "/" + test.get("frame"));
                 final Map<String, Object> frameJson = (Map<String, Object>) JsonUtils
                         .fromInputStream(frameStream);
                 result = JsonLdProcessor.frame(input, frameJson, options);
@@ -581,28 +583,17 @@ public class JsonLdProcessorTest {
                     {
                         put("@id",
                                 "http://json-ld.org/test-suite/tests/error-expand-manifest.jsonld"
-                                .equals(manifest) ? "earl:semiAuto" : "earl:automatic");
+                                        .equals(manifest) ? "earl:semiAuto" : "earl:automatic");
                     }
                 });
             }
         });
 
-        assertTrue(
-                "\nFailed test: "
-                        + group
-                        + test.get("@id")
-                        + " "
-                        + test.get("name")
-                        + " ("
-                        + test.get("input")
-                        + ","
-                        + test.get("expect")
-                        + ")\n"
-                        + "expected: "
-                        + JsonUtils.toPrettyString(expect)
-                        + "\nresult: "
-                        + (result instanceof JsonLdError ? ((JsonLdError) result).toString()
-                                : JsonUtils.toPrettyString(result)), testpassed);
+        assertTrue("\nFailed test: " + group + test.get("@id") + " " + test.get("name") + " ("
+                + test.get("input") + "," + test.get("expect") + ")\n" + "expected: "
+                + JsonUtils.toPrettyString(expect) + "\nresult: " + (result instanceof JsonLdError
+                        ? ((JsonLdError) result).toString() : JsonUtils.toPrettyString(result)),
+                testpassed);
     }
 
 }

@@ -21,7 +21,8 @@ public class JsonLdUtils {
      *
      * @param v
      *            the value to check.
-     * @param [ctx] the active context to check against.
+     * @param [ctx]
+     *            the active context to check against.
      *
      * @return true if the value is a keyword, false if not.
      */
@@ -127,12 +128,13 @@ public class JsonLdUtils {
             values = new ArrayList<Object>();
             obj.put(key, values);
         }
-        //if ("@list".equals(key)
-        //        || (value instanceof Map && ((Map<String, Object>) value).containsKey("@list"))
-                //|| !deepContains(values, value)
-        //        ) {
-            values.add(value);
-        //}
+        // if ("@list".equals(key)
+        // || (value instanceof Map && ((Map<String, Object>)
+        // value).containsKey("@list"))
+        // || !deepContains(values, value)
+        // ) {
+        values.add(value);
+        // }
     }
 
     static void mergeCompactedValue(Map<String, Object> obj, String key, Object value) {
@@ -173,9 +175,8 @@ public class JsonLdUtils {
         // 1. It is an Object.
         // 2. It is not a @value, @set, or @list.
         // 3. It has more than 1 key OR any existing key is not @id.
-        if (v instanceof Map
-                && !(((Map) v).containsKey("@value") || ((Map) v).containsKey("@set") || ((Map) v)
-                        .containsKey("@list"))) {
+        if (v instanceof Map && !(((Map) v).containsKey("@value") || ((Map) v).containsKey("@set")
+                || ((Map) v).containsKey("@list"))) {
             return ((Map<String, Object>) v).size() > 1 || !((Map) v).containsKey("@id");
         }
         return false;
@@ -193,8 +194,8 @@ public class JsonLdUtils {
         // Note: A value is a subject reference if all of these hold true:
         // 1. It is an Object.
         // 2. It has a single key: @id.
-        return (v instanceof Map && ((Map<String, Object>) v).size() == 1 && ((Map<String, Object>) v)
-                .containsKey("@id"));
+        return (v instanceof Map && ((Map<String, Object>) v).size() == 1
+                && ((Map<String, Object>) v).containsKey("@id"));
     }
 
     // TODO: fix this test
@@ -221,10 +222,12 @@ public class JsonLdUtils {
      *            the property that relates the value to the subject.
      * @param value
      *            the value to add.
-     * @param [propertyIsArray] true if the property is always an array, false
-     *        if not (default: false).
-     * @param [allowDuplicate] true if the property is a @list, false if not
-     *        (default: false).
+     * @param [propertyIsArray]
+     *            true if the property is always an array, false if not
+     *            (default: false).
+     * @param [allowDuplicate]
+     *            true if the property is a @list, false if not (default:
+     *            false).
      */
     static void addValue(Map<String, Object> subject, String property, Object value,
             boolean propertyIsArray, boolean allowDuplicate) {
@@ -400,8 +403,8 @@ public class JsonLdUtils {
 
         // must be a string, subject reference, or empty object
         if (v instanceof String
-                || (v instanceof Map && (((Map<String, Object>) v).containsKey("@id") || ((Map<String, Object>) v)
-                        .size() == 0))) {
+                || (v instanceof Map && (((Map<String, Object>) v).containsKey("@id")
+                        || ((Map<String, Object>) v).size() == 0))) {
             return true;
         }
 
@@ -410,8 +413,8 @@ public class JsonLdUtils {
         if (v instanceof List) {
             isValid = true;
             for (final Object i : (List) v) {
-                if (!(i instanceof String || i instanceof Map
-                        && ((Map<String, Object>) i).containsKey("@id"))) {
+                if (!(i instanceof String
+                        || i instanceof Map && ((Map<String, Object>) i).containsKey("@id"))) {
                     isValid = false;
                     break;
                 }
@@ -670,9 +673,9 @@ public class JsonLdUtils {
      * Compares two JSON-LD values for equality. Two JSON-LD values will be
      * considered equal if:
      *
-     * 1. They are both primitives of the same type and value. 2. They are both @values
-     * with the same @value, @type, and @language, OR 3. They both have @ids
-     * they are the same.
+     * 1. They are both primitives of the same type and value. 2. They are
+     * both @values with the same @value, @type, and @language, OR 3. They both
+     * have @ids they are the same.
      *
      * @param v1
      *            the first value.
@@ -686,23 +689,22 @@ public class JsonLdUtils {
             return true;
         }
 
-        if (isValue(v1)
-                && isValue(v2)
+        if (isValue(v1) && isValue(v2)
                 && Obj.equals(((Map<String, Object>) v1).get("@value"),
                         ((Map<String, Object>) v2).get("@value"))
-                        && Obj.equals(((Map<String, Object>) v1).get("@type"),
-                                ((Map<String, Object>) v2).get("@type"))
-                                && Obj.equals(((Map<String, Object>) v1).get("@language"),
-                                        ((Map<String, Object>) v2).get("@language"))
-                                        && Obj.equals(((Map<String, Object>) v1).get("@index"),
-                                                ((Map<String, Object>) v2).get("@index"))) {
+                && Obj.equals(((Map<String, Object>) v1).get("@type"),
+                        ((Map<String, Object>) v2).get("@type"))
+                && Obj.equals(((Map<String, Object>) v1).get("@language"),
+                        ((Map<String, Object>) v2).get("@language"))
+                && Obj.equals(((Map<String, Object>) v1).get("@index"),
+                        ((Map<String, Object>) v2).get("@index"))) {
             return true;
         }
 
         if ((v1 instanceof Map && ((Map<String, Object>) v1).containsKey("@id"))
                 && (v2 instanceof Map && ((Map<String, Object>) v2).containsKey("@id"))
-                && ((Map<String, Object>) v1).get("@id").equals(
-                        ((Map<String, Object>) v2).get("@id"))) {
+                && ((Map<String, Object>) v1).get("@id")
+                        .equals(((Map<String, Object>) v2).get("@id"))) {
             return true;
         }
 
@@ -718,15 +720,17 @@ public class JsonLdUtils {
      *            the property that relates the value to the subject.
      * @param value
      *            the value to remove.
-     * @param [options] the options to use: [propertyIsArray] true if the
-     *        property is always an array, false if not (default: false).
+     * @param [options]
+     *            the options to use: [propertyIsArray] true if the property is
+     *            always an array, false if not (default: false).
      */
-    static void removeValue(Map<String, Object> subject, String property, Map<String, Object> value) {
+    static void removeValue(Map<String, Object> subject, String property,
+            Map<String, Object> value) {
         removeValue(subject, property, value, false);
     }
 
-    static void removeValue(Map<String, Object> subject, String property,
-            Map<String, Object> value, boolean propertyIsArray) {
+    static void removeValue(Map<String, Object> subject, String property, Map<String, Object> value,
+            boolean propertyIsArray) {
         // filter out value
         final List<Object> values = new ArrayList<Object>();
         if (subject.get(property) instanceof List) {
@@ -767,9 +771,8 @@ public class JsonLdUtils {
             if (((Map) v).containsKey("@id")) {
                 return ((String) ((Map) v).get("@id")).startsWith("_:");
             } else {
-                return ((Map) v).size() == 0
-                        || !(((Map) v).containsKey("@value") || ((Map) v).containsKey("@set") || ((Map) v)
-                                .containsKey("@list"));
+                return ((Map) v).size() == 0 || !(((Map) v).containsKey("@value")
+                        || ((Map) v).containsKey("@set") || ((Map) v).containsKey("@list"));
             }
         }
         return false;
@@ -788,7 +791,8 @@ public class JsonLdUtils {
      *
      * @return true if new URLs to resolve were found, false if not.
      */
-    private static boolean findContextUrls(Object input, Map<String, Object> urls, Boolean replace) {
+    private static boolean findContextUrls(Object input, Map<String, Object> urls,
+            Boolean replace) {
         final int count = urls.size();
         if (input instanceof List) {
             for (final Object i : (List) input) {

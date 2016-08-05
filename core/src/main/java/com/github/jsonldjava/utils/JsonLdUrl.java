@@ -31,8 +31,8 @@ public class JsonLdUrl {
     public String normalizedPath = null;
     public String authority = null;
 
-    private static Pattern parser = Pattern
-            .compile("^(?:([^:\\/?#]+):)?(?:\\/\\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\\/?#]*)(?::(\\d*))?))?((((?:[^?#\\/]*\\/)*)([^?#]*))(?:\\?([^#]*))?(?:#(.*))?)");
+    private static Pattern parser = Pattern.compile(
+            "^(?:([^:\\/?#]+):)?(?:\\/\\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\\/?#]*)(?::(\\d*))?))?((((?:[^?#\\/]*\\/)*)([^?#]*))(?:\\?([^#]*))?(?:#(.*))?)");
 
     public static JsonLdUrl parse(String url) {
         final JsonLdUrl rval = new JsonLdUrl();
@@ -189,13 +189,13 @@ public class JsonLdUrl {
         final JsonLdUrl rel = JsonLdUrl.parse(iri.substring(root.length()));
 
         // remove path segments that match
-        final List<String> baseSegments = new ArrayList<String>(Arrays.asList(base.normalizedPath
-                .split("/")));
+        final List<String> baseSegments = new ArrayList<String>(
+                Arrays.asList(base.normalizedPath.split("/")));
         if (base.normalizedPath.endsWith("/")) {
             baseSegments.add("");
         }
-        final List<String> iriSegments = new ArrayList<String>(Arrays.asList(rel.normalizedPath
-                .split("/")));
+        final List<String> iriSegments = new ArrayList<String>(
+                Arrays.asList(rel.normalizedPath.split("/")));
         if (rel.normalizedPath.endsWith("/")) {
             iriSegments.add("");
         }

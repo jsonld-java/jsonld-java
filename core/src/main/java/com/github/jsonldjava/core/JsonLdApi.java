@@ -1625,20 +1625,21 @@ public class JsonLdApi {
             for (final String key : frame.keySet()) {
                 if (JsonLdConsts.ID.equals(key) || !isKeyword(key) && !(node.containsKey(key))) {
 
-                    Object frameObject = frame.get(key);
+                    final Object frameObject = frame.get(key);
                     if (frameObject instanceof ArrayList) {
-                        ArrayList<Object> o = (ArrayList<Object>) frame.get(key);
+                        final ArrayList<Object> o = (ArrayList<Object>) frame.get(key);
 
                         boolean _default = false;
-                        for (Object oo : o) {
+                        for (final Object oo : o) {
                             if (oo instanceof Map) {
                                 if (((Map) oo).containsKey(JsonLdConsts.DEFAULT)) {
                                     _default = true;
                                 }
                             }
                         }
-                        if (_default)
+                        if (_default) {
                             continue;
+                        }
                     }
 
                     return false;

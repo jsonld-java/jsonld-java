@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Random;
@@ -88,14 +87,14 @@ public class JsonLdPerformanceTest {
 
     private void testCompaction(String label, InputStream nextInputStream)
             throws IOException, FileNotFoundException, JsonLdError {
-        File testFile = File.createTempFile("jsonld-perf-source-", ".jsonld", testDir);
+        final File testFile = File.createTempFile("jsonld-perf-source-", ".jsonld", testDir);
         FileUtils.copyInputStreamToFile(nextInputStream, testFile);
 
-        LongSummaryStatistics parseStats = new LongSummaryStatistics();
-        LongSummaryStatistics compactStats = new LongSummaryStatistics();
+        final LongSummaryStatistics parseStats = new LongSummaryStatistics();
+        final LongSummaryStatistics compactStats = new LongSummaryStatistics();
 
         for (int i = 0; i < 1000; i++) {
-            InputStream testInput = new BufferedInputStream(new FileInputStream(testFile));
+            final InputStream testInput = new BufferedInputStream(new FileInputStream(testFile));
             try {
                 final long parseStart = System.currentTimeMillis();
                 final Object inputObject = JsonUtils.fromInputStream(testInput);
@@ -117,16 +116,16 @@ public class JsonLdPerformanceTest {
     @Ignore("Disable performance tests by default")
     @Test
     public final void testPerformanceRandom() throws Exception {
-        Random prng = new Random();
-        int rounds = 10000;
+        final Random prng = new Random();
+        final int rounds = 10000;
 
-        String exNs = "http://example.org/";
+        final String exNs = "http://example.org/";
 
-        String bnode = "_:anon";
-        String uri1 = exNs + "a1";
-        String uri2 = exNs + "b2";
-        String uri3 = exNs + "c3";
-        List<String> potentialSubjects = new ArrayList<String>();
+        final String bnode = "_:anon";
+        final String uri1 = exNs + "a1";
+        final String uri2 = exNs + "b2";
+        final String uri3 = exNs + "c3";
+        final List<String> potentialSubjects = new ArrayList<String>();
         potentialSubjects.add(bnode);
         potentialSubjects.add(uri1);
         potentialSubjects.add(uri2);
@@ -143,11 +142,11 @@ public class JsonLdPerformanceTest {
         }
         Collections.shuffle(potentialSubjects, prng);
 
-        List<String> potentialObjects = new ArrayList<String>();
+        final List<String> potentialObjects = new ArrayList<String>();
         potentialObjects.addAll(potentialSubjects);
         Collections.shuffle(potentialObjects, prng);
 
-        List<String> potentialPredicates = new ArrayList<String>();
+        final List<String> potentialPredicates = new ArrayList<String>();
         potentialPredicates.add(JsonLdConsts.RDF_TYPE);
         potentialPredicates.add(JsonLdConsts.RDF_LIST);
         potentialPredicates.add(JsonLdConsts.RDF_NIL);
@@ -156,10 +155,10 @@ public class JsonLdPerformanceTest {
         potentialPredicates.add(JsonLdConsts.XSD_STRING);
         Collections.shuffle(potentialPredicates, prng);
 
-        RDFDataset testData = new RDFDataset();
+        final RDFDataset testData = new RDFDataset();
 
         for (int i = 0; i < 2000; i++) {
-            String nextObject = potentialObjects.get(prng.nextInt(potentialObjects.size()));
+            final String nextObject = potentialObjects.get(prng.nextInt(potentialObjects.size()));
             boolean isLiteral = true;
             if (nextObject.startsWith("_:") || nextObject.startsWith("http://")) {
                 isLiteral = false;
@@ -193,13 +192,13 @@ public class JsonLdPerformanceTest {
 
         System.out.println(
                 "RDF triples to JSON-LD (internal objects, not parsed from a document)...");
-        JsonLdOptions options = new JsonLdOptions();
-        JsonLdApi jsonLdApi = new JsonLdApi(options);
-        int[] hashCodes = new int[rounds];
-        LongSummaryStatistics statsFirst5000 = new LongSummaryStatistics();
-        LongSummaryStatistics stats = new LongSummaryStatistics();
+        final JsonLdOptions options = new JsonLdOptions();
+        final JsonLdApi jsonLdApi = new JsonLdApi(options);
+        final int[] hashCodes = new int[rounds];
+        final LongSummaryStatistics statsFirst5000 = new LongSummaryStatistics();
+        final LongSummaryStatistics stats = new LongSummaryStatistics();
         for (int i = 0; i < rounds; i++) {
-            long start = System.nanoTime();
+            final long start = System.nanoTime();
             Object fromRDF = jsonLdApi.fromRDF(testData);
             if (i < 5000) {
                 statsFirst5000.accept(System.nanoTime() - start);
@@ -225,13 +224,13 @@ public class JsonLdPerformanceTest {
 
         System.out.println(
                 "RDF triples to JSON-LD (internal objects, not parsed from a document), using laxMergeValue...");
-        JsonLdOptions optionsLax = new JsonLdOptions();
-        JsonLdApi jsonLdApiLax = new JsonLdApi(optionsLax);
-        int[] hashCodesLax = new int[rounds];
-        LongSummaryStatistics statsLaxFirst5000 = new LongSummaryStatistics();
-        LongSummaryStatistics statsLax = new LongSummaryStatistics();
+        final JsonLdOptions optionsLax = new JsonLdOptions();
+        final JsonLdApi jsonLdApiLax = new JsonLdApi(optionsLax);
+        final int[] hashCodesLax = new int[rounds];
+        final LongSummaryStatistics statsLaxFirst5000 = new LongSummaryStatistics();
+        final LongSummaryStatistics statsLax = new LongSummaryStatistics();
         for (int i = 0; i < rounds; i++) {
-            long start = System.nanoTime();
+            final long start = System.nanoTime();
             Object fromRDF = jsonLdApiLax.fromRDF(testData, true);
             if (i < 5000) {
                 statsLaxFirst5000.accept(System.nanoTime() - start);
@@ -256,13 +255,13 @@ public class JsonLdPerformanceTest {
         System.out.println("Count: " + statsLax.getCount());
 
         System.out.println("Non-pretty print benchmarking...");
-        JsonLdOptions options2 = new JsonLdOptions();
-        JsonLdApi jsonLdApi2 = new JsonLdApi(options2);
-        LongSummaryStatistics statsFirst5000Part2 = new LongSummaryStatistics();
-        LongSummaryStatistics statsPart2 = new LongSummaryStatistics();
-        Object fromRDF2 = jsonLdApi2.fromRDF(testData);
+        final JsonLdOptions options2 = new JsonLdOptions();
+        final JsonLdApi jsonLdApi2 = new JsonLdApi(options2);
+        final LongSummaryStatistics statsFirst5000Part2 = new LongSummaryStatistics();
+        final LongSummaryStatistics statsPart2 = new LongSummaryStatistics();
+        final Object fromRDF2 = jsonLdApi2.fromRDF(testData);
         for (int i = 0; i < rounds; i++) {
-            long start = System.nanoTime();
+            final long start = System.nanoTime();
             JsonUtils.toString(fromRDF2);
             if (i < 5000) {
                 statsFirst5000Part2.accept(System.nanoTime() - start);
@@ -285,13 +284,13 @@ public class JsonLdPerformanceTest {
         System.out.println("Count: " + statsPart2.getCount());
 
         System.out.println("Pretty print benchmarking...");
-        JsonLdOptions options3 = new JsonLdOptions();
-        JsonLdApi jsonLdApi3 = new JsonLdApi(options3);
-        LongSummaryStatistics statsFirst5000Part3 = new LongSummaryStatistics();
-        LongSummaryStatistics statsPart3 = new LongSummaryStatistics();
-        Object fromRDF3 = jsonLdApi3.fromRDF(testData);
+        final JsonLdOptions options3 = new JsonLdOptions();
+        final JsonLdApi jsonLdApi3 = new JsonLdApi(options3);
+        final LongSummaryStatistics statsFirst5000Part3 = new LongSummaryStatistics();
+        final LongSummaryStatistics statsPart3 = new LongSummaryStatistics();
+        final Object fromRDF3 = jsonLdApi3.fromRDF(testData);
         for (int i = 0; i < rounds; i++) {
-            long start = System.nanoTime();
+            final long start = System.nanoTime();
             JsonUtils.toPrettyString(fromRDF3);
             if (i < 5000) {
                 statsFirst5000Part3.accept(System.nanoTime() - start);
@@ -314,13 +313,13 @@ public class JsonLdPerformanceTest {
         System.out.println("Count: " + statsPart3.getCount());
 
         System.out.println("Expansion benchmarking...");
-        JsonLdOptions options4 = new JsonLdOptions();
-        JsonLdApi jsonLdApi4 = new JsonLdApi(options4);
-        LongSummaryStatistics statsFirst5000Part4 = new LongSummaryStatistics();
-        LongSummaryStatistics statsPart4 = new LongSummaryStatistics();
-        Object fromRDF4 = jsonLdApi4.fromRDF(testData);
+        final JsonLdOptions options4 = new JsonLdOptions();
+        final JsonLdApi jsonLdApi4 = new JsonLdApi(options4);
+        final LongSummaryStatistics statsFirst5000Part4 = new LongSummaryStatistics();
+        final LongSummaryStatistics statsPart4 = new LongSummaryStatistics();
+        final Object fromRDF4 = jsonLdApi4.fromRDF(testData);
         for (int i = 0; i < rounds; i++) {
-            long start = System.nanoTime();
+            final long start = System.nanoTime();
             JsonLdProcessor.expand(fromRDF4, options4);
             if (i < 5000) {
                 statsFirst5000Part4.accept(System.nanoTime() - start);
@@ -346,7 +345,7 @@ public class JsonLdPerformanceTest {
 
     /**
      * many triples with same subject and prop: current implementation is slow
-     * 
+     *
      * @author fpservant
      */
     @Ignore("Disable performance tests by default")
@@ -355,24 +354,27 @@ public class JsonLdPerformanceTest {
 
         final String ns = "http://www.example.com/foo/";
 
-        Function<Integer, String> subjectGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> subjectGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "s";
             }
         };
-        Function<Integer, String> predicateGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> predicateGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "p" + Integer.toString(index % 5);
             }
         };
-        Function<Integer, String> objectGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> objectGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "o" + Integer.toString(index);
             }
         };
-        int tripleCount = 2000;
-        int warmingRounds = 200;
-        int rounds = 1000;
+        final int tripleCount = 2000;
+        final int warmingRounds = 200;
+        final int rounds = 1000;
 
         runLaxVersusSlowToRDFTest("5 predicates", ns, subjectGenerator, predicateGenerator,
                 objectGenerator, tripleCount, warmingRounds, rounds);
@@ -381,7 +383,7 @@ public class JsonLdPerformanceTest {
 
     /**
      * many triples with same subject and prop: current implementation is slow
-     * 
+     *
      * @author fpservant
      */
     @Ignore("Disable performance tests by default")
@@ -390,24 +392,27 @@ public class JsonLdPerformanceTest {
 
         final String ns = "http://www.example.com/foo/";
 
-        Function<Integer, String> subjectGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> subjectGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "s";
             }
         };
-        Function<Integer, String> predicateGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> predicateGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "p" + Integer.toString(index % 2);
             }
         };
-        Function<Integer, String> objectGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> objectGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "o" + Integer.toString(index);
             }
         };
-        int tripleCount = 2000;
-        int warmingRounds = 200;
-        int rounds = 1000;
+        final int tripleCount = 2000;
+        final int warmingRounds = 200;
+        final int rounds = 1000;
 
         runLaxVersusSlowToRDFTest("2 predicates", ns, subjectGenerator, predicateGenerator,
                 objectGenerator, tripleCount, warmingRounds, rounds);
@@ -416,7 +421,7 @@ public class JsonLdPerformanceTest {
 
     /**
      * many triples with same subject and prop: current implementation is slow
-     * 
+     *
      * @author fpservant
      */
     @Ignore("Disable performance tests by default")
@@ -425,24 +430,27 @@ public class JsonLdPerformanceTest {
 
         final String ns = "http://www.example.com/foo/";
 
-        Function<Integer, String> subjectGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> subjectGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "s";
             }
         };
-        Function<Integer, String> predicateGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> predicateGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "p";
             }
         };
-        Function<Integer, String> objectGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> objectGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "o" + Integer.toString(index);
             }
         };
-        int tripleCount = 2000;
-        int warmingRounds = 200;
-        int rounds = 1000;
+        final int tripleCount = 2000;
+        final int warmingRounds = 200;
+        final int rounds = 1000;
 
         runLaxVersusSlowToRDFTest("1 predicate", ns, subjectGenerator, predicateGenerator,
                 objectGenerator, tripleCount, warmingRounds, rounds);
@@ -451,42 +459,45 @@ public class JsonLdPerformanceTest {
 
     /**
      * many triples with same subject and prop: current implementation is slow
-     * 
+     *
      * @author fpservant
      */
-    @Ignore("Disable performance tests by default")    
+    @Ignore("Disable performance tests by default")
     @Test
     public final void slowVsFastMultipleSubjects1Predicate() throws Exception {
 
         final String ns = "http://www.example.com/foo/";
 
-        Function<Integer, String> subjectGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> subjectGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "s" + Integer.toString(index % 100);
             }
         };
-        Function<Integer, String> predicateGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> predicateGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "p";
             }
         };
-        Function<Integer, String> objectGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> objectGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "o" + Integer.toString(index);
             }
         };
-        int tripleCount = 2000;
-        int warmingRounds = 200;
-        int rounds = 1000;
+        final int tripleCount = 2000;
+        final int warmingRounds = 200;
+        final int rounds = 1000;
 
-        runLaxVersusSlowToRDFTest("100 subjects and 1 predicate", ns, subjectGenerator, predicateGenerator,
-                objectGenerator, tripleCount, warmingRounds, rounds);
+        runLaxVersusSlowToRDFTest("100 subjects and 1 predicate", ns, subjectGenerator,
+                predicateGenerator, objectGenerator, tripleCount, warmingRounds, rounds);
 
     }
 
     /**
      * many triples with same subject and prop: current implementation is slow
-     * 
+     *
      * @author fpservant
      */
     @Ignore("Disable performance tests by default")
@@ -495,33 +506,36 @@ public class JsonLdPerformanceTest {
 
         final String ns = "http://www.example.com/foo/";
 
-        Function<Integer, String> subjectGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> subjectGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "s" + Integer.toString(index % 1000);
             }
         };
-        Function<Integer, String> predicateGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> predicateGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "p" + Integer.toString(index % 5);
             }
         };
-        Function<Integer, String> objectGenerator = new Function<Integer, String>() {
+        final Function<Integer, String> objectGenerator = new Function<Integer, String>() {
+            @Override
             public String apply(Integer index) {
                 return ns + "o" + Integer.toString(index);
             }
         };
-        int tripleCount = 2000;
-        int warmingRounds = 200;
-        int rounds = 1000;
+        final int tripleCount = 2000;
+        final int warmingRounds = 200;
+        final int rounds = 1000;
 
-        runLaxVersusSlowToRDFTest("1000 subjects and 5 predicates", ns, subjectGenerator, predicateGenerator,
-                objectGenerator, tripleCount, warmingRounds, rounds);
+        runLaxVersusSlowToRDFTest("1000 subjects and 5 predicates", ns, subjectGenerator,
+                predicateGenerator, objectGenerator, tripleCount, warmingRounds, rounds);
 
     }
 
     /**
      * Run a test on lax versus slow methods for toRDF.
-     * 
+     *
      * @param ns
      *            The namespace to assign
      * @param subjectGenerator
@@ -546,7 +560,7 @@ public class JsonLdPerformanceTest {
 
         System.out.println("Running test for lax versus slow for " + label);
 
-        RDFDataset inputRdf = new RDFDataset();
+        final RDFDataset inputRdf = new RDFDataset();
         inputRdf.setNamespace("ex", ns);
 
         for (int i = 0; i < tripleCount; i++) {
@@ -569,9 +583,9 @@ public class JsonLdPerformanceTest {
             // true));
         }
 
-        System.out.println("Average time to parse a dataset containing "
-                + tripleCount + " different triples:");
-        long startLax = System.currentTimeMillis();
+        System.out.println("Average time to parse a dataset containing " + tripleCount
+                + " different triples:");
+        final long startLax = System.currentTimeMillis();
         for (int i = 0; i < rounds; i++) {
             new JsonLdApi(options).fromRDF(inputRdf, true);
             // JsonLdProcessor.expand(new JsonLdApi(options).fromRDF(inputRdf,
@@ -580,7 +594,7 @@ public class JsonLdPerformanceTest {
         System.out.println("\t- Assuming no duplicates: "
                 + (((System.currentTimeMillis() - startLax)) / rounds));
 
-        long start = System.currentTimeMillis();
+        final long start = System.currentTimeMillis();
         for (int i = 0; i < rounds; i++) {
             new JsonLdApi(options).fromRDF(inputRdf);
             // JsonLdProcessor.expand(new JsonLdApi(options).fromRDF(inputRdf));
@@ -594,14 +608,14 @@ public class JsonLdPerformanceTest {
      */
     @Test
     public final void duplicatedTriplesInAnRDFDataset() throws Exception {
-        RDFDataset inputRdf = new RDFDataset();
-        String ns = "http://www.example.com/foo/";
+        final RDFDataset inputRdf = new RDFDataset();
+        final String ns = "http://www.example.com/foo/";
         inputRdf.setNamespace("ex", ns);
         inputRdf.addTriple(ns + "s", ns + "p", ns + "o");
         inputRdf.addTriple(ns + "s", ns + "p", ns + "o");
 
         System.out.println("Twice the same triple in RDFDataset:/n");
-        for (Quad quad : inputRdf.getQuads("@default")) {
+        for (final Quad quad : inputRdf.getQuads("@default")) {
             System.out.println(quad);
         }
 

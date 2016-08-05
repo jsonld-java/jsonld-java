@@ -27,14 +27,14 @@ public final class JsonLdConsts {
     public static final String RDF_OBJECT = RDF_SYNTAX_NS + "object";
     public static final String RDF_LANGSTRING = RDF_SYNTAX_NS + "langString";
     public static final String RDF_LIST = RDF_SYNTAX_NS + "List";
-    
+
     public static final String TEXT_TURTLE = "text/turtle";
     public static final String APPLICATION_NQUADS = "application/nquads";
-    
+
     public static final String FLATTENED = "flattened";
     public static final String COMPACTED = "compacted";
     public static final String EXPANDED = "expanded";
-    
+
     public static final String ID = "@id";
     public static final String DEFAULT = "@default";
     public static final String GRAPH = "@graph";

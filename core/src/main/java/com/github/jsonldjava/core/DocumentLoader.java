@@ -18,7 +18,8 @@ public class DocumentLoader {
     public static final String DISALLOW_REMOTE_CONTEXT_LOADING = "com.github.jsonldjava.disallowRemoteContextLoading";
 
     public RemoteDocument loadDocument(String url) throws JsonLdError {
-        String disallowRemote = System.getProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING);
+        final String disallowRemote = System
+                .getProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING);
 
         if ("true".equalsIgnoreCase(disallowRemote)) {
             throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
@@ -26,7 +27,7 @@ public class DocumentLoader {
 
         final RemoteDocument doc = new RemoteDocument(url, null);
         try {
-            if(url.equalsIgnoreCase("http://schema.org/")) {
+            if (url.equalsIgnoreCase("http://schema.org/")) {
                 doc.setDocument(JsonUtils.fromURLJavaNet(new URL(url)));
             } else {
                 doc.setDocument(JsonUtils.fromURL(new URL(url), getHttpClient()));
@@ -39,6 +40,7 @@ public class DocumentLoader {
 
     /**
      * An HTTP Accept header that prefers JSONLD.
+     * 
      * @deprecated Use {@link JsonUtils#ACCEPT_HEADER} instead.
      */
     @Deprecated
@@ -64,7 +66,7 @@ public class DocumentLoader {
     public Object fromURL(java.net.URL url) throws JsonParseException, IOException {
         return JsonUtils.fromURL(url, getHttpClient());
     }
-    
+
     /**
      * Opens an {@link InputStream} for the given {@link java.net.URL},
      * including support for http and https URLs that are requested using
@@ -82,13 +84,13 @@ public class DocumentLoader {
     public InputStream openStreamFromURL(java.net.URL url) throws IOException {
         return JsonUtils.openStreamForURL(url, getHttpClient());
     }
-    
+
     public CloseableHttpClient getHttpClient() {
         CloseableHttpClient result = httpClient;
         if (result == null) {
-            synchronized(DocumentLoader.class) {
+            synchronized (DocumentLoader.class) {
                 result = httpClient;
-                if(result == null) {
+                if (result == null) {
                     result = httpClient = JsonUtils.getDefaultHttpClient();
                 }
             }

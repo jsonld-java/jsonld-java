@@ -41,7 +41,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -50,7 +49,7 @@ import com.github.jsonldjava.utils.JsonUtils;
 @SuppressWarnings("unchecked")
 public class DocumentLoaderTest {
 
-    private DocumentLoader documentLoader = new DocumentLoader();
+    private final DocumentLoader documentLoader = new DocumentLoader();
 
     @After
     public void setContextClassLoader() {
@@ -120,13 +119,14 @@ public class DocumentLoaderTest {
     // @Ignore("Integration test")
     @Test
     public void loadDocumentWf4ever() throws Exception {
-        final RemoteDocument document = documentLoader.loadDocument("http://purl.org/wf4ever/ro-bundle/context.json");
-        Object context = document.getDocument();
+        final RemoteDocument document = documentLoader
+                .loadDocument("http://purl.org/wf4ever/ro-bundle/context.json");
+        final Object context = document.getDocument();
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
-    @Ignore("Broken at server side")
+    // @Ignore("Broken at server side")
     @Test
     public void fromURLSchemaOrg() throws Exception {
         final URL url = new URL("http://schema.org/");
@@ -135,33 +135,32 @@ public class DocumentLoaderTest {
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
-    //@Ignore("Integration test")
+    // @Ignore("Integration test")
     @Test
     public void fromURLSchemaOrgNoApacheHttpClient() throws Exception {
         final URL url = new URL("http://schema.org/");
-        
-        HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
+
+        final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.addRequestProperty("Accept", "application/ld+json");
 
-        InputStream directStream = urlConn.getInputStream();
-        
-        StringWriter output = new StringWriter();
+        final InputStream directStream = urlConn.getInputStream();
+
+        final StringWriter output = new StringWriter();
         try {
             IOUtils.copy(directStream, output, Charset.forName("UTF-8"));
-        }
-        finally {
+        } finally {
             directStream.close();
         }
-        Object context = JsonUtils.fromReader(new StringReader(output.toString()));
+        final Object context = JsonUtils.fromReader(new StringReader(output.toString()));
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
-    //@Ignore("Integration test")
+    // @Ignore("Integration test")
     @Test
     public void loadDocumentSchemaOrg() throws Exception {
         final RemoteDocument document = documentLoader.loadDocument("http://schema.org/");
-        Object context = document.getDocument();
+        final Object context = document.getDocument();
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
@@ -282,8 +281,8 @@ public class DocumentLoaderTest {
     public void jarCacheHit() throws Exception {
         // If no cache, should fail-fast as nonexisting.example.com is not in
         // DNS
-        final Object context = documentLoader.fromURL(new URL(
-                "http://nonexisting.example.com/context"));
+        final Object context = documentLoader
+                .fromURL(new URL("http://nonexisting.example.com/context"));
         assertTrue(context instanceof Map);
         assertTrue(((Map) context).containsKey("@context"));
     }
@@ -299,8 +298,8 @@ public class DocumentLoaderTest {
     public void jarCacheMissThreadCtx() throws Exception {
         final URLClassLoader findNothingCL = new URLClassLoader(new URL[] {}, null);
         Thread.currentThread().setContextClassLoader(findNothingCL);
-        final Object context = documentLoader.fromURL(new URL(
-                "http://nonexisting.example.com/context"));
+        final Object context = documentLoader
+                .fromURL(new URL("http://nonexisting.example.com/context"));
     }
 
     @Test
@@ -340,26 +339,27 @@ public class DocumentLoaderTest {
 
     @Test
     public void testDisallowRemoteContexts() throws Exception {
-        String testUrl = "http://json-ld.org/contexts/person.jsonld";
-        Object test = documentLoader.loadDocument(testUrl);
+        final String testUrl = "http://json-ld.org/contexts/person.jsonld";
+        final Object test = documentLoader.loadDocument(testUrl);
 
         assertNotNull(
                 "Was not able to fetch from URL before testing disallow remote contexts loading",
                 test);
 
-        String disallowProperty = System
+        final String disallowProperty = System
                 .getProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING);
         try {
             System.setProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING, "true");
             documentLoader.loadDocument(testUrl);
             fail("Expected exception to occur");
-        } catch (JsonLdError e) {
+        } catch (final JsonLdError e) {
             assertEquals(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, e.getType());
         } finally {
             if (disallowProperty == null) {
                 System.clearProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING);
             } else {
-                System.setProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING, disallowProperty);
+                System.setProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING,
+                        disallowProperty);
             }
         }
     }

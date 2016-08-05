@@ -49,7 +49,7 @@ public class JarCacheStorage implements HttpCacheStorage {
      * All live caching that is not found locally is delegated to this
      * implementation.
      */
-    private HttpCacheStorage delegate;
+    private final HttpCacheStorage delegate;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -83,7 +83,7 @@ public class JarCacheStorage implements HttpCacheStorage {
     }
 
     /**
-     * 
+     *
      * @param classLoader
      *            The ClassLoader to use to locate JAR files and resources, or
      *            null to use the Thread context class loader in each case.
@@ -223,8 +223,9 @@ public class JarCacheStorage implements HttpCacheStorage {
             responseHeaders.add(new BasicHeader(headerName, header.asText()));
         }
 
-        return new HttpCacheEntry(new Date(), new Date(), new BasicStatusLine(HttpVersion.HTTP_1_1,
-                200, "OK"), responseHeaders.toArray(new Header[0]), resource);
+        return new HttpCacheEntry(new Date(), new Date(),
+                new BasicStatusLine(HttpVersion.HTTP_1_1, 200, "OK"),
+                responseHeaders.toArray(new Header[0]), resource);
     }
 
     @Override
@@ -233,8 +234,8 @@ public class JarCacheStorage implements HttpCacheStorage {
     }
 
     @Override
-    public void updateEntry(String key, HttpCacheUpdateCallback callback) throws IOException,
-            HttpCacheUpdateException {
+    public void updateEntry(String key, HttpCacheUpdateCallback callback)
+            throws IOException, HttpCacheUpdateException {
         delegate.updateEntry(key, callback);
     }
 

@@ -145,7 +145,7 @@ public class Context extends LinkedHashMap<String, Object> {
     /**
      * Helper method used to work around logic errors related to the recursive
      * nature of the JSONLD-API Context Processing Algorithm.
-     * 
+     *
      * @param localContext
      *            The Local Context object.
      * @param remoteContexts
@@ -200,7 +200,7 @@ public class Context extends LinkedHashMap<String, Object> {
                     // with an @context member
                     throw new JsonLdError(Error.INVALID_REMOTE_CONTEXT, context);
                 }
-                Object tempContext = ((Map<String, Object>) remoteContext)
+                final Object tempContext = ((Map<String, Object>) remoteContext)
                         .get(JsonLdConsts.CONTEXT);
 
                 // 3.2.4
@@ -805,10 +805,10 @@ public class Context extends LinkedHashMap<String, Object> {
     public static String _iriCompactionStep5point4(String iri, Object value, String compactIRI,
             final String candidate, Map<String, Object> termDefinitions) {
 
-        boolean condition1 = (compactIRI == null
+        final boolean condition1 = (compactIRI == null
                 || compareShortestLeast(candidate, compactIRI) < 0);
 
-        boolean condition2 = (!termDefinitions.containsKey(candidate) || (iri
+        final boolean condition2 = (!termDefinitions.containsKey(candidate) || (iri
                 .equals(((Map<String, Object>) termDefinitions.get(candidate)).get(JsonLdConsts.ID))
                 && value == null));
 

@@ -101,8 +101,8 @@ public class RegexTest {
     public void test_PNAME_LN() {
         assertTrue(":p".matches("^" + Regex.PNAME_LN + "$"));
         assertTrue("abc:def".matches("^" + Regex.PNAME_LN + "$"));
-        assertTrue("\u00F8\u02FF\u0370\u037D:\u00F8\u02FF\u0370\u037D".matches("^" + Regex.PNAME_LN
-                + "$"));
+        assertTrue("\u00F8\u02FF\u0370\u037D:\u00F8\u02FF\u0370\u037D"
+                .matches("^" + Regex.PNAME_LN + "$"));
     }
 
     @Test
@@ -147,16 +147,16 @@ public class RegexTest {
                 .matcher("\"IRI with four digit numeric escape (\\\\u)\" ;");
         assertTrue(matcher.find());
 
-        assertTrue("\"dffhjkasdhfskldhfoiw'eu\\\"fhowleifh \u00F8\u02FF\u0370\u037D\"".matches("^"
-                + Regex.STRING_LITERAL_QUOTE + "$"));
+        assertTrue("\"dffhjkasdhfskldhfoiw'eu\\\"fhowleifh \u00F8\u02FF\u0370\u037D\""
+                .matches("^" + Regex.STRING_LITERAL_QUOTE + "$"));
         assertFalse("\"dffhjkasdhfs\nkldhfoiw\\\"'eufhowleifh \u00F8\u02FF\u0370\u037D\""
                 .matches("^" + Regex.STRING_LITERAL_QUOTE + "$"));
     }
 
     @Test
     public void test_STRING_LITERAL_SINGLE_QUOTE() {
-        assertTrue("'dffhjkasdhfskldhf\\'oiweu\"fhowleifh \u00F8\u02FF\u0370\u037D'".matches("^"
-                + Regex.STRING_LITERAL_SINGLE_QUOTE + "$"));
+        assertTrue("'dffhjkasdhfskldhf\\'oiweu\"fhowleifh \u00F8\u02FF\u0370\u037D'"
+                .matches("^" + Regex.STRING_LITERAL_SINGLE_QUOTE + "$"));
         assertFalse("\"dffhjkasdhfs\nkldhfoiw\\\"'eufhowleifh \u00F8\u02FF\u0370\u037D\""
                 .matches("^" + Regex.STRING_LITERAL_SINGLE_QUOTE + "$"));
     }
@@ -199,15 +199,17 @@ public class RegexTest {
         r = RDFDatasetUtils.unescape("\\t\\u007A\\U000F0000\\U00010000\\n");
         assertTrue("\t\u007A\uDB80\uDC00\uD800\uDC00\n".equals(r));
 
-        r = RDFDatasetUtils
-                .unescape("http://a.example/AZaz\u00c0\u00d6\u00d8\u00f6\u00f8\u02ff\u0370\u037d\u0384\u1ffe\u200c\u200d\u2070\u2189\u2c00\u2fd5\u3001\ud7fb\ufa0e\ufdc7\ufdf0\uffef");
-        assertTrue("http://a.example/AZaz\u00c0\u00d6\u00d8\u00f6\u00f8\u02ff\u0370\u037d\u0384\u1ffe\u200c\u200d\u2070\u2189\u2c00\u2fd5\u3001\ud7fb\ufa0e\ufdc7\ufdf0\uffef"
-                .equals(r));
+        r = RDFDatasetUtils.unescape(
+                "http://a.example/AZaz\u00c0\u00d6\u00d8\u00f6\u00f8\u02ff\u0370\u037d\u0384\u1ffe\u200c\u200d\u2070\u2189\u2c00\u2fd5\u3001\ud7fb\ufa0e\ufdc7\ufdf0\uffef");
+        assertTrue(
+                "http://a.example/AZaz\u00c0\u00d6\u00d8\u00f6\u00f8\u02ff\u0370\u037d\u0384\u1ffe\u200c\u200d\u2070\u2189\u2c00\u2fd5\u3001\ud7fb\ufa0e\ufdc7\ufdf0\uffef"
+                        .equals(r));
 
-        r = RDFDatasetUtils
-                .unescape("http://a.example/AZaz\\u00c0\\u00d6\\u00d8\\u00f6\\u00f8\\u02ff\\u0370\\u037d\\u0384\\u1ffe\\u200c\\u200d\\u2070\\u2189\\u2c00\\u2fd5\\u3001\\ud7fb\\ufa0e\\ufdc7\\ufdf0\\uffef\\U00010000\\U000e01ef");
-        assertTrue("http://a.example/AZaz\u00c0\u00d6\u00d8\u00f6\u00f8\u02ff\u0370\u037d\u0384\u1ffe\u200c\u200d\u2070\u2189\u2c00\u2fd5\u3001\ud7fb\ufa0e\ufdc7\ufdf0\uffef\uD800\uDC00\uDB40\uDDEF"
-                .equals(r));
+        r = RDFDatasetUtils.unescape(
+                "http://a.example/AZaz\\u00c0\\u00d6\\u00d8\\u00f6\\u00f8\\u02ff\\u0370\\u037d\\u0384\\u1ffe\\u200c\\u200d\\u2070\\u2189\\u2c00\\u2fd5\\u3001\\ud7fb\\ufa0e\\ufdc7\\ufdf0\\uffef\\U00010000\\U000e01ef");
+        assertTrue(
+                "http://a.example/AZaz\u00c0\u00d6\u00d8\u00f6\u00f8\u02ff\u0370\u037d\u0384\u1ffe\u200c\u200d\u2070\u2189\u2c00\u2fd5\u3001\ud7fb\ufa0e\ufdc7\ufdf0\uffef\uD800\uDC00\uDB40\uDDEF"
+                        .equals(r));
     }
 
     @Test

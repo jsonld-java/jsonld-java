@@ -31,7 +31,7 @@ class NormalizeUtils {
         this.namer = namer;
     }
 
-    // generates unique and duplicate hashes for bnodes 
+    // generates unique and duplicate hashes for bnodes
     public Object hashBlankNodes(Collection<String> unnamed_) throws JsonLdError {
         List<String> unnamed = new ArrayList<String>(unnamed_);
         List<String> nextUnnamed = new ArrayList<String>();
@@ -93,24 +93,24 @@ class NormalizeUtils {
                             for (int cai = 0; cai < quads.size(); ++cai) {
                                 final Map<String, Object> quad = (Map<String, Object>) quads
                                         .get(cai);
-                                for (final String attr : new String[] { "subject", "object", "name" }) {
+                                for (final String attr : new String[] { "subject", "object",
+                                        "name" }) {
                                     if (quad.containsKey(attr)) {
                                         final Map<String, Object> qa = (Map<String, Object>) quad
                                                 .get(attr);
-                                        if (qa != null
-                                                && "blank node".equals(qa.get("type"))
-                                                && ((String) qa.get("value")).indexOf("_:c14n") != 0) {
+                                        if (qa != null && "blank node".equals(qa.get("type"))
+                                                && ((String) qa.get("value"))
+                                                        .indexOf("_:c14n") != 0) {
                                             qa.put("value",
                                                     namer.getName((String) qa.get(("value"))));
                                         }
                                     }
                                 }
-                                normalized
-                                .add(toNQuad(
-                                        (RDFDataset.Quad) quad,
-                                        quad.containsKey("name")
-                                        && quad.get("name") != null ? (String) ((Map<String, Object>) quad
-                                                .get("name")).get("value") : null));
+                                normalized.add(toNQuad((RDFDataset.Quad) quad,
+                                        quad.containsKey("name") && quad.get("name") != null
+                                                ? (String) ((Map<String, Object>) quad.get("name"))
+                                                        .get("value")
+                                                : null));
                             }
 
                             // sort normalized output
@@ -119,7 +119,7 @@ class NormalizeUtils {
                             // handle output format
                             if (options.format != null) {
                                 if ("application/nquads".equals(options.format)) {
-                                    StringBuilder rval = new StringBuilder();
+                                    final StringBuilder rval = new StringBuilder();
                                     for (final String n : normalized) {
                                         rval.append(n);
                                     }
@@ -129,7 +129,7 @@ class NormalizeUtils {
                                             options.format);
                                 }
                             }
-                            StringBuilder rval = new StringBuilder();
+                            final StringBuilder rval = new StringBuilder();
                             for (final String n : normalized) {
                                 rval.append(n);
                             }
@@ -171,7 +171,8 @@ class NormalizeUtils {
                                 final UniqueNamer pathNamer = new UniqueNamer("_:b");
                                 pathNamer.getName(bnode);
 
-                                final HashResult result = hashPaths(bnode, bnodes, namer, pathNamer);
+                                final HashResult result = hashPaths(bnode, bnodes, namer,
+                                        pathNamer);
                                 results.add(result);
                             }
                         }
@@ -435,8 +436,10 @@ class NormalizeUtils {
         final List<String> nquads = new ArrayList<String>();
         for (int i = 0; i < quads.size(); ++i) {
             nquads.add(toNQuad((RDFDataset.Quad) quads.get(i),
-                    quads.get(i).get("name") != null ? (String) ((Map<String, Object>) quads.get(i)
-                            .get("name")).get("value") : null, id));
+                    quads.get(i).get("name") != null
+                            ? (String) ((Map<String, Object>) quads.get(i).get("name")).get("value")
+                            : null,
+                    id));
         }
         // sort serialized quads
         Collections.sort(nquads);
@@ -490,8 +493,8 @@ class NormalizeUtils {
      */
     private static String getAdjacentBlankNodeName(Map<String, Object> node, String id) {
         return "blank node".equals(node.get("type"))
-                && (!node.containsKey("value") || !Obj.equals(node.get("value"), id)) ? (String) node
-                        .get("value") : null;
+                && (!node.containsKey("value") || !Obj.equals(node.get("value"), id))
+                        ? (String) node.get("value") : null;
     }
 
     private static class Permutator {
@@ -540,8 +543,9 @@ class NormalizeUtils {
                 final String element = this.list.get(i);
                 final Boolean left = this.left.get(element);
                 if ((k == null || element.compareTo(k) > 0)
-                        && ((left && i > 0 && element.compareTo(this.list.get(i - 1)) > 0) || (!left
-                                && i < (length - 1) && element.compareTo(this.list.get(i + 1)) > 0))) {
+                        && ((left && i > 0 && element.compareTo(this.list.get(i - 1)) > 0)
+                                || (!left && i < (length - 1)
+                                        && element.compareTo(this.list.get(i + 1)) > 0))) {
                     k = element;
                     pos = i;
                 }

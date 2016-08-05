@@ -16,8 +16,8 @@ import com.github.jsonldjava.impl.TurtleTripleCallback;
 
 /**
  * This class implements the <a href=
- * "http://json-ld.org/spec/latest/json-ld-api/#the-jsonldprocessor-interface"
- * >JsonLdProcessor interface</a>, except that it does not currently support
+ * "http://json-ld.org/spec/latest/json-ld-api/#the-jsonldprocessor-interface" >
+ * JsonLdProcessor interface</a>, except that it does not currently support
  * asynchronous processing, and hence does not return Promises, instead directly
  * returning the results.
  *
@@ -50,7 +50,8 @@ public class JsonLdProcessor {
         // 2-6) NOTE: these are all the same steps as in expand
         final Object expanded = expand(input, opts);
         // 7)
-        if (context instanceof Map && ((Map<String, Object>) context).containsKey(JsonLdConsts.CONTEXT)) {
+        if (context instanceof Map
+                && ((Map<String, Object>) context).containsKey(JsonLdConsts.CONTEXT)) {
             context = ((Map<String, Object>) context).get(JsonLdConsts.CONTEXT);
         }
         Context activeCtx = new Context(opts);
@@ -92,8 +93,8 @@ public class JsonLdProcessor {
     }
 
     /**
-     * Expands the given input according to the steps in the <a
-     * href="http://www.w3.org/TR/json-ld-api/#expansion-algorithm">Expansion
+     * Expands the given input according to the steps in the
+     * <a href="http://www.w3.org/TR/json-ld-api/#expansion-algorithm">Expansion
      * algorithm</a>.
      *
      * @param input
@@ -132,7 +133,8 @@ public class JsonLdProcessor {
         // 4)
         if (opts.getExpandContext() != null) {
             Object exCtx = opts.getExpandContext();
-            if (exCtx instanceof Map && ((Map<String, Object>) exCtx).containsKey(JsonLdConsts.CONTEXT)) {
+            if (exCtx instanceof Map
+                    && ((Map<String, Object>) exCtx).containsKey(JsonLdConsts.CONTEXT)) {
                 exCtx = ((Map<String, Object>) exCtx).get(JsonLdConsts.CONTEXT);
             }
             activeCtx = activeCtx.parse(exCtx);
@@ -163,8 +165,8 @@ public class JsonLdProcessor {
     }
 
     /**
-     * Expands the given input according to the steps in the <a
-     * href="http://www.w3.org/TR/json-ld-api/#expansion-algorithm">Expansion
+     * Expands the given input according to the steps in the
+     * <a href="http://www.w3.org/TR/json-ld-api/#expansion-algorithm">Expansion
      * algorithm</a>, using the default {@link JsonLdOptions}.
      *
      * @param input
@@ -182,7 +184,8 @@ public class JsonLdProcessor {
         // 2-6) NOTE: these are all the same steps as in expand
         final Object expanded = expand(input, opts);
         // 7)
-        if (context instanceof Map && ((Map<String, Object>) context).containsKey(JsonLdConsts.CONTEXT)) {
+        if (context instanceof Map
+                && ((Map<String, Object>) context).containsKey(JsonLdConsts.CONTEXT)) {
             context = ((Map<String, Object>) context).get(JsonLdConsts.CONTEXT);
         }
         // 8) NOTE: blank node generation variables are members of JsonLdApi
@@ -195,7 +198,8 @@ public class JsonLdProcessor {
         // 2)
         new JsonLdApi(opts).generateNodeMap(expanded, nodeMap);
         // 3)
-        final Map<String, Object> defaultGraph = (Map<String, Object>) nodeMap.remove(JsonLdConsts.DEFAULT);
+        final Map<String, Object> defaultGraph = (Map<String, Object>) nodeMap
+                .remove(JsonLdConsts.DEFAULT);
         // 4)
         for (final String graphName : nodeMap.keySet()) {
             final Map<String, Object> graph = (Map<String, Object>) nodeMap.get(graphName);
@@ -257,9 +261,9 @@ public class JsonLdProcessor {
 
     /**
      * Flattens the given input and compacts it using the passed context
-     * according to the steps in the <a
-     * href="http://www.w3.org/TR/json-ld-api/#flattening-algorithm">Flattening
-     * algorithm</a>:
+     * according to the steps in the
+     * <a href="http://www.w3.org/TR/json-ld-api/#flattening-algorithm">
+     * Flattening algorithm</a>:
      *
      * @param input
      *            The input JSON-LD object.
@@ -275,8 +279,9 @@ public class JsonLdProcessor {
     }
 
     /**
-     * Frames the given input using the frame according to the steps in the <a
-     * href="http://json-ld.org/spec/latest/json-ld-framing/#framing-algorithm">
+     * Frames the given input using the frame according to the steps in the
+     * <a href=
+     * "http://json-ld.org/spec/latest/json-ld-framing/#framing-algorithm">
      * Framing Algorithm</a>.
      *
      * @param input
@@ -304,7 +309,8 @@ public class JsonLdProcessor {
 
         final JsonLdApi api = new JsonLdApi(expandedInput, opts);
         final List<Object> framed = api.frame(expandedInput, expandedFrame);
-        final Context activeCtx = api.context.parse(((Map<String, Object>) frame).get(JsonLdConsts.CONTEXT));
+        final Context activeCtx = api.context
+                .parse(((Map<String, Object>) frame).get(JsonLdConsts.CONTEXT));
 
         Object compacted = api.compact(activeCtx, null, framed);
         if (!(compacted instanceof List)) {
@@ -431,8 +437,8 @@ public class JsonLdProcessor {
             } else if (JsonLdConsts.FLATTENED.equals(options.outputForm)) {
                 return flatten(rval, dataset.getContext(), options);
             } else {
-                throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR, "Output form was unknown: "
-                        + options.outputForm);
+                throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR,
+                        "Output form was unknown: " + options.outputForm);
             }
         }
         return rval;

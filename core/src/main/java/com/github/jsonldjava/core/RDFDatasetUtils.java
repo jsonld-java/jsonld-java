@@ -106,8 +106,8 @@ public class RDFDatasetUtils {
      * @param triples
      *            the array of triples to append to.
      */
-    private static void listToRDF(List<Object> list, UniqueNamer namer,
-            Map<String, Object> subject, Map<String, Object> predicate, List<Object> triples) {
+    private static void listToRDF(List<Object> list, UniqueNamer namer, Map<String, Object> subject,
+            Map<String, Object> predicate, List<Object> triples) {
         final Map<String, Object> first = newMap();
         first.put("type", "IRI");
         first.put("value", RDF_FIRST);
@@ -215,10 +215,11 @@ public class RDFDatasetUtils {
     }
 
     public static String toNQuads(RDFDataset dataset) {
-        StringBuilder output = new StringBuilder(256);
+        final StringBuilder output = new StringBuilder(256);
         toNQuads(dataset, output);
         return output.toString();
     }
+
     public static void toNQuads(RDFDataset dataset, StringBuilder output) {
         final List<String> quads = new ArrayList<String>();
         for (String graphName : dataset.graphNames()) {
@@ -237,11 +238,13 @@ public class RDFDatasetUtils {
     }
 
     static String toNQuad(RDFDataset.Quad triple, String graphName, String bnode) {
-        StringBuilder output = new StringBuilder(256);
+        final StringBuilder output = new StringBuilder(256);
         toNQuad(triple, graphName, bnode, output);
         return output.toString();
     }
-    static void toNQuad(RDFDataset.Quad triple, String graphName, String bnode, StringBuilder output) {
+
+    static void toNQuad(RDFDataset.Quad triple, String graphName, String bnode,
+            StringBuilder output) {
         final RDFDataset.Node s = triple.getSubject();
         final RDFDataset.Node p = triple.getPredicate();
         final RDFDataset.Node o = triple.getObject();
@@ -252,7 +255,7 @@ public class RDFDatasetUtils {
             escape(s.getValue(), output);
             output.append(">");
         }
-        // normalization mode 
+        // normalization mode
         else if (bnode != null) {
             output.append(bnode.equals(s.getValue()) ? "_:a" : "_:z");
         }
@@ -321,8 +324,8 @@ public class RDFDatasetUtils {
         return toNQuad(triple, graphName, null);
     }
 
-    final private static Pattern UCHAR_MATCHED = Pattern.compile("\\u005C(?:([tbnrf\\\"'])|(?:u("
-            + HEX + "{4}))|(?:U(" + HEX + "{8})))");
+    final private static Pattern UCHAR_MATCHED = Pattern
+            .compile("\\u005C(?:([tbnrf\\\"'])|(?:u(" + HEX + "{4}))|(?:U(" + HEX + "{8})))");
 
     public static String unescape(String str) {
         String rval = str;
@@ -393,20 +396,26 @@ public class RDFDatasetUtils {
 
     /**
      * Escapes the given string according to the N-Quads escape rules
-     * @param str The string to escape
+     * 
+     * @param str
+     *            The string to escape
      * @return The escaped string
      * @deprecated Use {@link #escape(String, StringBuilder)} instead.
      */
+    @Deprecated
     public static String escape(String str) {
-        StringBuilder rval = new StringBuilder();
+        final StringBuilder rval = new StringBuilder();
         escape(str, rval);
         return rval.toString();
     }
-    
+
     /**
      * Escapes the given string according to the N-Quads escape rules
-     * @param str The string to escape
-     * @param rval The {@link StringBuilder} to append to.
+     * 
+     * @param str
+     *            The string to escape
+     * @param rval
+     *            The {@link StringBuilder} to append to.
      */
     public static void escape(String str, StringBuilder rval) {
         for (int i = 0; i < str.length(); i++) {
@@ -417,12 +426,12 @@ public class RDFDatasetUtils {
                     // supplement
                     // characters
                     ((hi >= 0x24F // 0x24F is the end of latin extensions
-                    && !Character.isHighSurrogate(hi))
+                            && !Character.isHighSurrogate(hi))
                     // TODO: there's probably a lot of other characters that
                     // shouldn't be escaped that
                     // fall outside these ranges, this is one example from the
                     // json-ld tests
-                            )) {
+                    )) {
                 rval.append(String.format("\\u%04x", (int) hi));
             } else if (Character.isHighSurrogate(hi)) {
                 final char lo = str.charAt(++i);
@@ -445,9 +454,9 @@ public class RDFDatasetUtils {
                 case '\r':
                     rval.append("\\r");
                     break;
-                    // case '\'':
-                    // rval += "\\'";
-                    // break;
+                // case '\'':
+                // rval += "\\'";
+                // break;
                 case '\"':
                     rval.append("\\\"");
                     // rval += "\\u0022";
@@ -462,7 +471,7 @@ public class RDFDatasetUtils {
                 }
             }
         }
-        //return rval;
+        // return rval;
     }
 
     private static class Regex {
@@ -474,8 +483,8 @@ public class RDFDatasetUtils {
         final public static Pattern PLAIN = Pattern.compile("\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"");
         final public static Pattern DATATYPE = Pattern.compile("(?:\\^\\^" + IRI + ")");
         final public static Pattern LANGUAGE = Pattern.compile("(?:@([a-z]+(?:-[a-zA-Z0-9]+)*))");
-        final public static Pattern LITERAL = Pattern.compile("(?:" + PLAIN + "(?:" + DATATYPE
-                + "|" + LANGUAGE + ")?)");
+        final public static Pattern LITERAL = Pattern
+                .compile("(?:" + PLAIN + "(?:" + DATATYPE + "|" + LANGUAGE + ")?)");
         final public static Pattern WS = Pattern.compile("[ \\t]+");
         final public static Pattern WSO = Pattern.compile("[ \\t]*");
         final public static Pattern EOLN = Pattern.compile("(?:\r\n)|(?:\n)|(?:\r)");
@@ -484,14 +493,14 @@ public class RDFDatasetUtils {
         // define quad part regexes
         final public static Pattern SUBJECT = Pattern.compile("(?:" + IRI + "|" + BNODE + ")" + WS);
         final public static Pattern PROPERTY = Pattern.compile(IRI.pattern() + WS.pattern());
-        final public static Pattern OBJECT = Pattern.compile("(?:" + IRI + "|" + BNODE + "|"
-                + LITERAL + ")" + WSO);
-        final public static Pattern GRAPH = Pattern.compile("(?:\\.|(?:(?:" + IRI + "|" + BNODE
-                + ")" + WSO + "\\.))");
+        final public static Pattern OBJECT = Pattern
+                .compile("(?:" + IRI + "|" + BNODE + "|" + LITERAL + ")" + WSO);
+        final public static Pattern GRAPH = Pattern
+                .compile("(?:\\.|(?:(?:" + IRI + "|" + BNODE + ")" + WSO + "\\.))");
 
         // full quad regex
-        final public static Pattern QUAD = Pattern.compile("^" + WSO + SUBJECT + PROPERTY + OBJECT
-                + GRAPH + WSO + "$");
+        final public static Pattern QUAD = Pattern
+                .compile("^" + WSO + SUBJECT + PROPERTY + OBJECT + GRAPH + WSO + "$");
     }
 
     /**
@@ -545,8 +554,8 @@ public class RDFDatasetUtils {
                 object = new RDFDataset.BlankNode(unescape(match.group(5)));
             } else {
                 final String language = unescape(match.group(8));
-                final String datatype = match.group(7) != null ? unescape(match.group(7)) : match
-                        .group(8) != null ? RDF_LANGSTRING : XSD_STRING;
+                final String datatype = match.group(7) != null ? unescape(match.group(7))
+                        : match.group(8) != null ? RDF_LANGSTRING : XSD_STRING;
                 final String unescaped = unescape(match.group(6));
                 object = new RDFDataset.Literal(unescaped, datatype, language);
             }

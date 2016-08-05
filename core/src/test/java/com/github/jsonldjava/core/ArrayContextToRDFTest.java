@@ -21,7 +21,8 @@ public class ArrayContextToRDFTest {
 
         final URL arrayContextUrl = getClass().getResource("/custom/array-context.jsonld");
         assertNotNull(arrayContextUrl);
-        final Object arrayContext = JsonUtils.fromURL(arrayContextUrl, JsonUtils.getDefaultHttpClient());
+        final Object arrayContext = JsonUtils.fromURL(arrayContextUrl,
+                JsonUtils.getDefaultHttpClient());
         assertNotNull(arrayContext);
         final JsonLdOptions options = new JsonLdOptions();
         options.useNamespaces = true;

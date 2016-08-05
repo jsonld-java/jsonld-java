@@ -62,8 +62,8 @@ public class EarlTestSuite {
         if (manifestURL.endsWith(".ttl") || manifestURL.endsWith("nq")
                 || manifestURL.endsWith("nt")) {
             try {
-                Map<String, Object> rval = (Map<String, Object>) JsonLdProcessor.fromRDF(
-                        manifestFile, new JsonLdOptions(manifestURL) {
+                Map<String, Object> rval = (Map<String, Object>) JsonLdProcessor
+                        .fromRDF(manifestFile, new JsonLdOptions(manifestURL) {
                             {
                                 this.format = "text/turtle";
                                 this.useNamespaces = true;

@@ -51,38 +51,38 @@ import com.github.jsonldjava.core.UniqueNamer;
 public class TurtleRDFParser implements RDFParser {
 
     static class Regex {
-        final public static Pattern PREFIX_ID = Pattern.compile("@prefix" + WS_1_N + PNAME_NS
-                + WS_1_N + IRIREF + WS_0_N + "\\." + WS_0_N);
-        final public static Pattern BASE = Pattern.compile("@base" + WS_1_N + IRIREF + WS_0_N
-                + "\\." + WS_0_N);
-        final public static Pattern SPARQL_PREFIX = Pattern.compile("[Pp][Rr][Ee][Ff][Ii][Xx]" + WS
-                + PNAME_NS + WS + IRIREF + WS_0_N);
-        final public static Pattern SPARQL_BASE = Pattern.compile("[Bb][Aa][Ss][Ee]" + WS + IRIREF
-                + WS_0_N);
+        final public static Pattern PREFIX_ID = Pattern
+                .compile("@prefix" + WS_1_N + PNAME_NS + WS_1_N + IRIREF + WS_0_N + "\\." + WS_0_N);
+        final public static Pattern BASE = Pattern
+                .compile("@base" + WS_1_N + IRIREF + WS_0_N + "\\." + WS_0_N);
+        final public static Pattern SPARQL_PREFIX = Pattern
+                .compile("[Pp][Rr][Ee][Ff][Ii][Xx]" + WS + PNAME_NS + WS + IRIREF + WS_0_N);
+        final public static Pattern SPARQL_BASE = Pattern
+                .compile("[Bb][Aa][Ss][Ee]" + WS + IRIREF + WS_0_N);
 
-        final public static Pattern PREFIXED_NAME = Pattern.compile("(?:" + PNAME_LN + "|"
-                + PNAME_NS + ")");
-        final public static Pattern IRI = Pattern.compile("(?:" + IRIREF + "|" + PREFIXED_NAME
-                + ")");
+        final public static Pattern PREFIXED_NAME = Pattern
+                .compile("(?:" + PNAME_LN + "|" + PNAME_NS + ")");
+        final public static Pattern IRI = Pattern
+                .compile("(?:" + IRIREF + "|" + PREFIXED_NAME + ")");
         final public static Pattern ANON = Pattern.compile("(?:\\[" + WS + "*\\])");
         final public static Pattern BLANK_NODE = Pattern.compile(BLANK_NODE_LABEL + "|" + ANON);
-        final public static Pattern STRING = Pattern.compile("(" + STRING_LITERAL_LONG_SINGLE_QUOTE
-                + "|" + STRING_LITERAL_LONG_QUOTE + "|" + STRING_LITERAL_QUOTE + "|"
-                + STRING_LITERAL_SINGLE_QUOTE + ")");
+        final public static Pattern STRING = Pattern
+                .compile("(" + STRING_LITERAL_LONG_SINGLE_QUOTE + "|" + STRING_LITERAL_LONG_QUOTE
+                        + "|" + STRING_LITERAL_QUOTE + "|" + STRING_LITERAL_SINGLE_QUOTE + ")");
         final public static Pattern BOOLEAN_LITERAL = Pattern.compile("(true|false)");
-        final public static Pattern RDF_LITERAL = Pattern.compile(STRING + "(?:" + LANGTAG
-                + "|\\^\\^" + IRI + ")?");
-        final public static Pattern NUMERIC_LITERAL = Pattern.compile("(" + DOUBLE + ")|("
-                + DECIMAL + ")|(" + INTEGER + ")");
-        final public static Pattern LITERAL = Pattern.compile(RDF_LITERAL + "|" + NUMERIC_LITERAL
-                + "|" + BOOLEAN_LITERAL);
+        final public static Pattern RDF_LITERAL = Pattern
+                .compile(STRING + "(?:" + LANGTAG + "|\\^\\^" + IRI + ")?");
+        final public static Pattern NUMERIC_LITERAL = Pattern
+                .compile("(" + DOUBLE + ")|(" + DECIMAL + ")|(" + INTEGER + ")");
+        final public static Pattern LITERAL = Pattern
+                .compile(RDF_LITERAL + "|" + NUMERIC_LITERAL + "|" + BOOLEAN_LITERAL);
 
-        final public static Pattern DIRECTIVE = Pattern.compile("^(?:" + PREFIX_ID + "|" + BASE
-                + "|" + SPARQL_PREFIX + "|" + SPARQL_BASE + ")");
+        final public static Pattern DIRECTIVE = Pattern.compile(
+                "^(?:" + PREFIX_ID + "|" + BASE + "|" + SPARQL_PREFIX + "|" + SPARQL_BASE + ")");
         final public static Pattern SUBJECT = Pattern.compile("^" + IRI + "|" + BLANK_NODE);
         final public static Pattern PREDICATE = Pattern.compile("^" + IRI + "|a" + WS_1_N);
-        final public static Pattern OBJECT = Pattern.compile("^" + IRI + "|" + BLANK_NODE + "|"
-                + LITERAL);
+        final public static Pattern OBJECT = Pattern
+                .compile("^" + IRI + "|" + BLANK_NODE + "|" + LITERAL);
 
         // others
         // final public static Pattern WS_AT_LINE_START = Pattern.compile("^" +
@@ -92,8 +92,8 @@ public class TurtleRDFParser implements RDFParser {
         // final public static Pattern EMPTY_LINE = Pattern.compile("^" + WS +
         // "*$");
 
-        final public static Pattern COMMENT_OR_WS = Pattern.compile("^(?:(?:[#].*(?:" + EOLN + ")"
-                + WS_0_N + ")|(?:" + WS_1_N + "))");
+        final public static Pattern COMMENT_OR_WS = Pattern
+                .compile("^(?:(?:[#].*(?:" + EOLN + ")" + WS_0_N + ")|(?:" + WS_1_N + "))");
     }
 
     private class State {
@@ -180,7 +180,7 @@ public class TurtleRDFParser implements RDFParser {
             if ("".equals(line) && !endIsOK()) {
                 throw new JsonLdError(JsonLdError.Error.PARSE_ERROR,
                         "Error while parsing Turtle; unexpected end of input. {line: " + lineNumber
-                        + ", position:" + linePosition + "}");
+                                + ", position:" + linePosition + "}");
             }
         }
 
@@ -450,7 +450,7 @@ public class TurtleRDFParser implements RDFParser {
                 if (!RDF_FIRST.equals(state.curPredicate)) {
                     throw new JsonLdError(JsonLdError.Error.PARSE_ERROR,
                             "Error while parsing Turtle; unexpected ). {line: " + state.lineNumber
-                            + "position: " + state.linePosition + "}");
+                                    + "position: " + state.linePosition + "}");
                 }
                 result.addTriple(state.curSubject, RDF_REST, RDF_NIL);
                 state.pop();

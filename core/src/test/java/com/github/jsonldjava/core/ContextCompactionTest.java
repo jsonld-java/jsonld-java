@@ -1,24 +1,20 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.github.jsonldjava.utils.JsonUtils;
 
 public class ContextCompactionTest {
 
-    //@Ignore("Disable until schema.org is fixed")
+    // @Ignore("Disable until schema.org is fixed")
     @Test
     public void testCompaction() throws Exception {
 

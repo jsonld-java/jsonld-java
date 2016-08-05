@@ -177,12 +177,12 @@ public class TurtleRegexTests {
 
     @Test
     public void test_STRING() {
-        assertTrue("\"dffhjkasdhfskldhfoiw'eu\\\"fhowleifh\u00F8\u02FF\u0370\u037D\"".matches("^"
-                + Regex.STRING + "$"));
+        assertTrue("\"dffhjkasdhfskldhfoiw'eu\\\"fhowleifh\u00F8\u02FF\u0370\u037D\""
+                .matches("^" + Regex.STRING + "$"));
         assertFalse("\"dffhjkasdhfs\nkldhfoiw\\\"'eufhowleifh \u00F8\u02FF\u0370\u037D\""
                 .matches("^" + Regex.STRING + "$"));
-        assertTrue("'dffhjkasdhfskldh\\'foiweu\"fhowleifh \u00F8\u02FF\u0370\u037D'".matches("^"
-                + Regex.STRING + "$"));
+        assertTrue("'dffhjkasdhfskldh\\'foiweu\"fhowleifh \u00F8\u02FF\u0370\u037D'"
+                .matches("^" + Regex.STRING + "$"));
         assertFalse("\"dffhjkasdhfs\nkldhfoiw\\\"'eufhowleifh \u00F8\u02FF\u0370\u037D\""
                 .matches("^" + Regex.STRING + "$"));
         assertTrue("'''dffhjkasdhfsk\nldhfoiw\"'eufhowleifh \u00F8\u02FF\u0370\u037D'''"

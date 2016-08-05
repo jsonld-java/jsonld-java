@@ -108,10 +108,10 @@ public class TurtleRDFParserTest {
         };
 
         final Object json = null; /*
-         * JsonLdProcessor.fromRDF(input, new
-         * JsonLdOptions() { { format = "text/turtle";
-         * } }, new TurtleRDFParser());
-         */
+                                   * JsonLdProcessor.fromRDF(input, new
+                                   * JsonLdOptions() { { format = "text/turtle";
+                                   * } }, new TurtleRDFParser());
+                                   */
         assertTrue(Obj.equals(expected, json));
     }
 
@@ -286,8 +286,8 @@ public class TurtleRDFParserTest {
                             }
                         } else {
                             // add possible mappings for the objects
-                            bnodeMaps.addPossibleMapping(eq.getObject().getValue(), rq.getObject()
-                                    .getValue());
+                            bnodeMaps.addPossibleMapping(eq.getObject().getValue(),
+                                    rq.getObject().getValue());
                         }
                     }
                     // otherwise, if the objects aren't equal we can't have a
@@ -301,8 +301,8 @@ public class TurtleRDFParserTest {
                     // if subject is not locked add a possible mapping between
                     // subjects
                     if (!subjectLocked) {
-                        bnodeMaps.addPossibleMapping(eq.getSubject().getValue(), rq.getSubject()
-                                .getValue());
+                        bnodeMaps.addPossibleMapping(eq.getSubject().getValue(),
+                                rq.getSubject().getValue());
                     }
                 }
                 // otherwise check if the subjects are equal
@@ -320,8 +320,8 @@ public class TurtleRDFParserTest {
                             }
                         } else {
                             // add possible mappings for the objects
-                            bnodeMaps.addPossibleMapping(eq.getObject().getValue(), rq.getObject()
-                                    .getValue());
+                            bnodeMaps.addPossibleMapping(eq.getObject().getValue(),
+                                    rq.getObject().getValue());
                         }
                         // if we get here we have a match
                         matches++;
@@ -345,13 +345,13 @@ public class TurtleRDFParserTest {
                 // we have one match
                 if (eq.getSubject().isBlankNode()) {
                     // lock this mapping
-                    bnodeMaps.lockMapping(eq.getSubject().getValue(), last_match.getSubject()
-                            .getValue());
+                    bnodeMaps.lockMapping(eq.getSubject().getValue(),
+                            last_match.getSubject().getValue());
                 }
                 if (eq.getObject().isBlankNode()) {
                     // lock this mapping
-                    bnodeMaps.lockMapping(eq.getObject().getValue(), last_match.getObject()
-                            .getValue());
+                    bnodeMaps.lockMapping(eq.getObject().getValue(),
+                            last_match.getObject().getValue());
                 }
                 res.remove(last_match);
             } else {

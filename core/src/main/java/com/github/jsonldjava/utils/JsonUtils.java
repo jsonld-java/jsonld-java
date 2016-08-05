@@ -9,7 +9,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +97,10 @@ public class JsonUtils {
      *             If there was an IO error during parsing.
      */
     public static Object fromInputStream(InputStream input, String enc) throws IOException {
-        return fromReader(new BufferedReader(new InputStreamReader(input, enc)));
+        try (InputStreamReader in = new InputStreamReader(input, enc);
+                BufferedReader reader = new BufferedReader(in);) {
+            return fromReader(reader);
+        }
     }
 
     /**
@@ -116,7 +118,7 @@ public class JsonUtils {
      */
     public static Object fromReader(Reader reader) throws IOException {
         final JsonParser jp = JSON_FACTORY.createParser(reader);
-        Object rval ;
+        Object rval;
         final JsonToken initialToken = jp.nextToken();
 
         if (initialToken == JsonToken.START_ARRAY) {
@@ -133,19 +135,24 @@ public class JsonUtils {
         } else if (initialToken == JsonToken.VALUE_NULL) {
             rval = null;
         } else {
-            throw new JsonParseException(jp, "document doesn't start with a valid json element : "
-                    + initialToken, jp.getCurrentLocation());
+            throw new JsonParseException(jp,
+                    "document doesn't start with a valid json element : " + initialToken,
+                    jp.getCurrentLocation());
         }
-        
-        JsonToken t ;
-        try { t = jp.nextToken(); }
-        catch (JsonParseException ex) {
-            throw new JsonParseException(jp, "Document contains more content after json-ld element - (possible mismatched {}?)",
-                                         jp.getCurrentLocation());
+
+        JsonToken t;
+        try {
+            t = jp.nextToken();
+        } catch (final JsonParseException ex) {
+            throw new JsonParseException(jp,
+                    "Document contains more content after json-ld element - (possible mismatched {}?)",
+                    jp.getCurrentLocation());
         }
-        if ( t != null )
-            throw new JsonParseException(jp, "Document contains possible json content after the json-ld element - (possible mismatched {}?)",
-                                             jp.getCurrentLocation());
+        if (t != null) {
+            throw new JsonParseException(jp,
+                    "Document contains possible json content after the json-ld element - (possible mismatched {}?)",
+                    jp.getCurrentLocation());
+        }
         return rval;
     }
 
@@ -177,7 +184,8 @@ public class JsonUtils {
      *             If there was a JSON related error during parsing.
      * @throws IOException
      *             If there was an IO error during parsing.
-     * @deprecated Use {@link #fromURL(java.net.URL, CloseableHttpClient)} instead.
+     * @deprecated Use {@link #fromURL(java.net.URL, CloseableHttpClient)}
+     *             instead.
      */
     @Deprecated
     public static Object fromURL(java.net.URL url) throws JsonParseException, IOException {
@@ -196,8 +204,8 @@ public class JsonUtils {
      * @throws IOException
      *             If there is an IO error during serialization.
      */
-    public static String toPrettyString(Object jsonObject) throws JsonGenerationException,
-    IOException {
+    public static String toPrettyString(Object jsonObject)
+            throws JsonGenerationException, IOException {
         final StringWriter sw = new StringWriter();
         writePrettyPrint(sw, jsonObject);
         return sw.toString();
@@ -232,8 +240,8 @@ public class JsonUtils {
      * @throws IOException
      *             If there is an IO error during serialization.
      */
-    public static void write(Writer writer, Object jsonObject) throws JsonGenerationException,
-    IOException {
+    public static void write(Writer writer, Object jsonObject)
+            throws JsonGenerationException, IOException {
         final JsonGenerator jw = JSON_FACTORY.createGenerator(writer);
         jw.writeObject(jsonObject);
     }
@@ -259,15 +267,22 @@ public class JsonUtils {
     }
 
     /**
-     * Attempts to open an {@link InputStream} that will contain the content of the URL, as resolved by the given HTTP Client.
+     * Attempts to open an {@link InputStream} that will contain the content of
+     * the URL, as resolved by the given HTTP Client.
+     *
+     * If the URL is not an HTTP or HTTPS URL it is resolved using the default
+     * {@link java.net.URL#openStream()} method.
      * 
-     * If the URL is not an HTTP or HTTPS URL it is resolved using the default {@link java.net.URL#openStream()} method.
-     * @param url The URL to resolve.
-     * @param httpClient The CloseableHttpClient to use to resolve the URL.
+     * @param url
+     *            The URL to resolve.
+     * @param httpClient
+     *            The CloseableHttpClient to use to resolve the URL.
      * @return An InputStream containing the contents of the resolved URL.
-     * @throws IOException If there are any IO exceptions while resolving the URL.
+     * @throws IOException
+     *             If there are any IO exceptions while resolving the URL.
      */
-    public static InputStream openStreamForURL(java.net.URL url, CloseableHttpClient httpClient) throws IOException {
+    public static InputStream openStreamForURL(java.net.URL url, CloseableHttpClient httpClient)
+            throws IOException {
         final String protocol = url.getProtocol();
         if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
             // Can't use the HTTP client for those!
@@ -279,7 +294,7 @@ public class JsonUtils {
         // We prefer application/ld+json, but fallback to application/json
         // or whatever is available
         request.addHeader("Accept", ACCEPT_HEADER);
-    
+
         final CloseableHttpResponse response = httpClient.execute(request);
         try {
             final int status = response.getStatusLine().getStatusCode();
@@ -301,7 +316,7 @@ public class JsonUtils {
      *
      * @param url
      *            The JsonLdUrl to resolve
-     * @param httpClient 
+     * @param httpClient
      *            The {@link CloseableHttpClient} to use to resolve the URL.
      * @return A JSON Object.
      * @throws JsonParseException
@@ -309,7 +324,8 @@ public class JsonUtils {
      * @throws IOException
      *             If there was an IO error during parsing.
      */
-    public static Object fromURL(java.net.URL url, CloseableHttpClient httpClient) throws JsonParseException, IOException {
+    public static Object fromURL(java.net.URL url, CloseableHttpClient httpClient)
+            throws JsonParseException, IOException {
         final InputStream in = openStreamForURL(url, httpClient);
         try {
             return fromInputStream(in);
@@ -319,8 +335,12 @@ public class JsonUtils {
     }
 
     /**
-     * Fallback method directly using the {@link java.net.HttpURLConnection} class for cases where servers do not interoperate correctly with Apache HTTPClient.
-     * @param url The URL to access.
+     * Fallback method directly using the {@link java.net.HttpURLConnection}
+     * class for cases where servers do not interoperate correctly with Apache
+     * HTTPClient.
+     * 
+     * @param url
+     *            The URL to access.
      * @return The result, after conversion from JSON to a Java Object.
      * @throws JsonParseException
      *             If there was a JSON related error during parsing.
@@ -328,23 +348,22 @@ public class JsonUtils {
      *             If there was an IO error during parsing.
      */
     public static Object fromURLJavaNet(java.net.URL url) throws JsonParseException, IOException {
-        HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
+        final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.addRequestProperty("Accept", ACCEPT_HEADER);
 
-        InputStream directStream = urlConn.getInputStream();
-        
-        StringWriter output = new StringWriter();
+        final InputStream directStream = urlConn.getInputStream();
+
+        final StringWriter output = new StringWriter();
         try {
             IOUtils.copy(directStream, output, Charset.forName("UTF-8"));
-        }
-        finally {
+        } finally {
             directStream.close();
             output.flush();
         }
-        Object context = JsonUtils.fromReader(new StringReader(output.toString()));
+        final Object context = JsonUtils.fromReader(new StringReader(output.toString()));
         return context;
     }
-    
+
     public static CloseableHttpClient getDefaultHttpClient() {
         CloseableHttpClient result = DEFAULT_HTTP_CLIENT;
         if (result == null) {
@@ -363,22 +382,20 @@ public class JsonUtils {
         // BasicHttpCacheStorage
         final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
                 .setMaxObjectSize(1024 * 128).build();
-    
-        CloseableHttpClient result = CachingHttpClientBuilder
-                .create()
+
+        final CloseableHttpClient result = CachingHttpClientBuilder.create()
                 // allow caching
                 .setCacheConfig(cacheConfig)
                 // Wrap the local JarCacheStorage around a BasicHttpCacheStorage
-                .setHttpCacheStorage(
-                        new JarCacheStorage(null, cacheConfig, new BasicHttpCacheStorage(
-                                cacheConfig)))
+                .setHttpCacheStorage(new JarCacheStorage(null, cacheConfig,
+                        new BasicHttpCacheStorage(cacheConfig)))
                 // Support compressed data
                 // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
                 .addInterceptorFirst(new RequestAcceptEncoding())
                 .addInterceptorFirst(new ResponseContentEncoding())
                 // use system defaults for proxy etc.
                 .useSystemProperties().build();
-    
+
         return result;
     }
 }
