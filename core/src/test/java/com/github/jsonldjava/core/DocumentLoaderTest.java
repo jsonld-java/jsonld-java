@@ -13,14 +13,19 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -39,6 +44,8 @@ import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+
+import com.github.jsonldjava.utils.JsonUtils;
 
 @SuppressWarnings("unchecked")
 public class DocumentLoaderTest {
@@ -124,6 +131,28 @@ public class DocumentLoaderTest {
     public void fromURLSchemaOrg() throws Exception {
         final URL url = new URL("http://schema.org/");
         final Object context = documentLoader.fromURL(url);
+        assertTrue(context instanceof Map);
+        assertFalse(((Map<?, ?>) context).isEmpty());
+    }
+
+    //@Ignore("Integration test")
+    @Test
+    public void fromURLSchemaOrgNoApacheHttpClient() throws Exception {
+        final URL url = new URL("http://schema.org/");
+        
+        HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
+        urlConn.addRequestProperty("Accept", "application/ld+json");
+
+        InputStream directStream = urlConn.getInputStream();
+        
+        StringWriter output = new StringWriter();
+        try {
+            IOUtils.copy(directStream, output, Charset.forName("UTF-8"));
+        }
+        finally {
+            directStream.close();
+        }
+        Object context = JsonUtils.fromReader(new StringReader(output.toString()));
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
