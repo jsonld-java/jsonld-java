@@ -1,6 +1,6 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +45,8 @@ public class MinimalSchemaOrgRegressionTest {
             directStream.close();
             output.flush();
         }
-        String outputString = output.toString();
+        final String outputString = output.toString();
+        System.out.println(outputString);
         // Test for some basic conditions without including the JSON/JSON-LD
         // parsing code here
         assertTrue(outputString.endsWith("}\n"));
