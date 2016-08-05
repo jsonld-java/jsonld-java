@@ -22,6 +22,7 @@ import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
 import org.junit.Test;
 
 import com.github.jsonldjava.utils.JarCacheStorage;
+import com.github.jsonldjava.utils.JsonUtils;
 
 public class MinimalSchemaOrgRegressionTest {
 
