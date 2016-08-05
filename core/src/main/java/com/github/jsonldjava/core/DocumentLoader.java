@@ -26,7 +26,7 @@ public class DocumentLoader {
 
         final RemoteDocument doc = new RemoteDocument(url, null);
         try {
-            doc.setDocument(fromURL(new URL(url)));
+            doc.setDocument(JsonUtils.fromURL(new URL(url), getHttpClient()));
         } catch (final Exception e) {
             throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
         }
@@ -54,7 +54,9 @@ public class DocumentLoader {
      *             If the JSON was not valid.
      * @throws IOException
      *             If there was an error resolving the resource.
+     * @deprecated Since 0.8.4, use {@link #loadDocument(String)} instead.
      */
+    @Deprecated
     public Object fromURL(java.net.URL url) throws JsonParseException, IOException {
         return JsonUtils.fromURL(url, getHttpClient());
     }
@@ -70,7 +72,9 @@ public class DocumentLoader {
      * @return An InputStream containing the contents of the source.
      * @throws IOException
      *             If there was an error resolving the {@link java.net.URL}.
+     * @deprecated Since 0.8.4, use {@link #loadDocument(String)} instead.
      */
+    @Deprecated
     public InputStream openStreamFromURL(java.net.URL url) throws IOException {
         return JsonUtils.openStreamForURL(url, getHttpClient());
     }
