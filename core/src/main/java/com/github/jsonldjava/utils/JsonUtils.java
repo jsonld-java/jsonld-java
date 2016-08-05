@@ -339,6 +339,7 @@ public class JsonUtils {
         }
         finally {
             directStream.close();
+            output.flush();
         }
         Object context = JsonUtils.fromReader(new StringReader(output.toString()));
         return context;
