@@ -30,15 +30,15 @@ public class MinimalSchemaOrgRegressionTest {
     @Test
     public void testHttpURLConnection() throws Exception {
         final URL url = new URL("http://schema.org/");
-        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+        final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.addRequestProperty("Accept", ACCEPT_HEADER);
 
-        InputStream directStream = urlConn.getInputStream();
+        final InputStream directStream = urlConn.getInputStream();
         verifyInputStream(directStream);
     }
 
     private void verifyInputStream(InputStream directStream) throws IOException {
-        StringWriter output = new StringWriter();
+        final StringWriter output = new StringWriter();
         try {
             IOUtils.copy(directStream, output, Charset.forName("UTF-8"));
         } finally {
@@ -61,7 +61,7 @@ public class MinimalSchemaOrgRegressionTest {
         final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
                 .setMaxObjectSize(1024 * 128).build();
 
-        CloseableHttpClient httpClient = CachingHttpClientBuilder.create()
+        final CloseableHttpClient httpClient = CachingHttpClientBuilder.create()
                 // allow caching
                 .setCacheConfig(cacheConfig)
                 // Wrap the local JarCacheStorage around a BasicHttpCacheStorage
@@ -85,7 +85,7 @@ public class MinimalSchemaOrgRegressionTest {
             if (status != 200 && status != 203) {
                 throw new IOException("Can't retrieve " + url + ", status code: " + status);
             }
-            InputStream content = response.getEntity().getContent();
+            final InputStream content = response.getEntity().getContent();
             verifyInputStream(content);
         } finally {
             if (response != null) {

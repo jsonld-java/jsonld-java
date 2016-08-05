@@ -272,7 +272,7 @@ public class JsonUtils {
      *
      * If the URL is not an HTTP or HTTPS URL it is resolved using the default
      * {@link java.net.URL#openStream()} method.
-     * 
+     *
      * @param url
      *            The URL to resolve.
      * @param httpClient
@@ -338,7 +338,7 @@ public class JsonUtils {
      * Fallback method directly using the {@link java.net.HttpURLConnection}
      * class for cases where servers do not interoperate correctly with Apache
      * HTTPClient.
-     * 
+     *
      * @param url
      *            The URL to access.
      * @return The result, after conversion from JSON to a Java Object.

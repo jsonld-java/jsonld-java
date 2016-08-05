@@ -396,7 +396,7 @@ public class RDFDatasetUtils {
 
     /**
      * Escapes the given string according to the N-Quads escape rules
-     * 
+     *
      * @param str
      *            The string to escape
      * @return The escaped string
@@ -411,7 +411,7 @@ public class RDFDatasetUtils {
 
     /**
      * Escapes the given string according to the N-Quads escape rules
-     * 
+     *
      * @param str
      *            The string to escape
      * @param rval

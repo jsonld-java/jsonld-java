@@ -40,7 +40,7 @@ public class DocumentLoader {
 
     /**
      * An HTTP Accept header that prefers JSONLD.
-     * 
+     *
      * @deprecated Use {@link JsonUtils#ACCEPT_HEADER} instead.
      */
     @Deprecated
