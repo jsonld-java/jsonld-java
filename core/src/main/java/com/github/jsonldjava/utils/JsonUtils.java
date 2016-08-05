@@ -247,43 +247,6 @@ public class JsonUtils {
     }
 
     /**
-     * Attempts to open an {@link InputStream} that will contain the content of
-     * the URL, as resolved by the given HTTP Client.
-     *
-     * If the URL is not an HTTP or HTTPS URL it is resolved using the default
-     * {@link java.net.URL#openStream()} method.
-     *
-     * @param url
-     *            The URL to resolve.
-     * @param httpClient
-     *            The CloseableHttpClient to use to resolve the URL.
-     * @return An InputStream containing the contents of the resolved URL.
-     * @throws IOException
-     *             If there are any IO exceptions while resolving the URL.
-     */
-    private static InputStream openStreamForURL(java.net.URL url, CloseableHttpClient httpClient)
-            throws IOException {
-        final String protocol = url.getProtocol();
-        if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
-            // Can't use the HTTP client for those!
-            // Fallback to Java's built-in JsonLdUrl handler. No need for
-            // Accept headers as it's likely to be file: or jar:
-            return url.openStream();
-        }
-        final HttpUriRequest request = new HttpGet(url.toExternalForm());
-        // We prefer application/ld+json, but fallback to application/json
-        // or whatever is available
-        request.addHeader("Accept", ACCEPT_HEADER);
-
-        final CloseableHttpResponse response = httpClient.execute(request);
-        final int status = response.getStatusLine().getStatusCode();
-        if (status != 200 && status != 203) {
-            throw new IOException("Can't retrieve " + url + ", status code: " + status);
-        }
-        return response.getEntity().getContent();
-    }
-
-    /**
      * Parses a JSON-LD document, from the contents of the JSON resource
      * resolved from the JsonLdUrl, to an object that can be used as input for
      * the {@link JsonLdApi} and {@link JsonLdProcessor} methods.
@@ -300,11 +263,34 @@ public class JsonUtils {
      */
     public static Object fromURL(java.net.URL url, CloseableHttpClient httpClient)
             throws JsonParseException, IOException {
-        final InputStream in = openStreamForURL(url, httpClient);
+        final String protocol = url.getProtocol();
+        // We can only use the Apache HTTPClient for HTTP/HTTPS, so use the
+        // native java client for the others
+        InputStream in = null;
         try {
+            if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
+                // Can't use the HTTP client for those!
+                // Fallback to Java's built-in JsonLdUrl handler. No need for
+                // Accept headers as it's likely to be file: or jar:
+                in = url.openStream();
+            } else {
+                final HttpUriRequest request = new HttpGet(url.toExternalForm());
+                // We prefer application/ld+json, but fallback to application/json
+                // or whatever is available
+                request.addHeader("Accept", ACCEPT_HEADER);
+    
+                final CloseableHttpResponse response = httpClient.execute(request);
+                final int status = response.getStatusLine().getStatusCode();
+                if (status != 200 && status != 203) {
+                    throw new IOException("Can't retrieve " + url + ", status code: " + status);
+                }
+                in = response.getEntity().getContent();
+            }
             return fromInputStream(in);
         } finally {
-            in.close();
+            if(in != null) {
+                in.close();
+            }
         }
     }
 
