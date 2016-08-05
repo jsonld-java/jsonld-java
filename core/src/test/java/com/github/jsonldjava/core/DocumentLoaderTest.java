@@ -126,7 +126,7 @@ public class DocumentLoaderTest {
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
-    @Ignore("Integration test")
+    @Ignore("Broken at server side")
     @Test
     public void fromURLSchemaOrg() throws Exception {
         final URL url = new URL("http://schema.org/");
@@ -157,7 +157,7 @@ public class DocumentLoaderTest {
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
-    @Ignore("Integration test")
+    //@Ignore("Integration test")
     @Test
     public void loadDocumentSchemaOrg() throws Exception {
         final RemoteDocument document = documentLoader.loadDocument("http://schema.org/");

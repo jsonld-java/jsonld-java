@@ -18,7 +18,7 @@ import com.github.jsonldjava.utils.JsonUtils;
 
 public class ContextCompactionTest {
 
-    @Ignore("Disable until schema.org is fixed")
+    //@Ignore("Disable until schema.org is fixed")
     @Test
     public void testCompaction() throws Exception {
 

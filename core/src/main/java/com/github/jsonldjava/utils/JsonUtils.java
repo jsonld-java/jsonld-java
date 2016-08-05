@@ -8,9 +8,13 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -129,18 +133,18 @@ public class JsonUtils {
         } else if (initialToken == JsonToken.VALUE_NULL) {
             rval = null;
         } else {
-            throw new JsonParseException("document doesn't start with a valid json element : "
+            throw new JsonParseException(jp, "document doesn't start with a valid json element : "
                     + initialToken, jp.getCurrentLocation());
         }
         
         JsonToken t ;
         try { t = jp.nextToken(); }
         catch (JsonParseException ex) {
-            throw new JsonParseException("Document contains more content after json-ld element - (possible mismatched {}?)",
+            throw new JsonParseException(jp, "Document contains more content after json-ld element - (possible mismatched {}?)",
                                          jp.getCurrentLocation());
         }
         if ( t != null )
-            throw new JsonParseException("Document contains possible json content after the json-ld element - (possible mismatched {}?)",
+            throw new JsonParseException(jp, "Document contains possible json content after the json-ld element - (possible mismatched {}?)",
                                              jp.getCurrentLocation());
         return rval;
     }
@@ -314,6 +318,32 @@ public class JsonUtils {
         }
     }
 
+    /**
+     * Fallback method directly using the {@link java.net.HttpURLConnection} class for cases where servers do not interoperate correctly with Apache HTTPClient.
+     * @param url The URL to access.
+     * @return The result, after conversion from JSON to a Java Object.
+     * @throws JsonParseException
+     *             If there was a JSON related error during parsing.
+     * @throws IOException
+     *             If there was an IO error during parsing.
+     */
+    public static Object fromURLJavaNet(java.net.URL url) throws JsonParseException, IOException {
+        HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
+        urlConn.addRequestProperty("Accept", ACCEPT_HEADER);
+
+        InputStream directStream = urlConn.getInputStream();
+        
+        StringWriter output = new StringWriter();
+        try {
+            IOUtils.copy(directStream, output, Charset.forName("UTF-8"));
+        }
+        finally {
+            directStream.close();
+        }
+        Object context = JsonUtils.fromReader(new StringReader(output.toString()));
+        return context;
+    }
+    
     public static CloseableHttpClient getDefaultHttpClient() {
         CloseableHttpClient result = DEFAULT_HTTP_CLIENT;
         if (result == null) {

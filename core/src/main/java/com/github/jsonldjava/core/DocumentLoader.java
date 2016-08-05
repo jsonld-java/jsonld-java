@@ -26,7 +26,11 @@ public class DocumentLoader {
 
         final RemoteDocument doc = new RemoteDocument(url, null);
         try {
-            doc.setDocument(JsonUtils.fromURL(new URL(url), getHttpClient()));
+            if(url.equalsIgnoreCase("http://schema.org/")) {
+                doc.setDocument(JsonUtils.fromURLJavaNet(new URL(url)));
+            } else {
+                doc.setDocument(JsonUtils.fromURL(new URL(url), getHttpClient()));
+            }
         } catch (final Exception e) {
             throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
         }
