@@ -474,7 +474,7 @@ public class JsonLdApi {
      */
     public Object compact(Context activeCtx, String activeProperty, Object element)
             throws JsonLdError {
-        return compact(activeCtx, activeProperty, element, true);
+        return compact(activeCtx, activeProperty, element, JsonLdOptions.DEFAULT_COMPACT_ARRAYS);
     }
 
     /***

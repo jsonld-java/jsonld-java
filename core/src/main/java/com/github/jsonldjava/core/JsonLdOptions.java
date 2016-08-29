@@ -10,7 +10,9 @@ package com.github.jsonldjava.core;
  */
 public class JsonLdOptions {
 
-    /**
+    public static final boolean DEFAULT_COMPACT_ARRAYS = true;
+
+	/**
      * Constructs an instance of JsonLdOptions using an empty base.
      */
     public JsonLdOptions() {
@@ -37,7 +39,7 @@ public class JsonLdOptions {
     /**
      * http://www.w3.org/TR/json-ld-api/#widl-JsonLdOptions-compactArrays
      */
-    private Boolean compactArrays = true;
+    private Boolean compactArrays = DEFAULT_COMPACT_ARRAYS;
     /**
      * http://www.w3.org/TR/json-ld-api/#widl-JsonLdOptions-expandContext
      */

@@ -312,7 +312,7 @@ public class JsonLdProcessor {
         final Context activeCtx = api.context
                 .parse(((Map<String, Object>) frame).get(JsonLdConsts.CONTEXT));
 
-        Object compacted = api.compact(activeCtx, null, framed);
+        Object compacted = api.compact(activeCtx, null, framed, opts.getCompactArrays());
         if (!(compacted instanceof List)) {
             final List<Object> tmp = new ArrayList<Object>();
             tmp.add(compacted);
