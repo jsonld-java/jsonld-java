@@ -53,8 +53,11 @@ public class JsonLdFramingTest {
 
         final Object out = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0003-out.jsonld"));
+        System.out.println("Input:");
         System.out.println(JsonUtils.toPrettyString(in));
+        System.out.println("Expected Output:");
         System.out.println(JsonUtils.toPrettyString(out));
+        System.out.println("Actual Output:");
         System.out.println(JsonUtils.toPrettyString(frame2));
         assertEquals(out, frame2);
     }
