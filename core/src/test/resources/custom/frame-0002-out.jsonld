@@ -1,0 +1,13 @@
+{
+  "@context" : {
+    "@vocab" : "http://xmlns.com/foaf/0.1/"
+  },
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "Person",
+    "member" : [{
+      "@id" : "_:b1",
+      "@type" : "Group"
+    }]
+  } ]
+}
