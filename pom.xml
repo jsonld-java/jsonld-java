@@ -45,7 +45,7 @@
 		<junit.version>4.12</junit.version>
 		<slf4j.version>1.7.21</slf4j.version>
 
-		<last-compare-version>0.8.3</last-compare-version>
+		<last-compare-version>0.9.0</last-compare-version>
 
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<maven.compiler.source>1.7</maven.compiler.source>
