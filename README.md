@@ -14,7 +14,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.8.3</version>
+        <version>0.9.0</version>
     </dependency>
 
 Code example
@@ -281,7 +281,7 @@ Here is the basic outline for what your module's pom.xml should look like
 		<parent>
 			<artifactId>jsonld-java-integration</artifactId>
 			<groupId>com.github.jsonld-java-parent</groupId>
-			<version>0.8.1-SNAPSHOT</version>
+			<version>0.9.1-SNAPSHOT</version>
 		</parent>
 		<modelVersion>4.0.0</modelVersion>
 		<artifactId>jsonld-java-{your module}</artifactId>
@@ -399,6 +399,10 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 
 CHANGELOG
 =========
+
+### 2016-12-23
+* Release 0.9.0
+* Fixes schema.org support that is broken with Apache HTTP Client but works with java.net.URL
 
 ### 2016-05-20
 * Fix reported NPE in JsonLdApi.removeDependents
