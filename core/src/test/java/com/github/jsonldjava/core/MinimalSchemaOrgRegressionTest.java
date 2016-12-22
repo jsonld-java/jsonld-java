@@ -47,7 +47,7 @@ public class MinimalSchemaOrgRegressionTest {
             output.flush();
         }
         final String outputString = output.toString();
-        System.out.println(outputString);
+        // System.out.println(outputString);
         // Test for some basic conditions without including the JSON/JSON-LD
         // parsing code here
         assertTrue(outputString.endsWith("}\n"));

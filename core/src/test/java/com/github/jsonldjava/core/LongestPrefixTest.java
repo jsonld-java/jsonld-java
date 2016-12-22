@@ -23,7 +23,7 @@ public class LongestPrefixTest {
         final JsonLdOptions options = new JsonLdOptions();
         options.useNamespaces = true;
         final RDFDataset rdf = (RDFDataset) JsonLdProcessor.toRDF(context, options);
-        System.out.println(rdf.getNamespaces());
+        // System.out.println(rdf.getNamespaces());
         assertEquals("http://vocab.getty.edu/aat/", rdf.getNamespace("aat"));
         assertEquals("http://vocab.getty.edu/aat/rev/", rdf.getNamespace("aat_rev"));
     }
@@ -45,12 +45,12 @@ public class LongestPrefixTest {
                 inputRdf.getContext(), options);
 
         final RDFDataset rdf = (RDFDataset) JsonLdProcessor.toRDF(fromRDF, options);
-        System.out.println(rdf.getNamespaces());
+        // System.out.println(rdf.getNamespaces());
         assertEquals("http://vocab.getty.edu/aat/", rdf.getNamespace("aat"));
         assertEquals("http://vocab.getty.edu/aat/rev/", rdf.getNamespace("aat_rev"));
 
         final String toJSONLD = JsonUtils.toPrettyString(fromRDF);
-        System.out.println(toJSONLD);
+        // System.out.println(toJSONLD);
 
         assertTrue("The lexicographically shortest URI was not chosen",
                 toJSONLD.contains("aat:rev/"));
@@ -73,12 +73,12 @@ public class LongestPrefixTest {
                 inputRdf.getContext(), options);
 
         final RDFDataset rdf = (RDFDataset) JsonLdProcessor.toRDF(fromRDF, options);
-        System.out.println(rdf.getNamespaces());
+        // System.out.println(rdf.getNamespaces());
         assertEquals("http://vocab.getty.edu/aat/", rdf.getNamespace("aat"));
         assertEquals("http://vocab.getty.edu/aat/rev/", rdf.getNamespace("aatrev"));
 
         final String toJSONLD = JsonUtils.toPrettyString(fromRDF);
-        System.out.println(toJSONLD);
+        // System.out.println(toJSONLD);
 
         assertFalse("The lexicographically shortest URI was not chosen",
                 toJSONLD.contains("aat:rev/"));
@@ -98,7 +98,7 @@ public class LongestPrefixTest {
         final Object fromRDF = JsonLdProcessor.compact(new JsonLdApi(options).fromRDF(inputRdf),
                 inputRdf.getContext(), options);
         final String toJSONLD = JsonUtils.toPrettyString(fromRDF);
-        System.out.println(toJSONLD);
+        // System.out.println(toJSONLD);
 
         assertFalse("The lexicographically shortest URI was not chosen",
                 toJSONLD.contains("http://www.a.com/foo/p"));

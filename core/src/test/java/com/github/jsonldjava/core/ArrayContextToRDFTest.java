@@ -36,7 +36,7 @@ public class ArrayContextToRDFTest {
         };
         options.setDocumentLoader(documentLoader);
         final RDFDataset rdf = (RDFDataset) JsonLdProcessor.toRDF(arrayContext, options);
-        System.out.println(rdf.getNamespaces());
+        // System.out.println(rdf.getNamespaces());
         assertEquals("http://example.org/", rdf.getNamespace("ex"));
         assertEquals("http://example.com/2/", rdf.getNamespace("ex2"));
         // Only 'proper' prefixes returned

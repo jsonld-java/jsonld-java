@@ -614,9 +614,9 @@ public class JsonLdPerformanceTest {
         inputRdf.addTriple(ns + "s", ns + "p", ns + "o");
         inputRdf.addTriple(ns + "s", ns + "p", ns + "o");
 
-        System.out.println("Twice the same triple in RDFDataset:/n");
+        // System.out.println("Twice the same triple in RDFDataset:/n");
         for (final Quad quad : inputRdf.getQuads("@default")) {
-            System.out.println(quad);
+            //System.out.println(quad);
         }
 
         final JsonLdOptions options = new JsonLdOptions();
@@ -625,19 +625,19 @@ public class JsonLdPerformanceTest {
         Object fromRDF;
         String jsonld;
 
-        System.out.println("\nJSON-LD output is OK:\n");
+        // System.out.println("\nJSON-LD output is OK:\n");
         fromRDF = JsonLdProcessor.compact(new JsonLdApi(options).fromRDF(inputRdf),
                 inputRdf.getContext(), options);
 
         jsonld = JsonUtils.toPrettyString(fromRDF);
-        System.out.println(jsonld);
+        // System.out.println(jsonld);
 
-        System.out.println(
-                "\nWouldn't be the case assuming there is no duplicated triple in RDFDataset:\n");
+        // System.out.println(
+        //        "\nWouldn't be the case assuming there is no duplicated triple in RDFDataset:\n");
         fromRDF = JsonLdProcessor.compact(new JsonLdApi(options).fromRDF(inputRdf, true),
                 inputRdf.getContext(), options);
         jsonld = JsonUtils.toPrettyString(fromRDF);
-        System.out.println(jsonld);
+        // System.out.println(jsonld);
 
     }
 }
