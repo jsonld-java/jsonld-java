@@ -42,7 +42,7 @@ public class JarCacheStorage implements HttpCacheStorage {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final CacheConfig cacheConfig;
-    // private final CacheConfig cacheConfig = new CacheConfig();
+    
     private ClassLoader classLoader;
 
     /**
@@ -51,7 +51,7 @@ public class JarCacheStorage implements HttpCacheStorage {
      */
     private final HttpCacheStorage delegate;
 
-    ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Map from uri of jarcache.json (e.g. jar://blab.jar!jarcache.json) to a
@@ -59,7 +59,7 @@ public class JarCacheStorage implements HttpCacheStorage {
      *
      * @see #getJarCache(URL)
      */
-    protected ConcurrentMap<URI, SoftReference<JsonNode>> jarCaches = new ConcurrentHashMap<URI, SoftReference<JsonNode>>();
+    protected final ConcurrentMap<URI, SoftReference<JsonNode>> jarCaches = new ConcurrentHashMap<URI, SoftReference<JsonNode>>();
 
     public ClassLoader getClassLoader() {
         if (classLoader != null) {
@@ -70,30 +70,6 @@ public class JarCacheStorage implements HttpCacheStorage {
 
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
-    }
-
-    /**
-     * @deprecated Use
-     *             {@link JarCacheStorage#JarCacheStorage(ClassLoader, CacheConfig)}
-     *             instead.
-     */
-    @Deprecated
-    public JarCacheStorage() {
-        this(null, CacheConfig.DEFAULT);
-    }
-
-    /**
-     *
-     * @param classLoader
-     *            The ClassLoader to use to locate JAR files and resources, or
-     *            null to use the Thread context class loader in each case.
-     * @deprecated Use
-     *             {@link JarCacheStorage#JarCacheStorage(ClassLoader, CacheConfig)}
-     *             instead.
-     */
-    @Deprecated
-    public JarCacheStorage(ClassLoader classLoader) {
-        this(classLoader, CacheConfig.DEFAULT);
     }
 
     public JarCacheStorage(ClassLoader classLoader, CacheConfig cacheConfig) {
