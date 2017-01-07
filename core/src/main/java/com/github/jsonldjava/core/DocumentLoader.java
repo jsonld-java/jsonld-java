@@ -1,12 +1,9 @@
 package com.github.jsonldjava.core;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.github.jsonldjava.utils.JsonUtils;
 
 public class DocumentLoader {
@@ -27,11 +24,7 @@ public class DocumentLoader {
 
         final RemoteDocument doc = new RemoteDocument(url, null);
         try {
-            if (url.equalsIgnoreCase("http://schema.org/")) {
-                doc.setDocument(JsonUtils.fromURLJavaNet(new URL(url)));
-            } else {
-                doc.setDocument(JsonUtils.fromURL(new URL(url), getHttpClient()));
-            }
+            doc.setDocument(JsonUtils.fromURL(new URL(url), getHttpClient()));
         } catch (final Exception e) {
             throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
         }

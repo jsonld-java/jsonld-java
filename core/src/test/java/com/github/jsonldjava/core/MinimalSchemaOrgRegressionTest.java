@@ -16,13 +16,13 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.RequestAcceptEncoding;
 import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
 import org.junit.Test;
 
 import com.github.jsonldjava.utils.JarCacheStorage;
-import com.github.jsonldjava.utils.JsonUtils;
 
 public class MinimalSchemaOrgRegressionTest {
 
@@ -72,28 +72,34 @@ public class MinimalSchemaOrgRegressionTest {
                 // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
                 .addInterceptorFirst(new RequestAcceptEncoding())
                 .addInterceptorFirst(new ResponseContentEncoding())
+                .setRedirectStrategy(DefaultRedirectStrategy.INSTANCE)
                 // use system defaults for proxy etc.
                 .useSystemProperties().build();
 
-        final HttpUriRequest request = new HttpGet(url.toExternalForm());
-        // We prefer application/ld+json, but fallback to application/json
-        // or whatever is available
-        request.addHeader("Accept", ACCEPT_HEADER);
-
-        final CloseableHttpResponse response = httpClient.execute(request);
         try {
-            final int status = response.getStatusLine().getStatusCode();
-            if (status != 200 && status != 203) {
-                throw new IOException("Can't retrieve " + url + ", status code: " + status);
+            final HttpUriRequest request = new HttpGet(url.toExternalForm());
+            // We prefer application/ld+json, but fallback to application/json
+            // or whatever is available
+            request.addHeader("Accept", ACCEPT_HEADER);
+
+            final CloseableHttpResponse response = httpClient.execute(request);
+            try {
+                final int status = response.getStatusLine().getStatusCode();
+                if (status != 200 && status != 203) {
+                    throw new IOException("Can't retrieve " + url + ", status code: " + status);
+                }
+                final InputStream content = response.getEntity().getContent();
+                verifyInputStream(content);
+            } finally {
+                if (response != null) {
+                    response.close();
+                }
             }
-            final InputStream content = response.getEntity().getContent();
-            verifyInputStream(content);
         } finally {
-            if (response != null) {
-                response.close();
+            if (httpClient != null) {
+                httpClient.close();
             }
         }
-
     }
 
 }

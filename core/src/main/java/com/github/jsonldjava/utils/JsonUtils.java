@@ -20,6 +20,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.RequestAcceptEncoding;
 import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
@@ -275,10 +276,11 @@ public class JsonUtils {
                 in = url.openStream();
             } else {
                 final HttpUriRequest request = new HttpGet(url.toExternalForm());
-                // We prefer application/ld+json, but fallback to application/json
+                // We prefer application/ld+json, but fallback to
+                // application/json
                 // or whatever is available
                 request.addHeader("Accept", ACCEPT_HEADER);
-    
+
                 final CloseableHttpResponse response = httpClient.execute(request);
                 final int status = response.getStatusLine().getStatusCode();
                 if (status != 200 && status != 203) {
@@ -288,7 +290,7 @@ public class JsonUtils {
             }
             return fromInputStream(in);
         } finally {
-            if(in != null) {
+            if (in != null) {
                 in.close();
             }
         }
@@ -353,6 +355,7 @@ public class JsonUtils {
                 // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
                 .addInterceptorFirst(new RequestAcceptEncoding())
                 .addInterceptorFirst(new ResponseContentEncoding())
+                .setRedirectStrategy(DefaultRedirectStrategy.INSTANCE)
                 // use system defaults for proxy etc.
                 .useSystemProperties().build();
 

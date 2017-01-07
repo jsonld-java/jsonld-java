@@ -155,6 +155,15 @@ public class DocumentLoaderTest {
     }
 
     @Test
+    public void loadDocumentSchemaOrgDirect() throws Exception {
+        final RemoteDocument document = documentLoader
+                .loadDocument("http://schema.org/docs/jsonldcontext.json");
+        final Object context = document.getDocument();
+        assertTrue(context instanceof Map);
+        assertFalse(((Map<?, ?>) context).isEmpty());
+    }
+
+    @Test
     public void fromURLCache() throws Exception {
         final URL url = new URL("http://json-ld.org/contexts/person.jsonld");
         JsonUtils.fromURL(url, documentLoader.getHttpClient());
@@ -230,6 +239,7 @@ public class DocumentLoaderTest {
             assertTrue(context instanceof Map);
         } finally {
             documentLoader.setHttpClient(null);
+            assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
         }
         assertEquals(1, httpRequest.getAllValues().size());
         final HttpUriRequest req = httpRequest.getValue();
@@ -270,7 +280,8 @@ public class DocumentLoaderTest {
     public void jarCacheHit() throws Exception {
         // If no cache, should fail-fast as nonexisting.example.com is not in
         // DNS
-        final Object context = JsonUtils.fromURL(new URL("http://nonexisting.example.com/context"), documentLoader.getHttpClient());
+        final Object context = JsonUtils.fromURL(new URL("http://nonexisting.example.com/context"),
+                documentLoader.getHttpClient());
         assertTrue(context instanceof Map);
         assertTrue(((Map) context).containsKey("@context"));
     }
@@ -278,14 +289,16 @@ public class DocumentLoaderTest {
     @Test(expected = IOException.class)
     public void jarCacheMiss404() throws Exception {
         // Should fail-fast as nonexisting.example.com is not in DNS
-        JsonUtils.fromURL(new URL("http://nonexisting.example.com/miss"), documentLoader.getHttpClient());
+        JsonUtils.fromURL(new URL("http://nonexisting.example.com/miss"),
+                documentLoader.getHttpClient());
     }
 
     @Test(expected = IOException.class)
     public void jarCacheMissThreadCtx() throws Exception {
         final URLClassLoader findNothingCL = new URLClassLoader(new URL[] {}, null);
         Thread.currentThread().setContextClassLoader(findNothingCL);
-        JsonUtils.fromURL(new URL("http://nonexisting.example.com/context"), documentLoader.getHttpClient());
+        JsonUtils.fromURL(new URL("http://nonexisting.example.com/context"),
+                documentLoader.getHttpClient());
     }
 
     @Test
@@ -315,12 +328,14 @@ public class DocumentLoaderTest {
     @Test
     public void differentHttpClient() throws Exception {
         // Custom http client
-        documentLoader.setHttpClient(new SystemDefaultHttpClient());
-        assertNotSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
-
-        // Use default again
-        documentLoader.setHttpClient(null);
-        assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
+        try {
+            documentLoader.setHttpClient(new SystemDefaultHttpClient());
+            assertNotSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
+        } finally {
+            // Use default again
+            documentLoader.setHttpClient(null);
+            assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
+        }
     }
 
     @Test
