@@ -37,7 +37,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.github.jsonldjava.impl.TurtleTripleCallback;
 import com.github.jsonldjava.utils.JsonUtils;
 import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.TestUtils;
@@ -172,39 +171,6 @@ public class JsonLdProcessorTest {
             JsonUtils.writePrettyPrint(
                     new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".jsonld")),
                     REPORT);
-        }
-
-        if ("text/plain".equals(reportFormat) || "nquads".equals(reportFormat)
-                || "nq".equals(reportFormat) || "nt".equals(reportFormat)
-                || "ntriples".equals(reportFormat) || "*".equals(reportFormat)) {
-            System.out.println("Generating Nquads Report");
-            final JsonLdOptions options = new JsonLdOptions("") {
-                {
-                    this.format = "application/nquads";
-                }
-            };
-            final String rdf = (String) JsonLdProcessor.toRDF(REPORT, options);
-            final OutputStreamWriter writer = new OutputStreamWriter(
-                    new FileOutputStream(reportOutputFile + ".nq"));
-            writer.write(rdf);
-            writer.close();
-        }
-        if ("text/turtle".equals(reportFormat) || "turtle".equals(reportFormat)
-                || "ttl".equals(reportFormat) || "*".equals(reportFormat)) { // write
-            // turtle
-            System.out.println("Generating Turtle Report");
-            final JsonLdOptions options = new JsonLdOptions("") {
-                {
-                    format = "text/turtle";
-                    useNamespaces = true;
-                }
-            };
-            final String rdf = (String) JsonLdProcessor.toRDF(REPORT, new TurtleTripleCallback(),
-                    options);
-            final OutputStreamWriter writer = new OutputStreamWriter(
-                    new FileOutputStream(reportOutputFile + ".ttl"));
-            writer.write(rdf);
-            writer.close();
         }
     }
 

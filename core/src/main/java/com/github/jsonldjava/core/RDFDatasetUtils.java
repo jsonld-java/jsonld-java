@@ -399,21 +399,6 @@ public class RDFDatasetUtils {
      *
      * @param str
      *            The string to escape
-     * @return The escaped string
-     * @deprecated Use {@link #escape(String, StringBuilder)} instead.
-     */
-    @Deprecated
-    public static String escape(String str) {
-        final StringBuilder rval = new StringBuilder();
-        escape(str, rval);
-        return rval.toString();
-    }
-
-    /**
-     * Escapes the given string according to the N-Quads escape rules
-     *
-     * @param str
-     *            The string to escape
      * @param rval
      *            The {@link StringBuilder} to append to.
      */

@@ -11,8 +11,6 @@ import java.util.Map;
 import com.github.jsonldjava.core.JsonLdError.Error;
 import com.github.jsonldjava.impl.NQuadRDFParser;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
-import com.github.jsonldjava.impl.TurtleRDFParser;
-import com.github.jsonldjava.impl.TurtleTripleCallback;
 
 /**
  * This class implements the <a href=
@@ -335,7 +333,6 @@ public class JsonLdProcessor {
         {
             // automatically register nquad serializer
             put(JsonLdConsts.APPLICATION_NQUADS, new NQuadRDFParser());
-            put(JsonLdConsts.TEXT_TURTLE, new TurtleRDFParser());
         }
     };
 
@@ -513,8 +510,6 @@ public class JsonLdProcessor {
         if (options.format != null) {
             if (JsonLdConsts.APPLICATION_NQUADS.equals(options.format)) {
                 return new NQuadTripleCallback().call(dataset);
-            } else if (JsonLdConsts.TEXT_TURTLE.equals(options.format)) {
-                return new TurtleTripleCallback().call(dataset);
             } else {
                 throw new JsonLdError(JsonLdError.Error.UNKNOWN_FORMAT, options.format);
             }
