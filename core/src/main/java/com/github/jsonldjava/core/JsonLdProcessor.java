@@ -115,7 +115,7 @@ public class JsonLdProcessor {
                 input = tmp.document;
                 // TODO: figure out how to deal with remote context
             } catch (final Exception e) {
-                throw new JsonLdError(Error.LOADING_DOCUMENT_FAILED, e.getMessage());
+                throw new JsonLdError(Error.LOADING_DOCUMENT_FAILED, e);
             }
             // if set the base in options should override the base iri in the
             // active context

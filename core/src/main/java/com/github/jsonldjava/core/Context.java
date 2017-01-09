@@ -349,7 +349,7 @@ public class Context extends LinkedHashMap<String, Object> {
                 if (error.getType() != Error.INVALID_IRI_MAPPING) {
                     throw error;
                 }
-                throw new JsonLdError(Error.INVALID_TYPE_MAPPING, type);
+                throw new JsonLdError(Error.INVALID_TYPE_MAPPING, type, error);
             }
             // TODO: fix check for absoluteIri (blank nodes shouldn't count, at
             // least not here!)
@@ -1126,11 +1126,6 @@ public class Context extends LinkedHashMap<String, Object> {
             }
         }
         return rval;
-    }
-
-    public Object getContextValue(String activeProperty, String string) throws JsonLdError {
-        throw new JsonLdError(Error.NOT_IMPLEMENTED,
-                "getContextValue is only used by old code so far and thus isn't implemented");
     }
 
     public Map<String, Object> serialize() {
