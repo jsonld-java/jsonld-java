@@ -400,6 +400,12 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2017-01-09
+* Propagate causes for JsonLdError instances where they were caused by other Exceptions
+* Remove schema.org hack as it appears to work again now...
+* Remove deprecated and unused APIs
+* Bump version to 0.10.0-SNAPSHOT per the removed/changed APIs
+
 ### 2016-12-23
 * Release 0.9.0
 * Fixes schema.org support that is broken with Apache HTTP Client but works with java.net.URL
