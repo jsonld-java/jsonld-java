@@ -19,14 +19,14 @@ public class DocumentLoader {
                 .getProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING);
 
         if ("true".equalsIgnoreCase(disallowRemote)) {
-            throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
+            throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, "Remote context loading has been disallowed (url was " + url + ")");
         }
 
         final RemoteDocument doc = new RemoteDocument(url, null);
         try {
             doc.setDocument(JsonUtils.fromURL(new URL(url), getHttpClient()));
         } catch (final Exception e) {
-            throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url);
+            throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url, e);
         }
         return doc;
     }
