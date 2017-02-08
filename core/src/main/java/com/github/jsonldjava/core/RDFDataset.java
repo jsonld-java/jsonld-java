@@ -291,7 +291,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
         @Override
         public int compareTo(Node o) {
-            // NOTE: this will also compare getValue()!
+            // NOTE: this will also compare getValue() early!
             int nodeCompare = super.compareTo(o);
             if (nodeCompare != 0) {
                 // null, different type or different value 
@@ -306,7 +306,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
             if (dataTypeCompare != 0) {
                 return dataTypeCompare;
             }
-            // NOTE: getValue() has already compared by super.compareTo()
+            // NOTE: getValue() already compared by super.compareTo()
             return 0;
         }
     }
