@@ -30,7 +30,7 @@ public class NodeCompareTest {
     }
 
     @Test
-    public void literalSameValuSameLang() throws Exception {
+    public void literalSameValueSameLang() throws Exception {
         Literal l1 = new RDFDataset.Literal("Same", JsonLdConsts.RDF_LANGSTRING, "en");
         Literal l2 = new RDFDataset.Literal("Same", JsonLdConsts.RDF_LANGSTRING, "en");
         assertEquals(l1, l2);
@@ -52,6 +52,16 @@ public class NodeCompareTest {
         assertNotEquals(l1, l2);
         assertNotEquals(0, l1.compareTo(l2));
     }    
+
+    @Test
+    public void literalSameValueLangNull() throws Exception {
+        Literal l1 = new RDFDataset.Literal("Same", JsonLdConsts.RDF_LANGSTRING, "en");
+        Literal l2 = new RDFDataset.Literal("Same", JsonLdConsts.RDF_LANGSTRING, null);
+        assertNotEquals(l1, l2);
+        assertNotEquals(0, l1.compareTo(l2));
+        assertNotEquals(0, l2.compareTo(l1));
+    }    
+    
     
     @Test
     public void literalSameValueSameType() throws Exception {
@@ -61,6 +71,15 @@ public class NodeCompareTest {
         assertEquals(0, l1.compareTo(l2));
     }
 
+    @Test
+    public void literalSameValueSameTypeNull() throws Exception {
+        Literal l1 = new RDFDataset.Literal("1", JsonLdConsts.XSD_STRING, null);
+        Literal l2 = new RDFDataset.Literal("1", null, null);
+        assertEquals(l1, l2);
+        assertEquals(0, l1.compareTo(l2));
+    }
+
+    
     @Test
     public void literalSameValueDifferentType() throws Exception {
         Literal l1 = new RDFDataset.Literal("1", JsonLdConsts.XSD_INTEGER, null);
@@ -90,8 +109,21 @@ public class NodeCompareTest {
         Node literal = new RDFDataset.Literal("http://example.com/", null, null);
         assertNotEquals(iri, literal);
         assertNotEquals(0, iri.compareTo(literal));
+        assertNotEquals(0, literal.compareTo(iri));
     }
 
+    @Test
+    public void iriDifferentNull() throws Exception {
+        Node iri = new RDFDataset.IRI("http://example.com/");
+        assertNotEquals(0, iri.compareTo(null));
+    }
+
+    @Test
+    public void literalDifferentNull() throws Exception {
+        Node literal = new RDFDataset.Literal("hello", null, null);
+        assertNotEquals(0, literal.compareTo(null));
+    }    
+    
     @Test
     public void iriDifferentIri() throws Exception {
         Node iri = new RDFDataset.IRI("http://example.com/");
@@ -114,27 +146,22 @@ public class NodeCompareTest {
         Node iri = new RDFDataset.IRI("b1");
         Node bnode = new RDFDataset.BlankNode("b1");
         assertNotEquals(iri, bnode);
+        assertNotEquals(bnode, iri);
         assertNotEquals(0, iri.compareTo(bnode));
+        assertNotEquals(0, bnode.compareTo(iri));
     }
 
-    @Test
-    public void literalDifferentIri() throws Exception {
-        Node literal = new RDFDataset.Literal("http://example.com/", null, null);
-        Node iri = new RDFDataset.IRI("http://example.com/");
-        assertNotEquals(literal, iri);
-        assertNotEquals(0, literal.compareTo(iri));
-    }
-    
     @Test
     public void literalDifferentBlankNode() throws Exception {
         // We'll use a relative IRI to avoid :-issues
         Node literal = new RDFDataset.Literal("b1", null, null);
         Node bnode = new RDFDataset.BlankNode("b1");
         assertNotEquals(literal, bnode);
+        assertNotEquals(bnode, literal);
         assertNotEquals(0, literal.compareTo(bnode));
+        assertNotEquals(0, bnode.compareTo(literal));
+
     }
-
-
     
     
 }
