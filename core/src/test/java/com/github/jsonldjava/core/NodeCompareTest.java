@@ -1,6 +1,7 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,22 +11,23 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import com.github.jsonldjava.core.RDFDataset.IRI;
 import com.github.jsonldjava.core.RDFDataset.BlankNode;
+import com.github.jsonldjava.core.RDFDataset.IRI;
 import com.github.jsonldjava.core.RDFDataset.Literal;
 import com.github.jsonldjava.core.RDFDataset.Node;
 import com.github.jsonldjava.core.RDFDataset.Quad;
 
-import junit.framework.Assert;
-
 public class NodeCompareTest {
 
+    /**
+     * While this order might not particularly make sense (RDF is unordered),
+     * this is at least documented. Feel free to move things around below if the
+     * underlying .compareTo() changes.
+     */
     @Test
     public void ordered() throws Exception {
         List<Node> expected = Arrays.asList(
-                // While this order might not particularly make sense, it
-                // is at least documented
-                
+
                 new Literal("1", JsonLdConsts.XSD_INTEGER, null),
                 new Literal("10", JsonLdConsts.XSD_INTEGER, null),
                 new Literal("2", JsonLdConsts.XSD_INTEGER, null), // still ordered by string value
