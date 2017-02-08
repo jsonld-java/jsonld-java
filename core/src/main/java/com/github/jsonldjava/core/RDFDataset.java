@@ -137,6 +137,10 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
         @Override
         public int compareTo(Node o) {
+            if (o == null) {
+                // valid nodes are > null nodes
+                return 1;
+            }
             if (this.isIRI()) {
                 if (!o.isIRI()) {
                     // IRIs > everything
@@ -150,7 +154,13 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                     // blank node > literal
                     return 1;
                 }
+            } else if (this.isLiteral()) {
+                if (o.isIRI() || o.isBlankNode()) {
+                    return -1; // literals < blanknode < IRI
+                }
             }
+            // NOTE: Literal will also need to compare 
+            // language and datatype
             return this.getValue().compareTo(o.getValue());
         }
 
@@ -265,31 +275,38 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
             return false;
         }
 
+        @SuppressWarnings("rawtypes")
+        private static int nullSafeCompare(Comparable a, Comparable b) {
+            if (a == null && b == null) {
+                return 0;
+            }
+            if (a == null) { 
+                return 1;
+            }
+            if (b == null) {
+                return -1;
+            }
+            return a.compareTo(b);
+        }
+
         @Override
         public int compareTo(Node o) {
-            if (o == null) {
-                // valid nodes are > null nodes
-                return 1;
+            // NOTE: this will also compare getValue()!
+            int nodeCompare = super.compareTo(o);
+            if (nodeCompare != 0) {
+                // null, different type or different value 
+                return nodeCompare;
             }
-            if (o.isIRI()) {
-                // literals < iri
-                return -1;
+            
+            int langCompare = nullSafeCompare(this.getLanguage(), o.getLanguage());
+            if (langCompare != 0) {
+                return langCompare;
             }
-            if (o.isBlankNode()) {
-                // blank node < iri
-                return -1;
+            int dataTypeCompare = nullSafeCompare(this.getDatatype(), o.getDatatype());
+            if (dataTypeCompare != 0) {
+                return dataTypeCompare;
             }
-            if (this.getLanguage() == null && ((Literal) o).getLanguage() != null) {
-                return -1;
-            } else if (this.getLanguage() != null && ((Literal) o).getLanguage() == null) {
-                return 1;
-            }
-
-            if (this.getDatatype() != null) {
-                return this.getDatatype().compareTo(((Literal) o).getDatatype());
-            } else if (((Literal) o).getDatatype() != null) {
-                return -1;
-            }
+            // NOTE: getValue() has already compared by super.compareTo()
             return 0;
         }
     }
