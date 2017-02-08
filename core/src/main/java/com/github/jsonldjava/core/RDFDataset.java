@@ -297,17 +297,15 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                 // null, different type or different value 
                 return nodeCompare;
             }
-            
-            int langCompare = nullSafeCompare(this.getLanguage(), o.getLanguage());
-            if (langCompare != 0) {
-                return langCompare;
-            }
-            int dataTypeCompare = nullSafeCompare(this.getDatatype(), o.getDatatype());
-            if (dataTypeCompare != 0) {
-                return dataTypeCompare;
+            if (this.getLanguage() != null || o.getLanguage() != null) {
+                // We'll ignore type-checking if either has language tag
+                // as language tagged literals should always have the type
+                // rdf:langString in RDF 1.1
+                return nullSafeCompare(this.getLanguage(), o.getLanguage());
+            } else {
+                return nullSafeCompare(this.getDatatype(), o.getDatatype());
             }
             // NOTE: getValue() already compared by super.compareTo()
-            return 0;
         }
     }
 
