@@ -29,7 +29,7 @@ public final class JsonLdConsts {
     public static final String RDF_LIST = RDF_SYNTAX_NS + "List";
 
     public static final String TEXT_TURTLE = "text/turtle";
-    public static final String APPLICATION_NQUADS = "application/nquads";
+    public static final String APPLICATION_NQUADS = "application/n-quads"; // https://www.w3.org/TR/n-quads/#sec-mediatype
 
     public static final String FLATTENED = "flattened";
     public static final String COMPACTED = "compacted";

@@ -466,11 +466,11 @@ public class JsonLdProcessorTest {
             } else if (testType.contains("jld:FromRDFTest")) {
                 result = JsonLdProcessor.fromRDF(input, options);
             } else if (testType.contains("jld:ToRDFTest")) {
-                options.format = "application/nquads";
+                options.format = JsonLdConsts.APPLICATION_NQUADS;
                 result = JsonLdProcessor.toRDF(input, options);
                 result = ((String) result).trim();
             } else if (testType.contains("jld:NormalizeTest")) {
-                options.format = "application/nquads";
+                options.format = JsonLdConsts.APPLICATION_NQUADS;
                 result = JsonLdProcessor.normalize(input, options);
                 result = ((String) result).trim();
             } else {
