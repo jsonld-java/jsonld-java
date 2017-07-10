@@ -44,6 +44,8 @@ public class JsonLdError extends Exception {
 
         LOADING_REMOTE_CONTEXT_FAILED("loading remote context failed"),
 
+        LOADING_INJECTED_CONTEXT_FAILED("loading injected context failed"),
+
         INVALID_REMOTE_CONTEXT("invalid remote context"),
 
         RECURSIVE_CONTEXT_INCLUSION("recursive context inclusion"),

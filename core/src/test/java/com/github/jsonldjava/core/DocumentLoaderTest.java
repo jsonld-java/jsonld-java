@@ -364,4 +364,33 @@ public class DocumentLoaderTest {
             }
         }
     }
+
+    @Test
+    public void injectContext() throws Exception {
+
+        final Object jsonObject = JsonUtils.fromString("{ \"@context\":\"http://nonexisting.example.com/thing\", \"pony\":5 }");
+        final JsonLdOptions options = new JsonLdOptions();
+
+        // Verify fails to find context by default
+        try {
+            JsonLdProcessor.expand(jsonObject, options);
+            fail("Expected exception to occur");
+        } catch (JsonLdError e) {
+            // Success
+        }
+
+        // Inject context
+        final DocumentLoader dl = new DocumentLoader();
+        dl.addInjectedDoc("http://nonexisting.example.com/thing",
+                "{ \"@context\": { \"pony\":\"http://nonexisting.example.com/thing/pony\" } }");
+        options.setDocumentLoader(dl);
+
+        // Execute
+        final List<Object> expand = JsonLdProcessor.expand(jsonObject, options);
+
+        // Verify result
+        Object v = ((Map<Object, Object>) ((Map<Object,Object>) ((List<Object>) ((Map<Object,Object>)
+                expand.get(0)).get("http://nonexisting.example.com/thing/pony")).get(0))).get("@value");
+        assertEquals(5, v);
+    }
 }

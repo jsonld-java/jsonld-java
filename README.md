@@ -58,7 +58,7 @@ The default HTTP Client is wrapped with a
 small memory-based cache (1000 objects, max 128 kB each) of regularly accessed contexts.
 
 
-### Loading contexts from classpath/JAR
+### Loading contexts from classpath
 
 Your application might be parsing JSONLD documents which always use the same
 external `@context` IRIs. Although the default HTTP cache (see above) will
@@ -136,6 +136,30 @@ You can also use the constant provided in DocumentLoader for the same purpose:
     System.setProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING, "true");
 
 Note that if you override DocumentLoader you should also support this setting for consistency.
+
+
+### Loading contexts from a string
+
+Your application might be parsing JSONLD documents which reference external `@context` IRIs
+that are not available as file URIs on the classpath. In this case, the `jarcache.json`
+approch will not work. Instead you can inject the literal context file strings through
+the `JsonLdOptions` object, as follows:
+
+```java
+// Inject a context document into the options as a literal string
+DocumentLoader dl = new DocumentLoader();
+JsonLdOptions options = new JsonLdOptions();
+// ... the contents of "contexts/example.jsonld"
+String jsonContext = "{ \"@contxt\": { ... } }";
+dl.addInjectedDoc("http://www.example.com/context",  jsonContext);
+options.setDocumentLoader(dl);
+
+InputStream inputStream = new FileInputStream("input.json");
+Object jsonObject = JsonUtils.fromInputStream(inputStream);
+Map context = new HashMap();
+Object compact = JsonLdProcessor.compact(jsonObject, context, options);
+System.out.println(JsonUtils.toPrettyString(compact));
+```
 
 ### Customizing the Apache HttpClient
 
