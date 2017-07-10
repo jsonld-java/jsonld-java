@@ -119,6 +119,23 @@ public class JsonUtils {
      */
     public static Object fromReader(Reader reader) throws IOException {
         final JsonParser jp = JSON_FACTORY.createParser(reader);
+        return fromJsonParser(jp);
+    }
+
+    /**
+     * Parses a JSON-LD document from the given {@link JsonParser} to an object that
+     * can be used as input for the {@link JsonLdApi} and
+     * {@link JsonLdProcessor} methods.
+     *
+     * @param jp
+     *            The JSON-LD document in a {@link JsonParser}.
+     * @return A JSON Object.
+     * @throws JsonParseException
+     *             If there was a JSON related error during parsing.
+     * @throws IOException
+     *             If there was an IO error during parsing.
+     */
+    public static Object fromJsonParser(JsonParser jp) throws IOException {
         Object rval;
         final JsonToken initialToken = jp.nextToken();
 
