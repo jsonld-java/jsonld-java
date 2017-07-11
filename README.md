@@ -451,6 +451,8 @@ CHANGELOG
 
 ### 2017-07-11
 * Add injection of contexts directly into DocumentLoader (Patch by @ryankenney)
+* Fix N-Quads content type (Patch by @NicolasRouquette)
+* Add JsonUtils.fromJsonParser (Patch by @dschulten)
 
 ### 2017-02-16
 * Make literals compare consistently (Patch by @stain)
