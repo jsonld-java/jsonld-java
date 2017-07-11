@@ -118,7 +118,7 @@ class NormalizeUtils {
 
                             // handle output format
                             if (options.format != null) {
-                                if ("application/nquads".equals(options.format)) {
+                                if (JsonLdConsts.APPLICATION_NQUADS.equals(options.format)) {
                                     final StringBuilder rval = new StringBuilder();
                                     for (final String n : normalized) {
                                         rval.append(n);
