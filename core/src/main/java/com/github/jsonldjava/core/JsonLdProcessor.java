@@ -4,9 +4,15 @@ import static com.github.jsonldjava.utils.Obj.newMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.github.jsonldjava.core.JsonLdError.Error;
 import com.github.jsonldjava.impl.NQuadRDFParser;
@@ -319,8 +325,31 @@ public class JsonLdProcessor {
         final String alias = activeCtx.compactIri(JsonLdConsts.GRAPH);
         final Map<String, Object> rval = activeCtx.serialize();
         rval.put(alias, compacted);
-        JsonLdUtils.removePreserve(activeCtx, rval, opts);
+
+        Set<Object> toPrune = opts.getPruneBlankNodeIdentifiers() ?
+                blankNodeIdsToPrune(rval, new HashSet<>()) : Collections.emptySet();
+        JsonLdUtils.removePreserveAndPrune(activeCtx, rval, opts, toPrune);
         return rval;
+    }
+
+    private static Set<Object> blankNodeIdsToPrune(Object input, Set<Object> set) {
+        if (input instanceof List) {
+            ((List<?>) input).forEach(e -> blankNodeIdsToPrune(e, set));
+        } else if (input instanceof Map) {
+            ((Map<?, ?>) input).entrySet().forEach(e -> blankNodeIdsToPrune(e.getValue(), set));
+        } else if (input instanceof String) {
+            String p = (String) input;
+            if (p.startsWith("_:")) {
+                if(set.contains(p)){
+                    // more than 1, don't prune
+                    set.remove(p);
+                } else {
+                    // exactly 1, prune
+                    set.add(p);
+                }
+            }
+        }
+        return set;
     }
 
     /**
