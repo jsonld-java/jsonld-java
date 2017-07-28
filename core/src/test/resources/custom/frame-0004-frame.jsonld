@@ -1,0 +1,144 @@
+{  "@context" : {
+  "sc" : "http://iiif.io/api/presentation/2#",
+  "iiif" : "http://iiif.io/api/image/2#",
+  "exif" : "http://www.w3.org/2003/12/exif/ns#",
+  "oa" : "http://www.w3.org/ns/oa#",
+  "cnt" : "http://www.w3.org/2011/content#",
+  "dc" : "http://purl.org/dc/elements/1.1/",
+  "dcterms" : "http://purl.org/dc/terms/",
+  "dctypes" : "http://purl.org/dc/dcmitype/",
+  "doap" : "http://usefulinc.com/ns/doap#",
+  "foaf" : "http://xmlns.com/foaf/0.1/",
+  "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+  "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+  "xsd" : "http://www.w3.org/2001/XMLSchema#",
+  "svcs" : "http://rdfs.org/sioc/services#",
+  "as" : "http://www.w3.org/ns/activitystreams#",
+  "service" : {
+    "@type" : "@id",
+    "@id" : "svcs:has_service"
+  },
+  "profile" : {
+    "@type" : "@id",
+    "@id" : "doap:implements"
+  },
+  "manifests" : {
+    "@type" : "@id",
+    "@id" : "sc:hasManifests",
+    "@container" : "@list"
+  },
+  "sequences" : {
+    "@type" : "@id",
+    "@id" : "sc:hasSequences",
+    "@container" : "@list"
+  },
+  "canvases" : {
+    "@type" : "@id",
+    "@id" : "sc:hasCanvases",
+    "@container" : "@list"
+  },
+  "resources" : {
+    "@type" : "@id",
+    "@id" : "sc:hasAnnotations",
+    "@container" : "@set"
+  },
+  "images" : {
+    "@type" : "@id",
+    "@id" : "sc:hasImageAnnotations",
+    "@container" : "@list"
+  },
+  "otherContent" : {
+    "@type" : "@id",
+    "@id" : "sc:hasLists",
+    "@container" : "@list"
+  },
+  "height" : {
+    "@type" : "xsd:integer",
+    "@id" : "exif:height"
+  },
+  "width" : {
+    "@type" : "xsd:integer",
+    "@id" : "exif:width"
+  },
+  "viewingDirection" : {
+    "@id" : "sc:viewingDirection",
+    "@type" : "@vocab"
+  },
+  "viewingHint" : {
+    "@id" : "sc:viewingHint",
+    "@type" : "@vocab"
+  },
+  "paged" : {
+    "@id" : "sc:pagedHint"
+  },
+  "motivation" : {
+    "@type" : "@id",
+    "@id" : "oa:motivatedBy"
+  },
+  "resource" : {
+    "@type" : "@id",
+    "@id" : "oa:hasBody"
+  },
+  "on" : {
+    "@type" : "@id",
+    "@id" : "oa:hasTarget"
+  },
+  "chars" : {
+    "@id" : "cnt:chars"
+  },
+  "format" : {
+    "@id" : "dc:format"
+  },
+  "value" : {
+    "@id" : "rdf:value"
+  },
+  "label" : {
+    "@id" : "rdfs:label"
+  }
+},
+  "@type": "sc:Manifest",
+  "sequences": [
+    {
+      "@type": "sc:Sequence",
+      "startCanvas": {
+        "@type": "sc:Canvas",
+        "@omitDefault": true,
+        "@embed": false
+      },
+      "canvases": [
+        {
+          "@type": "sc:Canvas",
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "@embed": true
+            }
+          ],
+          "otherContent": [
+            {
+              "@type": "sc:AnnotationList",
+              "@embed": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "structures": [
+    {
+      "@type": "sc:Range",
+      "@embed": true,
+      "@omitDefault": true,
+      "canvases": [
+        {
+          "@embed": false
+        }
+      ],
+      "ranges": [
+        {
+          "@embed": false
+        }
+      ]
+    }
+  ]
+}
