@@ -58,6 +58,7 @@ public class JsonLdOptions {
     private Boolean embed = null;
     private Boolean explicit = null;
     private Boolean omitDefault = null;
+    private Boolean requireAll = null;
 
     // RDF conversion options :
     // http://www.w3.org/TR/json-ld-api/#serialize-rdf-as-json-ld-algorithm
@@ -65,6 +66,14 @@ public class JsonLdOptions {
     Boolean useRdfType = false;
     Boolean useNativeTypes = false;
     private boolean produceGeneralizedRdf = false;
+
+    public Boolean getRequireAll() {
+        return requireAll;
+    }
+
+    public void setRequireAll(Boolean requireAll) {
+        this.requireAll = requireAll;
+    }
 
     public Boolean getEmbed() {
         return embed;

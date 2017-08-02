@@ -41,4 +41,22 @@ public class JsonLdFramingTest {
         assertEquals(out, frame2);
     }
 
+    @Test
+    public void testFrame0003() throws IOException, JsonLdError {
+        final Object frame = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0003-frame.jsonld"));
+        final Object in = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0003-in.jsonld"));
+
+        JsonLdOptions opts = new JsonLdOptions();
+        opts.setCompactArrays(false);
+        final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
+
+        final Object out = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0003-out.jsonld"));
+        // System.out.println(JsonUtils.toPrettyString(out));
+        // System.out.println(JsonUtils.toPrettyString(frame2));
+        assertEquals(out, frame2);
+    }
+
 }

@@ -1253,12 +1253,14 @@ public class JsonLdApi {
         public boolean embed;
         public boolean explicit;
         public boolean omitDefault;
+        public boolean requireAll;
 
         public FramingContext() {
             embed = true;
             explicit = false;
             omitDefault = false;
             embeds = null;
+            requireAll = false;
         }
 
         public FramingContext(JsonLdOptions opts) {
@@ -1271,6 +1273,9 @@ public class JsonLdApi {
             }
             if (opts.getOmitDefault() != null) {
                 this.omitDefault = opts.getOmitDefault();
+            }
+            if (opts.getRequireAll() != null) {
+                this.requireAll = opts.getRequireAll();
             }
         }
 
@@ -1340,6 +1345,7 @@ public class JsonLdApi {
         // get flags for current frame
         Boolean embedOn = getFrameFlag(frame, JsonLdConsts.EMBED, state.embed);
         final Boolean explicicOn = getFrameFlag(frame, JsonLdConsts.EXPLICIT, state.explicit);
+        final Boolean requireAll = getFrameFlag(frame, JsonLdConsts.REQUIRE_ALL, state.requireAll);
 
         // add matches to output
         final List<String> ids = new ArrayList<String>(matches.keySet());
