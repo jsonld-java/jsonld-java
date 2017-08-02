@@ -44,6 +44,8 @@ public final class JsonLdConsts {
     public static final String OMIT_DEFAULT = "@omitDefault";
     public static final String EMBED_CHILDREN = "@embedChildren";
     public static final String EMBED = "@embed";
+    public static final String REQUIRE_ALL = "@requireAll";
+
     public static final String LIST = "@list";
     public static final String LANGUAGE = "@language";
     public static final String INDEX = "@index";
