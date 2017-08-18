@@ -10,6 +10,10 @@ package com.github.jsonldjava.core;
  */
 public class JsonLdOptions {
 
+    private static final String JSON_LD_1_0 = "json-ld-1.0";
+
+    private static final String JSON_LD_1_1 = "json-ld-1.1";
+
     public static final boolean DEFAULT_COMPACT_ARRAYS = true;
 
 	/**
@@ -47,7 +51,7 @@ public class JsonLdOptions {
     /**
      * http://www.w3.org/TR/json-ld-api/#widl-JsonLdOptions-processingMode
      */
-    private String processingMode = "json-ld-1.0";
+    private String processingMode = JSON_LD_1_0;
     /**
      * http://www.w3.org/TR/json-ld-api/#widl-JsonLdOptions-documentLoader
      */
@@ -58,6 +62,7 @@ public class JsonLdOptions {
     private Boolean embed = null;
     private Boolean explicit = null;
     private Boolean omitDefault = null;
+    private Boolean pruneBlankNodeIdentifiers = true;
 
     // RDF conversion options :
     // http://www.w3.org/TR/json-ld-api/#serialize-rdf-as-json-ld-algorithm
@@ -88,6 +93,17 @@ public class JsonLdOptions {
 
     public void setOmitDefault(Boolean omitDefault) {
         this.omitDefault = omitDefault;
+    }
+
+    public Boolean getPruneBlankNodeIdentifiers() {
+        return pruneBlankNodeIdentifiers && getProcessingMode().equals(JSON_LD_1_1);
+    }
+
+    public void setPruneBlankNodeIdentifiers(Boolean pruneBlankNodeIdentifiers) {
+        if(pruneBlankNodeIdentifiers) {
+            setProcessingMode(JSON_LD_1_1);
+        }
+        this.pruneBlankNodeIdentifiers = pruneBlankNodeIdentifiers;
     }
 
     public Boolean getCompactArrays() {
