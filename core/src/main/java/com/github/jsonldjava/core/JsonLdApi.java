@@ -1324,8 +1324,6 @@ public class JsonLdApi {
      *
      * @param state
      *            the current framing state.
-     * @param subjects
-     *            the subjects to filter.
      * @param frame
      *            the frame.
      * @param parent
@@ -1343,7 +1341,10 @@ public class JsonLdApi {
 
         // get flags for current frame
         Boolean embedOn = getFrameFlag(frame, JsonLdConsts.EMBED, state.embed);
-        final Boolean explicicOn = getFrameFlag(frame, JsonLdConsts.EXPLICIT, state.explicit);
+        final Boolean explicitOn = getFrameFlag(frame, JsonLdConsts.EXPLICIT, state.explicit);
+        final Map<String, Object> flags = newMap();
+        flags.put(JsonLdConsts.EXPLICIT, explicitOn);
+        flags.put(JsonLdConsts.EMBED, embedOn);
 
         // add matches to output
         final List<String> ids = new ArrayList<String>(matches.keySet());
@@ -1415,11 +1416,7 @@ public class JsonLdApi {
                     }
 
                     // if property isn't in the frame
-                    if (!frame.containsKey(prop)) {
-                        // if explicit is off, embed values
-                        if (!explicicOn) {
-                            embedValues(state, element, prop, output);
-                        }
+                    if (explicitOn && !frame.containsKey(prop)) {
                         continue;
                     }
 
@@ -1447,10 +1444,13 @@ public class JsonLdApi {
                                     // TODO: nodes may need to be node_map,
                                     // which is global
                                     tmp.put(itemid, this.nodeMap.get(itemid));
-                                    frame(state, tmp,
-                                            (Map<String, Object>) ((List<Object>) frame.get(prop))
-                                                    .get(0),
-                                            list, JsonLdConsts.LIST);
+                                    Map<String, Object> subframe;
+                                    if (frame.containsKey(prop)) {
+                                        subframe = (Map<String, Object>) ((List<Object>) frame.get(prop)).get(0);
+                                    } else {
+                                        subframe = flags;
+                                    }
+                                    frame(state, tmp, subframe, list, JsonLdConsts.LIST);
                                 } else {
                                     // include other values automatcially (TODO:
                                     // may need JsonLdUtils.clone(n))
@@ -1467,9 +1467,13 @@ public class JsonLdApi {
                             // TODO: nodes may need to be node_map, which is
                             // global
                             tmp.put(itemid, this.nodeMap.get(itemid));
-                            frame(state, tmp,
-                                    (Map<String, Object>) ((List<Object>) frame.get(prop)).get(0),
-                                    output, prop);
+                            Map<String, Object> subframe;
+                            if (frame.containsKey(prop)) {
+                                subframe = (Map<String, Object>) ((List<Object>) frame.get(prop)).get(0);
+                            } else {
+                                subframe = flags;
+                            }
+                            frame(state, tmp, subframe, output, prop);
                         } else {
                             // include other values automatically (TODO: may
                             // need JsonLdUtils.clone(o))

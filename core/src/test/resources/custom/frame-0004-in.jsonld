@@ -1,0 +1,117 @@
+{
+  "@graph": [
+    {
+      "@id": "_:b1",
+      "@type": "oa:Annotation",
+      "resource": "http://localhost/r1.jp2",
+      "on": "http://localhost/c1"
+    },
+    {
+      "@id": "_:b2",
+      "@type": "oa:Annotation",
+      "resource": "http://localhost/r0.jp2",
+      "on": "http://localhost/c0"
+    },
+    {
+      "@id": "http://localhost:5004/r0.jp2",
+      "@type": "http://iiif.io/api/image/2/context.json"
+    },
+    {
+      "@id": "http://localhost:5004/r1.jp2",
+      "@type": "http://iiif.io/api/image/2/context.json"
+    },
+    {
+      "@id": "http://localhost/c0",
+      "@type": "sc:Canvas",
+      "images": [
+        "_:b2"
+      ],
+      "otherContent": [
+        "http://localhost/l0"
+      ]
+    },
+    {
+      "@id": "http://localhost/c1",
+      "@type": "sc:Canvas",
+      "images": [
+        "_:b1"
+      ],
+      "otherContent": [
+        "http://localhost/l1"
+      ]
+    },
+    {
+      "@id": "http://localhost/l0",
+      "@type": "sc:AnnotationList"
+    },
+    {
+      "@id": "http://localhost/l1",
+      "@type": "sc:AnnotationList"
+    },
+    {
+      "@id": "http://localhost/manifest",
+      "@type": "sc:Manifest",
+      "sequences": [
+        "http://localhost/sequence/normal"
+      ]
+    },
+    {
+      "@id": "http://localhost/r0.jp2",
+      "@type": "dctypes:Image"
+    },
+    {
+      "@id": "http://localhost/r1.jp2",
+      "@type": "dctypes:Image"
+    },
+    {
+      "@id": "http://localhost/sequence/normal",
+      "@type": "sc:Sequence",
+      "canvases": [
+        "http://localhost/c0",
+        "http://localhost/c1"
+      ]
+    }
+  ],
+  "@context": {
+    "sc": "http://iiif.io/api/presentation/2#",
+    "oa": "http://www.w3.org/ns/oa#",
+    "manifests": {
+      "@type": "@id",
+      "@id": "sc:hasManifests",
+      "@container": "@list"
+    },
+    "sequences": {
+      "@type": "@id",
+      "@id": "sc:hasSequences",
+      "@container": "@list"
+    },
+    "canvases": {
+      "@type": "@id",
+      "@id": "sc:hasCanvases",
+      "@container": "@list"
+    },
+    "resources": {
+      "@type": "@id",
+      "@id": "sc:hasAnnotations",
+      "@container": "@set"
+    },
+    "images": {
+      "@type": "@id",
+      "@id": "sc:hasImageAnnotations",
+      "@container": "@list"
+    },
+    "otherContent": {
+      "@type": "@id",
+      "@id": "sc:hasLists",
+      "@container": "@list"
+    },
+    "resource": {
+      "@id": "oa:hasBody",
+      "@type": "@id"
+    },
+    "on": {
+      "@id": "oa:hasTarget",
+      "@type": "@id"
+    }
+  }
+}

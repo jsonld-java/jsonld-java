@@ -1,0 +1,72 @@
+{
+  "@context": {
+    "sc": "http://iiif.io/api/presentation/2#",
+    "oa": "http://www.w3.org/ns/oa#",
+    "manifests": {
+      "@type": "@id",
+      "@id": "sc:hasManifests",
+      "@container": "@list"
+    },
+    "sequences": {
+      "@type": "@id",
+      "@id": "sc:hasSequences",
+      "@container": "@list"
+    },
+    "canvases": {
+      "@type": "@id",
+      "@id": "sc:hasCanvases",
+      "@container": "@list"
+    },
+    "resources": {
+      "@type": "@id",
+      "@id": "sc:hasAnnotations",
+      "@container": "@set"
+    },
+    "images": {
+      "@type": "@id",
+      "@id": "sc:hasImageAnnotations",
+      "@container": "@list"
+    },
+    "otherContent": {
+      "@type": "@id",
+      "@id": "sc:hasLists",
+      "@container": "@list"
+    },
+    "resource" : {
+      "@id" : "oa:hasBody",
+      "@type" : "@id"
+    },
+    "on" : {
+      "@id" : "oa:hasTarget",
+      "@type" : "@id"
+    }
+  },
+  "@type": "sc:Manifest",
+  "sequences": [
+    {
+      "@type": "sc:Sequence",
+      "startCanvas": {
+        "@type": "sc:Canvas",
+        "@omitDefault": true,
+        "@embed": false
+      },
+      "canvases": [
+        {
+          "@type": "sc:Canvas",
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "@embed": true
+            }
+          ],
+          "otherContent": [
+            {
+              "@type": "sc:AnnotationList",
+              "@embed": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
