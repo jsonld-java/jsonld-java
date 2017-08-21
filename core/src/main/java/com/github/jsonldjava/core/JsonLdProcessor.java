@@ -326,30 +326,28 @@ public class JsonLdProcessor {
         final Map<String, Object> rval = activeCtx.serialize();
         rval.put(alias, compacted);
 
-        Set<Object> toPrune = opts.getPruneBlankNodeIdentifiers() ?
-                blankNodeIdsToPrune(rval, new HashSet<>()) : Collections.emptySet();
+        Set<Object> toPrune = opts.getPruneBlankNodeIdentifiers() ? blankNodeIdsToPrune(rval) : Collections.emptySet();
         JsonLdUtils.removePreserveAndPrune(activeCtx, rval, opts, toPrune);
         return rval;
     }
 
-    private static Set<Object> blankNodeIdsToPrune(Object input, Set<Object> set) {
+    private static Set<Object> blankNodeIdsToPrune(final Map<String, Object> rval) {
+        return countBlankNodeIds(rval, new HashMap<>()).entrySet().stream().filter(e -> e.getValue() == 1)
+                .map(e -> e.getKey()).collect(Collectors.toSet());
+    }
+
+    private static Map<Object, Integer> countBlankNodeIds(Object input, Map<Object, Integer> frequencies) {
         if (input instanceof List) {
-            ((List<?>) input).forEach(e -> blankNodeIdsToPrune(e, set));
+            ((List<?>) input).forEach(e -> countBlankNodeIds(e, frequencies));
         } else if (input instanceof Map) {
-            ((Map<?, ?>) input).entrySet().forEach(e -> blankNodeIdsToPrune(e.getValue(), set));
+            ((Map<?, ?>) input).entrySet().forEach(e -> countBlankNodeIds(e.getValue(), frequencies));
         } else if (input instanceof String) {
             String p = (String) input;
             if (p.startsWith("_:")) {
-                if(set.contains(p)){
-                    // more than 1, don't prune
-                    set.remove(p);
-                } else {
-                    // exactly 1, prune
-                    set.add(p);
-                }
+                frequencies.put(p, frequencies.containsKey(p) ? frequencies.get(p) + 1 : 1);
             }
         }
-        return set;
+        return frequencies;
     }
 
     /**

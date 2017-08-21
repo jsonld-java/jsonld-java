@@ -419,6 +419,9 @@ public class JsonLdProcessorTest {
             if (test_opts.containsKey("produceGeneralizedRdf")) {
                 options.setProduceGeneralizedRdf((Boolean) test_opts.get("produceGeneralizedRdf"));
             }
+            if (test_opts.containsKey("pruneBlankNodeIdentifiers")) {
+                options.setPruneBlankNodeIdentifiers((Boolean) test_opts.get("pruneBlankNodeIdentifiers"));
+            }
             if (test_opts.containsKey("redirectTo")) {
                 testLoader.setRedirectTo((String) test_opts.get("redirectTo"));
             }
