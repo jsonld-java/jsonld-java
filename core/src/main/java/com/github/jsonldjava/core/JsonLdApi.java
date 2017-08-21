@@ -994,7 +994,7 @@ public class JsonLdApi {
                     result = null;
                 }
                 // 12.2)
-                else if (result != null && result.containsKey(JsonLdConsts.ID)
+                else if (result != null && !frameExpansion && result.containsKey(JsonLdConsts.ID)
                         && result.size() == 1) {
                     result = null;
                 }
@@ -1712,6 +1712,7 @@ public class JsonLdApi {
                     }
                 }
             }
+            return false;
         }
         // 2. Node matches if frame has no non-keyword properties.TODO
         // 3.1 If property is @type: 
