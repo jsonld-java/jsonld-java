@@ -1,5 +1,7 @@
 package com.github.jsonldjava.core;
 
+import com.github.jsonldjava.core.JsonLdConsts.Embed;
+
 /**
  * The JsonLdOptions type as specified in the
  * <a href="http://www.w3.org/TR/json-ld-api/#the-jsonldoptions-type">JSON-LD-
@@ -59,7 +61,7 @@ public class JsonLdOptions {
 
     // Frame options : http://json-ld.org/spec/latest/json-ld-framing/
 
-    private Boolean embed = null;
+    private Embed embed = Embed.LAST;
     private Boolean explicit = null;
     private Boolean omitDefault = null;
     private Boolean pruneBlankNodeIdentifiers = true;
@@ -71,12 +73,40 @@ public class JsonLdOptions {
     Boolean useNativeTypes = false;
     private boolean produceGeneralizedRdf = false;
 
-    public Boolean getEmbed() {
-        return embed;
+    public String getEmbed() {
+        switch (this.embed) {
+        case ALWAYS:
+            return "@always";
+        case NEVER:
+            return "@never";
+        case LINK:
+            return "@link";
+        default:
+            return "@last";
+        }
+    }
+
+    Embed getEmbedVal() {
+        return this.embed;
     }
 
     public void setEmbed(Boolean embed) {
-        this.embed = embed;
+        this.embed = embed ? Embed.LAST : Embed.NEVER;
+    }
+
+    public void setEmbed(String embed) throws JsonLdError {
+        switch (embed) {
+        case "@always":
+            this.embed = Embed.ALWAYS;
+        case "@never":
+            this.embed = Embed.NEVER;
+        case "@last":
+            this.embed = Embed.LAST;
+        case "@link":
+            this.embed = Embed.LINK;
+        default:
+            throw new JsonLdError(JsonLdError.Error.INVALID_EMBED_VALUE);
+        }
     }
 
     public Boolean getExplicit() {

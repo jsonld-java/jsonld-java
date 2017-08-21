@@ -57,4 +57,6 @@ public final class JsonLdConsts {
     public static final String BLANK_NODE_PREFIX = "_:";
     public static final String VOCAB = "@vocab";
     public static final String BASE = "@base";
+
+    public enum Embed {	ALWAYS,	NEVER, LAST, LINK; }
 }

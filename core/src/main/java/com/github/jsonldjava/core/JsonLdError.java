@@ -100,6 +100,8 @@ public class JsonLdError extends Exception {
 
         INVALID_REVERSE_PROPERTY_VALUE("invalid reverse property value"),
 
+        INVALID_EMBED_VALUE("invalid @embed value"),
+
         // non spec related errors
         SYNTAX_ERROR("syntax error"),
 

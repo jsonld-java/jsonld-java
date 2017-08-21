@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jsonldjava.core.JsonLdConsts.Embed;
 import com.github.jsonldjava.core.JsonLdError.Error;
 import com.github.jsonldjava.utils.Obj;
 
@@ -1254,12 +1255,12 @@ public class JsonLdApi {
      */
 
     private class FramingContext {
-        public boolean embed;
+        public Embed embed;
         public boolean explicit;
         public boolean omitDefault;
 
         public FramingContext() {
-            embed = true;
+            embed = Embed.LAST;
             explicit = false;
             omitDefault = false;
             embeds = null;
@@ -1268,7 +1269,7 @@ public class JsonLdApi {
         public FramingContext(JsonLdOptions opts) {
             this();
             if (opts.getEmbed() != null) {
-                this.embed = opts.getEmbed();
+                this.embed = opts.getEmbedVal();
             }
             if (opts.getExplicit() != null) {
                 this.explicit = opts.getExplicit();
@@ -1340,7 +1341,8 @@ public class JsonLdApi {
         final Map<String, Object> matches = filterNodes(state, nodes, frame);
 
         // get flags for current frame
-        Boolean embedOn = getFrameFlag(frame, JsonLdConsts.EMBED, state.embed);
+        Embed generalEmbed = getFrameEmbed(frame, state.embed);
+        Boolean embedOn = generalEmbed != Embed.NEVER;
         final Boolean explicitOn = getFrameFlag(frame, JsonLdConsts.EXPLICIT, state.explicit);
         final Map<String, Object> flags = newMap();
         flags.put(JsonLdConsts.EXPLICIT, explicitOn);
@@ -1522,7 +1524,7 @@ public class JsonLdApi {
         }
     }
 
-    private Boolean getFrameFlag(Map<String, Object> frame, String name, boolean thedefault) {
+    private Object getFrameValue(Map<String, Object> frame, String name) {
         Object value = frame.get(name);
         if (value instanceof List) {
             if (((List<Object>) value).size() > 0) {
@@ -1532,10 +1534,39 @@ public class JsonLdApi {
         if (value instanceof Map && ((Map<String, Object>) value).containsKey(JsonLdConsts.VALUE)) {
             value = ((Map<String, Object>) value).get(JsonLdConsts.VALUE);
         }
+        return value;
+    }
+
+    private Boolean getFrameFlag(Map<String, Object> frame, String name, boolean thedefault) {
+        Object value = getFrameValue(frame, name);
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
         return thedefault;
+    }
+
+    private Embed getFrameEmbed(Map<String, Object> frame, Embed thedefault) throws JsonLdError {
+        Object value = getFrameValue(frame, JsonLdConsts.EMBED);
+        if (value == null)
+            return thedefault;
+        if (value instanceof Boolean) {
+            return (Boolean) value ? Embed.LAST : Embed.NEVER;
+        }
+        if (value instanceof String) {
+            switch ((String) value) {
+            case "@always":
+                return Embed.ALWAYS;
+            case "@never":
+                return Embed.NEVER;
+            case "@last":
+                return Embed.LAST;
+            case "@link":
+                return Embed.LINK;
+            default:
+                throw new JsonLdError(JsonLdError.Error.INVALID_EMBED_VALUE);
+            }
+        }
+        throw new JsonLdError(JsonLdError.Error.INVALID_EMBED_VALUE);
     }
 
     /**
