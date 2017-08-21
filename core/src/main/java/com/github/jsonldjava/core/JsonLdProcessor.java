@@ -308,13 +308,25 @@ public class JsonLdProcessor {
         }
         // TODO string/IO input
 
+        // 2. Set expanded input to the result of using the expand method using input and options. 
         final Object expandedInput = expand(input, opts);
+        
+        // 3. Set expanded frame to the result of using the expand method using frame and options
+        // with expandContext set to null and processingMode set to json-ld-1.1-expand-frame. 
+        String savedProcessingMode = opts.getProcessingMode();
+        Object savedExpandedContext = opts.getExpandContext();
+        opts.setProcessingMode(JsonLdOptions.JSON_LD_1_1_FRAME);
+        opts.setExpandContext(null);
         final List<Object> expandedFrame = expand(frame, opts);
+        opts.setProcessingMode(savedProcessingMode);
+        opts.setExpandContext(savedExpandedContext);
 
+        // 4. Set context to the value of @context from frame, if it exists, or to a new empty
+        // context, otherwise.
         final JsonLdApi api = new JsonLdApi(expandedInput, opts);
-        final List<Object> framed = api.frame(expandedInput, expandedFrame);
         final Context activeCtx = api.context
                 .parse(((Map<String, Object>) frame).get(JsonLdConsts.CONTEXT));
+        final List<Object> framed = api.frame(expandedInput, expandedFrame);
 
         Object compacted = api.compact(activeCtx, null, framed, opts.getCompactArrays());
         if (!(compacted instanceof List)) {

@@ -12,9 +12,11 @@ import com.github.jsonldjava.core.JsonLdConsts.Embed;
  */
 public class JsonLdOptions {
 
-    private static final String JSON_LD_1_0 = "json-ld-1.0";
+    public static final String JSON_LD_1_0 = "json-ld-1.0";
 
-    private static final String JSON_LD_1_1 = "json-ld-1.1";
+    public static final String JSON_LD_1_1 = "json-ld-1.1";
+    
+    public static final String JSON_LD_1_1_FRAME = "json-ld-1.1-expand-frame";
 
     public static final boolean DEFAULT_COMPACT_ARRAYS = true;
 
