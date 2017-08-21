@@ -449,6 +449,11 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2017-08-22
+* Add implicit "flag only" subframe to fix incomplete list recursion (Patch by @christopher-johnson)
+* Support pruneBlankNodeIdentifiers framing option in 1.1 mode (Patch by @fsteeg and @eroux)
+* Support new @embed values (Patch by @eroux)
+
 ### 2017-07-11
 * Add injection of contexts directly into DocumentLoader (Patch by @ryankenney)
 * Fix N-Quads content type (Patch by @NicolasRouquette)
