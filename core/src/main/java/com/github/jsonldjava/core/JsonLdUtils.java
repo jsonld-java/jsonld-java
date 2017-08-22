@@ -37,7 +37,7 @@ public class JsonLdUtils {
                 || "@graph".equals(key) || "@id".equals(key) || "@index".equals(key)
                 || "@language".equals(key) || "@list".equals(key) || "@omitDefault".equals(key)
                 || "@reverse".equals(key) || "@preserve".equals(key) || "@set".equals(key)
-                || "@type".equals(key) || "@value".equals(key) || "@vocab".equals(key);
+                || "@type".equals(key) || "@value".equals(key) || "@vocab".equals(key) || "@requireAll".equals(key);
     }
 
     public static Boolean deepCompare(Object v1, Object v2, Boolean listOrderMatters) {
