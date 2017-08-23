@@ -1,0 +1,15 @@
+{
+  "@graph" : [ {
+    "@id" : "http://www.myresource/uuid",
+    "@type" : "http://www.myresource/uuidtype",
+    "http://www.myresource.com/ontology/1.0#talksAbout" : {
+      "@list" : [ {
+        "@id" : "http://rdf.freebase.com/ns/m.018w8",
+        "http://www.w3.org/2000/01/rdf-schema#label" : {
+          "@language" : "en",
+          "@value" : "Basketball"
+        }
+      } ]
+    }
+  } ]
+}

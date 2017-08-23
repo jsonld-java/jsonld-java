@@ -67,6 +67,7 @@ public class JsonLdOptions {
     private Boolean explicit = null;
     private Boolean omitDefault = null;
     private Boolean pruneBlankNodeIdentifiers = true;
+    private Boolean requireAll = false;
 
     // RDF conversion options :
     // http://www.w3.org/TR/json-ld-api/#serialize-rdf-as-json-ld-algorithm
@@ -138,6 +139,14 @@ public class JsonLdOptions {
         this.pruneBlankNodeIdentifiers = pruneBlankNodeIdentifiers;
     }
 
+    public Boolean getRequireAll() {
+        return this.requireAll;
+    }
+
+    public void setRequireAll(Boolean requireAll) {
+        this.requireAll = requireAll;
+    }
+
     public Boolean getCompactArrays() {
         return compactArrays;
     }
@@ -207,4 +216,5 @@ public class JsonLdOptions {
     public String format = null;
     public Boolean useNamespaces = false;
     public String outputForm = null;
+
 }

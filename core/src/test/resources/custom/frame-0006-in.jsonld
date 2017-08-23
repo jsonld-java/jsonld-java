@@ -1,0 +1,11 @@
+[ {
+  "@id" : "http://example.com/canvas-1",
+  "@type" : "http://example.com"
+}, {
+  "@id" : "http://example.com/element",
+  "http://example.com" : {
+    "@list" : [ {
+      "@id" : "http://example.com/canvas-1"
+    } ]
+  }
+} ]

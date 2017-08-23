@@ -75,4 +75,52 @@ public class JsonLdFramingTest {
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0004-out.jsonld"));
         assertEquals(out, frame2);
     }
+
+    @Test
+    public void testFrame0005() throws IOException, JsonLdError {
+        final Object frame = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0005-frame.jsonld"));
+        final Object in = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0005-in.jsonld"));
+
+        JsonLdOptions opts = new JsonLdOptions();
+        opts.setCompactArrays(true);
+        final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
+
+        final Object out = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0005-out.jsonld"));
+        assertEquals(out, frame2);
+    }
+
+    @Test
+    public void testFrame0006() throws IOException, JsonLdError {
+        final Object frame = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0006-frame.jsonld"));
+        final Object in = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0006-in.jsonld"));
+
+        JsonLdOptions opts = new JsonLdOptions();
+        opts.setCompactArrays(true);
+        final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
+
+        final Object out = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0006-out.jsonld"));
+        assertEquals(out, frame2);
+    }
+
+    @Test
+    public void testFrame0007() throws IOException, JsonLdError {
+        final Object frame = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0007-frame.jsonld"));
+        final Object in = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0007-in.jsonld"));
+
+        JsonLdOptions opts = new JsonLdOptions();
+        opts.setCompactArrays(true);
+        final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
+
+        final Object out = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0007-out.jsonld"));
+        assertEquals(out, frame2);
+    }
 }

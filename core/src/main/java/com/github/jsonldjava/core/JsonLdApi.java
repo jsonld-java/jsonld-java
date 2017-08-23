@@ -776,6 +776,7 @@ public class JsonLdApi {
                     else if (frameExpansion && (JsonLdConsts.EXPLICIT.equals(expandedProperty)
                             || JsonLdConsts.DEFAULT.equals(expandedProperty)
                             || JsonLdConsts.EMBED.equals(expandedProperty)
+                            || JsonLdConsts.REQUIRE_ALL.equals(expandedProperty)
                             || JsonLdConsts.EMBED_CHILDREN.equals(expandedProperty)
                             || JsonLdConsts.OMIT_DEFAULT.equals(expandedProperty))) {
                         expandedValue = expand(activeCtx, expandedProperty, value);
@@ -994,7 +995,7 @@ public class JsonLdApi {
                     result = null;
                 }
                 // 12.2)
-                else if (result != null && result.containsKey(JsonLdConsts.ID)
+                else if (result != null && !frameExpansion && result.containsKey(JsonLdConsts.ID)
                         && result.size() == 1) {
                     result = null;
                 }
@@ -1287,11 +1288,13 @@ public class JsonLdApi {
         public boolean omitDefault;
         public Map<String, EmbedNode> uniqueEmbeds;
         public LinkedList<String> subjectStack;
+        public boolean requireAll;
 
         public FramingContext() {
             embed = Embed.LAST;
             explicit = false;
             omitDefault = false;
+            requireAll = false;
             uniqueEmbeds = new HashMap<>();
             subjectStack = new LinkedList<>();
         }
@@ -1306,6 +1309,9 @@ public class JsonLdApi {
             }
             if (opts.getOmitDefault() != null) {
                 this.omitDefault = opts.getOmitDefault();
+            }
+            if (opts.getRequireAll() != null) {
+                this.requireAll = opts.getRequireAll();
             }
         }
     }
@@ -1385,14 +1391,16 @@ public class JsonLdApi {
         // TODO: handle @requireAll
         Embed embed = getFrameEmbed(frame, state.embed);
         final Boolean explicitOn = getFrameFlag(frame, JsonLdConsts.EXPLICIT, state.explicit);
+        final Boolean requireAll = getFrameFlag(frame, JsonLdConsts.REQUIRE_ALL, state.requireAll);
         final Map<String, Object> flags = newMap();
         flags.put(JsonLdConsts.EXPLICIT, explicitOn);
         flags.put(JsonLdConsts.EMBED, embed);
+        flags.put(JsonLdConsts.REQUIRE_ALL, requireAll);
 
         // 3.
         // Create a list of matched subjects by filtering subjects against frame
         // using the Frame Matching algorithm with state, subjects, frame, and requireAll.
-        final Map<String, Object> matches = filterNodes(state, nodes, frame);
+        final Map<String, Object> matches = filterNodes(state, nodes, frame, requireAll);
         final List<String> ids = new ArrayList<String>(matches.keySet());
         Collections.sort(ids);
         
@@ -1671,11 +1679,11 @@ public class JsonLdApi {
     }
 
     private Map<String, Object> filterNodes(FramingContext state, Map<String, Object> nodes,
-            Map<String, Object> frame) throws JsonLdError {
+            Map<String, Object> frame, boolean requireAll) throws JsonLdError {
         final Map<String, Object> rval = newMap();
         for (final String id : nodes.keySet()) {
             final Map<String, Object> element = (Map<String, Object>) nodes.get(id);
-            if (element != null && filterNode(state, element, frame)) {
+            if (element != null && filterNode(state, element, frame, requireAll)) {
                 rval.put(id, element);
             }
         }
@@ -1683,7 +1691,7 @@ public class JsonLdApi {
     }
 
     private boolean filterNode(FramingContext state, Map<String, Object> node,
-            Map<String, Object> frame) throws JsonLdError {
+            Map<String, Object> frame, boolean requireAll) throws JsonLdError {
         final Object types = frame.get(JsonLdConsts.TYPE);
         final Object frameIds = frame.get(JsonLdConsts.ID);
         // https://json-ld.org/spec/latest/json-ld-framing/#frame-matching
@@ -1712,8 +1720,14 @@ public class JsonLdApi {
                     }
                 }
             }
+            return false;
         }
         // 2. Node matches if frame has no non-keyword properties.TODO
+        // 3. If requireAll is true, node matches if all non-keyword properties
+        // (property) in frame match any of the following conditions. Or, if
+        // requireAll is false, if any of the non-keyword properties (property)
+        // in frame match any of the following conditions. For the values of each
+        // property from frame in node: 
         // 3.1 If property is @type: 
         if (types != null) {
             if (!(types instanceof List)) {
