@@ -14,7 +14,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.10.0</version>
+        <version>0.11.0</version>
     </dependency>
 
 Code example
@@ -448,6 +448,9 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 
 CHANGELOG
 =========
+
+### 2017-08-24
+* Release 0.11.0
 
 ### 2017-08-22
 * Add implicit "flag only" subframe to fix incomplete list recursion (Patch by @christopher-johnson)
