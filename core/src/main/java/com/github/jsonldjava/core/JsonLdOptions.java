@@ -101,12 +101,16 @@ public class JsonLdOptions {
         switch (embed) {
         case "@always":
             this.embed = Embed.ALWAYS;
+            break;
         case "@never":
             this.embed = Embed.NEVER;
+            break;
         case "@last":
             this.embed = Embed.LAST;
+            break;
         case "@link":
             this.embed = Embed.LINK;
+            break;
         default:
             throw new JsonLdError(JsonLdError.Error.INVALID_EMBED_VALUE);
         }
