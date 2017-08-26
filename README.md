@@ -449,6 +449,10 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2017-08-26
+* Release 0.11.1
+* Fix @embed:@always support (Patch by @dr0i)
+
 ### 2017-08-24
 * Release 0.11.0
 
