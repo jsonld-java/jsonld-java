@@ -10,7 +10,7 @@ import com.github.jsonldjava.utils.JsonUtils;
 
 public class DocumentLoader {
 
-    private Map<String, Object> m_injectedDocs = new HashMap<>();
+    private final Map<String, Object> m_injectedDocs = new HashMap<>();
 
     /**
      * Identifies a system property that can be set to "true" in order to
@@ -42,7 +42,8 @@ public class DocumentLoader {
         final String disallowRemote = System
                 .getProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING);
         if ("true".equalsIgnoreCase(disallowRemote)) {
-            throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, "Remote context loading has been disallowed (url was " + url + ")");
+            throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED,
+                    "Remote context loading has been disallowed (url was " + url + ")");
         }
 
         try {

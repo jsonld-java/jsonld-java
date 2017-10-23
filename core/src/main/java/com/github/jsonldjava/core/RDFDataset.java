@@ -159,7 +159,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                     return -1; // literals < blanknode < IRI
                 }
             }
-            // NOTE: Literal will also need to compare 
+            // NOTE: Literal will also need to compare
             // language and datatype
             return this.getValue().compareTo(o.getValue());
         }
@@ -280,7 +280,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
             if (a == null && b == null) {
                 return 0;
             }
-            if (a == null) { 
+            if (a == null) {
                 return 1;
             }
             if (b == null) {
@@ -292,9 +292,9 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
         @Override
         public int compareTo(Node o) {
             // NOTE: this will also compare getValue() early!
-            int nodeCompare = super.compareTo(o);
+            final int nodeCompare = super.compareTo(o);
             if (nodeCompare != 0) {
-                // null, different type or different value 
+                // null, different type or different value
                 return nodeCompare;
             }
             if (this.getLanguage() != null || o.getLanguage() != null) {

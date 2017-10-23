@@ -10,8 +10,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.github.jsonldjava.utils.JsonUtils;
-
 public class ContextCompactionTest {
 
     // @Ignore("Disable until schema.org is fixed")

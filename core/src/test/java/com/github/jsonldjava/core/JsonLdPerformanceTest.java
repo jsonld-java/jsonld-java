@@ -616,7 +616,7 @@ public class JsonLdPerformanceTest {
 
         // System.out.println("Twice the same triple in RDFDataset:/n");
         for (final Quad quad : inputRdf.getQuads("@default")) {
-            //System.out.println(quad);
+            // System.out.println(quad);
         }
 
         final JsonLdOptions options = new JsonLdOptions();
@@ -633,7 +633,8 @@ public class JsonLdPerformanceTest {
         // System.out.println(jsonld);
 
         // System.out.println(
-        //        "\nWouldn't be the case assuming there is no duplicated triple in RDFDataset:\n");
+        // "\nWouldn't be the case assuming there is no duplicated triple in
+        // RDFDataset:\n");
         fromRDF = JsonLdProcessor.compact(new JsonLdApi(options).fromRDF(inputRdf, true),
                 inputRdf.getContext(), options);
         jsonld = JsonUtils.toPrettyString(fromRDF);

@@ -826,11 +826,10 @@ public class Context extends LinkedHashMap<String, Object> {
      * ":".
      *
      * @param onlyCommonPrefixes
-     *            If <code>true</code>, the result will not include
-     *            "not so useful" prefixes, such as "term1":
-     *            "http://example.com/term1", e.g. all IRIs will end with "/" or
-     *            "#". If <code>false</code>, all potential prefixes are
-     *            returned.
+     *            If <code>true</code>, the result will not include "not so
+     *            useful" prefixes, such as "term1": "http://example.com/term1",
+     *            e.g. all IRIs will end with "/" or "#". If <code>false</code>,
+     *            all potential prefixes are returned.
      *
      * @return A map from prefix string to IRI string
      */

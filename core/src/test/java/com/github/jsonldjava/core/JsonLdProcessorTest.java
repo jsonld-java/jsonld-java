@@ -243,7 +243,8 @@ public class JsonLdProcessorTest {
         @Override
         public RemoteDocument loadDocument(String url) throws JsonLdError {
             if (url == null) {
-                throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, "URL was null");
+                throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED,
+                        "URL was null");
             }
             if (url.contains(":")) {
                 // check if the url is relative to the test base
@@ -260,7 +261,8 @@ public class JsonLdProcessorTest {
                 }
             }
             // we can't load this remote document from the test suite
-            throw new JsonLdError(JsonLdError.Error.NOT_IMPLEMENTED, "URL scheme was not recognised: " + url);
+            throw new JsonLdError(JsonLdError.Error.NOT_IMPLEMENTED,
+                    "URL scheme was not recognised: " + url);
         }
 
         public void setRedirectTo(String string) {
@@ -420,7 +422,8 @@ public class JsonLdProcessorTest {
                 options.setProduceGeneralizedRdf((Boolean) test_opts.get("produceGeneralizedRdf"));
             }
             if (test_opts.containsKey("pruneBlankNodeIdentifiers")) {
-                options.setPruneBlankNodeIdentifiers((Boolean) test_opts.get("pruneBlankNodeIdentifiers"));
+                options.setPruneBlankNodeIdentifiers(
+                        (Boolean) test_opts.get("pruneBlankNodeIdentifiers"));
             }
             if (test_opts.containsKey("redirectTo")) {
                 testLoader.setRedirectTo((String) test_opts.get("redirectTo"));

@@ -42,7 +42,7 @@ public class JarCacheStorage implements HttpCacheStorage {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final CacheConfig cacheConfig;
-    
+
     private ClassLoader classLoader;
 
     /**

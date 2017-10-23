@@ -31,9 +31,9 @@ public class JsonLdFramingTest {
         final Object in = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0002-in.jsonld"));
 
-        JsonLdOptions opts = new JsonLdOptions();
+        final JsonLdOptions opts = new JsonLdOptions();
         opts.setCompactArrays(false);
-		final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
+        final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
 
         final Object out = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0002-out.jsonld"));
@@ -49,7 +49,7 @@ public class JsonLdFramingTest {
         final Object in = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0002-in.jsonld"));
 
-        JsonLdOptions opts = new JsonLdOptions();
+        final JsonLdOptions opts = new JsonLdOptions();
         opts.setCompactArrays(false);
         opts.setProcessingMode("json-ld-1.1");
         final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
@@ -67,7 +67,7 @@ public class JsonLdFramingTest {
         final Object in = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0004-in.jsonld"));
 
-        JsonLdOptions opts = new JsonLdOptions();
+        final JsonLdOptions opts = new JsonLdOptions();
         opts.setCompactArrays(true);
         final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
 
@@ -83,7 +83,7 @@ public class JsonLdFramingTest {
         final Object in = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0005-in.jsonld"));
 
-        JsonLdOptions opts = new JsonLdOptions();
+        final JsonLdOptions opts = new JsonLdOptions();
         opts.setCompactArrays(true);
         final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
 
@@ -99,7 +99,7 @@ public class JsonLdFramingTest {
         final Object in = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0006-in.jsonld"));
 
-        JsonLdOptions opts = new JsonLdOptions();
+        final JsonLdOptions opts = new JsonLdOptions();
         opts.setCompactArrays(true);
         final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
 
@@ -115,7 +115,7 @@ public class JsonLdFramingTest {
         final Object in = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0007-in.jsonld"));
 
-        JsonLdOptions opts = new JsonLdOptions();
+        final JsonLdOptions opts = new JsonLdOptions();
         opts.setCompactArrays(true);
         final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
 
@@ -131,7 +131,7 @@ public class JsonLdFramingTest {
         final Object in = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0008-in.jsonld"));
 
-        JsonLdOptions opts = new JsonLdOptions();
+        final JsonLdOptions opts = new JsonLdOptions();
         opts.setEmbed("@always");
         final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
 
@@ -140,4 +140,3 @@ public class JsonLdFramingTest {
         assertEquals(out, frame2);
     }
 }
-

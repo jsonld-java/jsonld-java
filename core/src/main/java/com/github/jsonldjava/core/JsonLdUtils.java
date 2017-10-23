@@ -1,17 +1,11 @@
 package com.github.jsonldjava.core;
 
-import static com.github.jsonldjava.utils.Obj.newMap;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.github.jsonldjava.utils.JsonLdUrl;
 import com.github.jsonldjava.utils.Obj;
 
 public class JsonLdUtils {
@@ -37,7 +31,8 @@ public class JsonLdUtils {
                 || "@graph".equals(key) || "@id".equals(key) || "@index".equals(key)
                 || "@language".equals(key) || "@list".equals(key) || "@omitDefault".equals(key)
                 || "@reverse".equals(key) || "@preserve".equals(key) || "@set".equals(key)
-                || "@type".equals(key) || "@value".equals(key) || "@vocab".equals(key) || "@requireAll".equals(key);
+                || "@type".equals(key) || "@value".equals(key) || "@vocab".equals(key)
+                || "@requireAll".equals(key);
     }
 
     public static Boolean deepCompare(Object v1, Object v2, Boolean listOrderMatters) {
@@ -189,20 +184,23 @@ public class JsonLdUtils {
     }
 
     /**
-     * Removes the @preserve keywords and blank node IDs to prune as the last step of the framing algorithm.
+     * Removes the @preserve keywords and blank node IDs to prune as the last
+     * step of the framing algorithm.
      *
      * @param ctx
      *            the active context used to compact the input.
      * @param input
      *            the framed, compacted output.
-     * @param toPrune The blank node IDs to prune.
+     * @param toPrune
+     *            The blank node IDs to prune.
      * @param options
      *            the compaction options used.
      *
      * @return the resulting output.
      * @throws JsonLdError
      */
-    static Object removePreserveAndPrune(Context ctx, Object input, JsonLdOptions opts, Set<Object> toPrune) throws JsonLdError {
+    static Object removePreserveAndPrune(Context ctx, Object input, JsonLdOptions opts,
+            Set<Object> toPrune) throws JsonLdError {
         // recurse through arrays
         if (isArray(input)) {
             final List<Object> output = new ArrayList<Object>();
@@ -230,20 +228,22 @@ public class JsonLdUtils {
 
             // recurse through @lists
             if (isList(input)) {
-                ((Map<String, Object>) input).put("@list",
-                        removePreserveAndPrune(ctx, ((Map<String, Object>) input).get("@list"), opts, toPrune));
+                ((Map<String, Object>) input).put("@list", removePreserveAndPrune(ctx,
+                        ((Map<String, Object>) input).get("@list"), opts, toPrune));
                 return input;
             }
 
             // recurse through properties
             for (final String prop : new LinkedHashSet<>(((Map<String, Object>) input).keySet())) {
-                Object result = removePreserveAndPrune(ctx, ((Map<String, Object>) input).get(prop), opts, toPrune);
+                Object result = removePreserveAndPrune(ctx, ((Map<String, Object>) input).get(prop),
+                        opts, toPrune);
                 final String container = ctx.getContainer(prop);
                 if (opts.getCompactArrays() && isArray(result)
                         && ((List<Object>) result).size() == 1 && container == null) {
                     result = ((List<Object>) result).get(0);
                 }
-                if(ctx.expandIri(prop, false, false, null, null).equals(JsonLdConsts.ID) && toPrune.contains(result)) {
+                if (ctx.expandIri(prop, false, false, null, null).equals(JsonLdConsts.ID)
+                        && toPrune.contains(result)) {
                     ((Map<String, Object>) input).remove(prop);
                 } else {
                     ((Map<String, Object>) input).put(prop, result);

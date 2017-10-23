@@ -59,5 +59,7 @@ public final class JsonLdConsts {
     public static final String BASE = "@base";
     public static final String REQUIRE_ALL = "@requireAll";
 
-    public enum Embed {	ALWAYS,	NEVER, LAST, LINK; }
+    public enum Embed {
+        ALWAYS, NEVER, LAST, LINK;
+    }
 }

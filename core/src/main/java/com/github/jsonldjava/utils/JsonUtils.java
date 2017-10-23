@@ -32,6 +32,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jsonldjava.core.DocumentLoader;
 import com.github.jsonldjava.core.JsonLdApi;
 import com.github.jsonldjava.core.JsonLdProcessor;
 
@@ -47,8 +48,19 @@ public class JsonUtils {
      * An HTTP Accept header that prefers JSONLD.
      */
     public static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
+
+    /**
+     * The user agent used by the default {@link CloseableHttpClient}.
+     * 
+     * This will not be used if
+     * {@link DocumentLoader#setHttpClient(CloseableHttpClient)} is called with
+     * a custom client.
+     */
+    public static final String JSONLD_JAVA_USER_AGENT = "JSONLD-Java";
+
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final JsonFactory JSON_FACTORY = new JsonFactory(JSON_MAPPER);
+
     private static volatile CloseableHttpClient DEFAULT_HTTP_CLIENT;
 
     static {
@@ -123,8 +135,8 @@ public class JsonUtils {
     }
 
     /**
-     * Parses a JSON-LD document from the given {@link JsonParser} to an object that
-     * can be used as input for the {@link JsonLdApi} and
+     * Parses a JSON-LD document from the given {@link JsonParser} to an object
+     * that can be used as input for the {@link JsonLdApi} and
      * {@link JsonLdProcessor} methods.
      *
      * @param jp
@@ -359,8 +371,8 @@ public class JsonUtils {
     private static CloseableHttpClient createDefaultHttpClient() {
         // Common CacheConfig for both the JarCacheStorage and the underlying
         // BasicHttpCacheStorage
-        final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
-                .setMaxObjectSize(1024 * 128).build();
+        final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(500)
+                .setMaxObjectSize(1024 * 256).build();
 
         final CloseableHttpClient result = CachingHttpClientBuilder.create()
                 // allow caching
@@ -369,10 +381,12 @@ public class JsonUtils {
                 .setHttpCacheStorage(new JarCacheStorage(null, cacheConfig,
                         new BasicHttpCacheStorage(cacheConfig)))
                 // Support compressed data
-                // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
+                // https://wayback.archive.org/web/20130901115452/http://hc.apache.org:80/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
                 .addInterceptorFirst(new RequestAcceptEncoding())
                 .addInterceptorFirst(new ResponseContentEncoding())
                 .setRedirectStrategy(DefaultRedirectStrategy.INSTANCE)
+                // User agent customisation
+                .setUserAgent(JSONLD_JAVA_USER_AGENT)
                 // use system defaults for proxy etc.
                 .useSystemProperties().build();
 

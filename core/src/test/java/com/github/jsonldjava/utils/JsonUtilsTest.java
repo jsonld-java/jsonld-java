@@ -2,7 +2,6 @@ package com.github.jsonldjava.utils;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -43,13 +42,13 @@ public class JsonUtilsTest {
 
     @Test
     public void testFromJsonParser() throws Exception {
-        ObjectMapper jsonMapper = new ObjectMapper();
-        JsonFactory jsonFactory = new JsonFactory(jsonMapper);
-        Reader testInputString = new StringReader("{}");
-        JsonParser jp = jsonFactory.createParser(testInputString);
-        JsonUtils.fromJsonParser(jp );
+        final ObjectMapper jsonMapper = new ObjectMapper();
+        final JsonFactory jsonFactory = new JsonFactory(jsonMapper);
+        final Reader testInputString = new StringReader("{}");
+        final JsonParser jp = jsonFactory.createParser(testInputString);
+        JsonUtils.fromJsonParser(jp);
     }
-    
+
     @Test
     public void trailingContent_1() throws JsonParseException, IOException {
         trailingContent("{}");
