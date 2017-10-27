@@ -4,8 +4,6 @@ jdk:
   - oraclejdk8
   - oraclejdk9
 notifications:
-  email:
-    - ansell.peter@gmail.com
-    - tristan.king@gmail.com
+  email: false
 after_success:
   - mvn clean test jacoco:report coveralls:report
