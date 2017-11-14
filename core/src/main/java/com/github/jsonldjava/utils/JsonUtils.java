@@ -13,7 +13,9 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.ByteOrderMark;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -89,8 +91,12 @@ public class JsonUtils {
      *             If there was an IO error during parsing.
      */
     public static Object fromInputStream(InputStream input) throws IOException {
+        //filter BOMs from InputStream
+        BOMInputStream bOMInputStream = new BOMInputStream(input, false, ByteOrderMark.UTF_8,
+                ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE,
+                ByteOrderMark.UTF_32BE, ByteOrderMark.UTF_32LE);
         // no readers from inputstreams w.o. encoding!!
-        return fromInputStream(input, "UTF-8");
+        return fromInputStream(bOMInputStream, "UTF-8");
     }
 
     /**

@@ -96,6 +96,15 @@ public class DocumentLoaderTest {
         assertEquals("ex:term2", term2.get("@id"));
     }
 
+    @Test
+    public void fromURLBomTest0004() throws Exception {
+        final URL contexttest = getClass().getResource("/custom/contexttest-0004.jsonld");
+        assertNotNull(contexttest);
+        final Object context = JsonUtils.fromURL(contexttest, documentLoader.getHttpClient());
+        assertTrue(context instanceof Map);
+        assertFalse(((Map<?, ?>) context).isEmpty());
+     }
+
     // @Ignore("Integration test")
     @Test
     public void fromURLredirectHTTPSToHTTP() throws Exception {
