@@ -97,9 +97,10 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void fromURLBomTest0003() throws Exception {
-        final URL url = new URL("http://wellcomelibrary.org/ld/iiif-ext/0/context.json");
-        final Object context = JsonUtils.fromURL(url, documentLoader.getHttpClient());
+    public void fromURLBomTest0004() throws Exception {
+        final URL contexttest = getClass().getResource("/custom/contexttest-0004.jsonld");
+        assertNotNull(contexttest);
+        final Object context = JsonUtils.fromURL(contexttest, documentLoader.getHttpClient());
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
      }

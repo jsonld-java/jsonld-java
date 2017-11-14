@@ -1,0 +1,28 @@
+﻿{
+  "@context": [
+    {
+      "wdl": "http://wellcomelibrary.org/iiif-ext/0#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+
+      "accessHint": {
+        "@id": "wdl:accessHint",
+        "@type": "@vocab"
+      },
+      "open": {
+        "@id": "wdl:openAccess",
+        "@type": "wdl:accessHint"
+      },
+      "clickthrough": {
+        "@id": "wdl:clickthrough",
+        "@type": "wdl:accessHint"
+      },
+      "credentials": {
+        "@id": "wdl:credentials",
+        "@type": "wdl:accessHint"
+      },
+      "authService": {
+        "@id": "wdl:suggestedAuthService"
+      }
+    }
+  ]
+}
