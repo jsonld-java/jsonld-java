@@ -96,6 +96,14 @@ public class DocumentLoaderTest {
         assertEquals("ex:term2", term2.get("@id"));
     }
 
+    @Test
+    public void fromURLBomTest0003() throws Exception {
+        final URL url = new URL("http://wellcomelibrary.org/ld/iiif-ext/0/context.json");
+        final Object context = JsonUtils.fromURL(url, documentLoader.getHttpClient());
+        assertTrue(context instanceof Map);
+        assertFalse(((Map<?, ?>) context).isEmpty());
+     }
+
     // @Ignore("Integration test")
     @Test
     public void fromURLredirectHTTPSToHTTP() throws Exception {
