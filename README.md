@@ -449,6 +449,9 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2017-11-15
+* Ignore UTF BOM (Patch by @christopher-johnson)
+
 ### 2017-08-26
 * Release 0.11.1
 * Fix @embed:@always support (Patch by @dr0i)
