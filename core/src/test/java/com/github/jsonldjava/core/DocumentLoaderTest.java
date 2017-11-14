@@ -143,13 +143,9 @@ public class DocumentLoaderTest {
         final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.addRequestProperty("Accept", "application/ld+json");
 
-        final InputStream directStream = urlConn.getInputStream();
-
         final StringWriter output = new StringWriter();
-        try {
+        try (final InputStream directStream = urlConn.getInputStream();) {
             IOUtils.copy(directStream, output, Charset.forName("UTF-8"));
-        } finally {
-            directStream.close();
         }
         final Object context = JsonUtils.fromReader(new StringReader(output.toString()));
         assertTrue(context instanceof Map);
@@ -336,10 +332,13 @@ public class DocumentLoaderTest {
         assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void differentHttpClient() throws Exception {
         // Custom http client
         try {
+            // Only using deprecated http client to verify that the usual HTTP
+            // client can be overridden
             documentLoader.setHttpClient(new SystemDefaultHttpClient());
             assertNotSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
         } finally {

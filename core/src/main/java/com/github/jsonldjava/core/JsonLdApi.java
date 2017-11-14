@@ -627,7 +627,7 @@ public class JsonLdApi {
                         }
                         // TODO: SPEC: no mention of empty map check
                         else if (frameExpansion && value instanceof Map) {
-                            if (((Map<String, Object>) value).size() != 0) {
+                            if (!((Map<String, Object>) value).isEmpty()) {
                                 throw new JsonLdError(Error.INVALID_TYPE_VALUE,
                                         "@type value must be a an empty object for framing");
                             }
@@ -919,7 +919,7 @@ public class JsonLdApi {
                 // 8.1)
                 // TODO: is this method faster than just using containsKey for
                 // each?
-                final Set<String> keySet = new HashSet(result.keySet());
+                final Set<String> keySet = new HashSet<>(result.keySet());
                 keySet.remove(JsonLdConsts.VALUE);
                 keySet.remove(JsonLdConsts.INDEX);
                 final boolean langremoved = keySet.remove(JsonLdConsts.LANGUAGE);

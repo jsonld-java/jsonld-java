@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -92,11 +93,22 @@ public class JsonUtils {
      */
     public static Object fromInputStream(InputStream input) throws IOException {
         // filter BOMs from InputStream
-        final BOMInputStream bOMInputStream = new BOMInputStream(input, false, ByteOrderMark.UTF_8,
-                ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE, ByteOrderMark.UTF_32BE,
-                ByteOrderMark.UTF_32LE);
-        // no readers from inputstreams w.o. encoding!!
-        return fromInputStream(bOMInputStream, "UTF-8");
+        try (final BOMInputStream bOMInputStream = new BOMInputStream(input, false,
+                ByteOrderMark.UTF_8, ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE,
+                ByteOrderMark.UTF_32BE, ByteOrderMark.UTF_32LE);) {
+            Charset charset = StandardCharsets.UTF_8;
+            // Attempt to use the BOM if it exists
+            if (bOMInputStream.hasBOM()) {
+                try {
+                    charset = Charset.forName(bOMInputStream.getBOMCharsetName());
+                } catch (final IllegalArgumentException e) {
+                    // If there are any issues with the BOM charset, attempt to
+                    // parse with UTF_8
+                    charset = StandardCharsets.UTF_8;
+                }
+            }
+            return fromInputStream(bOMInputStream, charset);
+        }
     }
 
     /**
@@ -116,6 +128,26 @@ public class JsonUtils {
      *             If there was an IO error during parsing.
      */
     public static Object fromInputStream(InputStream input, String enc) throws IOException {
+        return fromInputStream(input, Charset.forName(enc));
+    }
+
+    /**
+     * Parses a JSON-LD document from the given {@link InputStream} to an object
+     * that can be used as input for the {@link JsonLdApi} and
+     * {@link JsonLdProcessor} methods.
+     *
+     * @param input
+     *            The JSON-LD document in an InputStream.
+     * @param enc
+     *            The character encoding to use when interpreting the characters
+     *            in the InputStream.
+     * @return A JSON Object.
+     * @throws JsonParseException
+     *             If there was a JSON related error during parsing.
+     * @throws IOException
+     *             If there was an IO error during parsing.
+     */
+    public static Object fromInputStream(InputStream input, Charset enc) throws IOException {
         try (InputStreamReader in = new InputStreamReader(input, enc);
                 BufferedReader reader = new BufferedReader(in);) {
             return fromReader(reader);
@@ -348,13 +380,10 @@ public class JsonUtils {
         final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.addRequestProperty("Accept", ACCEPT_HEADER);
 
-        final InputStream directStream = urlConn.getInputStream();
-
         final StringWriter output = new StringWriter();
-        try {
-            IOUtils.copy(directStream, output, Charset.forName("UTF-8"));
+        try (final InputStream directStream = urlConn.getInputStream();) {
+            IOUtils.copy(directStream, output, StandardCharsets.UTF_8);
         } finally {
-            directStream.close();
             output.flush();
         }
         final Object context = JsonUtils.fromReader(new StringReader(output.toString()));
@@ -397,5 +426,9 @@ public class JsonUtils {
                 .useSystemProperties().build();
 
         return result;
+    }
+
+    private JsonUtils() {
+        // Static class, no access to constructor
     }
 }

@@ -23,6 +23,8 @@ import com.github.jsonldjava.utils.Obj;
  */
 public class Context extends LinkedHashMap<String, Object> {
 
+    private static final long serialVersionUID = 2894534897574805571L;
+
     private JsonLdOptions options;
     private Map<String, Object> termDefinitions;
     public Map<String, Object> inverse = null;
@@ -498,8 +500,7 @@ public class Context extends LinkedHashMap<String, Object> {
         }
         // 3)
         if (vocab && this.termDefinitions.containsKey(value)) {
-            final Map<String, Object> td = (LinkedHashMap<String, Object>) this.termDefinitions
-                    .get(value);
+            final Map<String, Object> td = (Map<String, Object>) this.termDefinitions.get(value);
             if (td != null) {
                 return (String) td.get(JsonLdConsts.ID);
             } else {
@@ -523,7 +524,7 @@ public class Context extends LinkedHashMap<String, Object> {
             }
             // 4.4)
             if (this.termDefinitions.containsKey(prefix)) {
-                return (String) ((LinkedHashMap<String, Object>) this.termDefinitions.get(prefix))
+                return (String) ((Map<String, Object>) this.termDefinitions.get(prefix))
                         .get(JsonLdConsts.ID) + suffix;
             }
             // 4.5)

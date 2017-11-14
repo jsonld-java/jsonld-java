@@ -328,11 +328,12 @@ public class JsonLdUtils {
         // 2. If it has an @id key its value begins with '_:'.
         // 3. It has no keys OR is not a @value, @set, or @list.
         if (v instanceof Map) {
-            if (((Map) v).containsKey("@id")) {
-                return ((String) ((Map) v).get("@id")).startsWith("_:");
+            final Map<String, Object> map = (Map<String, Object>) v;
+            if (map.containsKey("@id")) {
+                return ((String) map.get("@id")).startsWith("_:");
             } else {
-                return ((Map) v).size() == 0 || !(((Map) v).containsKey("@value")
-                        || ((Map) v).containsKey("@set") || ((Map) v).containsKey("@list"));
+                return map.isEmpty() || !map.containsKey("@value") || map.containsKey("@set")
+                        || map.containsKey("@list");
             }
         }
         return false;
