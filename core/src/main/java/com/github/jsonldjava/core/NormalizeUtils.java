@@ -435,8 +435,10 @@ class NormalizeUtils {
                 .get(id)).get("quads");
         final List<String> nquads = new ArrayList<String>();
         for (int i = 0; i < quads.size(); ++i) {
-            nquads.add(toNQuad((RDFDataset.Quad) quads.get(i), quads.get(i).get("name") != null
-                    ? (String) ((Map<String, Object>) quads.get(i).get("name")).get("value") : null,
+            nquads.add(toNQuad((RDFDataset.Quad) quads.get(i),
+                    quads.get(i).get("name") != null
+                            ? (String) ((Map<String, Object>) quads.get(i).get("name")).get("value")
+                            : null,
                     id));
         }
         // sort serialized quads
@@ -492,7 +494,8 @@ class NormalizeUtils {
     private static String getAdjacentBlankNodeName(Map<String, Object> node, String id) {
         return "blank node".equals(node.get("type"))
                 && (!node.containsKey("value") || !Obj.equals(node.get("value"), id))
-                        ? (String) node.get("value") : null;
+                        ? (String) node.get("value")
+                        : null;
     }
 
     private static class Permutator {

@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -161,16 +162,14 @@ public class JsonLdProcessorTest {
         String reportFormat = System.getProperty("report.format");
         if (reportFormat != null) {
             reportFormat = reportFormat.toLowerCase();
-        } else {
-            return; // nothing to do
-        }
-
-        if ("application/ld+json".equals(reportFormat) || "jsonld".equals(reportFormat)
-                || "*".equals(reportFormat)) {
-            System.out.println("Generating JSON-LD Report");
-            JsonUtils.writePrettyPrint(
-                    new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".jsonld")),
-                    REPORT);
+            if ("application/ld+json".equals(reportFormat) || "jsonld".equals(reportFormat)
+                    || "*".equals(reportFormat)) {
+                System.out.println("Generating JSON-LD Report");
+                JsonUtils.writePrettyPrint(
+                        new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".jsonld"),
+                                StandardCharsets.UTF_8),
+                        REPORT);
+            }
         }
     }
 
@@ -563,8 +562,9 @@ public class JsonLdProcessorTest {
 
         assertTrue("\nFailed test: " + group + test.get("@id") + " " + test.get("name") + " ("
                 + test.get("input") + "," + test.get("expect") + ")\n" + "expected: "
-                + JsonUtils.toPrettyString(expect) + "\nresult: " + (result instanceof JsonLdError
-                        ? ((JsonLdError) result).toString() : JsonUtils.toPrettyString(result)),
+                + JsonUtils.toPrettyString(expect) + "\nresult: "
+                + (result instanceof JsonLdError ? ((JsonLdError) result).toString()
+                        : JsonUtils.toPrettyString(result)),
                 testpassed);
     }
 

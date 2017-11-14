@@ -103,7 +103,7 @@ public class DocumentLoaderTest {
         final Object context = JsonUtils.fromURL(contexttest, documentLoader.getHttpClient());
         assertTrue(context instanceof Map);
         assertFalse(((Map<?, ?>) context).isEmpty());
-     }
+    }
 
     // @Ignore("Integration test")
     @Test

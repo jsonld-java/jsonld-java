@@ -53,7 +53,7 @@ public class JsonUtils {
 
     /**
      * The user agent used by the default {@link CloseableHttpClient}.
-     * 
+     *
      * This will not be used if
      * {@link DocumentLoader#setHttpClient(CloseableHttpClient)} is called with
      * a custom client.
@@ -91,10 +91,10 @@ public class JsonUtils {
      *             If there was an IO error during parsing.
      */
     public static Object fromInputStream(InputStream input) throws IOException {
-        //filter BOMs from InputStream
-        BOMInputStream bOMInputStream = new BOMInputStream(input, false, ByteOrderMark.UTF_8,
-                ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE,
-                ByteOrderMark.UTF_32BE, ByteOrderMark.UTF_32LE);
+        // filter BOMs from InputStream
+        final BOMInputStream bOMInputStream = new BOMInputStream(input, false, ByteOrderMark.UTF_8,
+                ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE, ByteOrderMark.UTF_32BE,
+                ByteOrderMark.UTF_32LE);
         // no readers from inputstreams w.o. encoding!!
         return fromInputStream(bOMInputStream, "UTF-8");
     }
