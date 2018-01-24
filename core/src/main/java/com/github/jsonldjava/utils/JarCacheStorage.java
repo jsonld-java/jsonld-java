@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -61,6 +62,8 @@ public class JarCacheStorage implements HttpCacheStorage {
      */
     protected final ConcurrentMap<URI, SoftReference<JsonNode>> jarCaches = new ConcurrentHashMap<URI, SoftReference<JsonNode>>();
 
+    private volatile List<URL> cachedResourceList;
+
     public ClassLoader getClassLoader() {
         if (classLoader != null) {
             return classLoader;
@@ -90,7 +93,7 @@ public class JarCacheStorage implements HttpCacheStorage {
 
     @Override
     public HttpCacheEntry getEntry(String key) throws IOException {
-        log.trace("Requesting " + key);
+        log.trace("Requesting {}", key);
         URI requestedUri;
         try {
             requestedUri = new URI(key);
@@ -107,17 +110,13 @@ public class JarCacheStorage implements HttpCacheStorage {
             }
         }
 
-        final Enumeration<URL> jarcaches = getResources();
-        while (jarcaches.hasMoreElements()) {
-            final URL url = jarcaches.nextElement();
-
+        for(final URL url : getResources()) {
             final JsonNode tree = getJarCache(url);
             // TODO: Cache tree per URL
             for (final JsonNode node : tree) {
                 final URI uri = URI.create(node.get("Content-Location").asText());
                 if (uri.equals(requestedUri)) {
                     return cacheEntry(requestedUri, url, node);
-
                 }
             }
         }
@@ -126,13 +125,28 @@ public class JarCacheStorage implements HttpCacheStorage {
         return delegate.getEntry(key);
     }
 
-    private Enumeration<URL> getResources() throws IOException {
-        final ClassLoader cl = getClassLoader();
-        if (cl != null) {
-            return cl.getResources(JARCACHE_JSON);
-        } else {
-            return ClassLoader.getSystemResources(JARCACHE_JSON);
+    /**
+     * Get all of the {@code jarcache.json} resources that exist on the classpath
+     * 
+     * @return A cached list of jarcache.json classpath resources as {@link URL}s
+     * @throws IOException If there was an IO error while scanning the classpath
+     */
+    private List<URL> getResources() throws IOException {
+        List<URL> result = cachedResourceList;
+        if(result == null) {
+            synchronized(this) {
+                result = cachedResourceList;
+                if(result == null) {
+                    final ClassLoader cl = getClassLoader();
+                    if (cl != null) {
+                        result = cachedResourceList = Collections.list(cl.getResources(JARCACHE_JSON));
+                    } else {
+                        result = cachedResourceList = Collections.list(ClassLoader.getSystemResources(JARCACHE_JSON));
+                    }
+                }
+            }
         }
+        return result;
     }
 
     protected JsonNode getJarCache(URL url) throws IOException, JsonProcessingException {
@@ -152,6 +166,7 @@ public class JarCacheStorage implements HttpCacheStorage {
             if (jarCache != null) {
                 return jarCache;
             } else {
+                // SoftReference was Garbage Collected, remove it from cache
                 jarCaches.remove(uri);
             }
         }
@@ -178,7 +193,7 @@ public class JarCacheStorage implements HttpCacheStorage {
     protected HttpCacheEntry cacheEntry(URI requestedUri, URL baseURL, JsonNode cacheNode)
             throws MalformedURLException, IOException {
         final URL classpath = new URL(baseURL, cacheNode.get("X-Classpath").asText());
-        log.debug("Cache hit for " + requestedUri);
+        log.debug("Cache hit for {}", requestedUri);
         log.trace("{}", cacheNode);
 
         final List<Header> responseHeaders = new ArrayList<Header>();
@@ -195,7 +210,6 @@ public class JarCacheStorage implements HttpCacheStorage {
         while (fieldNames.hasNext()) {
             final String headerName = fieldNames.next();
             final JsonNode header = cacheNode.get(headerName);
-            // TODO: Support multiple headers with []
             responseHeaders.add(new BasicHeader(headerName, header.asText()));
         }
 
