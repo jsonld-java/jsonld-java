@@ -447,6 +447,9 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2018-01-25
+* Fix resource leak in JsonUtils.fromURL on unsuccessful requests (Patch by @plaplaige)
+
 ### 2017-11-15
 * Ignore UTF BOM (Patch by @christopher-johnson)
 

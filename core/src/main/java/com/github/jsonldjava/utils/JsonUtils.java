@@ -334,6 +334,7 @@ public class JsonUtils {
         final String protocol = url.getProtocol();
         // We can only use the Apache HTTPClient for HTTP/HTTPS, so use the
         // native java client for the others
+        CloseableHttpResponse response = null;
         InputStream in = null;
         try {
             if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
@@ -348,7 +349,7 @@ public class JsonUtils {
                 // or whatever is available
                 request.addHeader("Accept", ACCEPT_HEADER);
 
-                final CloseableHttpResponse response = httpClient.execute(request);
+                response = httpClient.execute(request);
                 final int status = response.getStatusLine().getStatusCode();
                 if (status != 200 && status != 203) {
                     throw new IOException("Can't retrieve " + url + ", status code: " + status);
@@ -357,8 +358,14 @@ public class JsonUtils {
             }
             return fromInputStream(in);
         } finally {
-            if (in != null) {
-                in.close();
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } finally {
+                if (response != null) {
+                    response.close();
+                }
             }
         }
     }
