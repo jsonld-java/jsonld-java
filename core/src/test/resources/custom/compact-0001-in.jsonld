@@ -1,0 +1,15 @@
+{
+"@id":"http://example.com/people#john",
+"unemployed":{
+	"@type":"xsd:boolean",
+	"@value":"true"
+},
+"age":{
+	"@type":"xsd:integer",
+	"@value":"23"
+},
+"homepage":[
+	"http://personal.example.org/john",
+	"http://work.example.com/jsmith/"
+]
+}
