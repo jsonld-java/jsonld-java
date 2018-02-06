@@ -8,6 +8,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 
 import com.github.jsonldjava.utils.JsonUtils;
 
+/**
+ * Resolves URLs to RemoteDocuments. Subclass this class to change the behaviour of loadDocument to suit your purposes.
+ */
 public class DocumentLoader {
 
     private final Map<String, Object> m_injectedDocs = new HashMap<>();
@@ -77,6 +80,9 @@ public class DocumentLoader {
         return result;
     }
 
+    /**
+     * Call this method to override the default CloseableHttpClient provided by JsonUtils.getDefaultHttpClient.
+     */
     public void setHttpClient(CloseableHttpClient nextHttpClient) {
         httpClient = nextHttpClient;
     }
