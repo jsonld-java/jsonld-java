@@ -414,7 +414,8 @@ public class JsonUtils {
         // Common CacheConfig for both the JarCacheStorage and the underlying
         // BasicHttpCacheStorage
         final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(500)
-                .setMaxObjectSize(1024 * 256).build();
+                .setMaxObjectSize(1024 * 256).setSharedCache(false)
+                .setHeuristicCachingEnabled(true).setHeuristicDefaultLifetime(86400).build();
 
         final CloseableHttpClient result = CachingHttpClientBuilder.create()
                 // allow caching

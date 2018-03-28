@@ -95,7 +95,7 @@ public class JarCacheStorage implements HttpCacheStorage {
         try {
             requestedUri = new URI(key);
         } catch (final URISyntaxException e) {
-            return null;
+            return delegate.getEntry(key);
         }
         if ((requestedUri.getScheme().equals("http") && requestedUri.getPort() == 80)
                 || (requestedUri.getScheme().equals("https") && requestedUri.getPort() == 443)) {

@@ -404,4 +404,22 @@ public class DocumentLoaderTest {
                 .get(0)).get("http://nonexisting.example.com/thing/pony")).get(0)).get("@value");
         assertEquals(5, v);
     }
+
+    @Test
+    public void testRemoteContextCaching() throws Exception {
+        final String[] urls = {"http://schema.org/", "http://schema.org/docs/jsonldcontext.json"};
+        for (String url : urls) {
+            long start = System.currentTimeMillis();
+            for (int i = 1; i <= 10000; i++) {
+                documentLoader.loadDocument(url);
+
+                long seconds = (System.currentTimeMillis() - start) / 1000;
+
+                if (seconds > 60) {
+                    fail(String.format("Took %s seconds to access %s %s times", seconds, url, i));
+                    break;
+                }
+            }
+        }
+    }
 }
