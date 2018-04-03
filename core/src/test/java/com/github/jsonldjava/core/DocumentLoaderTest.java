@@ -410,7 +410,7 @@ public class DocumentLoaderTest {
         final String[] urls = {"http://schema.org/", "http://schema.org/docs/jsonldcontext.json"};
         for (String url : urls) {
             long start = System.currentTimeMillis();
-            for (int i = 1; i <= 10000; i++) {
+            for (int i = 1; i <= 1000; i++) {
                 documentLoader.loadDocument(url);
 
                 long seconds = (System.currentTimeMillis() - start) / 1000;
