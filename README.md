@@ -447,6 +447,13 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2018-04-03
+* Fix performance issue caused by not caching schema.org and others that use ``Cache-Control: private`` (Patch by @HansBrende)
+* Cache classpath scans for jarcache.json to fix a similar performance issue
+* Add internal shaded dependency on Google Guava to use maintained soft and weak reference maps rather than adhoc versions
+* Make JsonLdError a RuntimeException to improve its use in closures
+* Bump minor version to 0.12 to reflect the API incompatibility caused by JsonLdError and protected field change and hiding in JarCacheStorage
+
 ### 2018-01-25
 * Fix resource leak in JsonUtils.fromURL on unsuccessful requests (Patch by @plaplaige)
 
