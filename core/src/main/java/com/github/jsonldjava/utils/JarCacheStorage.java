@@ -173,17 +173,23 @@ public class JarCacheStorage implements HttpCacheStorage {
      */
     private List<URL> getResources() throws IOException {
         final ClassLoader cl = getClassLoader();
-        return cachedResourceList.computeIfAbsent(cl, nextCl -> {
-            try {
-                if (nextCl != null) {
-                    return Collections.list(nextCl.getResources(JARCACHE_JSON));
-                } else {
-                    return Collections.list(ClassLoader.getSystemResources(JARCACHE_JSON));
+        try {
+            return cachedResourceList.computeIfAbsent(cl, nextCl -> {
+                try {
+                    if (nextCl != null) {
+                        return Collections.list(nextCl.getResources(JARCACHE_JSON));
+                    } else {
+                        return Collections.list(ClassLoader.getSystemResources(JARCACHE_JSON));
+                    }
+                } catch (IOException e) {
+                    throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR, e);
                 }
-            } catch (IOException e) {
-                throw new JsonLdError(JsonLdError.Error.LOADING_INJECTED_CONTEXT_FAILED, e);
-            }
-        });
+            });
+        } catch (JsonLdError e) {
+            // Horrible hack to enable the use of computeIfAbsent to simplify
+            // creation of new cached resource lists
+            throw (IOException) e.getCause();
+        }
     }
 
     protected JsonNode getJarCache(URL url) throws IOException, JsonProcessingException {
