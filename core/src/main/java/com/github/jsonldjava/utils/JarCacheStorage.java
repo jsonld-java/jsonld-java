@@ -42,6 +42,12 @@ import com.google.common.collect.MapMaker;
 
 public class JarCacheStorage implements HttpCacheStorage {
 
+    /**
+     * The classpath location that is searched inside of the classloader set for
+     * this cache. Note this search is also done on the Thread
+     * contextClassLoader if none is explicitly set, and the System classloader
+     * if there is no contextClassLoader.
+     */
     private static final String JARCACHE_JSON = "jarcache.json";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
