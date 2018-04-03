@@ -61,6 +61,15 @@ public class JarCacheStorage implements HttpCacheStorage {
     private ClassLoader classLoader = null;
 
     /**
+     * A holder for the case where the System class loader needs to be used, but
+     * cannot be directly identified in another way.
+     * 
+     * Used as a key in cachedResourceList.
+     */
+    private final ClassLoader NULL_CLASS_LOADER = new ClassLoader() {
+    };
+
+    /**
      * All live caching that is not found locally is delegated to this
      * implementation.
      */
@@ -178,11 +187,18 @@ public class JarCacheStorage implements HttpCacheStorage {
      *             If there was an IO error while scanning the classpath
      */
     private List<URL> getResources() throws IOException {
-        final ClassLoader cl = getClassLoader();
+        ClassLoader cl = getClassLoader();
+
+        // ConcurrentHashMap doesn't support null keys, so substitute a pseudo
+        // key
+        if (cl == null) {
+            cl = NULL_CLASS_LOADER;
+        }
+
         try {
             return cachedResourceList.computeIfAbsent(cl, nextCl -> {
                 try {
-                    if (nextCl != null) {
+                    if (nextCl != NULL_CLASS_LOADER) {
                         return Collections.list(nextCl.getResources(JARCACHE_JSON));
                     } else {
                         return Collections.list(ClassLoader.getSystemResources(JARCACHE_JSON));
