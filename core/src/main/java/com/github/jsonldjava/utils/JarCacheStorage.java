@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -91,33 +92,37 @@ public class JarCacheStorage implements HttpCacheStorage {
     @Override
     public HttpCacheEntry getEntry(String key) throws IOException {
         log.trace("Requesting " + key);
-        URI requestedUri;
+        Optional<URI> parsedUri = Optional.empty();
         try {
-            requestedUri = new URI(key);
+            parsedUri = Optional.of(new URI(key));
         } catch (final URISyntaxException e) {
-            return delegate.getEntry(key);
+            parsedUri = Optional.empty();
         }
-        if ((requestedUri.getScheme().equals("http") && requestedUri.getPort() == 80)
-                || (requestedUri.getScheme().equals("https") && requestedUri.getPort() == 443)) {
-            // Strip away default http ports
-            try {
-                requestedUri = new URI(requestedUri.getScheme(), requestedUri.getHost(),
-                        requestedUri.getPath(), requestedUri.getFragment());
-            } catch (final URISyntaxException e) {
+        if (parsedUri.isPresent()) {
+            URI requestedUri = parsedUri.get();
+            if ((requestedUri.getScheme().equals("http") && requestedUri.getPort() == 80)
+                    || (requestedUri.getScheme().equals("https")
+                            && requestedUri.getPort() == 443)) {
+                // Strip away default http ports
+                try {
+                    requestedUri = new URI(requestedUri.getScheme(), requestedUri.getHost(),
+                            requestedUri.getPath(), requestedUri.getFragment());
+                } catch (final URISyntaxException e) {
+                }
             }
-        }
 
-        final Enumeration<URL> jarcaches = getResources();
-        while (jarcaches.hasMoreElements()) {
-            final URL url = jarcaches.nextElement();
+            final Enumeration<URL> jarcaches = getResources();
+            while (jarcaches.hasMoreElements()) {
+                final URL url = jarcaches.nextElement();
 
-            final JsonNode tree = getJarCache(url);
-            // TODO: Cache tree per URL
-            for (final JsonNode node : tree) {
-                final URI uri = URI.create(node.get("Content-Location").asText());
-                if (uri.equals(requestedUri)) {
-                    return cacheEntry(requestedUri, url, node);
+                final JsonNode tree = getJarCache(url);
+                // TODO: Cache tree per URL
+                for (final JsonNode node : tree) {
+                    final URI uri = URI.create(node.get("Content-Location").asText());
+                    if (uri.equals(requestedUri)) {
+                        return cacheEntry(requestedUri, url, node);
 
+                    }
                 }
             }
         }
