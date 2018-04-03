@@ -78,10 +78,13 @@ public class JarCacheStorage implements HttpCacheStorage {
             });
 
     /**
-     * Create a Guava concurrent weak reference key map to avoid holding onto
+     * Cached URLs from the given ClassLoader to identified locations of
+     * jarcache.json resources on the classpath
+     * 
+     * Uses a Guava concurrent weak reference key map to avoid holding onto
      * ClassLoader instances after they are otherwise unavailable.
      */
-    private final ConcurrentMap<ClassLoader, List<URL>> cachedResourceList = new MapMaker()
+    private static final ConcurrentMap<ClassLoader, List<URL>> cachedResourceList = new MapMaker()
             .concurrencyLevel(4).weakKeys().makeMap();
 
     public ClassLoader getClassLoader() {
@@ -128,7 +131,7 @@ public class JarCacheStorage implements HttpCacheStorage {
         try {
             parsedUri = Optional.of(new URI(key));
         } catch (final URISyntaxException e) {
-            parsedUri = Optional.empty();
+            // Ignore, will delegate this request
         }
         if (parsedUri.isPresent()) {
             URI requestedUri = parsedUri.get();
