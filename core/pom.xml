@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>jsonld-java-parent</artifactId>
 		<groupId>com.github.jsonld-java</groupId>
-		<version>0.12.0</version>
+		<version>0.12.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jsonld-java</artifactId>
@@ -81,6 +81,14 @@
 						</relocation>
 					</relocations>
 					<minimizeJar>true</minimizeJar>
+					<filters>
+						<filter>
+							<artifact>com.google.guava:guava</artifact>
+							<excludes>
+								<exclude>META-INF/maven/**</exclude>
+							</excludes>
+						</filter>
+				</filters>
 				</configuration>
 				<executions>
 					<execution>
