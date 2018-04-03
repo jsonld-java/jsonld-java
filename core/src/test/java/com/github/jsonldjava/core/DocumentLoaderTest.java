@@ -304,8 +304,6 @@ public class DocumentLoaderTest {
     public void jarCacheMissThreadCtx() throws Exception {
         final URLClassLoader findNothingCL = new URLClassLoader(new URL[] {}, null);
         Thread.currentThread().setContextClassLoader(findNothingCL);
-        // Must create a new CloseableHttpClient as the previous instance will not pickup the new classloader due to caching
-        documentLoader.setHttpClient(JsonUtils.createDefaultHttpClient());
         JsonUtils.fromURL(new URL("http://nonexisting.example.com/context"),
                 documentLoader.getHttpClient());
     }
@@ -323,8 +321,6 @@ public class DocumentLoaderTest {
 
         final ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
         Thread.currentThread().setContextClassLoader(cl);
-        // Must create a new CloseableHttpClient as the previous instance will not pickup the new classloader due to caching
-        documentLoader.setHttpClient(JsonUtils.createDefaultHttpClient());
         final Object hello = JsonUtils.fromURL(url, documentLoader.getHttpClient());
         assertTrue(hello instanceof Map);
         assertEquals("World!", ((Map) hello).get("Hello"));
@@ -411,7 +407,7 @@ public class DocumentLoaderTest {
 
     @Test
     public void testRemoteContextCaching() throws Exception {
-        final String[] urls = {"http://schema.org/", "http://schema.org/docs/jsonldcontext.json"};
+        final String[] urls = { "http://schema.org/", "http://schema.org/docs/jsonldcontext.json" };
         for (String url : urls) {
             long start = System.currentTimeMillis();
             for (int i = 1; i <= 1000; i++) {
