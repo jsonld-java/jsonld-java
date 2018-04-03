@@ -68,7 +68,7 @@ public class JarCacheStorage implements HttpCacheStorage {
      *
      * @see #getJarCache(URL)
      */
-    protected final LoadingCache<URL, JsonNode> jarCaches = CacheBuilder.newBuilder()
+    private final LoadingCache<URL, JsonNode> jarCaches = CacheBuilder.newBuilder()
             .concurrencyLevel(4).maximumSize(100).softValues()
             .build(new CacheLoader<URL, JsonNode>() {
                 @Override
@@ -85,8 +85,9 @@ public class JarCacheStorage implements HttpCacheStorage {
             .concurrencyLevel(4).weakKeys().makeMap();
 
     public ClassLoader getClassLoader() {
-        if (classLoader != null) {
-            return classLoader;
+        ClassLoader nextClassLoader = classLoader;
+        if (nextClassLoader != null) {
+            return nextClassLoader;
         }
         return Thread.currentThread().getContextClassLoader();
     }
