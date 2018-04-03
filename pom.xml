@@ -204,7 +204,8 @@
 				<artifactId>commons-io</artifactId>
 				<version>2.6</version>
 			</dependency>
-			<!-- Reuse Guava, but shade it to avoid transitive classpath issues for users given the high major release rate-->
+			<!-- Reuse Guava, but shade it to avoid transitive classpath issues for 
+				users given the high major release rate -->
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
