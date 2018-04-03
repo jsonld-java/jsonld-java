@@ -9,11 +9,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpVersion;
@@ -35,6 +36,11 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jsonldjava.core.JsonLdError;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.MapMaker;
 
 public class JarCacheStorage implements HttpCacheStorage {
 
@@ -44,7 +50,11 @@ public class JarCacheStorage implements HttpCacheStorage {
 
     private final CacheConfig cacheConfig;
 
-    private ClassLoader classLoader;
+    /**
+     * The classloader to use, defaults to null which will use the thread
+     * context classloader.
+     */
+    private ClassLoader classLoader = null;
 
     /**
      * All live caching that is not found locally is delegated to this
@@ -60,9 +70,21 @@ public class JarCacheStorage implements HttpCacheStorage {
      *
      * @see #getJarCache(URL)
      */
-    protected final ConcurrentMap<URI, SoftReference<JsonNode>> jarCaches = new ConcurrentHashMap<URI, SoftReference<JsonNode>>();
+    protected final LoadingCache<URL, JsonNode> jarCaches = CacheBuilder.newBuilder()
+            .concurrencyLevel(4).maximumSize(100).softValues()
+            .build(new CacheLoader<URL, JsonNode>() {
+                @Override
+                public JsonNode load(URL url) throws Exception {
+                    return mapper.readTree(url);
+                }
+            });
 
-    private volatile List<URL> cachedResourceList;
+    /**
+     * Create a Guava concurrent weak reference key map to avoid holding onto
+     * ClassLoader instances after they are otherwise unavailable.
+     */
+    private final ConcurrentMap<ClassLoader, List<URL>> cachedResourceList = new MapMaker()
+            .concurrencyLevel(4).weakKeys().makeMap();
 
     public ClassLoader getClassLoader() {
         if (classLoader != null) {
@@ -71,6 +93,15 @@ public class JarCacheStorage implements HttpCacheStorage {
         return Thread.currentThread().getContextClassLoader();
     }
 
+    /**
+     * Sets the ClassLoader used internally to a new value, or null to use
+     * {@link Thread#currentThread()} and {@link Thread#getContextClassLoader()}
+     * for each access.
+     * 
+     * @param classLoader
+     *            The classloader to use, or null to use the thread context
+     *            classloader
+     */
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
@@ -94,29 +125,33 @@ public class JarCacheStorage implements HttpCacheStorage {
     @Override
     public HttpCacheEntry getEntry(String key) throws IOException {
         log.trace("Requesting {}", key);
-        URI requestedUri;
+        Optional<URI> parsedUri = Optional.empty();
         try {
-            requestedUri = new URI(key);
+            parsedUri = Optional.of(new URI(key));
         } catch (final URISyntaxException e) {
-            return null;
+            parsedUri = Optional.empty();
         }
-        if ((requestedUri.getScheme().equals("http") && requestedUri.getPort() == 80)
-                || (requestedUri.getScheme().equals("https") && requestedUri.getPort() == 443)) {
-            // Strip away default http ports
-            try {
-                requestedUri = new URI(requestedUri.getScheme(), requestedUri.getHost(),
-                        requestedUri.getPath(), requestedUri.getFragment());
-            } catch (final URISyntaxException e) {
+        if (parsedUri.isPresent()) {
+            URI requestedUri = parsedUri.get();
+            if ((requestedUri.getScheme().equals("http") && requestedUri.getPort() == 80)
+                    || (requestedUri.getScheme().equals("https")
+                            && requestedUri.getPort() == 443)) {
+                // Strip away default http ports
+                try {
+                    requestedUri = new URI(requestedUri.getScheme(), requestedUri.getHost(),
+                            requestedUri.getPath(), requestedUri.getFragment());
+                } catch (final URISyntaxException e) {
+                }
             }
-        }
 
-        for(final URL url : getResources()) {
-            final JsonNode tree = getJarCache(url);
-            // TODO: Cache tree per URL
-            for (final JsonNode node : tree) {
-                final URI uri = URI.create(node.get("Content-Location").asText());
-                if (uri.equals(requestedUri)) {
-                    return cacheEntry(requestedUri, url, node);
+            for (final URL url : getResources()) {
+                final JsonNode tree = getJarCache(url);
+                // TODO: Cache tree per URL
+                for (final JsonNode node : tree) {
+                    final URI uri = URI.create(node.get("Content-Location").asText());
+                    if (uri.equals(requestedUri)) {
+                        return cacheEntry(requestedUri, url, node);
+                    }
                 }
             }
         }
@@ -126,68 +161,35 @@ public class JarCacheStorage implements HttpCacheStorage {
     }
 
     /**
-     * Get all of the {@code jarcache.json} resources that exist on the classpath
+     * Get all of the {@code jarcache.json} resources that exist on the
+     * classpath
      * 
-     * @return A cached list of jarcache.json classpath resources as {@link URL}s
-     * @throws IOException If there was an IO error while scanning the classpath
+     * @return A cached list of jarcache.json classpath resources as
+     *         {@link URL}s
+     * @throws IOException
+     *             If there was an IO error while scanning the classpath
      */
     private List<URL> getResources() throws IOException {
-        List<URL> result = cachedResourceList;
-        if(result == null) {
-            synchronized(this) {
-                result = cachedResourceList;
-                if(result == null) {
-                    final ClassLoader cl = getClassLoader();
-                    if (cl != null) {
-                        result = cachedResourceList = Collections.list(cl.getResources(JARCACHE_JSON));
-                    } else {
-                        result = cachedResourceList = Collections.list(ClassLoader.getSystemResources(JARCACHE_JSON));
-                    }
+        final ClassLoader cl = getClassLoader();
+        return cachedResourceList.computeIfAbsent(cl, nextCl -> {
+            try {
+                if (nextCl != null) {
+                    return Collections.list(nextCl.getResources(JARCACHE_JSON));
+                } else {
+                    return Collections.list(ClassLoader.getSystemResources(JARCACHE_JSON));
                 }
+            } catch (IOException e) {
+                throw new JsonLdError(JsonLdError.Error.LOADING_INJECTED_CONTEXT_FAILED, e);
             }
-        }
-        return result;
+        });
     }
 
     protected JsonNode getJarCache(URL url) throws IOException, JsonProcessingException {
-
-        URI uri;
         try {
-            uri = url.toURI();
-        } catch (final URISyntaxException e) {
-            throw new IllegalArgumentException("Invalid jarCache URI " + url, e);
+            return jarCaches.get(url);
+        } catch (ExecutionException e) {
+            throw new IOException("Failed to retrieve jar cache for URL: " + url, e);
         }
-
-        // Check if we have one from before - we'll use SoftReference so that
-        // the maps reference is not counted for garbage collection purposes
-        final SoftReference<JsonNode> jarCacheRef = jarCaches.get(uri);
-        if (jarCacheRef != null) {
-            final JsonNode jarCache = jarCacheRef.get();
-            if (jarCache != null) {
-                return jarCache;
-            } else {
-                // SoftReference was Garbage Collected, remove it from cache
-                jarCaches.remove(uri);
-            }
-        }
-
-        // Only parse again if the optimistic get failed
-        final JsonNode tree = mapper.readTree(url);
-        // Use putIfAbsent to ensure concurrent reads do not return different
-        // JsonNode objects, for memory management purposes
-        final SoftReference<JsonNode> putIfAbsent = jarCaches.putIfAbsent(uri,
-                new SoftReference<JsonNode>(tree));
-        if (putIfAbsent != null) {
-            final JsonNode returnValue = putIfAbsent.get();
-            if (returnValue != null) {
-                return returnValue;
-            } else {
-                // Force update the reference if the existing reference had
-                // been garbage collected
-                jarCaches.put(uri, new SoftReference<JsonNode>(tree));
-            }
-        }
-        return tree;
     }
 
     protected HttpCacheEntry cacheEntry(URI requestedUri, URL baseURL, JsonNode cacheNode)

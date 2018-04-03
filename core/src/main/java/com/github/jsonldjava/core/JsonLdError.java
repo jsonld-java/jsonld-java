@@ -1,6 +1,6 @@
 package com.github.jsonldjava.core;
 
-public class JsonLdError extends Exception {
+public class JsonLdError extends RuntimeException {
 
     private static final long serialVersionUID = -8685402790466459014L;
     private final Error type;
