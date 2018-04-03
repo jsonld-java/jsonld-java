@@ -1,7 +1,6 @@
 package com.github.jsonldjava.utils;
 
 import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,7 +11,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
@@ -74,7 +72,7 @@ public class JarCacheStorage implements HttpCacheStorage {
             .concurrencyLevel(4).maximumSize(100).softValues()
             .build(new CacheLoader<URL, JsonNode>() {
                 @Override
-                public JsonNode load(URL url) throws Exception {
+                public JsonNode load(URL url) throws IOException {
                     return mapper.readTree(url);
                 }
             });
