@@ -80,6 +80,7 @@
 							<shadedPattern>com.github.jsonldjava.shaded.com.google.common</shadedPattern>
 						</relocation>
 					</relocations>
+					<minimizeJar>true</minimizeJar>
 				</configuration>
 				<executions>
 					<execution>
