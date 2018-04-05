@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.jsonldjava.core.JsonLdError;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -66,8 +65,7 @@ public class JarCacheStorage implements HttpCacheStorage {
      * 
      * Used as a key in cachedResourceList.
      */
-    private final ClassLoader NULL_CLASS_LOADER = new ClassLoader() {
-    };
+    private static final Object NULL_CLASS_LOADER = new Object();
 
     /**
      * All live caching that is not found locally is delegated to this
@@ -99,7 +97,7 @@ public class JarCacheStorage implements HttpCacheStorage {
      * Uses a Guava concurrent weak reference key map to avoid holding onto
      * ClassLoader instances after they are otherwise unavailable.
      */
-    private static final ConcurrentMap<ClassLoader, List<URL>> cachedResourceList = new MapMaker()
+    private static final ConcurrentMap<Object, List<URL>> cachedResourceList = new MapMaker()
             .concurrencyLevel(4).weakKeys().makeMap();
 
     public ClassLoader getClassLoader() {
@@ -191,27 +189,21 @@ public class JarCacheStorage implements HttpCacheStorage {
 
         // ConcurrentHashMap doesn't support null keys, so substitute a pseudo
         // key
-        if (cl == null) {
-            cl = NULL_CLASS_LOADER;
+        Object key = cl == null ? NULL_CLASS_LOADER : cl;
+
+        List<URL> newValue = cachedResourceList.get(key);
+        if (newValue != null) {
+            return newValue;
         }
 
-        try {
-            return cachedResourceList.computeIfAbsent(cl, nextCl -> {
-                try {
-                    if (nextCl != NULL_CLASS_LOADER) {
-                        return Collections.list(nextCl.getResources(JARCACHE_JSON));
-                    } else {
-                        return Collections.list(ClassLoader.getSystemResources(JARCACHE_JSON));
-                    }
-                } catch (IOException e) {
-                    throw new JsonLdError(JsonLdError.Error.UNKNOWN_ERROR, e);
-                }
-            });
-        } catch (JsonLdError e) {
-            // Horrible hack to enable the use of computeIfAbsent to simplify
-            // creation of new cached resource lists
-            throw (IOException) e.getCause();
+        if (cl != null) {
+            newValue = Collections.list(cl.getResources(JARCACHE_JSON));
+        } else {
+            newValue = Collections.list(ClassLoader.getSystemResources(JARCACHE_JSON));
         }
+
+        List<URL> oldValue = cachedResourceList.putIfAbsent(key, newValue);
+        return oldValue != null ? oldValue : newValue;
     }
 
     protected JsonNode getJarCache(URL url) throws IOException, JsonProcessingException {
