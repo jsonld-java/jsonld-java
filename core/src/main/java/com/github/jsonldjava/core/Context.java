@@ -195,7 +195,7 @@ public class Context extends LinkedHashMap<String, Object> {
 
                 // 3.2.3: Dereference context
                 final RemoteDocument rd = this.options.getDocumentLoader().loadDocument(uri);
-                final Object remoteContext = rd.document;
+                final Object remoteContext = rd.getDocument();
                 if (!(remoteContext instanceof Map) || !((Map<String, Object>) remoteContext)
                         .containsKey(JsonLdConsts.CONTEXT)) {
                     // If the dereferenced document has no top-level JSON object

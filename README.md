@@ -447,6 +447,9 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2018-04-08
+* Encapsulate RemoteDocument and make it immutable. Part of new minor version 0.12
+
 ### 2018-04-03
 * Fix performance issue caused by not caching schema.org and others that use ``Cache-Control: private`` (Patch by @HansBrende)
 * Cache classpath scans for jarcache.json to fix a similar performance issue

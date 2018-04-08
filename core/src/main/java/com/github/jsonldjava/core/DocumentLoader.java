@@ -54,30 +54,26 @@ public class DocumentLoader {
      *             disallowed.
      */
     public RemoteDocument loadDocument(String url) throws JsonLdError {
-        final RemoteDocument doc = new RemoteDocument(url, null);
-
         if (m_injectedDocs.containsKey(url)) {
             try {
-                doc.setDocument(m_injectedDocs.get(url));
+                return new RemoteDocument(url, m_injectedDocs.get(url));
             } catch (final Exception e) {
                 throw new JsonLdError(JsonLdError.Error.LOADING_INJECTED_CONTEXT_FAILED, url, e);
             }
-            return doc;
-        }
+        } else {
+            final String disallowRemote = System
+                    .getProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING);
+            if ("true".equalsIgnoreCase(disallowRemote)) {
+                throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED,
+                        "Remote context loading has been disallowed (url was " + url + ")");
+            }
 
-        final String disallowRemote = System
-                .getProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING);
-        if ("true".equalsIgnoreCase(disallowRemote)) {
-            throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED,
-                    "Remote context loading has been disallowed (url was " + url + ")");
+            try {
+                return new RemoteDocument(url, JsonUtils.fromURL(new URL(url), getHttpClient()));
+            } catch (final Exception e) {
+                throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url, e);
+            }
         }
-
-        try {
-            doc.setDocument(JsonUtils.fromURL(new URL(url), getHttpClient()));
-        } catch (final Exception e) {
-            throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED, url, e);
-        }
-        return doc;
     }
 
     /**

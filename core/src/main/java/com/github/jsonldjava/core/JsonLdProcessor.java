@@ -115,7 +115,7 @@ public class JsonLdProcessor {
         if (input instanceof String && ((String) input).contains(":")) {
             try {
                 final RemoteDocument tmp = opts.getDocumentLoader().loadDocument((String) input);
-                input = tmp.document;
+                input = tmp.getDocument();
                 // TODO: figure out how to deal with remote context
             } catch (final Exception e) {
                 throw new JsonLdError(Error.LOADING_DOCUMENT_FAILED, e);
