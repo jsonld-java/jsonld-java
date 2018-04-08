@@ -166,9 +166,8 @@ public class JarCacheStorage implements HttpCacheStorage {
                             requestedUri.getPath(), requestedUri.getFragment());
                 } catch (final URISyntaxException e) {
                     if (log.isTraceEnabled()) {
-                        log.trace(
-                                "Failed to normalise URI before looking in cache: " + requestedUri,
-                                e);
+                        log.trace("Failed to normalise URI port before looking in cache: "
+                                + requestedUri, e);
                     }
                     // Ignore syntax error and use the original URI directly instead
                     // This shouldn't happen as we already attempted to parse the URI earlier and
