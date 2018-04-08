@@ -9,18 +9,31 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import com.github.jsonldjava.utils.JsonUtils;
 
 /**
- * Resolves URLs to RemoteDocuments. Subclass this class to change the behaviour of loadDocument to suit your purposes.
+ * Resolves URLs to {@link RemoteDocument}s. Subclass this class to change the
+ * behaviour of loadDocument to suit your purposes.
  */
 public class DocumentLoader {
 
     private final Map<String, Object> m_injectedDocs = new HashMap<>();
 
     /**
-     * Identifies a system property that can be set to "true" in order to
-     * disallow remote context loading.
+     * Identifies a system property that can be set to "true" in order to disallow
+     * remote context loading.
      */
     public static final String DISALLOW_REMOTE_CONTEXT_LOADING = "com.github.jsonldjava.disallowRemoteContextLoading";
 
+    /**
+     * Avoid resolving a document by instead using the given serialised
+     * representation.
+     * 
+     * @param url
+     *            The URL this document represents.
+     * @param doc
+     *            The serialised document as a String
+     * @return This object for fluent addition of other injected documents.
+     * @throws JsonLdError
+     *             If loading of the document failed for any reason.
+     */
     public DocumentLoader addInjectedDoc(String url, String doc) throws JsonLdError {
         try {
             m_injectedDocs.put(url, JsonUtils.fromString(doc));
@@ -30,6 +43,16 @@ public class DocumentLoader {
         }
     }
 
+    /**
+     * Loads the URL if possible, returning it as a RemoteDocument.
+     * 
+     * @param url
+     *            The URL to load
+     * @return The resolved URL as a RemoteDocument
+     * @throws JsonLdError
+     *             If there are errors loading or remote context loading has been
+     *             disallowed.
+     */
     public RemoteDocument loadDocument(String url) throws JsonLdError {
         final RemoteDocument doc = new RemoteDocument(url, null);
 
@@ -67,6 +90,12 @@ public class DocumentLoader {
 
     private volatile CloseableHttpClient httpClient;
 
+    /**
+     * Get the {@link CloseableHttpClient} which will be used by this DocumentLoader
+     * to resolve HTTP and HTTPS resources.
+     * 
+     * @return The {@link CloseableHttpClient} which this DocumentLoader uses.
+     */
     public CloseableHttpClient getHttpClient() {
         CloseableHttpClient result = httpClient;
         if (result == null) {
@@ -81,7 +110,11 @@ public class DocumentLoader {
     }
 
     /**
-     * Call this method to override the default CloseableHttpClient provided by JsonUtils.getDefaultHttpClient.
+     * Call this method to override the default CloseableHttpClient provided by
+     * JsonUtils.getDefaultHttpClient.
+     * 
+     * @param nextHttpClient
+     *            The {@link CloseableHttpClient} to replace the default with.
      */
     public void setHttpClient(CloseableHttpClient nextHttpClient) {
         httpClient = nextHttpClient;
