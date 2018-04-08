@@ -38,7 +38,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Ignore;
@@ -340,14 +339,11 @@ public class DocumentLoaderTest {
         assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void differentHttpClient() throws Exception {
         // Custom http client
         try {
-            // Only using deprecated http client to verify that the usual HTTP
-            // client can be overridden
-            documentLoader.setHttpClient(new SystemDefaultHttpClient());
+            documentLoader.setHttpClient(JsonUtils.createDefaultHttpClient());
             assertNotSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
         } finally {
             // Use default again

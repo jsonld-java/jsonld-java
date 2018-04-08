@@ -275,8 +275,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
             return false;
         }
 
-        @SuppressWarnings("rawtypes")
-        private static int nullSafeCompare(Comparable a, Comparable b) {
+        private static int nullSafeCompare(String a, String b) {
             if (a == null && b == null) {
                 return 0;
             }

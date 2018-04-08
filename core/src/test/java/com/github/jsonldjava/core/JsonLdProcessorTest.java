@@ -202,7 +202,6 @@ public class JsonLdProcessorTest {
         }));
 
         final Collection<Object[]> rdata = new ArrayList<Object[]>();
-        final int count = 0;
         for (final File in : manifestfiles) {
             // System.out.println("Reading: " + in.getCanonicalPath());
             final FileInputStream manifestfile = new FileInputStream(in);

@@ -1930,11 +1930,7 @@ public class JsonLdApi {
      * @return A list of JSON-LD objects found in the given dataset.
      * @throws JsonLdError
      *             If there was an error during conversion from RDF to JSON-LD.
-     * @deprecated Experimental method, only use if you are sure you need to use
-     *             this method. Most users will need to use
-     *             {@link #fromRDF(RDFDataset)}.
      */
-    @Deprecated
     public List<Object> fromRDF(final RDFDataset dataset, boolean noDuplicatesInDataset)
             throws JsonLdError {
         // 1)
