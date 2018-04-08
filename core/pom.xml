@@ -65,6 +65,8 @@
 	</dependencies>
 	<build>
 		<plugins>
+			<!-- Shade Google Guava into jsonld-java to avoid downstream incompatibilities 
+				caused by Guava's fast major release cycles. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
