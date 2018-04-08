@@ -319,6 +319,14 @@ public class DocumentLoaderTest {
             // expected
         }
 
+        Thread.currentThread().setContextClassLoader(null);
+        try {
+            JsonUtils.fromURL(url, documentLoader.getHttpClient());
+            fail("Should not be able to find nested/hello yet");
+        } catch (final IOException ex) {
+            // expected
+        }
+        
         final ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
         Thread.currentThread().setContextClassLoader(cl);
         final Object hello = JsonUtils.fromURL(url, documentLoader.getHttpClient());
@@ -407,7 +415,7 @@ public class DocumentLoaderTest {
 
     @Test
     public void testRemoteContextCaching() throws Exception {
-        final String[] urls = {"http://schema.org/", "http://schema.org/docs/jsonldcontext.json"};
+        final String[] urls = { "http://schema.org/", "http://schema.org/docs/jsonldcontext.json" };
         for (String url : urls) {
             long start = System.currentTimeMillis();
             for (int i = 1; i <= 1000; i++) {

@@ -24,6 +24,7 @@ import org.apache.http.client.protocol.RequestAcceptEncoding;
 import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
@@ -410,14 +411,28 @@ public class JsonUtils {
         return result;
     }
 
-    private static CloseableHttpClient createDefaultHttpClient() {
-        // Common CacheConfig for both the JarCacheStorage and the underlying
-        // BasicHttpCacheStorage
-        final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(500)
+    public static CloseableHttpClient createDefaultHttpClient() {
+        final CacheConfig cacheConfig = createDefaultCacheConfig();
+
+        final CloseableHttpClient result = createDefaultHttpClient(cacheConfig);
+
+        return result;
+    }
+
+    public static CacheConfig createDefaultCacheConfig() {
+        return CacheConfig.custom().setMaxCacheEntries(500)
                 .setMaxObjectSize(1024 * 256).setSharedCache(false)
                 .setHeuristicCachingEnabled(true).setHeuristicDefaultLifetime(86400).build();
+    }
 
-        final CloseableHttpClient result = CachingHttpClientBuilder.create()
+    public static CloseableHttpClient createDefaultHttpClient(final CacheConfig cacheConfig) {
+        return createDefaultHttpClientBuilder(cacheConfig).build();
+    }
+    
+    public static HttpClientBuilder createDefaultHttpClientBuilder(final CacheConfig cacheConfig) {
+        // Common CacheConfig for both the JarCacheStorage and the underlying
+        // BasicHttpCacheStorage
+        return CachingHttpClientBuilder.create()
                 // allow caching
                 .setCacheConfig(cacheConfig)
                 // Wrap the local JarCacheStorage around a BasicHttpCacheStorage
@@ -431,9 +446,7 @@ public class JsonUtils {
                 // User agent customisation
                 .setUserAgent(JSONLD_JAVA_USER_AGENT)
                 // use system defaults for proxy etc.
-                .useSystemProperties().build();
-
-        return result;
+                .useSystemProperties();
     }
 
     private JsonUtils() {

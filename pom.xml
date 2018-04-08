@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.jsonld-java</groupId>
 	<artifactId>jsonld-java-parent</artifactId>
-	<version>0.11.2-SNAPSHOT</version>
+	<version>0.12.0-SNAPSHOT</version>
 	<name>JSONLD Java :: Parent</name>
 	<description>Json-LD Java Parent POM</description>
 	<packaging>pom</packaging>
@@ -204,6 +204,13 @@
 				<artifactId>commons-io</artifactId>
 				<version>2.6</version>
 			</dependency>
+			<!-- Reuse Guava, but shade it to avoid transitive classpath issues for 
+				users given the high major release rate -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>24.1-jre</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -276,6 +283,11 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.1.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-shade-plugin</artifactId>
 					<version>3.1.0</version>
 				</plugin>
 				<plugin>
