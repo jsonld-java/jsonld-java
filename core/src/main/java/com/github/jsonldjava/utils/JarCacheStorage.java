@@ -229,7 +229,7 @@ public class JarCacheStorage implements HttpCacheStorage {
         return oldValue != null ? oldValue : newValue;
     }
 
-    protected JsonNode getJarCache(URL url) throws IOException, JsonProcessingException {
+    protected JsonNode getJarCache(URL url) throws IOException {
         try {
             return jarCaches.get(url);
         } catch (ExecutionException e) {
