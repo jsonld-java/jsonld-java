@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
@@ -39,13 +40,21 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.MapMaker;
 
+/**
+ * Implementation of the Apache HttpClient {@link HttpCacheStorage} interface
+ * using {@code jarcache.json} files on the classpath to identify static JSON-LD
+ * resources on the classpath, to avoid retrieving them.
+ * 
+ * @author Stian Soiland-Reyes
+ * @author Peter Ansell p_ansell@yahoo.com
+ */
 public class JarCacheStorage implements HttpCacheStorage {
 
     /**
      * The classpath location that is searched inside of the classloader set for
-     * this cache. Note this search is also done on the Thread
-     * contextClassLoader if none is explicitly set, and the System classloader
-     * if there is no contextClassLoader.
+     * this cache. Note this search is also done on the Thread contextClassLoader if
+     * none is explicitly set, and the System classloader if there is no
+     * contextClassLoader.
      */
     private static final String JARCACHE_JSON = "jarcache.json";
 
@@ -54,8 +63,8 @@ public class JarCacheStorage implements HttpCacheStorage {
     private final CacheConfig cacheConfig;
 
     /**
-     * The classloader to use, defaults to null which will use the thread
-     * context classloader.
+     * The classloader to use, defaults to null which will use the thread context
+     * classloader.
      */
     private ClassLoader classLoader = null;
 
@@ -77,7 +86,7 @@ public class JarCacheStorage implements HttpCacheStorage {
 
     /**
      * Map from uri of jarcache.json (e.g. jar://blab.jar!jarcache.json) to a
-     * SoftReference to its content as JsonNode.
+     * SoftReference to its parsed content as JsonNode.
      *
      * @see #getJarCache(URL)
      */
@@ -100,6 +109,17 @@ public class JarCacheStorage implements HttpCacheStorage {
     private static final ConcurrentMap<Object, List<URL>> cachedResourceList = new MapMaker()
             .concurrencyLevel(4).weakKeys().makeMap();
 
+    public JarCacheStorage(ClassLoader classLoader, CacheConfig cacheConfig) {
+        this(classLoader, cacheConfig, new BasicHttpCacheStorage(cacheConfig));
+    }
+
+    public JarCacheStorage(ClassLoader classLoader, CacheConfig cacheConfig,
+            HttpCacheStorage delegate) {
+        setClassLoader(classLoader);
+        this.cacheConfig = Objects.requireNonNull(cacheConfig, "Cache config cannot be null");
+        this.delegate = Objects.requireNonNull(delegate, "Delegate cannot be null");
+    }
+
     public ClassLoader getClassLoader() {
         ClassLoader nextClassLoader = classLoader;
         if (nextClassLoader != null) {
@@ -110,8 +130,8 @@ public class JarCacheStorage implements HttpCacheStorage {
 
     /**
      * Sets the ClassLoader used internally to a new value, or null to use
-     * {@link Thread#currentThread()} and {@link Thread#getContextClassLoader()}
-     * for each access.
+     * {@link Thread#currentThread()} and {@link Thread#getContextClassLoader()} for
+     * each access.
      * 
      * @param classLoader
      *            The classloader to use, or null to use the thread context
@@ -119,17 +139,6 @@ public class JarCacheStorage implements HttpCacheStorage {
      */
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
-    }
-
-    public JarCacheStorage(ClassLoader classLoader, CacheConfig cacheConfig) {
-        this(classLoader, cacheConfig, new BasicHttpCacheStorage(cacheConfig));
-    }
-
-    public JarCacheStorage(ClassLoader classLoader, CacheConfig cacheConfig,
-            HttpCacheStorage delegate) {
-        setClassLoader(classLoader);
-        this.cacheConfig = cacheConfig;
-        this.delegate = delegate;
     }
 
     @Override
@@ -156,12 +165,23 @@ public class JarCacheStorage implements HttpCacheStorage {
                     requestedUri = new URI(requestedUri.getScheme(), requestedUri.getHost(),
                             requestedUri.getPath(), requestedUri.getFragment());
                 } catch (final URISyntaxException e) {
+                    if (log.isTraceEnabled()) {
+                        log.trace(
+                                "Failed to normalise URI before looking in cache: " + requestedUri,
+                                e);
+                    }
+                    // Ignore syntax error and use the original URI directly instead
+                    // This shouldn't happen as we already attempted to parse the URI earlier and
+                    // would not come here if that failed
                 }
             }
 
+            // getResources uses a cache to avoid scanning the classpath again for the
+            // current classloader
             for (final URL url : getResources()) {
+                // getJarCache attempts to use already parsed in-memory locations to avoid
+                // retrieving and parsing again
                 final JsonNode tree = getJarCache(url);
-                // TODO: Cache tree per URL
                 for (final JsonNode node : tree) {
                     final URI uri = URI.create(node.get("Content-Location").asText());
                     if (uri.equals(requestedUri)) {
@@ -176,33 +196,37 @@ public class JarCacheStorage implements HttpCacheStorage {
     }
 
     /**
-     * Get all of the {@code jarcache.json} resources that exist on the
-     * classpath
+     * Get all of the {@code jarcache.json} resources that exist on the classpath
      * 
-     * @return A cached list of jarcache.json classpath resources as
-     *         {@link URL}s
+     * @return A cached list of jarcache.json classpath resources as {@link URL}s
      * @throws IOException
      *             If there was an IO error while scanning the classpath
      */
     private List<URL> getResources() throws IOException {
-        ClassLoader cl = getClassLoader();
+        final ClassLoader cl = getClassLoader();
 
         // ConcurrentHashMap doesn't support null keys, so substitute a pseudo
         // key
-        Object key = cl == null ? NULL_CLASS_LOADER : cl;
+        final Object key = cl == null ? NULL_CLASS_LOADER : cl;
 
+        // computeIfAbsent requires unchecked exceptions for the creation process, so we
+        // cannot easily use it directly, instead using get and putIfAbsent
         List<URL> newValue = cachedResourceList.get(key);
         if (newValue != null) {
             return newValue;
         }
 
         if (cl != null) {
-            newValue = Collections.list(cl.getResources(JARCACHE_JSON));
+            newValue = Collections
+                    .unmodifiableList(Collections.list(cl.getResources(JARCACHE_JSON)));
         } else {
-            newValue = Collections.list(ClassLoader.getSystemResources(JARCACHE_JSON));
+            newValue = Collections.unmodifiableList(
+                    Collections.list(ClassLoader.getSystemResources(JARCACHE_JSON)));
         }
 
-        List<URL> oldValue = cachedResourceList.putIfAbsent(key, newValue);
+        final List<URL> oldValue = cachedResourceList.putIfAbsent(key, newValue);
+        // We are not synchronising access to the ConcurrentMap, so if there were
+        // multiple classpath scans, we always choose the first one
         return oldValue != null ? oldValue : newValue;
     }
 
@@ -217,8 +241,8 @@ public class JarCacheStorage implements HttpCacheStorage {
     protected HttpCacheEntry cacheEntry(URI requestedUri, URL baseURL, JsonNode cacheNode)
             throws MalformedURLException, IOException {
         final URL classpath = new URL(baseURL, cacheNode.get("X-Classpath").asText());
-        log.debug("Cache hit for {}", requestedUri);
-        log.trace("{}", cacheNode);
+        log.debug("Cache hit for: {}", requestedUri);
+        log.trace("Parsed cache entry: {}", cacheNode);
 
         final List<Header> responseHeaders = new ArrayList<Header>();
         if (!cacheNode.has(HTTP.DATE_HEADER)) {
@@ -234,7 +258,9 @@ public class JarCacheStorage implements HttpCacheStorage {
         while (fieldNames.hasNext()) {
             final String headerName = fieldNames.next();
             final JsonNode header = cacheNode.get(headerName);
-            responseHeaders.add(new BasicHeader(headerName, header.asText()));
+            if (header != null) {
+                responseHeaders.add(new BasicHeader(headerName, header.asText()));
+            }
         }
 
         return new HttpCacheEntry(new Date(), new Date(),
