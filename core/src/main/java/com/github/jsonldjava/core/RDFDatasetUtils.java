@@ -145,7 +145,7 @@ public class RDFDatasetUtils {
                         final int w1 = 0xD800 + vh;
                         final int w2 = 0xDC00 + v1;
 
-                        final StringBuffer b = new StringBuffer();
+                        final StringBuilder b = new StringBuilder();
                         b.appendCodePoint(w1);
                         b.appendCodePoint(w2);
                         uni = b.toString();
@@ -185,7 +185,7 @@ public class RDFDatasetUtils {
                     }
                 }
                 final String pat = Pattern.quote(m.group(0));
-                final String x = Integer.toHexString(uni.charAt(0));
+                // final String x = Integer.toHexString(uni.charAt(0));
                 rval = rval.replaceAll(pat, uni);
             }
         }
