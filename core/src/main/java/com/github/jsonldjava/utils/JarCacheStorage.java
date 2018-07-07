@@ -43,7 +43,7 @@ import com.google.common.collect.MapMaker;
  * Implementation of the Apache HttpClient {@link HttpCacheStorage} interface
  * using {@code jarcache.json} files on the classpath to identify static JSON-LD
  * resources on the classpath, to avoid retrieving them.
- * 
+ *
  * @author Stian Soiland-Reyes
  * @author Peter Ansell p_ansell@yahoo.com
  */
@@ -51,9 +51,9 @@ public class JarCacheStorage implements HttpCacheStorage {
 
     /**
      * The classpath location that is searched inside of the classloader set for
-     * this cache. Note this search is also done on the Thread contextClassLoader if
-     * none is explicitly set, and the System classloader if there is no
-     * contextClassLoader.
+     * this cache. Note this search is also done on the Thread
+     * contextClassLoader if none is explicitly set, and the System classloader
+     * if there is no contextClassLoader.
      */
     private static final String JARCACHE_JSON = "jarcache.json";
 
@@ -62,15 +62,15 @@ public class JarCacheStorage implements HttpCacheStorage {
     private final CacheConfig cacheConfig;
 
     /**
-     * The classloader to use, defaults to null which will use the thread context
-     * classloader.
+     * The classloader to use, defaults to null which will use the thread
+     * context classloader.
      */
     private ClassLoader classLoader = null;
 
     /**
      * A holder for the case where the System class loader needs to be used, but
      * cannot be directly identified in another way.
-     * 
+     *
      * Used as a key in cachedResourceList.
      */
     private static final Object NULL_CLASS_LOADER = new Object();
@@ -101,7 +101,7 @@ public class JarCacheStorage implements HttpCacheStorage {
     /**
      * Cached URLs from the given ClassLoader to identified locations of
      * jarcache.json resources on the classpath
-     * 
+     *
      * Uses a Guava concurrent weak reference key map to avoid holding onto
      * ClassLoader instances after they are otherwise unavailable.
      */
@@ -120,7 +120,7 @@ public class JarCacheStorage implements HttpCacheStorage {
     }
 
     public ClassLoader getClassLoader() {
-        ClassLoader nextClassLoader = classLoader;
+        final ClassLoader nextClassLoader = classLoader;
         if (nextClassLoader != null) {
             return nextClassLoader;
         }
@@ -129,9 +129,9 @@ public class JarCacheStorage implements HttpCacheStorage {
 
     /**
      * Sets the ClassLoader used internally to a new value, or null to use
-     * {@link Thread#currentThread()} and {@link Thread#getContextClassLoader()} for
-     * each access.
-     * 
+     * {@link Thread#currentThread()} and {@link Thread#getContextClassLoader()}
+     * for each access.
+     *
      * @param classLoader
      *            The classloader to use, or null to use the thread context
      *            classloader
@@ -168,16 +168,20 @@ public class JarCacheStorage implements HttpCacheStorage {
                         log.trace("Failed to normalise URI port before looking in cache: "
                                 + requestedUri, e);
                     }
-                    // Ignore syntax error and use the original URI directly instead
-                    // This shouldn't happen as we already attempted to parse the URI earlier and
+                    // Ignore syntax error and use the original URI directly
+                    // instead
+                    // This shouldn't happen as we already attempted to parse
+                    // the URI earlier and
                     // would not come here if that failed
                 }
             }
 
-            // getResources uses a cache to avoid scanning the classpath again for the
+            // getResources uses a cache to avoid scanning the classpath again
+            // for the
             // current classloader
             for (final URL url : getResources()) {
-                // getJarCache attempts to use already parsed in-memory locations to avoid
+                // getJarCache attempts to use already parsed in-memory
+                // locations to avoid
                 // retrieving and parsing again
                 final JsonNode tree = getJarCache(url);
                 for (final JsonNode node : tree) {
@@ -194,9 +198,11 @@ public class JarCacheStorage implements HttpCacheStorage {
     }
 
     /**
-     * Get all of the {@code jarcache.json} resources that exist on the classpath
-     * 
-     * @return A cached list of jarcache.json classpath resources as {@link URL}s
+     * Get all of the {@code jarcache.json} resources that exist on the
+     * classpath
+     *
+     * @return A cached list of jarcache.json classpath resources as
+     *         {@link URL}s
      * @throws IOException
      *             If there was an IO error while scanning the classpath
      */
@@ -207,7 +213,8 @@ public class JarCacheStorage implements HttpCacheStorage {
         // key
         final Object key = cl == null ? NULL_CLASS_LOADER : cl;
 
-        // computeIfAbsent requires unchecked exceptions for the creation process, so we
+        // computeIfAbsent requires unchecked exceptions for the creation
+        // process, so we
         // cannot easily use it directly, instead using get and putIfAbsent
         List<URL> newValue = cachedResourceList.get(key);
         if (newValue != null) {
@@ -223,7 +230,8 @@ public class JarCacheStorage implements HttpCacheStorage {
         }
 
         final List<URL> oldValue = cachedResourceList.putIfAbsent(key, newValue);
-        // We are not synchronising access to the ConcurrentMap, so if there were
+        // We are not synchronising access to the ConcurrentMap, so if there
+        // were
         // multiple classpath scans, we always choose the first one
         return oldValue != null ? oldValue : newValue;
     }
@@ -231,7 +239,7 @@ public class JarCacheStorage implements HttpCacheStorage {
     protected JsonNode getJarCache(URL url) throws IOException {
         try {
             return jarCaches.get(url);
-        } catch (ExecutionException e) {
+        } catch (final ExecutionException e) {
             throw new IOException("Failed to retrieve jar cache for URL: " + url, e);
         }
     }

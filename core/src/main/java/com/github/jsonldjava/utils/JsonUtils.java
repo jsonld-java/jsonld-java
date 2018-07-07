@@ -420,15 +420,15 @@ public class JsonUtils {
     }
 
     public static CacheConfig createDefaultCacheConfig() {
-        return CacheConfig.custom().setMaxCacheEntries(500)
-                .setMaxObjectSize(1024 * 256).setSharedCache(false)
-                .setHeuristicCachingEnabled(true).setHeuristicDefaultLifetime(86400).build();
+        return CacheConfig.custom().setMaxCacheEntries(500).setMaxObjectSize(1024 * 256)
+                .setSharedCache(false).setHeuristicCachingEnabled(true)
+                .setHeuristicDefaultLifetime(86400).build();
     }
 
     public static CloseableHttpClient createDefaultHttpClient(final CacheConfig cacheConfig) {
         return createDefaultHttpClientBuilder(cacheConfig).build();
     }
-    
+
     public static HttpClientBuilder createDefaultHttpClientBuilder(final CacheConfig cacheConfig) {
         // Common CacheConfig for both the JarCacheStorage and the underlying
         // BasicHttpCacheStorage

@@ -17,15 +17,15 @@ public class DocumentLoader {
     private final Map<String, Object> m_injectedDocs = new HashMap<>();
 
     /**
-     * Identifies a system property that can be set to "true" in order to disallow
-     * remote context loading.
+     * Identifies a system property that can be set to "true" in order to
+     * disallow remote context loading.
      */
     public static final String DISALLOW_REMOTE_CONTEXT_LOADING = "com.github.jsonldjava.disallowRemoteContextLoading";
 
     /**
      * Avoid resolving a document by instead using the given serialised
      * representation.
-     * 
+     *
      * @param url
      *            The URL this document represents.
      * @param doc
@@ -45,13 +45,13 @@ public class DocumentLoader {
 
     /**
      * Loads the URL if possible, returning it as a RemoteDocument.
-     * 
+     *
      * @param url
      *            The URL to load
      * @return The resolved URL as a RemoteDocument
      * @throws JsonLdError
-     *             If there are errors loading or remote context loading has been
-     *             disallowed.
+     *             If there are errors loading or remote context loading has
+     *             been disallowed.
      */
     public RemoteDocument loadDocument(String url) throws JsonLdError {
         if (m_injectedDocs.containsKey(url)) {
@@ -79,9 +79,9 @@ public class DocumentLoader {
     private volatile CloseableHttpClient httpClient;
 
     /**
-     * Get the {@link CloseableHttpClient} which will be used by this DocumentLoader
-     * to resolve HTTP and HTTPS resources.
-     * 
+     * Get the {@link CloseableHttpClient} which will be used by this
+     * DocumentLoader to resolve HTTP and HTTPS resources.
+     *
      * @return The {@link CloseableHttpClient} which this DocumentLoader uses.
      */
     public CloseableHttpClient getHttpClient() {
@@ -100,7 +100,7 @@ public class DocumentLoader {
     /**
      * Call this method to override the default CloseableHttpClient provided by
      * JsonUtils.getDefaultHttpClient.
-     * 
+     *
      * @param nextHttpClient
      *            The {@link CloseableHttpClient} to replace the default with.
      */

@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
@@ -36,7 +35,7 @@ public class MinimalSchemaOrgRegressionTest {
     @Test
     public void testHttpURLConnection() throws Exception {
         final URL url = new URL("http://schema.org/");
-        boolean followRedirectsSetting = HttpURLConnection.getFollowRedirects();
+        final boolean followRedirectsSetting = HttpURLConnection.getFollowRedirects();
         try {
             HttpURLConnection.setFollowRedirects(true);
             final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();

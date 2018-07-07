@@ -623,18 +623,18 @@ public class JsonLdPerformanceTest {
         options.useNamespaces = true;
 
         // System.out.println("\nJSON-LD output is OK:\n");
-        Object fromRDF1 = JsonLdProcessor.compact(new JsonLdApi(options).fromRDF(inputRdf),
+        final Object fromRDF1 = JsonLdProcessor.compact(new JsonLdApi(options).fromRDF(inputRdf),
                 inputRdf.getContext(), options);
 
-        String jsonld1 = JsonUtils.toPrettyString(fromRDF1);
+        final String jsonld1 = JsonUtils.toPrettyString(fromRDF1);
         // System.out.println(jsonld1);
 
         // System.out.println(
         // "\nWouldn't be the case assuming there is no duplicated triple in
         // RDFDataset:\n");
-        Object fromRDF2 = JsonLdProcessor.compact(new JsonLdApi(options).fromRDF(inputRdf, true),
-                inputRdf.getContext(), options);
-        String jsonld2 = JsonUtils.toPrettyString(fromRDF2);
+        final Object fromRDF2 = JsonLdProcessor.compact(
+                new JsonLdApi(options).fromRDF(inputRdf, true), inputRdf.getContext(), options);
+        final String jsonld2 = JsonUtils.toPrettyString(fromRDF2);
         // System.out.println(jsonld2);
 
     }

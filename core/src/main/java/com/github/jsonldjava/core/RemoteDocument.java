@@ -2,7 +2,7 @@ package com.github.jsonldjava.core;
 
 /**
  * Encapsulates a URL along with the parsed resource matching the URL.
- * 
+ *
  * @author Tristan King
  */
 public class RemoteDocument {
@@ -12,7 +12,7 @@ public class RemoteDocument {
     /**
      * Create a new RemoteDocument with the URL and the parsed resource for the
      * document.
-     * 
+     *
      * @param url
      *            The URL
      * @param document
@@ -25,7 +25,7 @@ public class RemoteDocument {
 
     /**
      * Get the URL for this document.
-     * 
+     *
      * @return The URL for this document, as a String
      */
     public String getDocumentUrl() {
@@ -34,7 +34,7 @@ public class RemoteDocument {
 
     /**
      * Get the parsed resource for this document.
-     * 
+     *
      * @return The parsed resource for this document
      */
     public Object getDocument() {
