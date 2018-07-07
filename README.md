@@ -449,6 +449,9 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2018-07-07
+* Fix tests setup for schema.org with HttpURLConnection that break because of the inability of HttpURLConnection to redirect from HTTP to HTTPS
+
 ### 2018-04-08
 * Release 0.12.0
 * Encapsulate RemoteDocument and make it immutable

@@ -135,6 +135,7 @@ public class DocumentLoaderTest {
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
+    @Ignore("Schema.org started to redirect from HTTP to HTTPS which breaks the Java HttpURLConnection API")
     @Test
     public void fromURLSchemaOrgNoApacheHttpClient() throws Exception {
         final URL url = new URL("http://schema.org/");
@@ -325,7 +326,7 @@ public class DocumentLoaderTest {
         } catch (final IOException ex) {
             // expected
         }
-        
+
         final ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
         Thread.currentThread().setContextClassLoader(cl);
         final Object hello = JsonUtils.fromURL(url, documentLoader.getHttpClient());
