@@ -133,7 +133,7 @@ public class JsonLdOptions {
     }
 
     public Boolean getPruneBlankNodeIdentifiers() {
-        return pruneBlankNodeIdentifiers && getProcessingMode().equals(JSON_LD_1_1);
+        return pruneBlankNodeIdentifiers || getProcessingMode().equals(JSON_LD_1_1);
     }
 
     public void setPruneBlankNodeIdentifiers(Boolean pruneBlankNodeIdentifiers) {

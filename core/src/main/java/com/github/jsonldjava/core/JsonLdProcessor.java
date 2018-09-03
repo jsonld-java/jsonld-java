@@ -329,6 +329,13 @@ public class JsonLdProcessor {
                 .parse(((Map<String, Object>) frame).get(JsonLdConsts.CONTEXT));
         final List<Object> framed = api.frame(expandedInput, expandedFrame);
 
+        Map<String, Object> rval;
+        if (opts.getPruneBlankNodeIdentifiers()) {
+            rval = activeCtx.serialize();
+            final Set<Object> toPrune =  blankNodeIdsToPrune(rval);
+            JsonLdUtils.pruneBlankNodes(framed, toPrune);
+        }
+
         Object compacted = api.compact(activeCtx, null, framed, opts.getCompactArrays());
         if (!(compacted instanceof List)) {
             final List<Object> tmp = new ArrayList<Object>();
@@ -336,12 +343,9 @@ public class JsonLdProcessor {
             compacted = tmp;
         }
         final String alias = activeCtx.compactIri(JsonLdConsts.GRAPH);
-        final Map<String, Object> rval = activeCtx.serialize();
+        rval = activeCtx.serialize();
         rval.put(alias, compacted);
-
-        final Set<Object> toPrune = opts.getPruneBlankNodeIdentifiers() ? blankNodeIdsToPrune(rval)
-                : Collections.emptySet();
-        JsonLdUtils.removePreserveAndPrune(activeCtx, rval, opts, toPrune);
+        JsonLdUtils.removePreserve(activeCtx, rval, opts);
         return rval;
     }
 
@@ -356,7 +360,7 @@ public class JsonLdProcessor {
             ((List<?>) input).forEach(e -> countBlankNodeIds(e, frequencies));
         } else if (input instanceof Map) {
             ((Map<?, ?>) input).entrySet()
-                    .forEach(e -> countBlankNodeIds(e.getValue(), frequencies));
+            .forEach(e -> countBlankNodeIds(e.getValue(), frequencies));
         } else if (input instanceof String) {
             final String p = (String) input;
             if (p.startsWith("_:")) {

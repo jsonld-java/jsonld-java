@@ -191,21 +191,18 @@ public class JsonLdUtils {
      *            the active context used to compact the input.
      * @param input
      *            the framed, compacted output.
-     * @param toPrune
-     *            The blank node IDs to prune.
      * @param options
      *            the compaction options used.
      *
      * @return the resulting output.
      * @throws JsonLdError
      */
-    static Object removePreserveAndPrune(Context ctx, Object input, JsonLdOptions opts,
-            Set<Object> toPrune) throws JsonLdError {
+    static Object removePreserve(Context ctx, Object input, JsonLdOptions opts) throws JsonLdError {
         // recurse through arrays
         if (isArray(input)) {
             final List<Object> output = new ArrayList<Object>();
             for (final Object i : (List<Object>) input) {
-                final Object result = removePreserveAndPrune(ctx, i, opts, toPrune);
+                final Object result = removePreserve(ctx, i, opts);
                 // drop nulls from arrays
                 if (result != null) {
                     output.add(result);
@@ -228,29 +225,66 @@ public class JsonLdUtils {
 
             // recurse through @lists
             if (isList(input)) {
-                ((Map<String, Object>) input).put("@list", removePreserveAndPrune(ctx,
-                        ((Map<String, Object>) input).get("@list"), opts, toPrune));
+                ((Map<String, Object>) input).put("@list", removePreserve(ctx,
+                        ((Map<String, Object>) input).get("@list"), opts));
                 return input;
             }
 
             // recurse through properties
             for (final String prop : new LinkedHashSet<>(((Map<String, Object>) input).keySet())) {
-                Object result = removePreserveAndPrune(ctx, ((Map<String, Object>) input).get(prop),
-                        opts, toPrune);
+                Object result = removePreserve(ctx, ((Map<String, Object>) input).get(prop),
+                        opts);
                 final String container = ctx.getContainer(prop);
                 if (opts.getCompactArrays() && isArray(result)
                         && ((List<Object>) result).size() == 1 && container == null) {
                     result = ((List<Object>) result).get(0);
                 }
-                if (ctx.expandIri(prop, false, false, null, null).equals(JsonLdConsts.ID)
-                        && toPrune.contains(result)) {
-                    ((Map<String, Object>) input).remove(prop);
-                } else {
-                    ((Map<String, Object>) input).put(prop, result);
-                }
             }
         }
         return input;
+    }
+
+    /**
+     * Removes the @preserve keywords and blank node IDs to prune as the last
+     * step of the framing algorithm.
+     *
+     * @param input
+     *            the framed, compacted output.
+     * @param toPrune
+     *            The blank node IDs to prune.
+     */
+    static void pruneBlankNodes(Object input, Set<Object> toPrune) {
+        // recurse through arrays
+        if (isArray(input)) {
+            final List<Object> output = new ArrayList<Object>();
+            for (final Object i : (List<Object>) input) {
+                pruneBlankNodes(i, toPrune);
+            }
+            input = output;
+        } else if (isObject(input)) {
+            // skip @values
+            if (isValue(input)) {
+                return;
+            }
+
+            // recurse through @lists
+            if (isList(input)) {
+                pruneBlankNodes(((Map<String, Object>) input).get("@list"), toPrune);
+                return;
+            }
+
+            // recurse through properties
+            for (final String prop : new LinkedHashSet<>(((Map<String, Object>) input).keySet())) {
+                if (prop.equals(JsonLdConsts.ID)) {
+                    final String id = (String) ((Map<String, Object>) input).get(JsonLdConsts.ID);
+                    if (toPrune.contains(id)) {
+                        ((Map<String, Object>) input).remove(JsonLdConsts.ID);
+                    }
+                } else {
+                    pruneBlankNodes(((Map<String, Object>) input).get(prop), toPrune);
+                }
+            }
+        }
     }
 
     /**
@@ -307,7 +341,7 @@ public class JsonLdUtils {
         if ((v1 instanceof Map && ((Map<String, Object>) v1).containsKey("@id"))
                 && (v2 instanceof Map && ((Map<String, Object>) v2).containsKey("@id"))
                 && ((Map<String, Object>) v1).get("@id")
-                        .equals(((Map<String, Object>) v2).get("@id"))) {
+                .equals(((Map<String, Object>) v2).get("@id"))) {
             return true;
         }
 
