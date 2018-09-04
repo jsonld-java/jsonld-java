@@ -416,12 +416,11 @@ public class JsonLdProcessorTest {
             if (test_opts.containsKey("useRdfType")) {
                 options.setUseRdfType((Boolean) test_opts.get("useRdfType"));
             }
+            if (test_opts.containsKey("processingMode")) {
+                options.setProcessingMode((String) test_opts.get("processingMode"));
+            }
             if (test_opts.containsKey("produceGeneralizedRdf")) {
                 options.setProduceGeneralizedRdf((Boolean) test_opts.get("produceGeneralizedRdf"));
-            }
-            if (test_opts.containsKey("pruneBlankNodeIdentifiers")) {
-                options.setPruneBlankNodeIdentifiers(
-                        (Boolean) test_opts.get("pruneBlankNodeIdentifiers"));
             }
             if (test_opts.containsKey("redirectTo")) {
                 testLoader.setRedirectTo((String) test_opts.get("redirectTo"));
@@ -553,7 +552,7 @@ public class JsonLdProcessorTest {
                     {
                         put("@id",
                                 "http://json-ld.org/test-suite/tests/error-expand-manifest.jsonld"
-                                        .equals(manifest) ? "earl:semiAuto" : "earl:automatic");
+                                .equals(manifest) ? "earl:semiAuto" : "earl:automatic");
                     }
                 });
             }

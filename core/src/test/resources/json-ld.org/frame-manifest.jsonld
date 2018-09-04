@@ -151,7 +151,8 @@
       "name": "Blank nodes in @type",
       "input": "frame-0021-in.jsonld",
       "frame": "frame-0021-frame.jsonld",
-      "expect": "frame-0021-out.jsonld"
+      "expect": "frame-0021-out.jsonld",
+      "option": {"specVersion": "json-ld-1.1", "processingMode": "json-ld-1.0"}
     } , {
       "@id": "#t0022",
       "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
@@ -167,34 +168,34 @@
       "frame": "frame-0030-frame.jsonld",
       "expect": "frame-0030-out.jsonld"
     }, {
-      "@id": "p0010",
+      "@id": "#tp010",
       "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
       "name": "Property CURIE conflict (prune bnodes)",
-      "option" : {"pruneBlankNodeIdentifiers" : true},
+      "option": {"processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"},
       "input": "frame-0010-in.jsonld",
       "frame": "frame-0010-frame.jsonld",
       "expect": "frame-p010-out.jsonld"
     }, {
-      "@id": "p0020",
+      "@id": "#tp020",
       "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
       "name": "Blank nodes in an array (prune bnodes)",
-      "option" : {"pruneBlankNodeIdentifiers" : true},
+      "option": {"processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"},
       "input": "frame-0020-in.jsonld",
       "frame": "frame-0020-frame.jsonld",
       "expect": "frame-p020-out.jsonld"
     }, {
-      "@id": "p0021",
+      "@id": "#tp021",
       "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
       "name": "Blank nodes in @type (prune bnodes)",
-      "option" : {"pruneBlankNodeIdentifiers" : true},
+      "option": {"processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"},
       "input": "frame-0021-in.jsonld",
       "frame": "frame-0021-frame.jsonld",
       "expect": "frame-p021-out.jsonld"
     }, {
-      "@id": "p0046",
+      "@id": "#tp046",
       "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
       "name": "Merge graphs if no outer @graph is used (prune bnodes)",
-      "option" : {"pruneBlankNodeIdentifiers" : true},
+      "option": {"processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"},
       "input": "frame-0046-in.jsonld",
       "frame": "frame-0046-frame.jsonld",
       "expect": "frame-p046-out.jsonld"

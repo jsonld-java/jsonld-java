@@ -254,10 +254,11 @@ public class JsonLdUtils {
      *            the framed output before compaction
      */
 
-    static void pruneBlankNodes(Object input) {
+    static void pruneBlankNodes(final Object input) {
         final Map<String,Object> toPrune = new HashMap<>();
         fillNodesToPrune(input, toPrune);
-        for (final Object node : toPrune.values()) {
+        for (final String id : toPrune.keySet()) {
+            final Object node = toPrune.get(id);
             if (node == null)
                 continue;
             ((Map<String, Object>) node).remove(JsonLdConsts.ID);
@@ -272,14 +273,12 @@ public class JsonLdUtils {
      * @param toPrune
      *            the resulting object.
      */
-    static void fillNodesToPrune(Object input, Map<String,Object> toPrune) {
+    static void fillNodesToPrune(Object input, final Map<String,Object> toPrune) {
         // recurse through arrays
         if (isArray(input)) {
-            final List<Object> output = new ArrayList<Object>();
             for (final Object i : (List<Object>) input) {
                 fillNodesToPrune(i, toPrune);
             }
-            input = output;
         } else if (isObject(input)) {
             // skip @values
             if (isValue(input)) {
@@ -307,6 +306,14 @@ public class JsonLdUtils {
                 } else {
                     fillNodesToPrune(((Map<String, Object>) input).get(prop), toPrune);
                 }
+            }
+        } else if (input instanceof String) {
+            // this is an id, as non-id values will have been discarded by the isValue() above
+            final String p = (String) input;
+            if (p.startsWith("_:")) {
+                // the id is outside of the context of an @id property, if we're in that case,
+                // then we're referencing a blank node id so this id should not be removed
+                toPrune.put(p, null);
             }
         }
     }
