@@ -184,8 +184,7 @@ public class JsonLdUtils {
     }
 
     /**
-     * Removes the @preserve keywords as the last
-     * step of the framing algorithm.
+     * Removes the @preserve keywords as the last step of the framing algorithm.
      *
      * @param ctx
      *            the active context used to compact the input.
@@ -225,15 +224,14 @@ public class JsonLdUtils {
 
             // recurse through @lists
             if (isList(input)) {
-                ((Map<String, Object>) input).put("@list", removePreserve(ctx,
-                        ((Map<String, Object>) input).get("@list"), opts));
+                ((Map<String, Object>) input).put("@list",
+                        removePreserve(ctx, ((Map<String, Object>) input).get("@list"), opts));
                 return input;
             }
 
             // recurse through properties
             for (final String prop : ((Map<String, Object>) input).keySet()) {
-                Object result = removePreserve(ctx, ((Map<String, Object>) input).get(prop),
-                        opts);
+                Object result = removePreserve(ctx, ((Map<String, Object>) input).get(prop), opts);
                 final String container = ctx.getContainer(prop);
                 if (opts.getCompactArrays() && isArray(result)
                         && ((List<Object>) result).size() == 1 && container == null) {
@@ -246,21 +244,22 @@ public class JsonLdUtils {
     }
 
     /**
-     *  Removes the @id member of each node object where the member value
-     *  is a blank node identifier which appears only once in any property
-     *  value within input.
+     * Removes the @id member of each node object where the member value is a
+     * blank node identifier which appears only once in any property value
+     * within input.
      *
      * @param input
      *            the framed output before compaction
      */
 
     static void pruneBlankNodes(final Object input) {
-        final Map<String,Object> toPrune = new HashMap<>();
+        final Map<String, Object> toPrune = new HashMap<>();
         fillNodesToPrune(input, toPrune);
         for (final String id : toPrune.keySet()) {
             final Object node = toPrune.get(id);
-            if (node == null)
+            if (node == null) {
                 continue;
+            }
             ((Map<String, Object>) node).remove(JsonLdConsts.ID);
         }
     }
@@ -273,7 +272,7 @@ public class JsonLdUtils {
      * @param toPrune
      *            the resulting object.
      */
-    static void fillNodesToPrune(Object input, final Map<String,Object> toPrune) {
+    static void fillNodesToPrune(Object input, final Map<String, Object> toPrune) {
         // recurse through arrays
         if (isArray(input)) {
             for (final Object i : (List<Object>) input) {
@@ -294,7 +293,8 @@ public class JsonLdUtils {
                 if (prop.equals(JsonLdConsts.ID)) {
                     final String id = (String) ((Map<String, Object>) input).get(JsonLdConsts.ID);
                     if (id.startsWith("_:")) {
-                        // if toPrune contains the id already, it was already present somewhere else,
+                        // if toPrune contains the id already, it was already
+                        // present somewhere else,
                         // so we just null the value
                         if (toPrune.containsKey(id)) {
                             toPrune.put(id, null);
@@ -308,11 +308,14 @@ public class JsonLdUtils {
                 }
             }
         } else if (input instanceof String) {
-            // this is an id, as non-id values will have been discarded by the isValue() above
+            // this is an id, as non-id values will have been discarded by the
+            // isValue() above
             final String p = (String) input;
             if (p.startsWith("_:")) {
-                // the id is outside of the context of an @id property, if we're in that case,
-                // then we're referencing a blank node id so this id should not be removed
+                // the id is outside of the context of an @id property, if we're
+                // in that case,
+                // then we're referencing a blank node id so this id should not
+                // be removed
                 toPrune.put(p, null);
             }
         }
@@ -372,7 +375,7 @@ public class JsonLdUtils {
         if ((v1 instanceof Map && ((Map<String, Object>) v1).containsKey("@id"))
                 && (v2 instanceof Map && ((Map<String, Object>) v2).containsKey("@id"))
                 && ((Map<String, Object>) v1).get("@id")
-                .equals(((Map<String, Object>) v2).get("@id"))) {
+                        .equals(((Map<String, Object>) v2).get("@id"))) {
             return true;
         }
 

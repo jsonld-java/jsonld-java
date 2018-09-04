@@ -16,11 +16,12 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.12.0</version>
+        <version>0.12.1</version>
     </dependency>
 
 Code example
 ------------
+
 ```java
 // Open a valid json(-ld) input file
 InputStream inputStream = new FileInputStream("input.json");
@@ -38,11 +39,11 @@ Object compact = JsonLdProcessor.compact(jsonObject, context, options);
 // Print out the result (or don't, it's your call!)
 System.out.println(JsonUtils.toPrettyString(compact));
 ```
+
 Processor options
 -----------------
 
 The Options specified by the [JSON-LD API Specification](https://json-ld.org/spec/latest/json-ld-api/#the-jsonldoptions-type) are accessible via the `com.github.jsonldjava.core.JsonLdOptions` class, and each `JsonLdProcessor.*` function has an optional input to take an instance of this class.
-
 
 Controlling network traffic
 ---------------------------
@@ -58,7 +59,6 @@ standard Java properties like `http.proxyHost`.
 The default HTTP Client is wrapped with a
 [CachingHttpClient](https://hc.apache.org/httpcomponents-client-ga/httpclient-cache/apidocs/org/apache/http/impl/client/cache/CachingHttpClient.html) to provide a 
 small memory-based cache (1000 objects, max 128 kB each) of regularly accessed contexts.
-
 
 ### Loading contexts from classpath
 
@@ -321,9 +321,9 @@ Here is the basic outline for what your module's pom.xml should look like
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
-    <artifactId>jsonld-java-integration</artifactId>
-    <groupId>com.github.jsonld-java-parent</groupId>
-    <version>0.11.0-SNAPSHOT</version>
+    <groupId>com.github.jsonld-java</groupId>
+    <artifactId>jsonld-java-parent</artifactId>
+    <version>0.12.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jsonld-java-{your module}</artifactId>
@@ -449,10 +449,11 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
-### 2018-07-07
-* make pruneBlankNodeIdentifiers false by default in 1.0 mode and always true in 1.1 mode
-* fix issue with blank node identifier pruning when @id is aliased
-* allow wildcard {} for @id in framing
+### 2018-09-05
+* Release 0.12.1
+* Make pruneBlankNodeIdentifiers false by default in 1.0 mode and always true in 1.1 mode (Patch by @eroux)
+* Fix issue with blank node identifier pruning when @id is aliased (Patch by @eroux)
+* Allow wildcard {} for @id in framing (Patch by @eroux)
 
 ### 2018-07-07
 * Fix tests setup for schema.org with HttpURLConnection that break because of the inability of HttpURLConnection to redirect from HTTP to HTTPS

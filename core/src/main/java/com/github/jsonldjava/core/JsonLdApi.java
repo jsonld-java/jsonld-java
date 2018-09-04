@@ -271,7 +271,7 @@ public class JsonLdApi {
                                 }
                                 if (value instanceof List) {
                                     ((List<Object>) result.get(property))
-                                    .addAll((List<Object>) value);
+                                            .addAll((List<Object>) value);
                                 } else {
                                     ((List<Object>) result.get(property)).add(value);
                                 }
@@ -373,7 +373,7 @@ public class JsonLdApi {
                                         // true
                                         activeCtx.compactIri(JsonLdConsts.INDEX, true),
                                         ((Map<String, Object>) expandedItem)
-                                        .get(JsonLdConsts.INDEX));
+                                                .get(JsonLdConsts.INDEX));
                             }
                         }
                         // 7.6.4.3)
@@ -398,7 +398,7 @@ public class JsonLdApi {
                         // 7.6.5.2)
                         if (JsonLdConsts.LANGUAGE.equals(container) && (compactedItem instanceof Map
                                 && ((Map<String, Object>) compactedItem)
-                                .containsKey(JsonLdConsts.VALUE))) {
+                                        .containsKey(JsonLdConsts.VALUE))) {
                             compactedItem = ((Map<String, Object>) compactedItem)
                                     .get(JsonLdConsts.VALUE);
                         }
@@ -443,7 +443,7 @@ public class JsonLdApi {
                             }
                             if (compactedItem instanceof List) {
                                 ((List<Object>) result.get(itemActiveProperty))
-                                .addAll((List<Object>) compactedItem);
+                                        .addAll((List<Object>) compactedItem);
                             } else {
                                 ((List<Object>) result.get(itemActiveProperty)).add(compactedItem);
                             }
@@ -721,7 +721,7 @@ public class JsonLdApi {
                                 // 7.4.11.2.2)
                                 if (item instanceof List) {
                                     ((List<Object>) result.get(property))
-                                    .addAll((List<Object>) item);
+                                            .addAll((List<Object>) item);
                                 } else {
                                     ((List<Object>) result.get(property)).add(item);
                                 }
@@ -752,7 +752,7 @@ public class JsonLdApi {
                                     if (item instanceof Map && (((Map<String, Object>) item)
                                             .containsKey(JsonLdConsts.VALUE)
                                             || ((Map<String, Object>) item)
-                                            .containsKey(JsonLdConsts.LIST))) {
+                                                    .containsKey(JsonLdConsts.LIST))) {
                                         throw new JsonLdError(Error.INVALID_REVERSE_PROPERTY_VALUE);
                                     }
                                     // 7.4.11.3.3.1.2)
@@ -893,7 +893,7 @@ public class JsonLdApi {
                         // 7.10.4.3)
                         if (item instanceof List) {
                             ((List<Object>) reverseMap.get(expandedProperty))
-                            .addAll((List<Object>) item);
+                                    .addAll((List<Object>) item);
                         } else {
                             ((List<Object>) reverseMap.get(expandedProperty)).add(item);
                         }
@@ -908,7 +908,7 @@ public class JsonLdApi {
                     // 7.11.2)
                     if (expandedValue instanceof List) {
                         ((List<Object>) result.get(expandedProperty))
-                        .addAll((List<Object>) expandedValue);
+                                .addAll((List<Object>) expandedValue);
                     } else {
                         ((List<Object>) result.get(expandedProperty)).add(expandedValue);
                     }
@@ -1044,7 +1044,7 @@ public class JsonLdApi {
 
     void generateNodeMap(Object element, Map<String, Object> nodeMap, String activeGraph,
             Object activeSubject, String activeProperty, Map<String, Object> list)
-                    throws JsonLdError {
+            throws JsonLdError {
         // 1)
         if (element instanceof List) {
             // 1.1)
@@ -1720,7 +1720,8 @@ public class JsonLdApi {
                 if (JsonLdUtils.deepCompare(nodeId, frameIds)) {
                     return true;
                 }
-            } else if (frameIds instanceof LinkedHashMap && ((LinkedHashMap) frameIds).size() == 0) {
+            } else if (frameIds instanceof LinkedHashMap
+                    && ((LinkedHashMap) frameIds).size() == 0) {
                 if (node.containsKey(JsonLdConsts.ID)) {
                     return true;
                 }
@@ -2006,7 +2007,7 @@ public class JsonLdApi {
                 if (object.isBlankNode() || object.isIRI()) {
                     // 3.5.8.1-3)
                     nodeMap.get(object.getValue()).usages
-                    .add(new UsagesNode(node, predicate, value));
+                            .add(new UsagesNode(node, predicate, value));
                 }
             }
         }
@@ -2206,7 +2207,7 @@ public class JsonLdApi {
                             });
                         }
                         ((List<Object>) ((Map<String, Object>) bnodes.get(id)).get("quads"))
-                        .add(quad);
+                                .add(quad);
                     }
                 }
             }

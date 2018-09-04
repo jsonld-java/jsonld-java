@@ -552,7 +552,7 @@ public class JsonLdProcessorTest {
                     {
                         put("@id",
                                 "http://json-ld.org/test-suite/tests/error-expand-manifest.jsonld"
-                                .equals(manifest) ? "earl:semiAuto" : "earl:automatic");
+                                        .equals(manifest) ? "earl:semiAuto" : "earl:automatic");
                     }
                 });
             }
