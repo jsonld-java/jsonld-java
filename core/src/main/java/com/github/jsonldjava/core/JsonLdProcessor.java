@@ -4,12 +4,9 @@ import static com.github.jsonldjava.utils.Obj.newMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.github.jsonldjava.core.JsonLdError.Error;
 import com.github.jsonldjava.impl.NQuadRDFParser;
@@ -329,11 +326,9 @@ public class JsonLdProcessor {
                 .parse(((Map<String, Object>) frame).get(JsonLdConsts.CONTEXT));
         final List<Object> framed = api.frame(expandedInput, expandedFrame);
 
-        Map<String, Object> rval;
+
         if (opts.getPruneBlankNodeIdentifiers()) {
-            rval = activeCtx.serialize();
-            final Set<Object> toPrune =  blankNodeIdsToPrune(rval);
-            JsonLdUtils.pruneBlankNodes(framed, toPrune);
+            JsonLdUtils.pruneBlankNodes(framed);
         }
 
         Object compacted = api.compact(activeCtx, null, framed, opts.getCompactArrays());
@@ -343,31 +338,10 @@ public class JsonLdProcessor {
             compacted = tmp;
         }
         final String alias = activeCtx.compactIri(JsonLdConsts.GRAPH);
-        rval = activeCtx.serialize();
+        final Map<String, Object> rval = activeCtx.serialize();
         rval.put(alias, compacted);
         JsonLdUtils.removePreserve(activeCtx, rval, opts);
         return rval;
-    }
-
-    private static Set<Object> blankNodeIdsToPrune(final Map<String, Object> rval) {
-        return countBlankNodeIds(rval, new HashMap<>()).entrySet().stream()
-                .filter(e -> e.getValue() == 1).map(e -> e.getKey()).collect(Collectors.toSet());
-    }
-
-    private static Map<Object, Integer> countBlankNodeIds(Object input,
-            Map<Object, Integer> frequencies) {
-        if (input instanceof List) {
-            ((List<?>) input).forEach(e -> countBlankNodeIds(e, frequencies));
-        } else if (input instanceof Map) {
-            ((Map<?, ?>) input).entrySet()
-            .forEach(e -> countBlankNodeIds(e.getValue(), frequencies));
-        } else if (input instanceof String) {
-            final String p = (String) input;
-            if (p.startsWith("_:")) {
-                frequencies.put(p, frequencies.containsKey(p) ? frequencies.get(p) + 1 : 1);
-            }
-        }
-        return frequencies;
     }
 
     /**

@@ -1,0 +1,10 @@
+{
+  "@context": {
+    "@vocab": "http://example/",
+    "id": "@id"
+  },
+  "id": "_:bnode0",
+  "name": "bar",
+  "prop1": { "name": "foo", "id": "_:bnode1" },
+  "prop2": { "name": "foo", "id": "_:bnode1" }
+}

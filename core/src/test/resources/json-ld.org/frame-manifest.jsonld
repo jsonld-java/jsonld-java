@@ -198,5 +198,14 @@
       "input": "frame-0046-in.jsonld",
       "frame": "frame-0046-frame.jsonld",
       "expect": "frame-p046-out.jsonld"
+    }, {
+      "@id": "#tp050",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Prune blank nodes with alias of @id",
+      "purpose": "If @id is aliased in a frame, an unreferenced blank node is still pruned.",
+      "input": "frame-p050-in.jsonld",
+      "frame": "frame-p050-frame.jsonld",
+      "expect": "frame-p050-out.jsonld",
+      "option": {"processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"}
     }]
 }

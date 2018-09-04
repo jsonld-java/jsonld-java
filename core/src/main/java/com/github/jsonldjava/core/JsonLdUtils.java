@@ -1,10 +1,10 @@
 package com.github.jsonldjava.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.github.jsonldjava.utils.Obj;
 
@@ -184,7 +184,7 @@ public class JsonLdUtils {
     }
 
     /**
-     * Removes the @preserve keywords and blank node IDs to prune as the last
+     * Removes the @preserve keywords as the last
      * step of the framing algorithm.
      *
      * @param ctx
@@ -245,20 +245,38 @@ public class JsonLdUtils {
     }
 
     /**
-     * Removes the @preserve keywords and blank node IDs to prune as the last
-     * step of the framing algorithm.
+     *  Removes the @id member of each node object where the member value
+     *  is a blank node identifier which appears only once in any property
+     *  value within input.
      *
      * @param input
-     *            the framed, compacted output.
-     * @param toPrune
-     *            The blank node IDs to prune.
+     *            the framed output before compaction
      */
-    static void pruneBlankNodes(Object input, Set<Object> toPrune) {
+
+    static void pruneBlankNodes(Object input) {
+        final Map<String,Object> toPrune = new HashMap<>();
+        fillNodesToPrune(input, toPrune);
+        for (final Object node : toPrune.values()) {
+            if (node == null)
+                continue;
+            ((Map<String, Object>) node).remove(JsonLdConsts.ID);
+        }
+    }
+
+    /**
+     * Gets the objects on which we'll prune the blank node ID
+     *
+     * @param input
+     *            the framed output before compaction
+     * @param toPrune
+     *            the resulting object.
+     */
+    static void fillNodesToPrune(Object input, Map<String,Object> toPrune) {
         // recurse through arrays
         if (isArray(input)) {
             final List<Object> output = new ArrayList<Object>();
             for (final Object i : (List<Object>) input) {
-                pruneBlankNodes(i, toPrune);
+                fillNodesToPrune(i, toPrune);
             }
             input = output;
         } else if (isObject(input)) {
@@ -266,22 +284,27 @@ public class JsonLdUtils {
             if (isValue(input)) {
                 return;
             }
-
             // recurse through @lists
             if (isList(input)) {
-                pruneBlankNodes(((Map<String, Object>) input).get("@list"), toPrune);
+                fillNodesToPrune(((Map<String, Object>) input).get("@list"), toPrune);
                 return;
             }
-
             // recurse through properties
             for (final String prop : new LinkedHashSet<>(((Map<String, Object>) input).keySet())) {
                 if (prop.equals(JsonLdConsts.ID)) {
                     final String id = (String) ((Map<String, Object>) input).get(JsonLdConsts.ID);
-                    if (toPrune.contains(id)) {
-                        ((Map<String, Object>) input).remove(JsonLdConsts.ID);
+                    if (id.startsWith("_:")) {
+                        // if toPrune contains the id already, it was already present somewhere else,
+                        // so we just null the value
+                        if (toPrune.containsKey(id)) {
+                            toPrune.put(id, null);
+                        } else {
+                            // else we add the object as the value
+                            toPrune.put(id, input);
+                        }
                     }
                 } else {
-                    pruneBlankNodes(((Map<String, Object>) input).get(prop), toPrune);
+                    fillNodesToPrune(((Map<String, Object>) input).get(prop), toPrune);
                 }
             }
         }

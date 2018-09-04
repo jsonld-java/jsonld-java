@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jsonldjava.utils.JsonUtils;
 
 public class JsonLdFramingTest {
@@ -153,6 +154,23 @@ public class JsonLdFramingTest {
 
         final Object out = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/json-ld.org/frame-p050-out.jsonld"));
+        assertEquals(out, frame2);
+    }
+
+    @Test
+    public void testFrame0009() throws IOException, JsonLdError {
+        final Object frame = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0009-frame.jsonld"));
+        final Object in = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0009-in.jsonld"));
+
+        final JsonLdOptions opts = new JsonLdOptions();
+        opts.setProcessingMode("json-ld-1.1");
+        final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
+        ObjectMapper om = new ObjectMapper();
+        om.writeValue(System.out, frame2);
+        final Object out = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0009-out.jsonld"));
         assertEquals(out, frame2);
     }
 }
