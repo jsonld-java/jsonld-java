@@ -66,7 +66,7 @@ public class JsonLdOptions {
     private Embed embed = Embed.LAST;
     private Boolean explicit = null;
     private Boolean omitDefault = null;
-    private Boolean pruneBlankNodeIdentifiers = true;
+    private Boolean pruneBlankNodeIdentifiers = false;
     private Boolean requireAll = false;
 
     // RDF conversion options :

@@ -1712,7 +1712,6 @@ public class JsonLdApi {
         // 1. Node matches if it has an @id property including any IRI or
         // blank node in the @id property in frame.
         if (frameIds != null) {
-            System.out.println(frameIds.getClass());
             if (frameIds instanceof String) {
                 final Object nodeId = node.get(JsonLdConsts.ID);
                 if (nodeId == null) {
@@ -1721,7 +1720,7 @@ public class JsonLdApi {
                 if (JsonLdUtils.deepCompare(nodeId, frameIds)) {
                     return true;
                 }
-            } else if (frameIds instanceof LinkedHashMap) {
+            } else if (frameIds instanceof LinkedHashMap && ((LinkedHashMap) frameIds).size() == 0) {
                 if (node.containsKey(JsonLdConsts.ID)) {
                     return true;
                 }

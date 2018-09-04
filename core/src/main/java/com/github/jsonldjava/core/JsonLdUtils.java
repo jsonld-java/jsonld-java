@@ -231,7 +231,7 @@ public class JsonLdUtils {
             }
 
             // recurse through properties
-            for (final String prop : new LinkedHashSet<>(((Map<String, Object>) input).keySet())) {
+            for (final String prop : ((Map<String, Object>) input).keySet()) {
                 Object result = removePreserve(ctx, ((Map<String, Object>) input).get(prop),
                         opts);
                 final String container = ctx.getContainer(prop);
@@ -239,6 +239,7 @@ public class JsonLdUtils {
                         && ((List<Object>) result).size() == 1 && container == null) {
                     result = ((List<Object>) result).get(0);
                 }
+                ((Map<String, Object>) input).put(prop, result);
             }
         }
         return input;

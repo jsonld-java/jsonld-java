@@ -41,7 +41,7 @@ System.out.println(JsonUtils.toPrettyString(compact));
 Processor options
 -----------------
 
-The Options specified by the [JSON-LD API Specification](http://json-ld.org/spec/latest/json-ld-api/#jsonldoptions) are accessible via the `com.github.jsonldjava.core.JsonLdOptions` class, and each `JsonLdProcessor.*` function has an optional input to take an instance of this class.
+The Options specified by the [JSON-LD API Specification](https://json-ld.org/spec/latest/json-ld-api/#the-jsonldoptions-type) are accessible via the `com.github.jsonldjava.core.JsonLdOptions` class, and each `JsonLdProcessor.*` function has an optional input to take an instance of this class.
 
 
 Controlling network traffic
@@ -448,6 +448,11 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 
 CHANGELOG
 =========
+
+### 2018-07-07
+* make pruneBlankNodeIdentifiers false by default in 1.0 mode and always true in 1.1 mode
+* fix issue with blank node identifier pruning when @id is aliased
+* allow wildcard {} for @id in framing
 
 ### 2018-07-07
 * Fix tests setup for schema.org with HttpURLConnection that break because of the inability of HttpURLConnection to redirect from HTTP to HTTPS
