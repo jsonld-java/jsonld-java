@@ -419,6 +419,9 @@ public class JsonLdProcessorTest {
             if (test_opts.containsKey("processingMode")) {
                 options.setProcessingMode((String) test_opts.get("processingMode"));
             }
+            if (test_opts.containsKey("omitGraph")) {
+                options.setOmitGraph((Boolean) test_opts.get("omitGraph"));
+            }
             if (test_opts.containsKey("produceGeneralizedRdf")) {
                 options.setProduceGeneralizedRdf((Boolean) test_opts.get("produceGeneralizedRdf"));
             }

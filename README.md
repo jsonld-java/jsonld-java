@@ -449,6 +449,9 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2018-09-05
+* handle omit graph flag
+
 ### 2018-07-07
 * make pruneBlankNodeIdentifiers false by default in 1.0 mode and always true in 1.1 mode
 * fix issue with blank node identifier pruning when @id is aliased

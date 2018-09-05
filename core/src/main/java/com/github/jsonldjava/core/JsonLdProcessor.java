@@ -307,15 +307,12 @@ public class JsonLdProcessor {
         final Object expandedInput = expand(input, opts);
 
         // 3. Set expanded frame to the result of using the expand method using
-        // frame and options
-        // with expandContext set to null and processingMode set to
-        // json-ld-1.1-expand-frame.
-        final String savedProcessingMode = opts.getProcessingMode();
+        // frame and options with expandContext set to null and the
+        // frameExpansion option set to true.
         final Object savedExpandedContext = opts.getExpandContext();
-        opts.setProcessingMode(JsonLdOptions.JSON_LD_1_1_FRAME);
         opts.setExpandContext(null);
+        opts.setFrameExpansion(true);
         final List<Object> expandedFrame = expand(frame, opts);
-        opts.setProcessingMode(savedProcessingMode);
         opts.setExpandContext(savedExpandedContext);
 
         // 4. Set context to the value of @context from frame, if it exists, or
@@ -329,14 +326,19 @@ public class JsonLdProcessor {
             JsonLdUtils.pruneBlankNodes(framed);
         }
         Object compacted = api.compact(activeCtx, null, framed, opts.getCompactArrays());
-        if (!(compacted instanceof List)) {
+        final Map<String, Object> rval = activeCtx.serialize();
+        final boolean addGraph = ((!(compacted instanceof List)) && !opts.getOmitGraph());
+        if (addGraph && !(compacted instanceof List)) {
             final List<Object> tmp = new ArrayList<Object>();
             tmp.add(compacted);
             compacted = tmp;
         }
-        final String alias = activeCtx.compactIri(JsonLdConsts.GRAPH);
-        final Map<String, Object> rval = activeCtx.serialize();
-        rval.put(alias, compacted);
+        if (addGraph || (compacted instanceof List)) {
+            final String alias = activeCtx.compactIri(JsonLdConsts.GRAPH);
+            rval.put(alias, compacted);
+        } else if (!addGraph && (compacted instanceof Map)) {
+            rval.putAll((Map) compacted);
+        }
         JsonLdUtils.removePreserve(activeCtx, rval, opts);
         return rval;
     }
