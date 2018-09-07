@@ -450,6 +450,7 @@ CHANGELOG
 =========
 
 ### 2018-09-05
+* handle omit graph flag (Patch by @eroux)
 * Release 0.12.1
 * Make pruneBlankNodeIdentifiers false by default in 1.0 mode and always true in 1.1 mode (Patch by @eroux)
 * Fix issue with blank node identifier pruning when @id is aliased (Patch by @eroux)

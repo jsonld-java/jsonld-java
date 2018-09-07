@@ -505,8 +505,7 @@ public class JsonLdApi {
      */
     public Object expand(Context activeCtx, String activeProperty, Object element)
             throws JsonLdError {
-        final boolean frameExpansion = this.opts.getProcessingMode()
-                .equals(JsonLdOptions.JSON_LD_1_1_FRAME);
+        final boolean frameExpansion = this.opts.getFrameExpansion();
         // 1)
         if (element == null) {
             return null;

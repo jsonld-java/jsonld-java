@@ -3,5 +3,5 @@
    "@vocab": "http://example/",
    "id": "@id"
  },
- "@graph": [{"name": "foo"}]
+ "name": "foo"
 }

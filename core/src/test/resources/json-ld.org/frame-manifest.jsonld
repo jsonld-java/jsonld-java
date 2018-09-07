@@ -168,9 +168,19 @@
       "frame": "frame-0030-frame.jsonld",
       "expect": "frame-0030-out.jsonld"
     }, {
+      "@id": "#tg001",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Library framing example with @graph and omitGraph is true.",
+      "purpose": "Basic example used in playground and spec examples.",
+      "input": "frame-g001-in.jsonld",
+      "frame": "frame-g001-frame.jsonld",
+      "expect": "frame-g001-out.jsonld",
+      "option": {"specVersion": "json-ld-1.1", "omitGraph": true}
+    }, {
       "@id": "#tp010",
       "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
       "name": "Property CURIE conflict (prune bnodes)",
+      "purpose": "(Not really framing) A term looking like a CURIE becomes a CURIE when framing/compacting if defined as such in frame/context.",
       "option": {"processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"},
       "input": "frame-0010-in.jsonld",
       "frame": "frame-0010-frame.jsonld",

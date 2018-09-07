@@ -16,8 +16,6 @@ public class JsonLdOptions {
 
     public static final String JSON_LD_1_1 = "json-ld-1.1";
 
-    public static final String JSON_LD_1_1_FRAME = "json-ld-1.1-expand-frame";
-
     public static final boolean DEFAULT_COMPACT_ARRAYS = true;
 
     /**
@@ -66,6 +64,8 @@ public class JsonLdOptions {
     private Embed embed = Embed.LAST;
     private Boolean explicit = null;
     private Boolean omitDefault = null;
+    private Boolean omitGraph = false;
+    private Boolean frameExpansion = false;
     private Boolean pruneBlankNodeIdentifiers = false;
     private Boolean requireAll = false;
 
@@ -132,14 +132,27 @@ public class JsonLdOptions {
         this.omitDefault = omitDefault;
     }
 
+    public Boolean getFrameExpansion() {
+        return frameExpansion;
+    }
+
+    public void setFrameExpansion(Boolean frameExpansion) {
+        this.frameExpansion = frameExpansion;
+    }
+
+    public Boolean getOmitGraph() {
+        return omitGraph;
+    }
+
+    public void setOmitGraph(Boolean omitGraph) {
+        this.omitGraph = omitGraph;
+    }
+
     public Boolean getPruneBlankNodeIdentifiers() {
-        return pruneBlankNodeIdentifiers || getProcessingMode().equals(JSON_LD_1_1);
+        return pruneBlankNodeIdentifiers;
     }
 
     public void setPruneBlankNodeIdentifiers(Boolean pruneBlankNodeIdentifiers) {
-        if (pruneBlankNodeIdentifiers) {
-            setProcessingMode(JSON_LD_1_1);
-        }
         this.pruneBlankNodeIdentifiers = pruneBlankNodeIdentifiers;
     }
 
@@ -173,6 +186,10 @@ public class JsonLdOptions {
 
     public void setProcessingMode(String processingMode) {
         this.processingMode = processingMode;
+        if (processingMode.equals(JSON_LD_1_1)) {
+            this.omitGraph = true;
+            this.pruneBlankNodeIdentifiers = true;
+        }
     }
 
     public String getBase() {
