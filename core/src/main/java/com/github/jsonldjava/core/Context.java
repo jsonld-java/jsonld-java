@@ -310,7 +310,9 @@ public class Context extends LinkedHashMap<String, Object> {
 
         defined.put(term, false);
 
-        if (JsonLdUtils.isKeyword(term)) {
+        if ( JsonLdUtils.isKeyword(term)//
+            && !(JsonLdConsts.TYPE.equals(term)//
+                && !(context.get(term)).toString().contains(JsonLdConsts.ID)) ) {
             throw new JsonLdError(Error.KEYWORD_REDEFINITION, term);
         }
 
@@ -439,7 +441,7 @@ public class Context extends LinkedHashMap<String, Object> {
             // 15)
         } else if (this.containsKey(JsonLdConsts.VOCAB)) {
             definition.put(JsonLdConsts.ID, this.get(JsonLdConsts.VOCAB) + term);
-        } else {
+        } else if (!JsonLdConsts.TYPE.equals(term)) {
             throw new JsonLdError(Error.INVALID_IRI_MAPPING,
                     "relative term definition without vocab mapping");
         }
@@ -454,6 +456,8 @@ public class Context extends LinkedHashMap<String, Object> {
                         "@container must be either @list, @set, @index, or @language");
             }
             definition.put(JsonLdConsts.CONTAINER, container);
+            if (JsonLdConsts.TYPE.equals(term))
+                definition.put(JsonLdConsts.ID,"type");
         }
 
         // 17)
