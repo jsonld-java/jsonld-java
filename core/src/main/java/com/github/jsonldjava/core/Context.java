@@ -1044,13 +1044,15 @@ public class Context extends LinkedHashMap<String, Object> {
      *
      * @param property
      *            The Property to get a container mapping for.
-     * @return The container mapping
+     * @return The container mapping if any, else null
      */
     public String getContainer(String property) {
+        if (property==null) return null;
         if (JsonLdConsts.GRAPH.equals(property)) {
             return JsonLdConsts.SET;
         }
-        if (JsonLdUtils.isKeyword(property)) {
+        if (!property.equals(JsonLdConsts.TYPE)
+            && JsonLdUtils.isKeyword(property)) {
             return property;
         }
         final Map<String, Object> td = (Map<String, Object>) termDefinitions.get(property);
