@@ -94,10 +94,6 @@ public class JsonLdOptions {
         return this.embed;
     }
 
-    public void setEmbed(Boolean embed) {
-        this.embed = embed ? Embed.LAST : Embed.NEVER;
-    }
-
     public void setEmbed(String embed) throws JsonLdError {
         switch (embed) {
         case "@always":
@@ -129,10 +125,6 @@ public class JsonLdOptions {
         return omitDefault;
     }
 
-    public void setOmitDefault(Boolean omitDefault) {
-        this.omitDefault = omitDefault;
-    }
-
     public Boolean getFrameExpansion() {
         return frameExpansion;
     }
@@ -153,24 +145,12 @@ public class JsonLdOptions {
         return pruneBlankNodeIdentifiers;
     }
 
-    public void setPruneBlankNodeIdentifiers(Boolean pruneBlankNodeIdentifiers) {
-        this.pruneBlankNodeIdentifiers = pruneBlankNodeIdentifiers;
-    }
-
     public Boolean getRequireAll() {
         return this.requireAll;
-    }
-
-    public void setRequireAll(Boolean requireAll) {
-        this.requireAll = requireAll;
     }
     
     public Boolean getAllowContainerSetOnType() {
         return allowContainerSetOnType;
-    }
-    
-    public void setAllowContainerSetOnType(Boolean allowContainerSetOnType) {
-        this.allowContainerSetOnType = allowContainerSetOnType;
     }
     
     public Boolean getCompactArrays() {
@@ -187,10 +167,6 @@ public class JsonLdOptions {
 
     public void setExpandContext(Object expandContext) {
         this.expandContext = expandContext;
-    }
-
-    public String getProcessingMode() {
-        return processingMode;
     }
 
     public void setProcessingMode(String processingMode) {
