@@ -310,7 +310,7 @@ public class Context extends LinkedHashMap<String, Object> {
 
         defined.put(term, false);
 
-        if ( JsonLdUtils.isKeyword(term)//
+        if (JsonLdUtils.isKeyword(term)//
             && !(JsonLdConsts.TYPE.equals(term)//
                 && !(context.get(term)).toString().contains(JsonLdConsts.ID)) ) {
             throw new JsonLdError(Error.KEYWORD_REDEFINITION, term);

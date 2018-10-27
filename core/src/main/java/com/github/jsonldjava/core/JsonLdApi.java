@@ -222,10 +222,11 @@ public class JsonLdApi {
                             types.add(activeCtx.compactIri(expandedType, true));
                         }
                         // 7.1.2.3)
-                        if ( types.size() == 1 
+                        if ( types.size() == 1//
                             // see w3c/json-ld-syntax#74
-                            && ! (activeCtx.getContainer(alias) != null 
-                            && activeCtx.getContainer(alias).equals(JsonLdConsts.SET)) ) {
+                            && (!opts.getAllowContainerSetOnType() ||
+                             !(activeCtx.getContainer(alias) != null 
+                            && activeCtx.getContainer(alias).equals(JsonLdConsts.SET))))  {
                             compactedValue = types.get(0);
                         } else {
                             compactedValue = types;

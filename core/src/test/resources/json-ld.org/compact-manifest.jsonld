@@ -605,6 +605,16 @@
       "context": "compact-0105-context.jsonld",
       "expect": "compact-0105-out.jsonld",
       "option": {"processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"}
+    },
+    {
+      "@id": "#t0106",
+      "@type": ["jld:PositiveEvaluationTest", "jld:CompactTest"],
+      "name": "Do not compact @type with @container: @set to an array using an alias of @type",
+      "purpose": "Ensures that a single @type value is not represented as an array in 1.0",
+      "input": "compact-0106-in.jsonld",
+      "context": "compact-0106-context.jsonld",
+      "expect": "compact-0106-out.jsonld",
+      "option": {"processingMode": "json-ld-1.0", "specVersion": "json-ld-1.1"}
     }
   ]
 }
