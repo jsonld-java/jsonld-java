@@ -8,7 +8,10 @@ import java.util.Map;
 
 import com.github.jsonldjava.utils.Obj;
 
-abstract class JsonLdUtils {
+public class JsonLdUtils {
+
+    private static final int MAX_CONTEXT_URLS = 10;
+
     /**
      * Returns whether or not the given value is a keyword (or a keyword alias).
      *
