@@ -16,7 +16,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.12.1</version>
+        <version>0.12.2</version>
     </dependency>
 
 Code example
@@ -323,10 +323,11 @@ Here is the basic outline for what your module's pom.xml should look like
   <parent>
     <groupId>com.github.jsonld-java</groupId>
     <artifactId>jsonld-java-parent</artifactId>
-    <version>0.12.1-SNAPSHOT</version>
+    <version>0.12.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jsonld-java-{your module}</artifactId>
+  <version>0.12.3-SNAPSHOT</version>
   <name>JSONLD Java :: {your module name}</name>
   <description>JSON-LD Java integration module for {RDF Library your module integrates}</description>
   <packaging>jar</packaging>
@@ -448,6 +449,10 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 
 CHANGELOG
 =========
+
+### 2018-11-03
+# W3c json ld syntax 34 allow container set on aliased type (Patch by @dr0i)
+# Release 0.12.2
 
 ### 2018-09-05
 * handle omit graph flag (Patch by @eroux)
