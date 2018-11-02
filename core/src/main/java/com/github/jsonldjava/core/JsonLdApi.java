@@ -202,10 +202,12 @@ public class JsonLdApi {
             Collections.sort(keys);
             for (final String expandedProperty : keys) {
                 final Object expandedValue = elem.get(expandedProperty);
-
                 // 7.1)
                 if (JsonLdConsts.ID.equals(expandedProperty)
                         || JsonLdConsts.TYPE.equals(expandedProperty)) {
+                    // TODO: Relabel these step numbers when spec changes
+                    // 7.1.3)
+                    final String alias = activeCtx.compactIri(expandedProperty, true);
                     Object compactedValue;
 
                     // 7.1.1)
@@ -221,15 +223,16 @@ public class JsonLdApi {
                             types.add(activeCtx.compactIri(expandedType, true));
                         }
                         // 7.1.2.3)
-                        if (types.size() == 1) {
+                        if (types.size() == 1//
+                                // see w3c/json-ld-syntax#74
+                                && (!opts.getAllowContainerSetOnType()
+                                        || !(activeCtx.getContainer(alias) != null && activeCtx
+                                                .getContainer(alias).equals(JsonLdConsts.SET)))) {
                             compactedValue = types.get(0);
                         } else {
                             compactedValue = types;
                         }
                     }
-
-                    // 7.1.3)
-                    final String alias = activeCtx.compactIri(expandedProperty, true);
                     // 7.1.4)
                     result.put(alias, compactedValue);
                     continue;

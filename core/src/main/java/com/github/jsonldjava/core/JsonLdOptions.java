@@ -68,6 +68,7 @@ public class JsonLdOptions {
     private Boolean frameExpansion = false;
     private Boolean pruneBlankNodeIdentifiers = false;
     private Boolean requireAll = false;
+    private Boolean allowContainerSetOnType = false;
 
     // RDF conversion options :
     // http://www.w3.org/TR/json-ld-api/#serialize-rdf-as-json-ld-algorithm
@@ -164,6 +165,14 @@ public class JsonLdOptions {
         this.requireAll = requireAll;
     }
 
+    public Boolean getAllowContainerSetOnType() {
+        return allowContainerSetOnType;
+    }
+
+    public void setAllowContainerSetOnType(Boolean allowContainerSetOnType) {
+        this.allowContainerSetOnType = allowContainerSetOnType;
+    }
+
     public Boolean getCompactArrays() {
         return compactArrays;
     }
@@ -189,6 +198,7 @@ public class JsonLdOptions {
         if (processingMode.equals(JSON_LD_1_1)) {
             this.omitGraph = true;
             this.pruneBlankNodeIdentifiers = true;
+            this.allowContainerSetOnType = true;
         }
     }
 

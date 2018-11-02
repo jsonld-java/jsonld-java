@@ -308,6 +308,14 @@
       "purpose": "Verifies that an exception is raised in Flattening when conflicting indexes are found",
       "input": "error-0043-in.jsonld",
       "expect": "conflicting indexes"
+    },
+    {
+      "@id": "#te042",
+      "@type": [ "jld:NegativeEvaluationTest", "jld:ExpandTest" ],
+      "name": "Keywords may not be redefined",
+      "purpose": "Verifies that an exception is raised on expansion when processing an invalid context attempting to define @container on a keyword",
+      "input": "expand-e042-in.jsonld",
+      "expect": "keyword redefinition"
     }
   ]
 }

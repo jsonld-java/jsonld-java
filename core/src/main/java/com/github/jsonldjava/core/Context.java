@@ -310,7 +310,9 @@ public class Context extends LinkedHashMap<String, Object> {
 
         defined.put(term, false);
 
-        if (JsonLdUtils.isKeyword(term)) {
+        if (JsonLdUtils.isKeyword(term)
+                && !(options.getAllowContainerSetOnType() && JsonLdConsts.TYPE.equals(term)
+                        && !(context.get(term)).toString().contains(JsonLdConsts.ID))) {
             throw new JsonLdError(Error.KEYWORD_REDEFINITION, term);
         }
 
@@ -439,7 +441,7 @@ public class Context extends LinkedHashMap<String, Object> {
             // 15)
         } else if (this.containsKey(JsonLdConsts.VOCAB)) {
             definition.put(JsonLdConsts.ID, this.get(JsonLdConsts.VOCAB) + term);
-        } else {
+        } else if (!JsonLdConsts.TYPE.equals(term)) {
             throw new JsonLdError(Error.INVALID_IRI_MAPPING,
                     "relative term definition without vocab mapping");
         }
@@ -454,6 +456,9 @@ public class Context extends LinkedHashMap<String, Object> {
                         "@container must be either @list, @set, @index, or @language");
             }
             definition.put(JsonLdConsts.CONTAINER, container);
+            if (JsonLdConsts.TYPE.equals(term)) {
+                definition.put(JsonLdConsts.ID, "type");
+            }
         }
 
         // 17)
@@ -1044,13 +1049,16 @@ public class Context extends LinkedHashMap<String, Object> {
      *
      * @param property
      *            The Property to get a container mapping for.
-     * @return The container mapping
+     * @return The container mapping if any, else null
      */
     public String getContainer(String property) {
+        if (property == null) {
+            return null;
+        }
         if (JsonLdConsts.GRAPH.equals(property)) {
             return JsonLdConsts.SET;
         }
-        if (JsonLdUtils.isKeyword(property)) {
+        if (!property.equals(JsonLdConsts.TYPE) && JsonLdUtils.isKeyword(property)) {
             return property;
         }
         final Map<String, Object> td = (Map<String, Object>) termDefinitions.get(property);
