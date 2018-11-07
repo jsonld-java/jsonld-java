@@ -152,4 +152,29 @@ public class JsonLdFramingTest {
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0009-out.jsonld"));
         assertEquals(out, frame2);
     }
+
+    @Test
+    public void testFrame0010() throws IOException, JsonLdError {
+        final Object frame = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0010-frame.jsonld"));
+        //{
+        //    "@id": "http://example.com/main/id",
+        //    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": {
+        //      "@id": "http://example.com/rdf/id",
+        //      "http://www.w3.org/1999/02/22-rdf-syntax-ns#label": "someLabel"
+        //    }
+        //}
+        final RDFDataset ds = new RDFDataset();
+        ds.addTriple("http://example.com/main/id", "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://example.com/rdf/id");
+        ds.addTriple("http://example.com/rdf/id", "http://www.w3.org/1999/02/22-rdf-syntax-ns#label", "someLabel", null, null);
+        final JsonLdOptions opts = new JsonLdOptions();
+        opts.setProcessingMode(JsonLdOptions.JSON_LD_1_0);
+
+        final Object in = new JsonLdApi(opts).fromRDF(ds, true);
+
+        final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
+        final Object out = JsonUtils
+                .fromInputStream(getClass().getResourceAsStream("/custom/frame-0010-out.jsonld"));
+        assertEquals(out, frame2);
+    }
 }

@@ -1861,6 +1861,15 @@ public class JsonLdApi {
         public Map<String, Object> value = null;
     }
 
+    private class Node {
+        private String predicate;
+        private RDFDataset.Node object;
+        public Node(String predicate, RDFDataset.Node object) {
+            this.predicate = predicate;
+            this.object = object;
+        }
+    }
+
     private class NodeMapNode extends LinkedHashMap<String, Object> {
         public List<UsagesNode> usages = new ArrayList(4);
 
@@ -1968,48 +1977,53 @@ public class JsonLdApi {
             }
 
             // 3.5)
+            final Map<String, List<Node>> nodes = new HashMap<>();
+
             for (final RDFDataset.Quad triple : graph) {
                 final String subject = triple.getSubject().getValue();
                 final String predicate = triple.getPredicate().getValue();
                 final RDFDataset.Node object = triple.getObject();
+                nodes.computeIfAbsent(subject, k -> new ArrayList<>()).add(new Node(predicate, object));
+            }
+            for (final Map.Entry<String, List<Node>> nodeEntry : nodes.entrySet()) {
+              final String subject = nodeEntry.getKey();
 
-                // 3.5.1+3.5.2)
-                NodeMapNode node;
-                if (!nodeMap.containsKey(subject)) {
-                    node = new NodeMapNode(subject);
-                    nodeMap.put(subject, node);
-                } else {
-                    node = nodeMap.get(subject);
-                }
+                for (final Node n : nodeEntry.getValue()) {
+                    final String predicate = n.predicate;
+                    final RDFDataset.Node object = n.object;
 
-                // 3.5.3)
-                if ((object.isIRI() || object.isBlankNode())
-                        && !nodeMap.containsKey(object.getValue())) {
-                    nodeMap.put(object.getValue(), new NodeMapNode(object.getValue()));
-                }
+                    // 3.5.1+3.5.2)
+                    final NodeMapNode node = nodeMap.computeIfAbsent(subject, k -> new NodeMapNode(subject));
 
-                // 3.5.4)
-                if (RDF_TYPE.equals(predicate) && (object.isIRI() || object.isBlankNode())
-                        && !opts.getUseRdfType()) {
-                    JsonLdUtils.mergeValue(node, JsonLdConsts.TYPE, object.getValue());
-                    continue;
-                }
+                    // 3.5.3)
+                    if ((object.isIRI() || object.isBlankNode())
+                            && !nodeMap.containsKey(object.getValue())) {
+                        nodeMap.put(object.getValue(), new NodeMapNode(object.getValue()));
+                    }
 
-                // 3.5.5)
-                final Map<String, Object> value = object.toObject(opts.getUseNativeTypes());
+                    // 3.5.4)
+                    if (RDF_TYPE.equals(predicate) && (object.isIRI() || object.isBlankNode())
+                            && !opts.getUseRdfType() && !nodes.containsKey(object.getValue())) {
+                        JsonLdUtils.mergeValue(node, JsonLdConsts.TYPE, object.getValue());
+                        continue;
+                    }
 
-                // 3.5.6+7)
-                if (noDuplicatesInDataset) {
-                    JsonLdUtils.laxMergeValue(node, predicate, value);
-                } else {
-                    JsonLdUtils.mergeValue(node, predicate, value);
-                }
+                    // 3.5.5)
+                    final Map<String, Object> value = object.toObject(opts.getUseNativeTypes());
 
-                // 3.5.8)
-                if (object.isBlankNode() || object.isIRI()) {
-                    // 3.5.8.1-3)
-                    nodeMap.get(object.getValue()).usages
-                            .add(new UsagesNode(node, predicate, value));
+                    // 3.5.6+7)
+                    if (noDuplicatesInDataset) {
+                        JsonLdUtils.laxMergeValue(node, predicate, value);
+                    } else {
+                        JsonLdUtils.mergeValue(node, predicate, value);
+                    }
+
+                    // 3.5.8)
+                    if (object.isBlankNode() || object.isIRI()) {
+                        // 3.5.8.1-3)
+                        nodeMap.get(object.getValue()).usages
+                                .add(new UsagesNode(node, predicate, value));
+                    }
                 }
             }
         }
