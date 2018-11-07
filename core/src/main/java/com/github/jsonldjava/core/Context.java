@@ -1077,7 +1077,7 @@ public class Context extends LinkedHashMap<String, Object> {
         return reverse != null && (Boolean) reverse;
     }
 
-    private String getTypeMapping(String property) {
+    public String getTypeMapping(String property) {
         final Map<String, Object> td = (Map<String, Object>) termDefinitions.get(property);
         if (td == null) {
             return null;
@@ -1085,7 +1085,7 @@ public class Context extends LinkedHashMap<String, Object> {
         return (String) td.get(JsonLdConsts.TYPE);
     }
 
-    private String getLanguageMapping(String property) {
+    public String getLanguageMapping(String property) {
         final Map<String, Object> td = (Map<String, Object>) termDefinitions.get(property);
         if (td == null) {
             return null;
