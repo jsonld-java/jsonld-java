@@ -1983,9 +1983,7 @@ public class JsonLdApi {
                 final String subject = triple.getSubject().getValue();
                 final String predicate = triple.getPredicate().getValue();
                 final RDFDataset.Node object = triple.getObject();
-                final List<Node> list = nodes.getOrDefault(subject, new ArrayList());
-                list.add(new Node(predicate, object));
-                nodes.put(subject, list);
+                nodes.computeIfAbsent(subject, k -> new ArrayList<>()).add(new Node(predicate, object));
             }
             for (final Map.Entry<String, List<Node>> nodeEntry : nodes.entrySet()) {
               final String subject = nodeEntry.getKey();
@@ -1995,13 +1993,7 @@ public class JsonLdApi {
                     final RDFDataset.Node object = n.object;
 
                     // 3.5.1+3.5.2)
-                    NodeMapNode node;
-                    if (!nodeMap.containsKey(subject)) {
-                        node = new NodeMapNode(subject);
-                        nodeMap.put(subject, node);
-                    } else {
-                        node = nodeMap.get(subject);
-                    }
+                    final NodeMapNode node = nodeMap.computeIfAbsent(subject, k -> new NodeMapNode(subject));
 
                     // 3.5.3)
                     if ((object.isIRI() || object.isBlankNode())
