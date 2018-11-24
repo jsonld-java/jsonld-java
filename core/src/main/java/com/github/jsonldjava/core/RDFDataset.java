@@ -658,11 +658,19 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                             datatype == null ? XSD_BOOLEAN : (String) datatype, null);
                 } else if (value instanceof Double || value instanceof Float
                         || XSD_DOUBLE.equals(datatype)) {
-                    // canonical double representation
-                    final DecimalFormat df = new DecimalFormat("0.0###############E0");
-                    df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
-                    return new Literal(df.format(value),
-                            datatype == null ? XSD_DOUBLE : (String) datatype, null);
+                    if (value instanceof Double && !Double.isFinite((double) value)) {
+                        return new Literal(Double.toString((double) value),
+                                datatype == null ? XSD_DOUBLE : (String) datatype, null);
+                    } else if (value instanceof Float && !Float.isFinite((float) value)) {
+                        return new Literal(Float.toString((float) value),
+                                datatype == null ? XSD_DOUBLE : (String) datatype, null);
+                    } else {
+                        // canonical double representation
+                        final DecimalFormat df = new DecimalFormat("0.0###############E0");
+                        df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
+                        return new Literal(df.format(value),
+                                datatype == null ? XSD_DOUBLE : (String) datatype, null);
+                    }
                 } else {
                     final DecimalFormat df = new DecimalFormat("0");
                     return new Literal(df.format(value),

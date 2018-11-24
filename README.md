@@ -16,7 +16,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.12.2</version>
+        <version>0.12.3</version>
     </dependency>
 
 Code example
@@ -323,7 +323,7 @@ Here is the basic outline for what your module's pom.xml should look like
   <parent>
     <groupId>com.github.jsonld-java</groupId>
     <artifactId>jsonld-java-parent</artifactId>
-    <version>0.12.2</version>
+    <version>0.12.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jsonld-java-{your module}</artifactId>
@@ -450,9 +450,15 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 CHANGELOG
 =========
 
+### 2018-11-24
+* Release 0.12.3
+* Fix NaN/Inf/-Inf raw value types on conversion to RDF
+* Added fix for wrong rdf:type to @type conversion (Path by @umbreak)
+* Open up Context.getTypeMapping and Context.getLanguageMapping for reuse
+
 ### 2018-11-03
-# W3c json ld syntax 34 allow container set on aliased type (Patch by @dr0i)
-# Release 0.12.2
+* W3c json ld syntax 34 allow container set on aliased type (Patch by @dr0i)
+* Release 0.12.2
 
 ### 2018-09-05
 * handle omit graph flag (Patch by @eroux)
