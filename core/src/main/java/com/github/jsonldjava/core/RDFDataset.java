@@ -137,6 +137,10 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
 
         @Override
         public int compareTo(Node o) {
+            if (o == null) {
+                // valid nodes are > null nodes
+                return 1;
+            }
             if (this.isIRI()) {
                 if (!o.isIRI()) {
                     // IRIs > everything
@@ -150,7 +154,13 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                     // blank node > literal
                     return 1;
                 }
+            } else if (this.isLiteral()) {
+                if (o.isIRI() || o.isBlankNode()) {
+                    return -1; // literals < blanknode < IRI
+                }
             }
+            // NOTE: Literal will also need to compare
+            // language and datatype
             return this.getValue().compareTo(o.getValue());
         }
 
@@ -265,32 +275,36 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
             return false;
         }
 
+        private static int nullSafeCompare(String a, String b) {
+            if (a == null && b == null) {
+                return 0;
+            }
+            if (a == null) {
+                return 1;
+            }
+            if (b == null) {
+                return -1;
+            }
+            return a.compareTo(b);
+        }
+
         @Override
         public int compareTo(Node o) {
-            if (o == null) {
-                // valid nodes are > null nodes
-                return 1;
+            // NOTE: this will also compare getValue() early!
+            final int nodeCompare = super.compareTo(o);
+            if (nodeCompare != 0) {
+                // null, different type or different value
+                return nodeCompare;
             }
-            if (o.isIRI()) {
-                // literals < iri
-                return -1;
+            if (this.getLanguage() != null || o.getLanguage() != null) {
+                // We'll ignore type-checking if either has language tag
+                // as language tagged literals should always have the type
+                // rdf:langString in RDF 1.1
+                return nullSafeCompare(this.getLanguage(), o.getLanguage());
+            } else {
+                return nullSafeCompare(this.getDatatype(), o.getDatatype());
             }
-            if (o.isBlankNode()) {
-                // blank node < iri
-                return -1;
-            }
-            if (this.getLanguage() == null && ((Literal) o).getLanguage() != null) {
-                return -1;
-            } else if (this.getLanguage() != null && ((Literal) o).getLanguage() == null) {
-                return 1;
-            }
-
-            if (this.getDatatype() != null) {
-                return this.getDatatype().compareTo(((Literal) o).getDatatype());
-            } else if (((Literal) o).getDatatype() != null) {
-                return -1;
-            }
-            return 0;
+            // NOTE: getValue() already compared by super.compareTo()
         }
     }
 
@@ -644,11 +658,19 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                             datatype == null ? XSD_BOOLEAN : (String) datatype, null);
                 } else if (value instanceof Double || value instanceof Float
                         || XSD_DOUBLE.equals(datatype)) {
-                    // canonical double representation
-                    final DecimalFormat df = new DecimalFormat("0.0###############E0");
-                    df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
-                    return new Literal(df.format(value),
-                            datatype == null ? XSD_DOUBLE : (String) datatype, null);
+                    if (value instanceof Double && !Double.isFinite((double) value)) {
+                        return new Literal(Double.toString((double) value),
+                                datatype == null ? XSD_DOUBLE : (String) datatype, null);
+                    } else if (value instanceof Float && !Float.isFinite((float) value)) {
+                        return new Literal(Float.toString((float) value),
+                                datatype == null ? XSD_DOUBLE : (String) datatype, null);
+                    } else {
+                        // canonical double representation
+                        final DecimalFormat df = new DecimalFormat("0.0###############E0");
+                        df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
+                        return new Literal(df.format(value),
+                                datatype == null ? XSD_DOUBLE : (String) datatype, null);
+                    }
                 } else {
                     final DecimalFormat df = new DecimalFormat("0");
                     return new Literal(df.format(value),

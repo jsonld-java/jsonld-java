@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +38,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.github.jsonldjava.impl.TurtleTripleCallback;
 import com.github.jsonldjava.utils.JsonUtils;
 import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.TestUtils;
@@ -162,49 +162,14 @@ public class JsonLdProcessorTest {
         String reportFormat = System.getProperty("report.format");
         if (reportFormat != null) {
             reportFormat = reportFormat.toLowerCase();
-        } else {
-            return; // nothing to do
-        }
-
-        if ("application/ld+json".equals(reportFormat) || "jsonld".equals(reportFormat)
-                || "*".equals(reportFormat)) {
-            System.out.println("Generating JSON-LD Report");
-            JsonUtils.writePrettyPrint(
-                    new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".jsonld")),
-                    REPORT);
-        }
-
-        if ("text/plain".equals(reportFormat) || "nquads".equals(reportFormat)
-                || "nq".equals(reportFormat) || "nt".equals(reportFormat)
-                || "ntriples".equals(reportFormat) || "*".equals(reportFormat)) {
-            System.out.println("Generating Nquads Report");
-            final JsonLdOptions options = new JsonLdOptions("") {
-                {
-                    this.format = "application/nquads";
-                }
-            };
-            final String rdf = (String) JsonLdProcessor.toRDF(REPORT, options);
-            final OutputStreamWriter writer = new OutputStreamWriter(
-                    new FileOutputStream(reportOutputFile + ".nq"));
-            writer.write(rdf);
-            writer.close();
-        }
-        if ("text/turtle".equals(reportFormat) || "turtle".equals(reportFormat)
-                || "ttl".equals(reportFormat) || "*".equals(reportFormat)) { // write
-            // turtle
-            System.out.println("Generating Turtle Report");
-            final JsonLdOptions options = new JsonLdOptions("") {
-                {
-                    format = "text/turtle";
-                    useNamespaces = true;
-                }
-            };
-            final String rdf = (String) JsonLdProcessor.toRDF(REPORT, new TurtleTripleCallback(),
-                    options);
-            final OutputStreamWriter writer = new OutputStreamWriter(
-                    new FileOutputStream(reportOutputFile + ".ttl"));
-            writer.write(rdf);
-            writer.close();
+            if ("application/ld+json".equals(reportFormat) || "jsonld".equals(reportFormat)
+                    || "*".equals(reportFormat)) {
+                System.out.println("Generating JSON-LD Report");
+                JsonUtils.writePrettyPrint(
+                        new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".jsonld"),
+                                StandardCharsets.UTF_8),
+                        REPORT);
+            }
         }
     }
 
@@ -237,7 +202,6 @@ public class JsonLdProcessorTest {
         }));
 
         final Collection<Object[]> rdata = new ArrayList<Object[]>();
-        final int count = 0;
         for (final File in : manifestfiles) {
             // System.out.println("Reading: " + in.getCanonicalPath());
             final FileInputStream manifestfile = new FileInputStream(in);
@@ -277,7 +241,8 @@ public class JsonLdProcessorTest {
         @Override
         public RemoteDocument loadDocument(String url) throws JsonLdError {
             if (url == null) {
-                throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED);
+                throw new JsonLdError(JsonLdError.Error.LOADING_REMOTE_CONTEXT_FAILED,
+                        "URL was null");
             }
             if (url.contains(":")) {
                 // check if the url is relative to the test base
@@ -289,12 +254,13 @@ public class JsonLdProcessorTest {
                     try {
                         return new RemoteDocument(url, JsonUtils.fromInputStream(inputStream));
                     } catch (final IOException e) {
-                        throw new JsonLdError(JsonLdError.Error.LOADING_DOCUMENT_FAILED);
+                        throw new JsonLdError(JsonLdError.Error.LOADING_DOCUMENT_FAILED, e);
                     }
                 }
             }
             // we can't load this remote document from the test suite
-            throw new JsonLdError(JsonLdError.Error.NOT_IMPLEMENTED);
+            throw new JsonLdError(JsonLdError.Error.NOT_IMPLEMENTED,
+                    "URL scheme was not recognised: " + url);
         }
 
         public void setRedirectTo(String string) {
@@ -450,6 +416,12 @@ public class JsonLdProcessorTest {
             if (test_opts.containsKey("useRdfType")) {
                 options.setUseRdfType((Boolean) test_opts.get("useRdfType"));
             }
+            if (test_opts.containsKey("processingMode")) {
+                options.setProcessingMode((String) test_opts.get("processingMode"));
+            }
+            if (test_opts.containsKey("omitGraph")) {
+                options.setOmitGraph((Boolean) test_opts.get("omitGraph"));
+            }
             if (test_opts.containsKey("produceGeneralizedRdf")) {
                 options.setProduceGeneralizedRdf((Boolean) test_opts.get("produceGeneralizedRdf"));
             }
@@ -500,11 +472,11 @@ public class JsonLdProcessorTest {
             } else if (testType.contains("jld:FromRDFTest")) {
                 result = JsonLdProcessor.fromRDF(input, options);
             } else if (testType.contains("jld:ToRDFTest")) {
-                options.format = "application/nquads";
+                options.format = JsonLdConsts.APPLICATION_NQUADS;
                 result = JsonLdProcessor.toRDF(input, options);
                 result = ((String) result).trim();
             } else if (testType.contains("jld:NormalizeTest")) {
-                options.format = "application/nquads";
+                options.format = JsonLdConsts.APPLICATION_NQUADS;
                 result = JsonLdProcessor.normalize(input, options);
                 result = ((String) result).trim();
             } else {
@@ -591,8 +563,9 @@ public class JsonLdProcessorTest {
 
         assertTrue("\nFailed test: " + group + test.get("@id") + " " + test.get("name") + " ("
                 + test.get("input") + "," + test.get("expect") + ")\n" + "expected: "
-                + JsonUtils.toPrettyString(expect) + "\nresult: " + (result instanceof JsonLdError
-                        ? ((JsonLdError) result).toString() : JsonUtils.toPrettyString(result)),
+                + JsonUtils.toPrettyString(expect) + "\nresult: "
+                + (result instanceof JsonLdError ? ((JsonLdError) result).toString()
+                        : JsonUtils.toPrettyString(result)),
                 testpassed);
     }
 

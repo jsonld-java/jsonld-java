@@ -10,8 +10,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.github.jsonldjava.utils.JsonUtils;
-
 public class ContextCompactionTest {
 
     // @Ignore("Disable until schema.org is fixed")
@@ -36,15 +34,15 @@ public class ContextCompactionTest {
         options.setBase("http://schema.org/");
         options.setCompactArrays(true);
 
-        System.out.println("Before compact");
-        System.out.println(JsonUtils.toPrettyString(json));
+        // System.out.println("Before compact");
+        // System.out.println(JsonUtils.toPrettyString(json));
 
         final List<String> newContexts = new LinkedList<String>();
         newContexts.add("http://schema.org/");
         final Map<String, Object> compacted = JsonLdProcessor.compact(json, newContexts, options);
 
-        System.out.println("\n\nAfter compact:");
-        System.out.println(JsonUtils.toPrettyString(compacted));
+        // System.out.println("\n\nAfter compact:");
+        // System.out.println(JsonUtils.toPrettyString(compacted));
 
         assertTrue("Compaction removed the context", compacted.containsKey("@context"));
         assertFalse("Compaction of context should be a string, not a list",

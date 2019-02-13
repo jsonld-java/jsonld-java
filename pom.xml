@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.jsonld-java</groupId>
 	<artifactId>jsonld-java-parent</artifactId>
-	<version>0.9.0-SNAPSHOT</version>
+	<version>0.12.4-SNAPSHOT</version>
 	<name>JSONLD Java :: Parent</name>
 	<description>Json-LD Java Parent POM</description>
 	<packaging>pom</packaging>
@@ -39,22 +39,24 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<httpclient.version>4.5.2</httpclient.version>
-		<httpcore.version>4.4.4</httpcore.version>
-		<jackson.version>2.7.4</jackson.version>
+		<httpclient.version>4.5.6</httpclient.version>
+		<httpcore.version>4.4.10</httpcore.version>
+		<jackson.version>2.9.7</jackson.version>
 		<junit.version>4.12</junit.version>
-		<slf4j.version>1.7.21</slf4j.version>
+		<slf4j.version>1.7.25</slf4j.version>
 
-		<maven.compiler.target>1.7</maven.compiler.target>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.testTarget>1.8</maven.compiler.testTarget>
-		<maven.compiler.testSource>1.8</maven.compiler.testSource>
+		<last-compare-version>0.11.0</last-compare-version>
 	</properties>
-	<prerequisites>
-		<maven>3.0.5</maven>
-	</prerequisites>
+
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>com.fasterxml.jackson</groupId>
+				<artifactId>jackson-bom</artifactId>
+				<version>${jackson.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
@@ -190,57 +192,118 @@
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.10</version>
+				<version>1.11</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>1.10.19</version>
+				<version>2.23.0</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>2.5</version>
+				<version>2.6</version>
+			</dependency>
+			<!-- Reuse Guava, but shade it to avoid transitive classpath issues for 
+				users given the high major release rate -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>27.0-jre</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>animal-sniffer-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
 		<pluginManagement>
 			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.5.1</version>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>3.0.0-M2</version>
 					<executions>
 						<execution>
-							<id>default-compile</id>
+							<id>enforce-maven-3</id>
+							<goals>
+								<goal>enforce</goal>
+							</goals>
 							<configuration>
-								<showDeprecation>true</showDeprecation>
-								<showWarnings>true</showWarnings>
-								<compilerArguments>
-									<source>${maven.compiler.target}</source>
-									<target>${maven.compiler.source}</target>
-								</compilerArguments>
+								<rules>
+									<requireMavenVersion>
+										<version>[3.0.5,)</version>
+									</requireMavenVersion>
+									<requireJavaVersion>
+										<version>[1.8,)</version>
+									</requireJavaVersion>
+								</rules>
 							</configuration>
 						</execution>
 						<execution>
-							<id>default-testCompile</id>
+							<id>enforce-bytecode-version</id>
+							<goals>
+								<goal>enforce</goal>
+							</goals>
 							<configuration>
-								<showDeprecation>true</showDeprecation>
-								<showWarnings>true</showWarnings>
-								<compilerArguments>
-									<source>${maven.compiler.testTarget}</source>
-									<target>${maven.compiler.testSource}</target>
-								</compilerArguments>
+								<rules>
+									<enforceBytecodeVersion>
+										<maxJdkVersion>1.8</maxJdkVersion>
+									</enforceBytecodeVersion>
+								</rules>
+								<fail>true</fail>
 							</configuration>
 						</execution>
 					</executions>
+					<dependencies>
+						<dependency>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>extra-enforcer-rules</artifactId>
+							<version>1.0-beta-9</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.7.0</version>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.1.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-shade-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>1.8</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.10.3</version>
+					<version>3.0.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -250,7 +313,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.7</version>
+					<version>3.1.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -260,7 +328,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>3.1.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -270,7 +338,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.6</version>
+					<version>3.1.0</version>
 					<executions>
 						<execution>
 							<goals>
@@ -282,7 +350,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>2.4</version>
+					<version>3.0.1</version>
 					<executions>
 						<execution>
 							<id>attach-source</id>
@@ -301,14 +369,20 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.19.1</version>
+					<version>2.22.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.7.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>animal-sniffer-maven-plugin</artifactId>
-					<version>1.15</version>
+					<version>1.17</version>
 					<executions>
 						<execution>
+							<id>check-jdk-compliance</id>
 							<phase>test</phase>
 							<goals>
 								<goal>check</goal>
@@ -318,31 +392,62 @@
 					<configuration>
 						<signature>
 							<groupId>org.codehaus.mojo.signature</groupId>
-							<artifactId>java17</artifactId>
+							<artifactId>java18</artifactId>
 							<version>1.0</version>
 						</signature>
 					</configuration>
 				</plugin>
 				<plugin>
+					<groupId>com.github.siom79.japicmp</groupId>
+					<artifactId>japicmp-maven-plugin</artifactId>
+					<version>0.13.0</version>
+					<configuration>
+						<oldVersion>
+							<dependency>
+								<groupId>${project.groupId}</groupId>
+								<artifactId>${project.artifactId}</artifactId>
+								<version>${last-compare-version}</version>
+								<type>jar</type>
+							</dependency>
+						</oldVersion>
+						<newVersion>
+							<file>
+								<path>${project.build.directory}/${project.artifactId}-${project.version}.jar</path>
+							</file>
+						</newVersion>
+						<parameter>
+							<onlyModified>true</onlyModified>
+						</parameter>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>verify</phase>
+							<goals>
+								<goal>cmp</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>appassembler-maven-plugin</artifactId>
-					<version>1.10</version>
+					<version>2.0.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.felix</groupId>
 					<artifactId>maven-bundle-plugin</artifactId>
-					<version>3.0.1</version>
+					<version>3.5.1</version>
 				</plugin>
 				<!-- Create code coverage reports and submit them to coveralls.io. -->
 				<plugin>
 					<groupId>org.eluder.coveralls</groupId>
 					<artifactId>coveralls-maven-plugin</artifactId>
-					<version>4.1.0</version>
+					<version>4.3.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.7.5.201505241946</version>
+					<version>0.8.1</version>
 					<executions>
 						<execution>
 							<id>prepare-agent</id>
@@ -352,35 +457,10 @@
 						</execution>
 					</executions>
 				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
 				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.jacoco</groupId>
-										<artifactId>
-											jacoco-maven-plugin
-										</artifactId>
-										<versionRange>
-											[0.7.2.201409121644,)
-										</versionRange>
-										<goals>
-											<goal>prepare-agent</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>versions-maven-plugin</artifactId>
+					<version>2.5</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -422,7 +502,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
-						<version>2.4</version>
 						<executions>
 							<execution>
 								<id>attach-sources</id>
@@ -435,7 +514,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.10.3</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -448,7 +526,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -462,24 +539,6 @@
 				</plugins>
 			</build>
 		</profile>
-        <profile>
-            <id>ide</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <source>${maven.compiler.testSource}</source>
-                            <target>${maven.compiler.testTarget}</target>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
 	</profiles>
 </project>
 

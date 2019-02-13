@@ -1,0 +1,19 @@
+{
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@id": "http://www.myresource/uuid",
+  "@type": "http://www.myresource/uuidtype",
+  "http://www.myresource.com/ontology/1.0#talksAbout": {
+    "@list": [
+    {
+      "@id": "http://rdf.freebase.com/ns/m.018w8",
+      "rdfs:label": [
+        {
+          "@value": "Basketball",
+          "@language": "en"
+        }
+      ]
+    }
+    ] }
+}

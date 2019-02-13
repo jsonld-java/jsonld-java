@@ -1,11 +1,9 @@
 package com.github.jsonldjava.core;
 
-import java.util.Map;
+public class JsonLdError extends RuntimeException {
 
-public class JsonLdError extends Exception {
-
-    Map<String, Object> details;
-    private Error type;
+    private static final long serialVersionUID = -8685402790466459014L;
+    private final Error type;
 
     public JsonLdError(Error type, Object detail) {
         // TODO: pretty toString (e.g. print whole json objects)
@@ -15,6 +13,17 @@ public class JsonLdError extends Exception {
 
     public JsonLdError(Error type) {
         super("");
+        this.type = type;
+    }
+
+    public JsonLdError(Error type, Object detail, Throwable cause) {
+        // TODO: pretty toString (e.g. print whole json objects)
+        super(detail == null ? "" : detail.toString(), cause);
+        this.type = type;
+    }
+
+    public JsonLdError(Error type, Throwable cause) {
+        super(cause);
         this.type = type;
     }
 
@@ -34,6 +43,8 @@ public class JsonLdError extends Exception {
         MULTIPLE_CONTEXT_LINK_HEADERS("multiple context link headers"),
 
         LOADING_REMOTE_CONTEXT_FAILED("loading remote context failed"),
+
+        LOADING_INJECTED_CONTEXT_FAILED("loading injected context failed"),
 
         INVALID_REMOTE_CONTEXT("invalid remote context"),
 
@@ -89,6 +100,8 @@ public class JsonLdError extends Exception {
 
         INVALID_REVERSE_PROPERTY_VALUE("invalid reverse property value"),
 
+        INVALID_EMBED_VALUE("invalid @embed value"),
+
         // non spec related errors
         SYNTAX_ERROR("syntax error"),
 
@@ -114,17 +127,8 @@ public class JsonLdError extends Exception {
         }
     }
 
-    public JsonLdError setType(Error error) {
-        this.type = error;
-        return this;
-    };
-
     public Error getType() {
         return type;
-    }
-
-    public Map<String, Object> getDetails() {
-        return details;
     }
 
     @Override

@@ -24,7 +24,7 @@ public class LocalBaseTest {
 
         final JsonLdOptions options = new JsonLdOptions();
         final Object expanded = JsonLdProcessor.expand(context, options);
-        System.out.println(JsonUtils.toPrettyString(expanded));
+        // System.out.println(JsonUtils.toPrettyString(expanded));
 
         final Reader outReader = new BufferedReader(new InputStreamReader(
                 this.getClass().getResourceAsStream("/custom/base-0001-out.jsonld"),
@@ -45,7 +45,7 @@ public class LocalBaseTest {
 
         final JsonLdOptions options = new JsonLdOptions();
         final Object expanded = JsonLdProcessor.expand(context, options);
-        System.out.println(JsonUtils.toPrettyString(expanded));
+        // System.out.println(JsonUtils.toPrettyString(expanded));
 
         final Reader outReader = new BufferedReader(new InputStreamReader(
                 this.getClass().getResourceAsStream("/custom/base-0002-out.jsonld"),

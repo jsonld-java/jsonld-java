@@ -1,7 +1,9 @@
+**JSONLD-Java is looking for a maintainer**
+
 JSONLD-JAVA
 ===========
 
-This is a Java implementation of the [JSON-LD specification](http://www.w3.org/TR/json-ld/) and the [JSON-LD-API specification](http://www.w3.org/TR/json-ld-api/).
+This is a Java implementation of the [JSON-LD 1.0 specification](https://www.w3.org/TR/2014/REC-json-ld-20140116/) and the [JSON-LD-API 1.0 specification](https://www.w3.org/TR/2014/REC-json-ld-api-20140116/).
 
 [![Build Status](https://travis-ci.org/jsonld-java/jsonld-java.svg?branch=master)](https://travis-ci.org/jsonld-java/jsonld-java) [![Coverage Status](https://coveralls.io/repos/jsonld-java/jsonld-java/badge.svg?branch=master)](https://coveralls.io/r/jsonld-java/jsonld-java?branch=master)
 
@@ -14,11 +16,12 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.8.3</version>
+        <version>0.12.3</version>
     </dependency>
 
 Code example
 ------------
+
 ```java
 // Open a valid json(-ld) input file
 InputStream inputStream = new FileInputStream("input.json");
@@ -36,11 +39,11 @@ Object compact = JsonLdProcessor.compact(jsonObject, context, options);
 // Print out the result (or don't, it's your call!)
 System.out.println(JsonUtils.toPrettyString(compact));
 ```
+
 Processor options
 -----------------
 
-The Options specified by the [JSON-LD API Specification](http://json-ld.org/spec/latest/json-ld-api/#jsonldoptions) are accessible via the `com.github.jsonldjava.core.JsonLdOptions` class, and each `JsonLdProcessor.*` function has an optional input to take an instance of this class.
-
+The Options specified by the [JSON-LD API Specification](https://json-ld.org/spec/latest/json-ld-api/#the-jsonldoptions-type) are accessible via the `com.github.jsonldjava.core.JsonLdOptions` class, and each `JsonLdProcessor.*` function has an optional input to take an instance of this class.
 
 Controlling network traffic
 ---------------------------
@@ -57,8 +60,7 @@ The default HTTP Client is wrapped with a
 [CachingHttpClient](https://hc.apache.org/httpcomponents-client-ga/httpclient-cache/apidocs/org/apache/http/impl/client/cache/CachingHttpClient.html) to provide a 
 small memory-based cache (1000 objects, max 128 kB each) of regularly accessed contexts.
 
-
-### Loading contexts from classpath/JAR
+### Loading contexts from classpath
 
 Your application might be parsing JSONLD documents which always use the same
 external `@context` IRIs. Although the default HTTP cache (see above) will
@@ -107,8 +109,10 @@ automatically injected together with the current `Date`, meaning that the
 resource loaded from the JAR will effectively never expire (the real HTTP
 server will never be consulted by the Apache HTTP client):
 
-    Date: Wed, 19 Mar 2014 13:25:08 GMT
-    Cache-Control: max-age=2147483647
+```
+Date: Wed, 19 Mar 2014 13:25:08 GMT
+Cache-Control: max-age=2147483647
+```
 
 The mechanism for loading `jarcache.json` relies on 
 [Thread.currentThread().getContextClassLoader()](http://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html#getContextClassLoader%28%29)
@@ -116,26 +120,55 @@ to locate resources from the classpath - if you are running on a command line,
 within a framework (e.g. OSGi) or Servlet container (e.g. Tomcat) this should
 normally be set correctly. If not, try:
 
-        ClassLoader oldContextCL = Thread.currentThread().getContextClassLoader();
-        try { 
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            JsonLdProcessor.expand(input);   // or any other JsonLd operation
-        } finally { 
-	    // Restore, in case the current thread was doing something else
-	    // with the context classloader before calling our method
-            Thread.currentThread().setContextClassLoader(oldContextCL);
-        }
+```java
+ClassLoader oldContextCL = Thread.currentThread().getContextClassLoader();
+try { 
+    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+    JsonLdProcessor.expand(input);   // or any other JsonLd operation
+} finally { 
+    // Restore, in case the current thread was doing something else
+    // with the context classloader before calling our method
+    Thread.currentThread().setContextClassLoader(oldContextCL);
+}
+```
 
 To disable all remote document fetching, when using the default DocumentLoader, set the 
 following Java System Property to "true" using:
 
-    System.setProperty("com.github.jsonldjava.disallowRemoteContextLoading", "true");
+```java
+System.setProperty("com.github.jsonldjava.disallowRemoteContextLoading", "true");
+```
 
 You can also use the constant provided in DocumentLoader for the same purpose:
 
-    System.setProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING, "true");
+```java
+System.setProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING, "true");
+```
 
-Note that if you override DocumentLoader you should also support this setting for consistency.
+Note that if you override DocumentLoader you should also support this setting for consistency and security.
+
+### Loading contexts from a string
+
+Your application might be parsing JSONLD documents which reference external `@context` IRIs
+that are not available as file URIs on the classpath. In this case, the `jarcache.json`
+approch will not work. Instead you can inject the literal context file strings through
+the `JsonLdOptions` object, as follows:
+
+```java
+// Inject a context document into the options as a literal string
+DocumentLoader dl = new DocumentLoader();
+JsonLdOptions options = new JsonLdOptions();
+// ... the contents of "contexts/example.jsonld"
+String jsonContext = "{ \"@contxt\": { ... } }";
+dl.addInjectedDoc("http://www.example.com/context",  jsonContext);
+options.setDocumentLoader(dl);
+
+InputStream inputStream = new FileInputStream("input.json");
+Object jsonObject = JsonUtils.fromInputStream(inputStream);
+Map context = new HashMap();
+Object compact = JsonLdProcessor.compact(jsonObject, context, options);
+System.out.println(JsonUtils.toPrettyString(compact));
+```
 
 ### Customizing the Apache HttpClient
 
@@ -149,40 +182,40 @@ and passed as an argument to `JsonLdProcessor` arguments.
 
 Example of inserting a credential provider (e.g. to load a `@context` protected
 by HTTP Basic Auth):
- 
-        Object input = JsonUtils.fromInputStream(..);
-        DocumentLoader documentLoader = new DocumentLoader();
-        
-        CredentialsProvider credsProvider = new BasicCredentialsProvider();
-        credsProvider.setCredentials(
-                new AuthScope("localhost", 443),
-                new UsernamePasswordCredentials("username", "password"));
-        
-        CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
-                .setMaxObjectSize(1024 * 128).build();
 
-        CloseableHttpClient httpClient = CachingHttpClientBuilder
-                .create()
-                // allow caching
-                .setCacheConfig(cacheConfig)
-                // Wrap the local JarCacheStorage around a BasicHttpCacheStorage
-                .setHttpCacheStorage(
-                        new JarCacheStorage(null, cacheConfig, new BasicHttpCacheStorage(
-                                cacheConfig)))....
+```java
+Object input = JsonUtils.fromInputStream(..);
+DocumentLoader documentLoader = new DocumentLoader();
+        
+CredentialsProvider credsProvider = new BasicCredentialsProvider();
+credsProvider.setCredentials(
+        new AuthScope("localhost", 443),
+        new UsernamePasswordCredentials("username", "password"));
+       
+CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
+        .setMaxObjectSize(1024 * 128).build();
+
+CloseableHttpClient httpClient = CachingHttpClientBuilder
+        .create()
+        // allow caching
+        .setCacheConfig(cacheConfig)
+        // Wrap the local JarCacheStorage around a BasicHttpCacheStorage
+        .setHttpCacheStorage(
+                new JarCacheStorage(null, cacheConfig, new BasicHttpCacheStorage(
+                        cacheConfig)))....
 		
-		// Add in the credentials provider
-		.setDefaultCredentialsProvider(credsProvider);
+        // Add in the credentials provider
+        .setDefaultCredentialsProvider(credsProvider);
+        // When you are finished setting the properties, call build
+        .build();
 
-
-		// When you are finished setting the properties, call build
-		.build();
-
-        documentLoader.setHttpClient(httpClient);
+documentLoader.setHttpClient(httpClient);
         
-        JsonLdOptions options = new JsonLdOptions();
-        options.setDocumentLoader(documentLoader);
-        // .. and any other options        
-        Object rdf = JsonLdProcessor.toRDF(input, options);
+JsonLdOptions options = new JsonLdOptions();
+options.setDocumentLoader(documentLoader);
+// .. and any other options        
+Object rdf = JsonLdProcessor.toRDF(input, options);
+```
 
 PLAYGROUND
 ----------
@@ -191,14 +224,18 @@ The [jsonld-java-tools](https://github.com/jsonld-java/jsonld-java-tools) reposi
 
 ### Initial clone and setup
 
-    git clone git@github.com:jsonld-java/jsonld-java-tools.git
-    chmod +x ./jsonldplayground
+```bash
+git clone git@github.com:jsonld-java/jsonld-java-tools.git
+chmod +x ./jsonldplayground
+```
 
 ### Usage
 
 run the following to get usage details:
 
-    ./jsonldplayground --help
+```bash
+./jsonldplayground --help
+```
 
 For Developers
 --------------
@@ -207,15 +244,17 @@ For Developers
 
 `jsonld-java` uses maven to compile. From the base `jsonld-java` module run `mvn clean install` to install the jar into your local maven repository.
 
-The tests require Java-8 to compile, while the rest of the codebase is still compatible and built using the Java-6 APIs.
-
 ### Running tests
 
-    mvn test
+```bash
+mvn test
+```
 
 or
 
-    mvn test -pl core
+```bash
+mvn test -pl core
+```
 
 to run only core package tests
 
@@ -244,7 +283,9 @@ https://github.com/jsonld-java/jsonld-java/tree/master/core/reports
 
 Implementation Reports conforming to the [JSON-LD Implementation Report](http://json-ld.org/test-suite/reports/#instructions-for-submitting-implementation-reports) document can be regenerated using the following command:
 
-    mvn test -pl core -Dtest=JsonLdProcessorTest -Dreport.format=<format>
+```bash
+mvn test -pl core -Dtest=JsonLdProcessorTest -Dreport.format=<format>
+```
 
 Current possible values for `<format>` include JSON-LD (`application/ld+json` or `jsonld`), NQuads (`text/plain`, `nquads`, `ntriples`, `nq` or `nt`) and Turtle (`text/turtle`, `turtle` or `ttl`). `*` can be used to generate reports in all available formats.
 
@@ -256,7 +297,7 @@ This is the base package for JSONLD-Java. Integration with other Java packages a
 Existing integrations
 ---------------------
 
-* [OpenRDF Sesame](https://bitbucket.org/openrdf/sesame)
+* [Eclipse RDF4J](https://github.com/eclipse/rdf4j)
 * [Apache Jena](https://github.com/apache/jena/)
 * [RDF2GO](https://github.com/jsonld-java/jsonld-java-rdf2go)
 * [Apache Clerezza](https://github.com/jsonld-java/jsonld-java-clerezza)
@@ -275,54 +316,57 @@ Create maven module
 
 Here is the basic outline for what your module's pom.xml should look like
 
-	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
-		<parent>
-			<artifactId>jsonld-java-integration</artifactId>
-			<groupId>com.github.jsonld-java-parent</groupId>
-			<version>0.8.1-SNAPSHOT</version>
-		</parent>
-		<modelVersion>4.0.0</modelVersion>
-		<artifactId>jsonld-java-{your module}</artifactId>
-		<name>JSONLD Java :: {your module name}</name>
-		<description>JSON-LD Java integration module for {RDF Library your module integrates}</description>
-		<packaging>jar</packaging>
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-		<developers>
-			<developer>
-				<name>{YOU}</name>
-				<email>{YOUR EMAIL ADDRESS}</email>
-			</developer>
-		</developers>
+  <parent>
+    <groupId>com.github.jsonld-java</groupId>
+    <artifactId>jsonld-java-parent</artifactId>
+    <version>0.12.3</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>jsonld-java-{your module}</artifactId>
+  <version>0.12.3-SNAPSHOT</version>
+  <name>JSONLD Java :: {your module name}</name>
+  <description>JSON-LD Java integration module for {RDF Library your module integrates}</description>
+  <packaging>jar</packaging>
 
-		<dependencies>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>jsonld-java</artifactId>
-				<version>${project.version}</version>
-				<type>jar</type> 
-				<scope>compile</scope> 
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>jsonld-java</artifactId>
-				<version>${project.version}</version>
-				<type>test-jar</type>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-jdk14</artifactId>
-				<scope>test</scope>
-			</dependency>
-		</dependencies>
-	</project>
+  <developers>
+    <developer>
+      <name>{YOU}</name>
+      <email>{YOUR EMAIL ADDRESS}</email>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jsonld-java</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type> 
+      <scope>compile</scope> 
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jsonld-java</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
+```
 
 Make sure you edit the following:
  * `project/artifactId` : set this to `jsonld-java-{module id}`, where `{module id}` usually represents the RDF library you're integrating (e.g. `jsonld-java-jena`)
@@ -357,12 +401,16 @@ There are two ways to use your `RDFParser` implementation.
 
 Register your parser with the `JSONLD` class and set `options.format` when you call `fromRDF`
 
-	JSONLD.registerRDFParser("format/identifier", new YourRDFParser());
-	Object jsonld = JSONLD.fromRDF(yourInput, new Options("") {{ format = "format/identifier" }});
+```java
+JSONLD.registerRDFParser("format/identifier", new YourRDFParser());
+Object jsonld = JSONLD.fromRDF(yourInput, new Options("") {{ format = "format/identifier" }});
+```
 
 or pass an instance of your `RDFParser` into the `fromRDF` function
 
-	Object jsonld = JSONLD.fromRDF(yourInput, new YourRDFParser());
+```java
+Object jsonld = JSONLD.fromRDF(yourInput, new YourRDFParser());
+```
 
 ### JSONLDTripleCallback
 
@@ -371,7 +419,9 @@ RDF model from JSON-LD - being called for each triple (technically quad).
 
 Pass an instance of your `TripleCallback` to `JSONLD.toRDF`
 
-	Object yourOutput = JSONLD.toRDF(jsonld, new YourTripleCallback());
+```java
+Object yourOutput = JSONLD.toRDF(jsonld, new YourTripleCallback());
+```
 
 Integrate with your framework
 -----------------------------
@@ -399,6 +449,74 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 
 CHANGELOG
 =========
+
+### 2018-11-24
+* Release 0.12.3
+* Fix NaN/Inf/-Inf raw value types on conversion to RDF
+* Added fix for wrong rdf:type to @type conversion (Path by @umbreak)
+* Open up Context.getTypeMapping and Context.getLanguageMapping for reuse
+
+### 2018-11-03
+* W3c json ld syntax 34 allow container set on aliased type (Patch by @dr0i)
+* Release 0.12.2
+
+### 2018-09-05
+* handle omit graph flag (Patch by @eroux)
+* Release 0.12.1
+* Make pruneBlankNodeIdentifiers false by default in 1.0 mode and always true in 1.1 mode (Patch by @eroux)
+* Fix issue with blank node identifier pruning when @id is aliased (Patch by @eroux)
+* Allow wildcard {} for @id in framing (Patch by @eroux)
+
+### 2018-07-07
+* Fix tests setup for schema.org with HttpURLConnection that break because of the inability of HttpURLConnection to redirect from HTTP to HTTPS
+
+### 2018-04-08
+* Release 0.12.0
+* Encapsulate RemoteDocument and make it immutable
+
+### 2018-04-03
+* Fix performance issue caused by not caching schema.org and others that use ``Cache-Control: private`` (Patch by @HansBrende)
+* Cache classpath scans for jarcache.json to fix a similar performance issue
+* Add internal shaded dependency on Google Guava to use maintained soft and weak reference maps rather than adhoc versions
+* Make JsonLdError a RuntimeException to improve its use in closures
+* Bump minor version to 0.12 to reflect the API incompatibility caused by JsonLdError and protected field change and hiding in JarCacheStorage
+
+### 2018-01-25
+* Fix resource leak in JsonUtils.fromURL on unsuccessful requests (Patch by @plaplaige)
+
+### 2017-11-15
+* Ignore UTF BOM (Patch by @christopher-johnson)
+
+### 2017-08-26
+* Release 0.11.1
+* Fix @embed:@always support (Patch by @dr0i)
+
+### 2017-08-24
+* Release 0.11.0
+
+### 2017-08-22
+* Add implicit "flag only" subframe to fix incomplete list recursion (Patch by @christopher-johnson)
+* Support pruneBlankNodeIdentifiers framing option in 1.1 mode (Patch by @fsteeg and @eroux)
+* Support new @embed values (Patch by @eroux)
+
+### 2017-07-11
+* Add injection of contexts directly into DocumentLoader (Patch by @ryankenney)
+* Fix N-Quads content type (Patch by @NicolasRouquette)
+* Add JsonUtils.fromJsonParser (Patch by @dschulten)
+
+### 2017-02-16
+* Make literals compare consistently (Patch by @stain)
+* Release 0.10.0
+
+### 2017-01-09
+* Propagate causes for JsonLdError instances where they were caused by other Exceptions
+* Remove schema.org hack as it appears to work again now...
+* Remove deprecated and unused APIs
+* Bump version to 0.10.0-SNAPSHOT per the removed/changed APIs
+
+### 2016-12-23
+* Release 0.9.0
+* Fixes schema.org support that is broken with Apache HTTP Client but works with java.net.URL
 
 ### 2016-05-20
 * Fix reported NPE in JsonLdApi.removeDependents

@@ -11,8 +11,10 @@ import static com.github.jsonldjava.utils.Obj.newMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +23,7 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jsonldjava.core.JsonLdConsts.Embed;
 import com.github.jsonldjava.core.JsonLdError.Error;
 import com.github.jsonldjava.utils.Obj;
 
@@ -199,10 +202,12 @@ public class JsonLdApi {
             Collections.sort(keys);
             for (final String expandedProperty : keys) {
                 final Object expandedValue = elem.get(expandedProperty);
-
                 // 7.1)
                 if (JsonLdConsts.ID.equals(expandedProperty)
                         || JsonLdConsts.TYPE.equals(expandedProperty)) {
+                    // TODO: Relabel these step numbers when spec changes
+                    // 7.1.3)
+                    final String alias = activeCtx.compactIri(expandedProperty, true);
                     Object compactedValue;
 
                     // 7.1.1)
@@ -218,15 +223,16 @@ public class JsonLdApi {
                             types.add(activeCtx.compactIri(expandedType, true));
                         }
                         // 7.1.2.3)
-                        if (types.size() == 1) {
+                        if (types.size() == 1//
+                                // see w3c/json-ld-syntax#74
+                                && (!opts.getAllowContainerSetOnType()
+                                        || !(activeCtx.getContainer(alias) != null && activeCtx
+                                                .getContainer(alias).equals(JsonLdConsts.SET)))) {
                             compactedValue = types.get(0);
                         } else {
                             compactedValue = types;
                         }
                     }
-
-                    // 7.1.3)
-                    final String alias = activeCtx.compactIri(expandedProperty, true);
                     // 7.1.4)
                     result.put(alias, compactedValue);
                     continue;
@@ -502,6 +508,7 @@ public class JsonLdApi {
      */
     public Object expand(Context activeCtx, String activeProperty, Object element)
             throws JsonLdError {
+        final boolean frameExpansion = this.opts.getFrameExpansion();
         // 1)
         if (element == null) {
             return null;
@@ -575,12 +582,34 @@ public class JsonLdApi {
                     }
                     // 7.4.3)
                     if (JsonLdConsts.ID.equals(expandedProperty)) {
-                        if (!(value instanceof String)) {
+                        if (value instanceof String) {
+                            expandedValue = activeCtx.expandIri((String) value, true, false, null,
+                                    null);
+                        } else if (frameExpansion) {
+                            if (value instanceof Map) {
+                                if (((Map<String, Object>) value).size() != 0) {
+                                    throw new JsonLdError(Error.INVALID_ID_VALUE,
+                                            "@id value must be a an empty object for framing");
+                                }
+                                expandedValue = value;
+                            } else if (value instanceof List) {
+                                expandedValue = new ArrayList<String>();
+                                for (final Object v : (List<Object>) value) {
+                                    if (!(v instanceof String)) {
+                                        throw new JsonLdError(Error.INVALID_ID_VALUE,
+                                                "@id value must be a string, an array of strings or an empty dictionary");
+                                    }
+                                    ((List<String>) expandedValue).add(activeCtx
+                                            .expandIri((String) v, true, true, null, null));
+                                }
+                            } else {
+                                throw new JsonLdError(Error.INVALID_ID_VALUE,
+                                        "value of @id must be a string, an array of strings or an empty dictionary");
+                            }
+                        } else {
                             throw new JsonLdError(Error.INVALID_ID_VALUE,
                                     "value of @id must be a string");
                         }
-                        expandedValue = activeCtx.expandIri((String) value, true, false, null,
-                                null);
                     }
                     // 7.4.4)
                     else if (JsonLdConsts.TYPE.equals(expandedProperty)) {
@@ -599,8 +628,8 @@ public class JsonLdApi {
                                     null);
                         }
                         // TODO: SPEC: no mention of empty map check
-                        else if (value instanceof Map) {
-                            if (((Map<String, Object>) value).size() != 0) {
+                        else if (frameExpansion && value instanceof Map) {
+                            if (!((Map<String, Object>) value).isEmpty()) {
                                 throw new JsonLdError(Error.INVALID_TYPE_VALUE,
                                         "@type value must be a an empty object for framing");
                             }
@@ -741,11 +770,12 @@ public class JsonLdApi {
                         continue;
                     }
                     // TODO: SPEC no mention of @explicit etc in spec
-                    else if (JsonLdConsts.EXPLICIT.equals(expandedProperty)
+                    else if (frameExpansion && (JsonLdConsts.EXPLICIT.equals(expandedProperty)
                             || JsonLdConsts.DEFAULT.equals(expandedProperty)
                             || JsonLdConsts.EMBED.equals(expandedProperty)
+                            || JsonLdConsts.REQUIRE_ALL.equals(expandedProperty)
                             || JsonLdConsts.EMBED_CHILDREN.equals(expandedProperty)
-                            || JsonLdConsts.OMIT_DEFAULT.equals(expandedProperty)) {
+                            || JsonLdConsts.OMIT_DEFAULT.equals(expandedProperty))) {
                         expandedValue = expand(activeCtx, expandedProperty, value);
                     }
                     // 7.4.12)
@@ -891,7 +921,7 @@ public class JsonLdApi {
                 // 8.1)
                 // TODO: is this method faster than just using containsKey for
                 // each?
-                final Set<String> keySet = new HashSet(result.keySet());
+                final Set<String> keySet = new HashSet<>(result.keySet());
                 keySet.remove(JsonLdConsts.VALUE);
                 keySet.remove(JsonLdConsts.INDEX);
                 final boolean langremoved = keySet.remove(JsonLdConsts.LANGUAGE);
@@ -962,7 +992,7 @@ public class JsonLdApi {
                     result = null;
                 }
                 // 12.2)
-                else if (result != null && result.containsKey(JsonLdConsts.ID)
+                else if (result != null && !frameExpansion && result.containsKey(JsonLdConsts.ID)
                         && result.size() == 1) {
                     result = null;
                 }
@@ -1250,21 +1280,26 @@ public class JsonLdApi {
      */
 
     private class FramingContext {
-        public boolean embed;
+        public Embed embed;
         public boolean explicit;
         public boolean omitDefault;
+        public Map<String, EmbedNode> uniqueEmbeds;
+        public LinkedList<String> subjectStack;
+        public boolean requireAll;
 
         public FramingContext() {
-            embed = true;
+            embed = Embed.LAST;
             explicit = false;
             omitDefault = false;
-            embeds = null;
+            requireAll = false;
+            uniqueEmbeds = new HashMap<>();
+            subjectStack = new LinkedList<>();
         }
 
         public FramingContext(JsonLdOptions opts) {
             this();
             if (opts.getEmbed() != null) {
-                this.embed = opts.getEmbed();
+                this.embed = opts.getEmbedVal();
             }
             if (opts.getExplicit() != null) {
                 this.explicit = opts.getExplicit();
@@ -1272,14 +1307,20 @@ public class JsonLdApi {
             if (opts.getOmitDefault() != null) {
                 this.omitDefault = opts.getOmitDefault();
             }
+            if (opts.getRequireAll() != null) {
+                this.requireAll = opts.getRequireAll();
+            }
         }
-
-        public Map<String, EmbedNode> embeds = null;
     }
 
     private class EmbedNode {
         public Object parent = null;
         public String property = null;
+
+        public EmbedNode(Object parent, String property) {
+            this.parent = parent;
+            this.property = property;
+        }
     }
 
     private Map<String, Object> nodeMap;
@@ -1300,7 +1341,7 @@ public class JsonLdApi {
         // create framing state
         final FramingContext state = new FramingContext(this.opts);
 
-        // use tree map so keys are sotred by default
+        // use tree map so keys are sorted by default
         final Map<String, Object> nodes = new TreeMap<String, Object>();
         generateNodeMap(input, nodes);
         this.nodeMap = (Map<String, Object>) nodes.get(JsonLdConsts.DEFAULT);
@@ -1308,6 +1349,9 @@ public class JsonLdApi {
         final List<Object> framed = new ArrayList<Object>();
         // NOTE: frame validation is done by the function not allowing anything
         // other than list to me passed
+        // 1.
+        // If frame is an array, set frame to the first member of the array,
+        // which MUST be a valid frame.
         frame(state, this.nodeMap,
                 (frame != null && frame.size() > 0 ? (Map<String, Object>) frame.get(0) : newMap()),
                 framed, null);
@@ -1315,13 +1359,15 @@ public class JsonLdApi {
         return framed;
     }
 
+    private boolean createsCircularReference(String id, FramingContext state) {
+        return state.subjectStack.contains(id);
+    }
+
     /**
      * Frames subjects according to the given frame.
      *
      * @param state
      *            the current framing state.
-     * @param subjects
-     *            the subjects to filter.
      * @param frame
      *            the frame.
      * @param parent
@@ -1334,187 +1380,218 @@ public class JsonLdApi {
     private void frame(FramingContext state, Map<String, Object> nodes, Map<String, Object> frame,
             Object parent, String property) throws JsonLdError {
 
-        // filter out subjects that match the frame
-        final Map<String, Object> matches = filterNodes(state, nodes, frame);
+        // https://json-ld.org/spec/latest/json-ld-framing/#framing-algorithm
 
-        // get flags for current frame
-        Boolean embedOn = getFrameFlag(frame, JsonLdConsts.EMBED, state.embed);
-        final Boolean explicicOn = getFrameFlag(frame, JsonLdConsts.EXPLICIT, state.explicit);
+        // 2.
+        // Initialize flags embed, explicit, and requireAll from object embed
+        // flag,
+        // explicit inclusion flag, and require all flag in state overriding
+        // from
+        // any property values for @embed, @explicit, and @requireAll in frame.
+        // TODO: handle @requireAll
+        final Embed embed = getFrameEmbed(frame, state.embed);
+        final Boolean explicitOn = getFrameFlag(frame, JsonLdConsts.EXPLICIT, state.explicit);
+        final Boolean requireAll = getFrameFlag(frame, JsonLdConsts.REQUIRE_ALL, state.requireAll);
+        final Map<String, Object> flags = newMap();
+        flags.put(JsonLdConsts.EXPLICIT, explicitOn);
+        flags.put(JsonLdConsts.EMBED, embed);
+        flags.put(JsonLdConsts.REQUIRE_ALL, requireAll);
 
-        // add matches to output
+        // 3.
+        // Create a list of matched subjects by filtering subjects against frame
+        // using the Frame Matching algorithm with state, subjects, frame, and
+        // requireAll.
+        final Map<String, Object> matches = filterNodes(state, nodes, frame, requireAll);
         final List<String> ids = new ArrayList<String>(matches.keySet());
         Collections.sort(ids);
-        for (final String id : ids) {
-            if (property == null) {
-                state.embeds = new LinkedHashMap<String, EmbedNode>();
-            }
 
-            // start output
+        // 4.
+        // Set link the the value of link in state associated with graph name in
+        // state,
+        // creating a new empty dictionary, if necessary.
+        final Map<String, EmbedNode> link = state.uniqueEmbeds;
+
+        // 5.
+        // For each id and associated node object node from the set of matched
+        // subjects, ordered by id:
+        for (final String id : ids) {
+            final Map<String, Object> subject = (Map<String, Object>) matches.get(id);
+
+            // 5.1
+            // Initialize output to a new dictionary with @id and id and add
+            // output to link associated with id.
             final Map<String, Object> output = newMap();
             output.put(JsonLdConsts.ID, id);
 
-            // prepare embed meta info
-            final EmbedNode embeddedNode = new EmbedNode();
-            embeddedNode.parent = parent;
-            embeddedNode.property = property;
+            // 5.2
+            // If embed is @link and id is in link, node already exists in
+            // results.
+            // Add the associated node object from link to parent and do not
+            // perform
+            // additional processing for this node.
+            if (embed == Embed.LINK && state.uniqueEmbeds.containsKey(id)) {
+                addFrameOutput(state, parent, property, state.uniqueEmbeds.get(id));
+                continue;
+            }
 
-            // if embed is on and there is an existing embed
-            if (embedOn && state.embeds.containsKey(id)) {
-                final EmbedNode existing = state.embeds.get(id);
-                embedOn = false;
+            // Occurs only at top level, compartmentalize each top-level match
+            if (property == null) {
+                state.uniqueEmbeds = new HashMap<>();
+            }
 
-                if (existing.parent instanceof List) {
-                    for (final Object p : (List<Object>) existing.parent) {
-                        if (JsonLdUtils.compareValues(output, p)) {
-                            embedOn = true;
-                            break;
-                        }
-                    }
-                }
-                // existing embed's parent is an object
-                else {
-                    if (((Map<String, Object>) existing.parent).containsKey(existing.property)) {
-                        for (final Object v : (List<Object>) ((Map<String, Object>) existing.parent)
-                                .get(existing.property)) {
-                            if (v instanceof Map && Obj.equals(id,
-                                    ((Map<String, Object>) v).get(JsonLdConsts.ID))) {
-                                embedOn = true;
-                                break;
-                            }
-                        }
-                    }
-                }
+            // 5.3
+            // Otherwise, if embed is @never or if a circular reference would be
+            // created by an embed,
+            // add output to parent and do not perform additional processing for
+            // this node.
+            if (embed == Embed.NEVER || createsCircularReference(id, state)) {
+                addFrameOutput(state, parent, property, output);
+                continue;
+            }
 
-                // existing embed has already been added, so allow an overwrite
-                if (embedOn) {
+            // 5.4
+            // Otherwise, if embed is @last, remove any existing embedded node
+            // from parent associated
+            // with graph name in state. Requires sorting of subjects.
+            if (embed == Embed.LAST) {
+                if (state.uniqueEmbeds.containsKey(id)) {
                     removeEmbed(state, id);
                 }
+                state.uniqueEmbeds.put(id, new EmbedNode(parent, property));
             }
 
-            // not embedding, add output without any other properties
-            if (!embedOn) {
-                addFrameOutput(state, parent, property, output);
-            } else {
-                // add embed meta info
-                state.embeds.put(id, embeddedNode);
+            state.subjectStack.push(id);
 
-                // iterate over subject properties
-                final Map<String, Object> element = (Map<String, Object>) matches.get(id);
-                List<String> props = new ArrayList<String>(element.keySet());
-                Collections.sort(props);
-                for (final String prop : props) {
+            // 5.5 If embed is @last or @always
 
-                    // copy keywords to output
-                    if (isKeyword(prop)) {
-                        output.put(prop, JsonLdUtils.clone(element.get(prop)));
-                        continue;
-                    }
+            // Skip 5.5.1
 
-                    // if property isn't in the frame
-                    if (!frame.containsKey(prop)) {
-                        // if explicit is off, embed values
-                        if (!explicicOn) {
-                            embedValues(state, element, prop, output);
-                        }
-                        continue;
-                    }
+            // 5.5.2 For each property and objects in node, ordered by property:
+            final Map<String, Object> element = (Map<String, Object>) matches.get(id);
+            List<String> props = new ArrayList<String>(element.keySet());
+            Collections.sort(props);
+            for (final String prop : props) {
 
-                    // add objects
-                    final List<Object> value = (List<Object>) element.get(prop);
+                // 5.5.2.1 If property is a keyword, add property and objects to
+                // output.
+                if (isKeyword(prop)) {
+                    output.put(prop, JsonLdUtils.clone(element.get(prop)));
+                    continue;
+                }
 
-                    for (final Object item : value) {
+                // 5.5.2.2 Otherwise, if property is not in frame, and explicit
+                // is true, processors
+                // MUST NOT add any values for property to output, and the
+                // following steps are skipped.
+                if (explicitOn && !frame.containsKey(prop)) {
+                    continue;
+                }
 
-                        // recurse into list
-                        if ((item instanceof Map)
-                                && ((Map<String, Object>) item).containsKey(JsonLdConsts.LIST)) {
-                            // add empty list
-                            final Map<String, Object> list = newMap();
-                            list.put(JsonLdConsts.LIST, new ArrayList<Object>());
-                            addFrameOutput(state, output, prop, list);
+                // add objects
+                final List<Object> value = (List<Object>) element.get(prop);
 
-                            // add list objects
-                            for (final Object listitem : (List<Object>) ((Map<String, Object>) item)
-                                    .get(JsonLdConsts.LIST)) {
-                                // recurse into subject reference
-                                if (JsonLdUtils.isNodeReference(listitem)) {
-                                    final Map<String, Object> tmp = newMap();
-                                    final String itemid = (String) ((Map<String, Object>) listitem)
-                                            .get(JsonLdConsts.ID);
-                                    // TODO: nodes may need to be node_map,
-                                    // which is global
-                                    tmp.put(itemid, this.nodeMap.get(itemid));
-                                    frame(state, tmp,
-                                            (Map<String, Object>) ((List<Object>) frame.get(prop))
-                                                    .get(0),
-                                            list, JsonLdConsts.LIST);
+                // 5.5.2.3 For each item in objects:
+                for (final Object item : value) {
+                    if ((item instanceof Map)
+                            && ((Map<String, Object>) item).containsKey(JsonLdConsts.LIST)) {
+                        // add empty list
+                        final Map<String, Object> list = newMap();
+                        list.put(JsonLdConsts.LIST, new ArrayList<Object>());
+                        addFrameOutput(state, output, prop, list);
+
+                        // add list objects
+                        for (final Object listitem : (List<Object>) ((Map<String, Object>) item)
+                                .get(JsonLdConsts.LIST)) {
+                            // 5.5.2.3.1.1 recurse into subject reference
+                            if (JsonLdUtils.isNodeReference(listitem)) {
+                                final Map<String, Object> tmp = newMap();
+                                final String itemid = (String) ((Map<String, Object>) listitem)
+                                        .get(JsonLdConsts.ID);
+                                // TODO: nodes may need to be node_map,
+                                // which is global
+                                tmp.put(itemid, this.nodeMap.get(itemid));
+                                Map<String, Object> subframe;
+                                if (frame.containsKey(prop)) {
+                                    subframe = (Map<String, Object>) ((List<Object>) frame
+                                            .get(prop)).get(0);
                                 } else {
-                                    // include other values automatcially (TODO:
-                                    // may need JsonLdUtils.clone(n))
-                                    addFrameOutput(state, list, JsonLdConsts.LIST, listitem);
+                                    subframe = flags;
                                 }
+                                frame(state, tmp, subframe, list, JsonLdConsts.LIST);
+                            } else {
+
+                                // include other values automatcially (TODO:
+                                // may need JsonLdUtils.clone(n))
+                                addFrameOutput(state, list, JsonLdConsts.LIST, listitem);
                             }
                         }
-
-                        // recurse into subject reference
-                        else if (JsonLdUtils.isNodeReference(item)) {
-                            final Map<String, Object> tmp = newMap();
-                            final String itemid = (String) ((Map<String, Object>) item)
-                                    .get(JsonLdConsts.ID);
-                            // TODO: nodes may need to be node_map, which is
-                            // global
-                            tmp.put(itemid, this.nodeMap.get(itemid));
-                            frame(state, tmp,
-                                    (Map<String, Object>) ((List<Object>) frame.get(prop)).get(0),
-                                    output, prop);
+                    }
+                    // recurse into subject reference
+                    else if (JsonLdUtils.isNodeReference(item)) {
+                        final Map<String, Object> tmp = newMap();
+                        final String itemid = (String) ((Map<String, Object>) item)
+                                .get(JsonLdConsts.ID);
+                        // TODO: nodes may need to be node_map, which is
+                        // global
+                        tmp.put(itemid, this.nodeMap.get(itemid));
+                        Map<String, Object> subframe;
+                        if (frame.containsKey(prop)) {
+                            subframe = (Map<String, Object>) ((List<Object>) frame.get(prop))
+                                    .get(0);
                         } else {
-                            // include other values automatically (TODO: may
-                            // need JsonLdUtils.clone(o))
-                            addFrameOutput(state, output, prop, item);
+                            subframe = flags;
                         }
+                        frame(state, tmp, subframe, output, prop);
+                    } else {
+                        // include other values automatically (TODO: may
+                        // need JsonLdUtils.clone(o))
+                        addFrameOutput(state, output, prop, item);
                     }
                 }
-
-                // handle defaults
-                props = new ArrayList<String>(frame.keySet());
-                Collections.sort(props);
-                for (final String prop : props) {
-                    // skip keywords
-                    if (isKeyword(prop)) {
-                        continue;
-                    }
-
-                    final List<Object> pf = (List<Object>) frame.get(prop);
-                    Map<String, Object> propertyFrame = pf.size() > 0
-                            ? (Map<String, Object>) pf.get(0) : null;
-                    if (propertyFrame == null) {
-                        propertyFrame = newMap();
-                    }
-                    final boolean omitDefaultOn = getFrameFlag(propertyFrame,
-                            JsonLdConsts.OMIT_DEFAULT, state.omitDefault);
-                    if (!omitDefaultOn && !output.containsKey(prop)) {
-                        Object def = "@null";
-                        if (propertyFrame.containsKey(JsonLdConsts.DEFAULT)) {
-                            def = JsonLdUtils.clone(propertyFrame.get(JsonLdConsts.DEFAULT));
-                        }
-                        if (!(def instanceof List)) {
-                            final List<Object> tmp = new ArrayList<Object>();
-                            tmp.add(def);
-                            def = tmp;
-                        }
-                        final Map<String, Object> tmp1 = newMap(JsonLdConsts.PRESERVE, def);
-                        final List<Object> tmp2 = new ArrayList<Object>();
-                        tmp2.add(tmp1);
-                        output.put(prop, tmp2);
-                    }
-                }
-
-                // add output to parent
-                addFrameOutput(state, parent, property, output);
             }
+
+            // handle defaults
+            props = new ArrayList<String>(frame.keySet());
+            Collections.sort(props);
+            for (final String prop : props) {
+                // skip keywords
+                if (isKeyword(prop)) {
+                    continue;
+                }
+
+                final List<Object> pf = (List<Object>) frame.get(prop);
+                Map<String, Object> propertyFrame = pf.size() > 0 ? (Map<String, Object>) pf.get(0)
+                        : null;
+                if (propertyFrame == null) {
+                    propertyFrame = newMap();
+                }
+                final boolean omitDefaultOn = getFrameFlag(propertyFrame, JsonLdConsts.OMIT_DEFAULT,
+                        state.omitDefault);
+                if (!omitDefaultOn && !output.containsKey(prop)) {
+                    Object def = "@null";
+                    if (propertyFrame.containsKey(JsonLdConsts.DEFAULT)) {
+                        def = JsonLdUtils.clone(propertyFrame.get(JsonLdConsts.DEFAULT));
+                    }
+                    if (!(def instanceof List)) {
+                        final List<Object> tmp = new ArrayList<Object>();
+                        tmp.add(def);
+                        def = tmp;
+                    }
+                    final Map<String, Object> tmp1 = newMap(JsonLdConsts.PRESERVE, def);
+                    final List<Object> tmp2 = new ArrayList<Object>();
+                    tmp2.add(tmp1);
+                    output.put(prop, tmp2);
+                }
+            }
+
+            // add output to parent
+            addFrameOutput(state, parent, property, output);
+
+            state.subjectStack.pop();
         }
     }
 
-    private Boolean getFrameFlag(Map<String, Object> frame, String name, boolean thedefault) {
+    private Object getFrameValue(Map<String, Object> frame, String name) {
         Object value = frame.get(name);
         if (value instanceof List) {
             if (((List<Object>) value).size() > 0) {
@@ -1524,10 +1601,43 @@ public class JsonLdApi {
         if (value instanceof Map && ((Map<String, Object>) value).containsKey(JsonLdConsts.VALUE)) {
             value = ((Map<String, Object>) value).get(JsonLdConsts.VALUE);
         }
+        return value;
+    }
+
+    private Boolean getFrameFlag(Map<String, Object> frame, String name, boolean thedefault) {
+        final Object value = getFrameValue(frame, name);
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
         return thedefault;
+    }
+
+    private Embed getFrameEmbed(Map<String, Object> frame, Embed thedefault) throws JsonLdError {
+        final Object value = getFrameValue(frame, JsonLdConsts.EMBED);
+        if (value == null) {
+            return thedefault;
+        }
+        if (value instanceof Boolean) {
+            return (Boolean) value ? Embed.LAST : Embed.NEVER;
+        }
+        if (value instanceof Embed) {
+            return (Embed) value;
+        }
+        if (value instanceof String) {
+            switch ((String) value) {
+            case "@always":
+                return Embed.ALWAYS;
+            case "@never":
+                return Embed.NEVER;
+            case "@last":
+                return Embed.LAST;
+            case "@link":
+                return Embed.LINK;
+            default:
+                throw new JsonLdError(JsonLdError.Error.INVALID_EMBED_VALUE);
+            }
+        }
+        throw new JsonLdError(JsonLdError.Error.INVALID_EMBED_VALUE);
     }
 
     /**
@@ -1540,8 +1650,8 @@ public class JsonLdApi {
      */
     private static void removeEmbed(FramingContext state, String id) {
         // get existing embed
-        final Map<String, EmbedNode> embeds = state.embeds;
-        final EmbedNode embed = embeds.get(id);
+        final Map<String, EmbedNode> links = state.uniqueEmbeds;
+        final EmbedNode embed = links.get(id);
         final Object parent = embed.parent;
         final String property = embed.property;
 
@@ -1565,7 +1675,7 @@ public class JsonLdApi {
             ((Map<String, Object>) parent).put(property, newvals);
         }
         // recursively remove dependent dangling embeds
-        removeDependents(embeds, id);
+        removeDependents(links, id);
     }
 
     private static void removeDependents(Map<String, EmbedNode> embeds, String id) {
@@ -1584,11 +1694,11 @@ public class JsonLdApi {
     }
 
     private Map<String, Object> filterNodes(FramingContext state, Map<String, Object> nodes,
-            Map<String, Object> frame) throws JsonLdError {
+            Map<String, Object> frame, boolean requireAll) throws JsonLdError {
         final Map<String, Object> rval = newMap();
         for (final String id : nodes.keySet()) {
             final Map<String, Object> element = (Map<String, Object>) nodes.get(id);
-            if (element != null && filterNode(state, element, frame)) {
+            if (element != null && filterNode(state, element, frame, requireAll)) {
                 rval.put(id, element);
             }
         }
@@ -1596,8 +1706,51 @@ public class JsonLdApi {
     }
 
     private boolean filterNode(FramingContext state, Map<String, Object> node,
-            Map<String, Object> frame) throws JsonLdError {
+            Map<String, Object> frame, boolean requireAll) throws JsonLdError {
         final Object types = frame.get(JsonLdConsts.TYPE);
+        final Object frameIds = frame.get(JsonLdConsts.ID);
+        // https://json-ld.org/spec/latest/json-ld-framing/#frame-matching
+        //
+        // 1. Node matches if it has an @id property including any IRI or
+        // blank node in the @id property in frame.
+        if (frameIds != null) {
+            if (frameIds instanceof String) {
+                final Object nodeId = node.get(JsonLdConsts.ID);
+                if (nodeId == null) {
+                    return false;
+                }
+                if (JsonLdUtils.deepCompare(nodeId, frameIds)) {
+                    return true;
+                }
+            } else if (frameIds instanceof LinkedHashMap
+                    && ((LinkedHashMap) frameIds).size() == 0) {
+                if (node.containsKey(JsonLdConsts.ID)) {
+                    return true;
+                }
+                return false;
+            } else if (!(frameIds instanceof List)) {
+                throw new JsonLdError(Error.SYNTAX_ERROR, "frame @id must be an array");
+            } else {
+                final Object nodeId = node.get(JsonLdConsts.ID);
+                if (nodeId == null) {
+                    return false;
+                }
+                for (final Object j : (List<Object>) frameIds) {
+                    if (JsonLdUtils.deepCompare(nodeId, j)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        // 2. Node matches if frame has no non-keyword properties.TODO
+        // 3. If requireAll is true, node matches if all non-keyword properties
+        // (property) in frame match any of the following conditions. Or, if
+        // requireAll is false, if any of the non-keyword properties (property)
+        // in frame match any of the following conditions. For the values of
+        // each
+        // property from frame in node:
+        // 3.1 If property is @type:
         if (types != null) {
             if (!(types instanceof List)) {
                 throw new JsonLdError(Error.SYNTAX_ERROR, "frame @type must be an array");
@@ -1608,45 +1761,50 @@ public class JsonLdApi {
             } else if (!(nodeTypes instanceof List)) {
                 throw new JsonLdError(Error.SYNTAX_ERROR, "node @type must be an array");
             }
+            // 3.1.1 Property matches if the @type property in frame includes
+            // any IRI in values.
+            for (final Object i : (List<Object>) nodeTypes) {
+                for (final Object j : (List<Object>) types) {
+                    if (JsonLdUtils.deepCompare(i, j)) {
+                        return true;
+                    }
+                }
+            }
+            // TODO: 3.1.2
+            // 3.1.3 Otherwise, property matches if values is empty and the
+            // @type property in frame is match none.
             if (((List<Object>) types).size() == 1 && ((List<Object>) types).get(0) instanceof Map
                     && ((Map<String, Object>) ((List<Object>) types).get(0)).size() == 0) {
                 return !((List<Object>) nodeTypes).isEmpty();
-            } else {
-                for (final Object i : (List<Object>) nodeTypes) {
-                    for (final Object j : (List<Object>) types) {
-                        if (JsonLdUtils.deepCompare(i, j)) {
-                            return true;
-                        }
-                    }
-                }
-                return false;
             }
-        } else {
-            for (final String key : frame.keySet()) {
-                if (JsonLdConsts.ID.equals(key) || !isKeyword(key) && !(node.containsKey(key))) {
+            // 3.1.4 Otherwise, property does not match.
+            return false;
+        }
+        // 3.2
+        for (final String key : frame.keySet()) {
+            if (!isKeyword(key) && !(node.containsKey(key))) {
 
-                    final Object frameObject = frame.get(key);
-                    if (frameObject instanceof ArrayList) {
-                        final ArrayList<Object> o = (ArrayList<Object>) frame.get(key);
+                final Object frameObject = frame.get(key);
+                if (frameObject instanceof ArrayList) {
+                    final ArrayList<Object> o = (ArrayList<Object>) frame.get(key);
 
-                        boolean _default = false;
-                        for (final Object oo : o) {
-                            if (oo instanceof Map) {
-                                if (((Map) oo).containsKey(JsonLdConsts.DEFAULT)) {
-                                    _default = true;
-                                }
+                    boolean _default = false;
+                    for (final Object oo : o) {
+                        if (oo instanceof Map) {
+                            if (((Map) oo).containsKey(JsonLdConsts.DEFAULT)) {
+                                _default = true;
                             }
                         }
-                        if (_default) {
-                            continue;
-                        }
                     }
-
-                    return false;
+                    if (_default) {
+                        continue;
+                    }
                 }
+
+                return false;
             }
-            return true;
         }
+        return true;
     }
 
     /**
@@ -1672,60 +1830,6 @@ public class JsonLdApi {
             prop.add(output);
         } else {
             ((List) parent).add(output);
-        }
-    }
-
-    /**
-     * Embeds values for the given subject and property into the given output
-     * during the framing algorithm.
-     *
-     * @param state
-     *            the current framing state.
-     * @param element
-     *            the subject.
-     * @param property
-     *            the property.
-     * @param output
-     *            the output.
-     */
-    private void embedValues(FramingContext state, Map<String, Object> element, String property,
-            Object output) {
-        // embed subject properties in output
-        final List<Object> objects = (List<Object>) element.get(property);
-        for (Object o : objects) {
-            // handle subject reference
-            if (JsonLdUtils.isNodeReference(o)) {
-                final String sid = (String) ((Map<String, Object>) o).get(JsonLdConsts.ID);
-
-                // embed full subject if isn't already embedded
-                if (!state.embeds.containsKey(sid)) {
-                    // add embed
-                    final EmbedNode embed = new EmbedNode();
-                    embed.parent = output;
-                    embed.property = property;
-                    state.embeds.put(sid, embed);
-
-                    // recurse into subject
-                    o = newMap();
-                    Map<String, Object> s = (Map<String, Object>) this.nodeMap.get(sid);
-                    if (s == null) {
-                        s = newMap(JsonLdConsts.ID, sid);
-                    }
-                    for (final String prop : s.keySet()) {
-                        // copy keywords
-                        if (isKeyword(prop)) {
-                            ((Map<String, Object>) o).put(prop, JsonLdUtils.clone(s.get(prop)));
-                            continue;
-                        }
-                        embedValues(state, s, prop, o);
-                    }
-                }
-                addFrameOutput(state, output, property, o);
-            }
-            // copy non-subject value
-            else {
-                addFrameOutput(state, output, property, JsonLdUtils.clone(o));
-            }
         }
     }
 
@@ -1755,6 +1859,16 @@ public class JsonLdApi {
         public NodeMapNode node = null;
         public String property = null;
         public Map<String, Object> value = null;
+    }
+
+    private class Node {
+        private String predicate;
+        private RDFDataset.Node object;
+
+        public Node(String predicate, RDFDataset.Node object) {
+            this.predicate = predicate;
+            this.object = object;
+        }
     }
 
     private class NodeMapNode extends LinkedHashMap<String, Object> {
@@ -1834,11 +1948,7 @@ public class JsonLdApi {
      * @return A list of JSON-LD objects found in the given dataset.
      * @throws JsonLdError
      *             If there was an error during conversion from RDF to JSON-LD.
-     * @deprecated Experimental method, only use if you are sure you need to use
-     *             this method. Most users will need to use
-     *             {@link #fromRDF(RDFDataset)}.
      */
-    @Deprecated
     public List<Object> fromRDF(final RDFDataset dataset, boolean noDuplicatesInDataset)
             throws JsonLdError {
         // 1)
@@ -1854,62 +1964,64 @@ public class JsonLdApi {
             final List<RDFDataset.Quad> graph = dataset.getQuads(name);
 
             // 3.2+3.4)
-            Map<String, NodeMapNode> nodeMap;
-            if (!graphMap.containsKey(name)) {
-                nodeMap = new LinkedHashMap<String, NodeMapNode>();
-                graphMap.put(name, nodeMap);
-            } else {
-                nodeMap = graphMap.get(name);
-            }
+            final Map<String, NodeMapNode> nodeMap = graphMap.computeIfAbsent(name,
+                    k -> new LinkedHashMap<String, NodeMapNode>());
 
             // 3.3)
-            if (!JsonLdConsts.DEFAULT.equals(name) && !Obj.contains(defaultGraph, name)) {
-                defaultGraph.put(name, new NodeMapNode(name));
+            if (!JsonLdConsts.DEFAULT.equals(name)) {
+                // Existing entries in the default graph are not overwritten
+                defaultGraph.computeIfAbsent(name, k -> new NodeMapNode(k));
             }
 
             // 3.5)
+            final Map<String, List<Node>> nodes = new HashMap<>();
+
             for (final RDFDataset.Quad triple : graph) {
                 final String subject = triple.getSubject().getValue();
                 final String predicate = triple.getPredicate().getValue();
                 final RDFDataset.Node object = triple.getObject();
+                nodes.computeIfAbsent(subject, k -> new ArrayList<>())
+                        .add(new Node(predicate, object));
+            }
+            for (final Map.Entry<String, List<Node>> nodeEntry : nodes.entrySet()) {
+                final String subject = nodeEntry.getKey();
 
-                // 3.5.1+3.5.2)
-                NodeMapNode node;
-                if (!nodeMap.containsKey(subject)) {
-                    node = new NodeMapNode(subject);
-                    nodeMap.put(subject, node);
-                } else {
-                    node = nodeMap.get(subject);
-                }
+                for (final Node n : nodeEntry.getValue()) {
+                    final String predicate = n.predicate;
+                    final RDFDataset.Node object = n.object;
 
-                // 3.5.3)
-                if ((object.isIRI() || object.isBlankNode())
-                        && !nodeMap.containsKey(object.getValue())) {
-                    nodeMap.put(object.getValue(), new NodeMapNode(object.getValue()));
-                }
+                    // 3.5.1+3.5.2)
+                    final NodeMapNode node = nodeMap.computeIfAbsent(subject,
+                            k -> new NodeMapNode(k));
 
-                // 3.5.4)
-                if (RDF_TYPE.equals(predicate) && (object.isIRI() || object.isBlankNode())
-                        && !opts.getUseRdfType()) {
-                    JsonLdUtils.mergeValue(node, JsonLdConsts.TYPE, object.getValue());
-                    continue;
-                }
+                    // 3.5.3)
+                    if ((object.isIRI() || object.isBlankNode())) {
+                        nodeMap.computeIfAbsent(object.getValue(), k -> new NodeMapNode(k));
+                    }
 
-                // 3.5.5)
-                final Map<String, Object> value = object.toObject(opts.getUseNativeTypes());
+                    // 3.5.4)
+                    if (RDF_TYPE.equals(predicate) && (object.isIRI() || object.isBlankNode())
+                            && !opts.getUseRdfType() && !nodes.containsKey(object.getValue())) {
+                        JsonLdUtils.mergeValue(node, JsonLdConsts.TYPE, object.getValue());
+                        continue;
+                    }
 
-                // 3.5.6+7)
-                if (noDuplicatesInDataset) {
-                    JsonLdUtils.laxMergeValue(node, predicate, value);
-                } else {
-                    JsonLdUtils.mergeValue(node, predicate, value);
-                }
+                    // 3.5.5)
+                    final Map<String, Object> value = object.toObject(opts.getUseNativeTypes());
 
-                // 3.5.8)
-                if (object.isBlankNode() || object.isIRI()) {
-                    // 3.5.8.1-3)
-                    nodeMap.get(object.getValue()).usages
-                            .add(new UsagesNode(node, predicate, value));
+                    // 3.5.6+7)
+                    if (noDuplicatesInDataset) {
+                        JsonLdUtils.laxMergeValue(node, predicate, value);
+                    } else {
+                        JsonLdUtils.mergeValue(node, predicate, value);
+                    }
+
+                    // 3.5.8)
+                    if (object.isBlankNode() || object.isIRI()) {
+                        // 3.5.8.1-3)
+                        nodeMap.get(object.getValue()).usages
+                                .add(new UsagesNode(node, predicate, value));
+                    }
                 }
             }
         }
@@ -1989,16 +2101,18 @@ public class JsonLdApi {
             // 6.1)
             if (graphMap.containsKey(subject)) {
                 // 6.1.1)
-                node.put(JsonLdConsts.GRAPH, new ArrayList<Object>(4));
+                List<Object> nextGraph = new ArrayList<Object>(4);
+                node.put(JsonLdConsts.GRAPH, nextGraph);
                 // 6.1.2)
-                final List<String> keys = new ArrayList<String>(graphMap.get(subject).keySet());
+                Map<String, NodeMapNode> nextSubjectMap = graphMap.get(subject);
+                final List<String> keys = new ArrayList<String>(nextSubjectMap.keySet());
                 Collections.sort(keys);
                 for (final String s : keys) {
-                    final NodeMapNode n = graphMap.get(subject).get(s);
+                    final NodeMapNode n = nextSubjectMap.get(s);
                     if (n.size() == 1 && n.containsKey(JsonLdConsts.ID)) {
                         continue;
                     }
-                    ((List<Object>) node.get(JsonLdConsts.GRAPH)).add(n.serialize());
+                    nextGraph.add(n.serialize());
                 }
             }
             // 6.2)

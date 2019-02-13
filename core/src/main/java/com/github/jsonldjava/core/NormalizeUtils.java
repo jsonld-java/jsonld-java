@@ -118,7 +118,7 @@ class NormalizeUtils {
 
                             // handle output format
                             if (options.format != null) {
-                                if ("application/nquads".equals(options.format)) {
+                                if (JsonLdConsts.APPLICATION_NQUADS.equals(options.format)) {
                                     final StringBuilder rval = new StringBuilder();
                                     for (final String n : normalized) {
                                         rval.append(n);
@@ -494,7 +494,8 @@ class NormalizeUtils {
     private static String getAdjacentBlankNodeName(Map<String, Object> node, String id) {
         return "blank node".equals(node.get("type"))
                 && (!node.containsKey("value") || !Obj.equals(node.get("value"), id))
-                        ? (String) node.get("value") : null;
+                        ? (String) node.get("value")
+                        : null;
     }
 
     private static class Permutator {

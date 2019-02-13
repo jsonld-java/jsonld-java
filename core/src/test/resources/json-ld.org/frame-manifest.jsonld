@@ -151,14 +151,72 @@
       "name": "Blank nodes in @type",
       "input": "frame-0021-in.jsonld",
       "frame": "frame-0021-frame.jsonld",
-      "expect": "frame-0021-out.jsonld"
-    }
-    , {
-          "@id": "#t0022",
-          "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
-          "name": "Default inside sets",
-          "input": "frame-0022-in.jsonld",
-          "frame": "frame-0022-frame.jsonld",
-          "expect": "frame-0022-out.jsonld"
-        }]
+      "expect": "frame-0021-out.jsonld",
+      "option": {"specVersion": "json-ld-1.1", "processingMode": "json-ld-1.0"}
+    } , {
+      "@id": "#t0022",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Default inside sets",
+      "input": "frame-0022-in.jsonld",
+      "frame": "frame-0022-frame.jsonld",
+      "expect": "frame-0022-out.jsonld"
+    } , {
+      "@id": "#t0030",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "@embed",
+      "input": "frame-0030-in.jsonld",
+      "frame": "frame-0030-frame.jsonld",
+      "expect": "frame-0030-out.jsonld"
+    }, {
+      "@id": "#tg001",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Library framing example with @graph and omitGraph is true.",
+      "purpose": "Basic example used in playground and spec examples.",
+      "input": "frame-g001-in.jsonld",
+      "frame": "frame-g001-frame.jsonld",
+      "expect": "frame-g001-out.jsonld",
+      "option": {"specVersion": "json-ld-1.1", "omitGraph": true}
+    }, {
+      "@id": "#tp010",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Property CURIE conflict (prune bnodes)",
+      "purpose": "(Not really framing) A term looking like a CURIE becomes a CURIE when framing/compacting if defined as such in frame/context.",
+      "option": {"processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"},
+      "input": "frame-0010-in.jsonld",
+      "frame": "frame-0010-frame.jsonld",
+      "expect": "frame-p010-out.jsonld"
+    }, {
+      "@id": "#tp020",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Blank nodes in an array (prune bnodes)",
+      "option": {"processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"},
+      "input": "frame-0020-in.jsonld",
+      "frame": "frame-0020-frame.jsonld",
+      "expect": "frame-p020-out.jsonld"
+    }, {
+      "@id": "#tp021",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Blank nodes in @type (prune bnodes)",
+      "option": {"processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"},
+      "input": "frame-0021-in.jsonld",
+      "frame": "frame-0021-frame.jsonld",
+      "expect": "frame-p021-out.jsonld"
+    }, {
+      "@id": "#tp046",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Merge graphs if no outer @graph is used (prune bnodes)",
+      "option": {"processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"},
+      "input": "frame-0046-in.jsonld",
+      "frame": "frame-0046-frame.jsonld",
+      "expect": "frame-p046-out.jsonld"
+    }, {
+      "@id": "#tp050",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Prune blank nodes with alias of @id",
+      "purpose": "If @id is aliased in a frame, an unreferenced blank node is still pruned.",
+      "input": "frame-p050-in.jsonld",
+      "frame": "frame-p050-frame.jsonld",
+      "expect": "frame-p050-out.jsonld",
+      "option": {"processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"}
+    }]
 }

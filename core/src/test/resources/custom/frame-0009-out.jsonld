@@ -1,0 +1,22 @@
+{
+  "@context": {
+    "@vocab": "http:\/\/example\/",
+    "id": "@id"
+  },
+  "@graph": [
+    {
+      "name": "bar",
+      "prop1": {
+        "id": "_:b1"
+      },
+      "prop2": {
+        "id": "_:b1",
+        "name": "foo"
+      }
+    },
+    {
+      "id": "_:b1",
+      "name": "foo"
+    }
+  ]
+}

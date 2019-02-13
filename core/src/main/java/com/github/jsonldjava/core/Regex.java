@@ -2,7 +2,7 @@ package com.github.jsonldjava.core;
 
 import java.util.regex.Pattern;
 
-public class Regex {
+class Regex {
     final public static Pattern TRICKY_UTF_CHARS = Pattern.compile(
             // ("1.7".equals(System.getProperty("java.specification.version")) ?
             // "[\\x{10000}-\\x{EFFFF}]" :

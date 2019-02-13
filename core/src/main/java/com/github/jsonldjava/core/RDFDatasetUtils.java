@@ -1,218 +1,16 @@
 package com.github.jsonldjava.core;
 
-import static com.github.jsonldjava.core.JsonLdConsts.RDF_FIRST;
 import static com.github.jsonldjava.core.JsonLdConsts.RDF_LANGSTRING;
-import static com.github.jsonldjava.core.JsonLdConsts.RDF_NIL;
-import static com.github.jsonldjava.core.JsonLdConsts.RDF_REST;
-import static com.github.jsonldjava.core.JsonLdConsts.RDF_TYPE;
-import static com.github.jsonldjava.core.JsonLdConsts.XSD_BOOLEAN;
-import static com.github.jsonldjava.core.JsonLdConsts.XSD_DOUBLE;
-import static com.github.jsonldjava.core.JsonLdConsts.XSD_INTEGER;
 import static com.github.jsonldjava.core.JsonLdConsts.XSD_STRING;
-import static com.github.jsonldjava.core.JsonLdUtils.isKeyword;
-import static com.github.jsonldjava.core.JsonLdUtils.isList;
-import static com.github.jsonldjava.core.JsonLdUtils.isObject;
-import static com.github.jsonldjava.core.JsonLdUtils.isValue;
 import static com.github.jsonldjava.core.Regex.HEX;
-import static com.github.jsonldjava.utils.Obj.newMap;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RDFDatasetUtils {
-
-    /**
-     * Creates an array of RDF triples for the given graph.
-     *
-     * @param graph
-     *            the graph to create RDF triples for.
-     * @param namer
-     *            a UniqueNamer for assigning blank node names.
-     *
-     * @return the array of RDF triples for the given graph.
-     * @deprecated Use {@link RDFDataset#graphToRDF(String, Map)} instead
-     */
-    @Deprecated
-    static List<Object> graphToRDF(Map<String, Object> graph, UniqueNamer namer) {
-        final List<Object> rval = new ArrayList<Object>();
-        for (final String id : graph.keySet()) {
-            final Map<String, Object> node = (Map<String, Object>) graph.get(id);
-            final List<String> properties = new ArrayList<String>(node.keySet());
-            Collections.sort(properties);
-            for (String property : properties) {
-                final Object items = node.get(property);
-                if ("@type".equals(property)) {
-                    property = RDF_TYPE;
-                } else if (isKeyword(property)) {
-                    continue;
-                }
-
-                for (final Object item : (List<Object>) items) {
-                    // RDF subjects
-                    final Map<String, Object> subject = newMap();
-                    if (id.indexOf("_:") == 0) {
-                        subject.put("type", "blank node");
-                        subject.put("value", namer.getName(id));
-                    } else {
-                        subject.put("type", "IRI");
-                        subject.put("value", id);
-                    }
-
-                    // RDF predicates
-                    final Map<String, Object> predicate = newMap();
-                    predicate.put("type", "IRI");
-                    predicate.put("value", property);
-
-                    // convert @list to triples
-                    if (isList(item)) {
-                        listToRDF((List<Object>) ((Map<String, Object>) item).get("@list"), namer,
-                                subject, predicate, rval);
-                    }
-                    // convert value or node object to triple
-                    else {
-                        final Object object = objectToRDF(item, namer);
-                        final Map<String, Object> tmp = newMap();
-                        tmp.put("subject", subject);
-                        tmp.put("predicate", predicate);
-                        tmp.put("object", object);
-                        rval.add(tmp);
-                    }
-                }
-            }
-        }
-
-        return rval;
-    }
-
-    /**
-     * Converts a @list value into linked list of blank node RDF triples (an RDF
-     * collection).
-     *
-     * @param list
-     *            the @list value.
-     * @param namer
-     *            a UniqueNamer for assigning blank node names.
-     * @param subject
-     *            the subject for the head of the list.
-     * @param predicate
-     *            the predicate for the head of the list.
-     * @param triples
-     *            the array of triples to append to.
-     */
-    private static void listToRDF(List<Object> list, UniqueNamer namer, Map<String, Object> subject,
-            Map<String, Object> predicate, List<Object> triples) {
-        final Map<String, Object> first = newMap();
-        first.put("type", "IRI");
-        first.put("value", RDF_FIRST);
-        final Map<String, Object> rest = newMap();
-        rest.put("type", "IRI");
-        rest.put("value", RDF_REST);
-        final Map<String, Object> nil = newMap();
-        nil.put("type", "IRI");
-        nil.put("value", RDF_NIL);
-
-        for (final Object item : list) {
-            final Map<String, Object> blankNode = newMap();
-            blankNode.put("type", "blank node");
-            blankNode.put("value", namer.getName());
-
-            {
-                final Map<String, Object> tmp = newMap();
-                tmp.put("subject", subject);
-                tmp.put("predicate", predicate);
-                tmp.put("object", blankNode);
-                triples.add(tmp);
-            }
-
-            subject = blankNode;
-            predicate = first;
-            final Object object = objectToRDF(item, namer);
-
-            {
-                final Map<String, Object> tmp = newMap();
-                tmp.put("subject", subject);
-                tmp.put("predicate", predicate);
-                tmp.put("object", object);
-                triples.add(tmp);
-            }
-
-            predicate = rest;
-        }
-        final Map<String, Object> tmp = newMap();
-        tmp.put("subject", subject);
-        tmp.put("predicate", predicate);
-        tmp.put("object", nil);
-        triples.add(tmp);
-    }
-
-    /**
-     * Converts a JSON-LD value object to an RDF literal or a JSON-LD string or
-     * node object to an RDF resource.
-     *
-     * @param item
-     *            the JSON-LD value or node object.
-     * @param namer
-     *            the UniqueNamer to use to assign blank node names.
-     *
-     * @return the RDF literal or RDF resource.
-     */
-    private static Object objectToRDF(Object item, UniqueNamer namer) {
-        final Map<String, Object> object = newMap();
-
-        // convert value object to RDF
-        if (isValue(item)) {
-            object.put("type", "literal");
-            final Object value = ((Map<String, Object>) item).get("@value");
-            final Object datatype = ((Map<String, Object>) item).get("@type");
-
-            // convert to XSD datatypes as appropriate
-            if (value instanceof Boolean || value instanceof Number) {
-                // convert to XSD datatype
-                if (value instanceof Boolean) {
-                    object.put("value", value.toString());
-                    object.put("datatype", datatype == null ? XSD_BOOLEAN : datatype);
-                } else if (value instanceof Double || value instanceof Float) {
-                    // canonical double representation
-                    final DecimalFormat df = new DecimalFormat("0.0###############E0");
-                    df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
-                    object.put("value", df.format(value));
-                    object.put("datatype", datatype == null ? XSD_DOUBLE : datatype);
-                } else {
-                    final DecimalFormat df = new DecimalFormat("0");
-                    object.put("value", df.format(value));
-                    object.put("datatype", datatype == null ? XSD_INTEGER : datatype);
-                }
-            } else if (((Map<String, Object>) item).containsKey("@language")) {
-                object.put("value", value);
-                object.put("datatype", datatype == null ? RDF_LANGSTRING : datatype);
-                object.put("language", ((Map<String, Object>) item).get("@language"));
-            } else {
-                object.put("value", value);
-                object.put("datatype", datatype == null ? XSD_STRING : datatype);
-            }
-        }
-        // convert string/node object to RDF
-        else {
-            final String id = isObject(item) ? (String) ((Map<String, Object>) item).get("@id")
-                    : (String) item;
-            if (id.indexOf("_:") == 0) {
-                object.put("type", "blank node");
-                object.put("value", namer.getName(id));
-            } else {
-                object.put("type", "IRI");
-                object.put("value", id);
-            }
-        }
-
-        return object;
-    }
 
     public static String toNQuads(RDFDataset dataset) {
         final StringBuilder output = new StringBuilder(256);
@@ -347,7 +145,7 @@ public class RDFDatasetUtils {
                         final int w1 = 0xD800 + vh;
                         final int w2 = 0xDC00 + v1;
 
-                        final StringBuffer b = new StringBuffer();
+                        final StringBuilder b = new StringBuilder();
                         b.appendCodePoint(w1);
                         b.appendCodePoint(w2);
                         uni = b.toString();
@@ -387,26 +185,11 @@ public class RDFDatasetUtils {
                     }
                 }
                 final String pat = Pattern.quote(m.group(0));
-                final String x = Integer.toHexString(uni.charAt(0));
+                // final String x = Integer.toHexString(uni.charAt(0));
                 rval = rval.replaceAll(pat, uni);
             }
         }
         return rval;
-    }
-
-    /**
-     * Escapes the given string according to the N-Quads escape rules
-     *
-     * @param str
-     *            The string to escape
-     * @return The escaped string
-     * @deprecated Use {@link #escape(String, StringBuilder)} instead.
-     */
-    @Deprecated
-    public static String escape(String str) {
-        final StringBuilder rval = new StringBuilder();
-        escape(str, rval);
-        return rval.toString();
     }
 
     /**

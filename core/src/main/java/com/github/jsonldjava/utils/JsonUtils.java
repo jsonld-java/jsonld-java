@@ -10,16 +10,21 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.ByteOrderMark;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.RequestAcceptEncoding;
 import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
@@ -31,6 +36,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jsonldjava.core.DocumentLoader;
 import com.github.jsonldjava.core.JsonLdApi;
 import com.github.jsonldjava.core.JsonLdProcessor;
 
@@ -46,8 +52,19 @@ public class JsonUtils {
      * An HTTP Accept header that prefers JSONLD.
      */
     public static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
+
+    /**
+     * The user agent used by the default {@link CloseableHttpClient}.
+     *
+     * This will not be used if
+     * {@link DocumentLoader#setHttpClient(CloseableHttpClient)} is called with
+     * a custom client.
+     */
+    public static final String JSONLD_JAVA_USER_AGENT = "JSONLD-Java";
+
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final JsonFactory JSON_FACTORY = new JsonFactory(JSON_MAPPER);
+
     private static volatile CloseableHttpClient DEFAULT_HTTP_CLIENT;
 
     static {
@@ -76,8 +93,23 @@ public class JsonUtils {
      *             If there was an IO error during parsing.
      */
     public static Object fromInputStream(InputStream input) throws IOException {
-        // no readers from inputstreams w.o. encoding!!
-        return fromInputStream(input, "UTF-8");
+        // filter BOMs from InputStream
+        try (final BOMInputStream bOMInputStream = new BOMInputStream(input, false,
+                ByteOrderMark.UTF_8, ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE,
+                ByteOrderMark.UTF_32BE, ByteOrderMark.UTF_32LE);) {
+            Charset charset = StandardCharsets.UTF_8;
+            // Attempt to use the BOM if it exists
+            if (bOMInputStream.hasBOM()) {
+                try {
+                    charset = Charset.forName(bOMInputStream.getBOMCharsetName());
+                } catch (final IllegalArgumentException e) {
+                    // If there are any issues with the BOM charset, attempt to
+                    // parse with UTF_8
+                    charset = StandardCharsets.UTF_8;
+                }
+            }
+            return fromInputStream(bOMInputStream, charset);
+        }
     }
 
     /**
@@ -97,6 +129,26 @@ public class JsonUtils {
      *             If there was an IO error during parsing.
      */
     public static Object fromInputStream(InputStream input, String enc) throws IOException {
+        return fromInputStream(input, Charset.forName(enc));
+    }
+
+    /**
+     * Parses a JSON-LD document from the given {@link InputStream} to an object
+     * that can be used as input for the {@link JsonLdApi} and
+     * {@link JsonLdProcessor} methods.
+     *
+     * @param input
+     *            The JSON-LD document in an InputStream.
+     * @param enc
+     *            The character encoding to use when interpreting the characters
+     *            in the InputStream.
+     * @return A JSON Object.
+     * @throws JsonParseException
+     *             If there was a JSON related error during parsing.
+     * @throws IOException
+     *             If there was an IO error during parsing.
+     */
+    public static Object fromInputStream(InputStream input, Charset enc) throws IOException {
         try (InputStreamReader in = new InputStreamReader(input, enc);
                 BufferedReader reader = new BufferedReader(in);) {
             return fromReader(reader);
@@ -118,6 +170,23 @@ public class JsonUtils {
      */
     public static Object fromReader(Reader reader) throws IOException {
         final JsonParser jp = JSON_FACTORY.createParser(reader);
+        return fromJsonParser(jp);
+    }
+
+    /**
+     * Parses a JSON-LD document from the given {@link JsonParser} to an object
+     * that can be used as input for the {@link JsonLdApi} and
+     * {@link JsonLdProcessor} methods.
+     *
+     * @param jp
+     *            The JSON-LD document in a {@link JsonParser}.
+     * @return A JSON Object.
+     * @throws JsonParseException
+     *             If there was a JSON related error during parsing.
+     * @throws IOException
+     *             If there was an IO error during parsing.
+     */
+    public static Object fromJsonParser(JsonParser jp) throws IOException {
         Object rval;
         final JsonToken initialToken = jp.nextToken();
 
@@ -266,6 +335,7 @@ public class JsonUtils {
         final String protocol = url.getProtocol();
         // We can only use the Apache HTTPClient for HTTP/HTTPS, so use the
         // native java client for the others
+        CloseableHttpResponse response = null;
         InputStream in = null;
         try {
             if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
@@ -275,11 +345,12 @@ public class JsonUtils {
                 in = url.openStream();
             } else {
                 final HttpUriRequest request = new HttpGet(url.toExternalForm());
-                // We prefer application/ld+json, but fallback to application/json
+                // We prefer application/ld+json, but fallback to
+                // application/json
                 // or whatever is available
                 request.addHeader("Accept", ACCEPT_HEADER);
-    
-                final CloseableHttpResponse response = httpClient.execute(request);
+
+                response = httpClient.execute(request);
                 final int status = response.getStatusLine().getStatusCode();
                 if (status != 200 && status != 203) {
                     throw new IOException("Can't retrieve " + url + ", status code: " + status);
@@ -288,8 +359,14 @@ public class JsonUtils {
             }
             return fromInputStream(in);
         } finally {
-            if(in != null) {
-                in.close();
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } finally {
+                if (response != null) {
+                    response.close();
+                }
             }
         }
     }
@@ -311,13 +388,10 @@ public class JsonUtils {
         final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.addRequestProperty("Accept", ACCEPT_HEADER);
 
-        final InputStream directStream = urlConn.getInputStream();
-
         final StringWriter output = new StringWriter();
-        try {
-            IOUtils.copy(directStream, output, Charset.forName("UTF-8"));
+        try (final InputStream directStream = urlConn.getInputStream();) {
+            IOUtils.copy(directStream, output, StandardCharsets.UTF_8);
         } finally {
-            directStream.close();
             output.flush();
         }
         final Object context = JsonUtils.fromReader(new StringReader(output.toString()));
@@ -337,25 +411,45 @@ public class JsonUtils {
         return result;
     }
 
-    private static CloseableHttpClient createDefaultHttpClient() {
+    public static CloseableHttpClient createDefaultHttpClient() {
+        final CacheConfig cacheConfig = createDefaultCacheConfig();
+
+        final CloseableHttpClient result = createDefaultHttpClient(cacheConfig);
+
+        return result;
+    }
+
+    public static CacheConfig createDefaultCacheConfig() {
+        return CacheConfig.custom().setMaxCacheEntries(500).setMaxObjectSize(1024 * 256)
+                .setSharedCache(false).setHeuristicCachingEnabled(true)
+                .setHeuristicDefaultLifetime(86400).build();
+    }
+
+    public static CloseableHttpClient createDefaultHttpClient(final CacheConfig cacheConfig) {
+        return createDefaultHttpClientBuilder(cacheConfig).build();
+    }
+
+    public static HttpClientBuilder createDefaultHttpClientBuilder(final CacheConfig cacheConfig) {
         // Common CacheConfig for both the JarCacheStorage and the underlying
         // BasicHttpCacheStorage
-        final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
-                .setMaxObjectSize(1024 * 128).build();
-
-        final CloseableHttpClient result = CachingHttpClientBuilder.create()
+        return CachingHttpClientBuilder.create()
                 // allow caching
                 .setCacheConfig(cacheConfig)
                 // Wrap the local JarCacheStorage around a BasicHttpCacheStorage
                 .setHttpCacheStorage(new JarCacheStorage(null, cacheConfig,
                         new BasicHttpCacheStorage(cacheConfig)))
                 // Support compressed data
-                // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
+                // https://wayback.archive.org/web/20130901115452/http://hc.apache.org:80/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
                 .addInterceptorFirst(new RequestAcceptEncoding())
                 .addInterceptorFirst(new ResponseContentEncoding())
+                .setRedirectStrategy(DefaultRedirectStrategy.INSTANCE)
+                // User agent customisation
+                .setUserAgent(JSONLD_JAVA_USER_AGENT)
                 // use system defaults for proxy etc.
-                .useSystemProperties().build();
+                .useSystemProperties();
+    }
 
-        return result;
+    private JsonUtils() {
+        // Static class, no access to constructor
     }
 }

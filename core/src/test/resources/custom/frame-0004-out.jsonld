@@ -1,0 +1,100 @@
+{
+  "@context": {
+    "sc": "http://iiif.io/api/presentation/2#",
+    "oa": "http://www.w3.org/ns/oa#",
+    "manifests": {
+      "@id": "sc:hasManifests",
+      "@type": "@id",
+      "@container": "@list"
+    },
+    "sequences": {
+      "@id": "sc:hasSequences",
+      "@type": "@id",
+      "@container": "@list"
+    },
+    "canvases": {
+      "@id": "sc:hasCanvases",
+      "@type": "@id",
+      "@container": "@list"
+    },
+    "resources": {
+      "@id": "sc:hasAnnotations",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "images": {
+      "@id": "sc:hasImageAnnotations",
+      "@type": "@id",
+      "@container": "@list"
+    },
+    "otherContent": {
+      "@id": "sc:hasLists",
+      "@type": "@id",
+      "@container": "@list"
+    },
+    "resource": {
+      "@id": "oa:hasBody",
+      "@type": "@id"
+    },
+    "on": {
+      "@id": "oa:hasTarget",
+      "@type": "@id"
+    }
+  },
+  "@graph": [
+    {
+      "@id": "http://localhost/manifest",
+      "@type": "sc:Manifest",
+      "sequences": [
+        {
+          "@id": "http://localhost/sequence/normal",
+          "@type": "sc:Sequence",
+          "canvases": [
+            {
+              "@id": "http://localhost/c0",
+              "@type": "sc:Canvas",
+              "images": [
+                {
+                  "@id": "_:b1",
+                  "@type": "oa:Annotation",
+                  "resource": {
+                    "@id": "http://localhost/r0.jp2",
+                    "@type": "dctypes:Image"
+                  },
+                  "on": "http://localhost/c0"
+                }
+              ],
+              "otherContent": [
+                {
+                  "@id": "http://localhost/l0",
+                  "@type": "sc:AnnotationList"
+                }
+              ]
+            },
+            {
+              "@id": "http://localhost/c1",
+              "@type": "sc:Canvas",
+              "images": [
+                {
+                  "@id": "_:b0",
+                  "@type": "oa:Annotation",
+                  "resource": {
+                    "@id": "http://localhost/r1.jp2",
+                    "@type": "dctypes:Image"
+                  },
+                  "on": "http://localhost/c1"
+                }
+              ],
+              "otherContent": [
+                {
+                  "@id": "http://localhost/l1",
+                  "@type": "sc:AnnotationList"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

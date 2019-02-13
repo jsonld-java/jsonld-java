@@ -1,14 +1,11 @@
 {
+  "@context" : {
+    "@vocab" : "http://xmlns.com/foaf/0.1/"
+  },
   "@graph" : [ {
-    "@id" : "http://example.com/canvas-1",
-    "@type" : "http://example.com"
-  }, {
-    "@id" : "http://example.com/element",
-    "http://example.com" : {
-      "@list" : [ {
-        "@id" : "http://example.com/canvas-1",
-        "@type" : "http://example.com"
-      } ]
-    }
+    "@type" : "Person",
+    "member" : [{
+      "@type" : "Group"
+    }]
   } ]
 }

@@ -11,8 +11,6 @@ import java.util.Map;
 import com.github.jsonldjava.core.JsonLdError.Error;
 import com.github.jsonldjava.impl.NQuadRDFParser;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
-import com.github.jsonldjava.impl.TurtleRDFParser;
-import com.github.jsonldjava.impl.TurtleTripleCallback;
 
 /**
  * This class implements the <a href=
@@ -114,10 +112,10 @@ public class JsonLdProcessor {
         if (input instanceof String && ((String) input).contains(":")) {
             try {
                 final RemoteDocument tmp = opts.getDocumentLoader().loadDocument((String) input);
-                input = tmp.document;
+                input = tmp.getDocument();
                 // TODO: figure out how to deal with remote context
             } catch (final Exception e) {
-                throw new JsonLdError(Error.LOADING_DOCUMENT_FAILED, e.getMessage());
+                throw new JsonLdError(Error.LOADING_DOCUMENT_FAILED, e);
             }
             // if set the base in options should override the base iri in the
             // active context
@@ -304,23 +302,43 @@ public class JsonLdProcessor {
         }
         // TODO string/IO input
 
+        // 2. Set expanded input to the result of using the expand method using
+        // input and options.
         final Object expandedInput = expand(input, opts);
-        final List<Object> expandedFrame = expand(frame, opts);
 
+        // 3. Set expanded frame to the result of using the expand method using
+        // frame and options with expandContext set to null and the
+        // frameExpansion option set to true.
+        final Object savedExpandedContext = opts.getExpandContext();
+        opts.setExpandContext(null);
+        opts.setFrameExpansion(true);
+        final List<Object> expandedFrame = expand(frame, opts);
+        opts.setExpandContext(savedExpandedContext);
+
+        // 4. Set context to the value of @context from frame, if it exists, or
+        // to a new empty
+        // context, otherwise.
         final JsonLdApi api = new JsonLdApi(expandedInput, opts);
-        final List<Object> framed = api.frame(expandedInput, expandedFrame);
         final Context activeCtx = api.context
                 .parse(((Map<String, Object>) frame).get(JsonLdConsts.CONTEXT));
-
+        final List<Object> framed = api.frame(expandedInput, expandedFrame);
+        if (opts.getPruneBlankNodeIdentifiers()) {
+            JsonLdUtils.pruneBlankNodes(framed);
+        }
         Object compacted = api.compact(activeCtx, null, framed, opts.getCompactArrays());
-        if (!(compacted instanceof List)) {
+        final Map<String, Object> rval = activeCtx.serialize();
+        final boolean addGraph = ((!(compacted instanceof List)) && !opts.getOmitGraph());
+        if (addGraph && !(compacted instanceof List)) {
             final List<Object> tmp = new ArrayList<Object>();
             tmp.add(compacted);
             compacted = tmp;
         }
-        final String alias = activeCtx.compactIri(JsonLdConsts.GRAPH);
-        final Map<String, Object> rval = activeCtx.serialize();
-        rval.put(alias, compacted);
+        if (addGraph || (compacted instanceof List)) {
+            final String alias = activeCtx.compactIri(JsonLdConsts.GRAPH);
+            rval.put(alias, compacted);
+        } else if (!addGraph && (compacted instanceof Map)) {
+            rval.putAll((Map) compacted);
+        }
         JsonLdUtils.removePreserve(activeCtx, rval, opts);
         return rval;
     }
@@ -335,7 +353,6 @@ public class JsonLdProcessor {
         {
             // automatically register nquad serializer
             put(JsonLdConsts.APPLICATION_NQUADS, new NQuadRDFParser());
-            put(JsonLdConsts.TEXT_TURTLE, new TurtleRDFParser());
         }
     };
 
@@ -513,8 +530,6 @@ public class JsonLdProcessor {
         if (options.format != null) {
             if (JsonLdConsts.APPLICATION_NQUADS.equals(options.format)) {
                 return new NQuadTripleCallback().call(dataset);
-            } else if (JsonLdConsts.TEXT_TURTLE.equals(options.format)) {
-                return new TurtleTripleCallback().call(dataset);
             } else {
                 throw new JsonLdError(JsonLdError.Error.UNKNOWN_FORMAT, options.format);
             }

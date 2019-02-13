@@ -23,6 +23,8 @@ import com.github.jsonldjava.utils.Obj;
  */
 public class Context extends LinkedHashMap<String, Object> {
 
+    private static final long serialVersionUID = 2894534897574805571L;
+
     private JsonLdOptions options;
     private Map<String, Object> termDefinitions;
     public Map<String, Object> inverse = null;
@@ -193,7 +195,7 @@ public class Context extends LinkedHashMap<String, Object> {
 
                 // 3.2.3: Dereference context
                 final RemoteDocument rd = this.options.getDocumentLoader().loadDocument(uri);
-                final Object remoteContext = rd.document;
+                final Object remoteContext = rd.getDocument();
                 if (!(remoteContext instanceof Map) || !((Map<String, Object>) remoteContext)
                         .containsKey(JsonLdConsts.CONTEXT)) {
                     // If the dereferenced document has no top-level JSON object
@@ -308,7 +310,9 @@ public class Context extends LinkedHashMap<String, Object> {
 
         defined.put(term, false);
 
-        if (JsonLdUtils.isKeyword(term)) {
+        if (JsonLdUtils.isKeyword(term)
+                && !(options.getAllowContainerSetOnType() && JsonLdConsts.TYPE.equals(term)
+                        && !(context.get(term)).toString().contains(JsonLdConsts.ID))) {
             throw new JsonLdError(Error.KEYWORD_REDEFINITION, term);
         }
 
@@ -349,7 +353,7 @@ public class Context extends LinkedHashMap<String, Object> {
                 if (error.getType() != Error.INVALID_IRI_MAPPING) {
                     throw error;
                 }
-                throw new JsonLdError(Error.INVALID_TYPE_MAPPING, type);
+                throw new JsonLdError(Error.INVALID_TYPE_MAPPING, type, error);
             }
             // TODO: fix check for absoluteIri (blank nodes shouldn't count, at
             // least not here!)
@@ -437,7 +441,7 @@ public class Context extends LinkedHashMap<String, Object> {
             // 15)
         } else if (this.containsKey(JsonLdConsts.VOCAB)) {
             definition.put(JsonLdConsts.ID, this.get(JsonLdConsts.VOCAB) + term);
-        } else {
+        } else if (!JsonLdConsts.TYPE.equals(term)) {
             throw new JsonLdError(Error.INVALID_IRI_MAPPING,
                     "relative term definition without vocab mapping");
         }
@@ -452,6 +456,9 @@ public class Context extends LinkedHashMap<String, Object> {
                         "@container must be either @list, @set, @index, or @language");
             }
             definition.put(JsonLdConsts.CONTAINER, container);
+            if (JsonLdConsts.TYPE.equals(term)) {
+                definition.put(JsonLdConsts.ID, "type");
+            }
         }
 
         // 17)
@@ -498,8 +505,7 @@ public class Context extends LinkedHashMap<String, Object> {
         }
         // 3)
         if (vocab && this.termDefinitions.containsKey(value)) {
-            final Map<String, Object> td = (LinkedHashMap<String, Object>) this.termDefinitions
-                    .get(value);
+            final Map<String, Object> td = (Map<String, Object>) this.termDefinitions.get(value);
             if (td != null) {
                 return (String) td.get(JsonLdConsts.ID);
             } else {
@@ -523,7 +529,7 @@ public class Context extends LinkedHashMap<String, Object> {
             }
             // 4.4)
             if (this.termDefinitions.containsKey(prefix)) {
-                return (String) ((LinkedHashMap<String, Object>) this.termDefinitions.get(prefix))
+                return (String) ((Map<String, Object>) this.termDefinitions.get(prefix))
                         .get(JsonLdConsts.ID) + suffix;
             }
             // 4.5)
@@ -799,7 +805,7 @@ public class Context extends LinkedHashMap<String, Object> {
         return iri;
     }
 
-    /**
+    /*
      * This method is only visible for testing.
      */
     public static String _iriCompactionStep5point4(String iri, Object value, String compactIRI,
@@ -826,11 +832,10 @@ public class Context extends LinkedHashMap<String, Object> {
      * ":".
      *
      * @param onlyCommonPrefixes
-     *            If <code>true</code>, the result will not include
-     *            "not so useful" prefixes, such as "term1":
-     *            "http://example.com/term1", e.g. all IRIs will end with "/" or
-     *            "#". If <code>false</code>, all potential prefixes are
-     *            returned.
+     *            If <code>true</code>, the result will not include "not so
+     *            useful" prefixes, such as "term1": "http://example.com/term1",
+     *            e.g. all IRIs will end with "/" or "#". If <code>false</code>,
+     *            all potential prefixes are returned.
      *
      * @return A map from prefix string to IRI string
      */
@@ -1044,13 +1049,16 @@ public class Context extends LinkedHashMap<String, Object> {
      *
      * @param property
      *            The Property to get a container mapping for.
-     * @return The container mapping
+     * @return The container mapping if any, else null
      */
     public String getContainer(String property) {
+        if (property == null) {
+            return null;
+        }
         if (JsonLdConsts.GRAPH.equals(property)) {
             return JsonLdConsts.SET;
         }
-        if (JsonLdUtils.isKeyword(property)) {
+        if (!property.equals(JsonLdConsts.TYPE) && JsonLdUtils.isKeyword(property)) {
             return property;
         }
         final Map<String, Object> td = (Map<String, Object>) termDefinitions.get(property);
@@ -1069,7 +1077,7 @@ public class Context extends LinkedHashMap<String, Object> {
         return reverse != null && (Boolean) reverse;
     }
 
-    private String getTypeMapping(String property) {
+    public String getTypeMapping(String property) {
         final Map<String, Object> td = (Map<String, Object>) termDefinitions.get(property);
         if (td == null) {
             return null;
@@ -1077,7 +1085,7 @@ public class Context extends LinkedHashMap<String, Object> {
         return (String) td.get(JsonLdConsts.TYPE);
     }
 
-    private String getLanguageMapping(String property) {
+    public String getLanguageMapping(String property) {
         final Map<String, Object> td = (Map<String, Object>) termDefinitions.get(property);
         if (td == null) {
             return null;
@@ -1126,11 +1134,6 @@ public class Context extends LinkedHashMap<String, Object> {
             }
         }
         return rval;
-    }
-
-    public Object getContextValue(String activeProperty, String string) throws JsonLdError {
-        throw new JsonLdError(Error.NOT_IMPLEMENTED,
-                "getContextValue is only used by old code so far and thus isn't implemented");
     }
 
     public Map<String, Object> serialize() {

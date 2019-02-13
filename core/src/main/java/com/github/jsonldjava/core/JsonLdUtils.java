@@ -1,15 +1,11 @@
 package com.github.jsonldjava.core;
 
-import static com.github.jsonldjava.utils.Obj.newMap;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-import com.github.jsonldjava.utils.JsonLdUrl;
 import com.github.jsonldjava.utils.Obj;
 
 public class JsonLdUtils {
@@ -35,7 +31,8 @@ public class JsonLdUtils {
                 || "@graph".equals(key) || "@id".equals(key) || "@index".equals(key)
                 || "@language".equals(key) || "@list".equals(key) || "@omitDefault".equals(key)
                 || "@reverse".equals(key) || "@preserve".equals(key) || "@set".equals(key)
-                || "@type".equals(key) || "@value".equals(key) || "@vocab".equals(key);
+                || "@type".equals(key) || "@value".equals(key) || "@vocab".equals(key)
+                || "@requireAll".equals(key);
     }
 
     public static Boolean deepCompare(Object v1, Object v2, Boolean listOrderMatters) {
@@ -137,26 +134,6 @@ public class JsonLdUtils {
         // }
     }
 
-    static void mergeCompactedValue(Map<String, Object> obj, String key, Object value) {
-        if (obj == null) {
-            return;
-        }
-        final Object prop = obj.get(key);
-        if (prop == null) {
-            obj.put(key, value);
-            return;
-        }
-        if (!(prop instanceof List)) {
-            final List<Object> tmp = new ArrayList<Object>();
-            tmp.add(prop);
-        }
-        if (value instanceof List) {
-            ((List<Object>) prop).addAll((List<Object>) value);
-        } else {
-            ((List<Object>) prop).add(value);
-        }
-    }
-
     public static boolean isAbsoluteIri(String value) {
         // TODO: this is a bit simplistic!
         return value.contains(":");
@@ -204,311 +181,6 @@ public class JsonLdUtils {
             return true;
         }
         return false;
-    }
-
-    // //////////////////////////////////////////////////// OLD CODE BELOW
-
-    /**
-     * Adds a value to a subject. If the value is an array, all values in the
-     * array will be added.
-     *
-     * Note: If the value is a subject that already exists as a property of the
-     * given subject, this method makes no attempt to deeply merge properties.
-     * Instead, the value will not be added.
-     *
-     * @param subject
-     *            the subject to add the value to.
-     * @param property
-     *            the property that relates the value to the subject.
-     * @param value
-     *            the value to add.
-     * @param [propertyIsArray]
-     *            true if the property is always an array, false if not
-     *            (default: false).
-     * @param [allowDuplicate]
-     *            true if the property is a @list, false if not (default:
-     *            false).
-     */
-    static void addValue(Map<String, Object> subject, String property, Object value,
-            boolean propertyIsArray, boolean allowDuplicate) {
-
-        if (isArray(value)) {
-            if (((List) value).size() == 0 && propertyIsArray && !subject.containsKey(property)) {
-                subject.put(property, new ArrayList<Object>());
-            }
-            for (final Object val : (List) value) {
-                addValue(subject, property, val, propertyIsArray, allowDuplicate);
-            }
-        } else if (subject.containsKey(property)) {
-            // check if subject already has the value if duplicates not allowed
-            final boolean hasValue = !allowDuplicate && hasValue(subject, property, value);
-
-            // make property an array if value not present or always an array
-            if (!isArray(subject.get(property)) && (!hasValue || propertyIsArray)) {
-                final List<Object> tmp = new ArrayList<Object>();
-                tmp.add(subject.get(property));
-                subject.put(property, tmp);
-            }
-
-            // add new value
-            if (!hasValue) {
-                ((List<Object>) subject.get(property)).add(value);
-            }
-        } else {
-            // add new value as a set or single value
-            Object tmp;
-            if (propertyIsArray) {
-                tmp = new ArrayList<Object>();
-                ((List<Object>) tmp).add(value);
-            } else {
-                tmp = value;
-            }
-            subject.put(property, tmp);
-        }
-    }
-
-    static void addValue(Map<String, Object> subject, String property, Object value,
-            boolean propertyIsArray) {
-        addValue(subject, property, value, propertyIsArray, true);
-    }
-
-    static void addValue(Map<String, Object> subject, String property, Object value) {
-        addValue(subject, property, value, false, true);
-    }
-
-    /**
-     * Prepends a base IRI to the given relative IRI.
-     *
-     * @param base
-     *            the base IRI.
-     * @param iri
-     *            the relative IRI.
-     *
-     * @return the absolute IRI.
-     *
-     *         TODO: the JsonLdUrl class isn't as forgiving as the Node.js url
-     *         parser, we may need to re-implement the parser here to support
-     *         the flexibility required
-     */
-    private static String prependBase(Object baseobj, String iri) {
-        // already an absolute IRI
-        if (iri.indexOf(":") != -1) {
-            return iri;
-        }
-
-        // parse base if it is a string
-        JsonLdUrl base;
-        if (isString(baseobj)) {
-            base = JsonLdUrl.parse((String) baseobj);
-        } else {
-            // assume base is already a JsonLdUrl
-            base = (JsonLdUrl) baseobj;
-        }
-
-        final JsonLdUrl rel = JsonLdUrl.parse(iri);
-
-        // start hierarchical part
-        String hierPart = base.protocol;
-        if (!"".equals(rel.authority)) {
-            hierPart += "//" + rel.authority;
-        } else if (!"".equals(base.href)) {
-            hierPart += "//" + base.authority;
-        }
-
-        // per RFC3986 normalize
-        String path;
-
-        // IRI represents an absolute path
-        if (rel.pathname.indexOf("/") == 0) {
-            path = rel.pathname;
-        } else {
-            path = base.pathname;
-
-            // append relative path to the end of the last directory from base
-            if (!"".equals(rel.pathname)) {
-                path = path.substring(0, path.lastIndexOf("/") + 1);
-                if (path.length() > 0 && !path.endsWith("/")) {
-                    path += "/";
-                }
-                path += rel.pathname;
-            }
-        }
-
-        // remove slashes anddots in path
-        path = JsonLdUrl.removeDotSegments(path, !"".equals(hierPart));
-
-        // add query and hash
-        if (!"".equals(rel.query)) {
-            path += "?" + rel.query;
-        }
-
-        if (!"".equals(rel.hash)) {
-            path += rel.hash;
-        }
-
-        final String rval = hierPart + path;
-
-        if ("".equals(rval)) {
-            return "./";
-        }
-        return rval;
-    }
-
-    /**
-     * Expands a language map.
-     *
-     * @param languageMap
-     *            the language map to expand.
-     *
-     * @return the expanded language map.
-     * @throws JsonLdError
-     */
-    static List<Object> expandLanguageMap(Map<String, Object> languageMap) throws JsonLdError {
-        final List<Object> rval = new ArrayList<Object>();
-        final List<String> keys = new ArrayList<String>(languageMap.keySet());
-        Collections.sort(keys); // lexicographically sort languages
-        for (final String key : keys) {
-            List<Object> val;
-            if (!isArray(languageMap.get(key))) {
-                val = new ArrayList<Object>();
-                val.add(languageMap.get(key));
-            } else {
-                val = (List<Object>) languageMap.get(key);
-            }
-            for (final Object item : val) {
-                if (!isString(item)) {
-                    throw new JsonLdError(JsonLdError.Error.SYNTAX_ERROR);
-                }
-                final Map<String, Object> tmp = newMap();
-                tmp.put("@value", item);
-                tmp.put("@language", key.toLowerCase());
-                rval.add(tmp);
-            }
-        }
-
-        return rval;
-    }
-
-    /**
-     * Throws an exception if the given value is not a valid @type value.
-     *
-     * @param v
-     *            the value to check.
-     * @throws JsonLdError
-     */
-    static boolean validateTypeValue(Object v) throws JsonLdError {
-        if (v == null) {
-            throw new NullPointerException("\"@type\" value cannot be null");
-        }
-
-        // must be a string, subject reference, or empty object
-        if (v instanceof String
-                || (v instanceof Map && (((Map<String, Object>) v).containsKey("@id")
-                        || ((Map<String, Object>) v).size() == 0))) {
-            return true;
-        }
-
-        // must be an array
-        boolean isValid = false;
-        if (v instanceof List) {
-            isValid = true;
-            for (final Object i : (List) v) {
-                if (!(i instanceof String
-                        || i instanceof Map && ((Map<String, Object>) i).containsKey("@id"))) {
-                    isValid = false;
-                    break;
-                }
-            }
-        }
-
-        if (!isValid) {
-            throw new JsonLdError(JsonLdError.Error.SYNTAX_ERROR);
-        }
-        return true;
-    }
-
-    /**
-     * Removes a base IRI from the given absolute IRI.
-     *
-     * @param base
-     *            the base IRI.
-     * @param iri
-     *            the absolute IRI.
-     *
-     * @return the relative IRI if relative to base, otherwise the absolute IRI.
-     */
-    private static String removeBase(Object baseobj, String iri) {
-        JsonLdUrl base;
-        if (isString(baseobj)) {
-            base = JsonLdUrl.parse((String) baseobj);
-        } else {
-            base = (JsonLdUrl) baseobj;
-        }
-
-        // establish base root
-        String root = "";
-        if (!"".equals(base.href)) {
-            root += (base.protocol) + "//" + base.authority;
-        }
-        // support network-path reference with empty base
-        else if (iri.indexOf("//") != 0) {
-            root += "//";
-        }
-
-        // IRI not relative to base
-        if (iri.indexOf(root) != 0) {
-            return iri;
-        }
-
-        // remove root from IRI and parse remainder
-        final JsonLdUrl rel = JsonLdUrl.parse(iri.substring(root.length()));
-
-        // remove path segments that match
-        final List<String> baseSegments = _split(base.normalizedPath, "/");
-        final List<String> iriSegments = _split(rel.normalizedPath, "/");
-
-        while (baseSegments.size() > 0 && iriSegments.size() > 0) {
-            if (!baseSegments.get(0).equals(iriSegments.get(0))) {
-                break;
-            }
-            if (baseSegments.size() > 0) {
-                baseSegments.remove(0);
-            }
-            if (iriSegments.size() > 0) {
-                iriSegments.remove(0);
-            }
-        }
-
-        // use '../' for each non-matching base segment
-        String rval = "";
-        if (baseSegments.size() > 0) {
-            // don't count the last segment if it isn't a path (doesn't end in
-            // '/')
-            // don't count empty first segment, it means base began with '/'
-            if (!base.normalizedPath.endsWith("/") || "".equals(baseSegments.get(0))) {
-                baseSegments.remove(baseSegments.size() - 1);
-            }
-            for (int i = 0; i < baseSegments.size(); ++i) {
-                rval += "../";
-            }
-        }
-
-        // prepend remaining segments
-        rval += _join(iriSegments, "/");
-
-        // add query and hash
-        if (!"".equals(rel.query)) {
-            rval += "?" + rel.query;
-        }
-        if (!"".equals(rel.hash)) {
-            rval += rel.hash;
-        }
-
-        if ("".equals(rval)) {
-            rval = "./";
-        }
-
-        return rval;
     }
 
     /**
@@ -572,39 +244,81 @@ public class JsonLdUtils {
     }
 
     /**
-     * replicate javascript .join because i'm too lazy to keep doing it manually
+     * Removes the @id member of each node object where the member value is a
+     * blank node identifier which appears only once in any property value
+     * within input.
      *
-     * @param iriSegments
-     * @param string
-     * @return
+     * @param input
+     *            the framed output before compaction
      */
-    private static String _join(List<String> list, String joiner) {
-        String rval = "";
-        if (list.size() > 0) {
-            rval += list.get(0);
+
+    static void pruneBlankNodes(final Object input) {
+        final Map<String, Object> toPrune = new HashMap<>();
+        fillNodesToPrune(input, toPrune);
+        for (final String id : toPrune.keySet()) {
+            final Object node = toPrune.get(id);
+            if (node == null) {
+                continue;
+            }
+            ((Map<String, Object>) node).remove(JsonLdConsts.ID);
         }
-        for (int i = 1; i < list.size(); i++) {
-            rval += joiner + list.get(i);
-        }
-        return rval;
     }
 
     /**
-     * replicates the functionality of javascript .split, which has different
-     * results to java's String.split if there is a trailing /
+     * Gets the objects on which we'll prune the blank node ID
      *
-     * @param string
-     * @param delim
-     * @return
+     * @param input
+     *            the framed output before compaction
+     * @param toPrune
+     *            the resulting object.
      */
-    private static List<String> _split(String string, String delim) {
-        final List<String> rval = new ArrayList<String>(Arrays.asList(string.split(delim)));
-        if (string.endsWith("/")) {
-            // javascript .split includes a blank entry if the string ends with
-            // the delimiter, java .split does not so we need to add it manually
-            rval.add("");
+    static void fillNodesToPrune(Object input, final Map<String, Object> toPrune) {
+        // recurse through arrays
+        if (isArray(input)) {
+            for (final Object i : (List<Object>) input) {
+                fillNodesToPrune(i, toPrune);
+            }
+        } else if (isObject(input)) {
+            // skip @values
+            if (isValue(input)) {
+                return;
+            }
+            // recurse through @lists
+            if (isList(input)) {
+                fillNodesToPrune(((Map<String, Object>) input).get("@list"), toPrune);
+                return;
+            }
+            // recurse through properties
+            for (final String prop : new LinkedHashSet<>(((Map<String, Object>) input).keySet())) {
+                if (prop.equals(JsonLdConsts.ID)) {
+                    final String id = (String) ((Map<String, Object>) input).get(JsonLdConsts.ID);
+                    if (id.startsWith("_:")) {
+                        // if toPrune contains the id already, it was already
+                        // present somewhere else,
+                        // so we just null the value
+                        if (toPrune.containsKey(id)) {
+                            toPrune.put(id, null);
+                        } else {
+                            // else we add the object as the value
+                            toPrune.put(id, input);
+                        }
+                    }
+                } else {
+                    fillNodesToPrune(((Map<String, Object>) input).get(prop), toPrune);
+                }
+            }
+        } else if (input instanceof String) {
+            // this is an id, as non-id values will have been discarded by the
+            // isValue() above
+            final String p = (String) input;
+            if (p.startsWith("_:")) {
+                // the id is outside of the context of an @id property, if we're
+                // in that case,
+                // then we're referencing a blank node id so this id should not
+                // be removed
+                toPrune.put(p, null);
+            }
         }
-        return rval;
     }
 
     /**
@@ -624,49 +338,6 @@ public class JsonLdUtils {
             return 1;
         }
         return Integer.signum(a.compareTo(b));
-    }
-
-    /**
-     * Determines if the given value is a property of the given subject.
-     *
-     * @param subject
-     *            the subject to check.
-     * @param property
-     *            the property to check.
-     * @param value
-     *            the value to check.
-     *
-     * @return true if the value exists, false if not.
-     */
-    static boolean hasValue(Map<String, Object> subject, String property, Object value) {
-        boolean rval = false;
-        if (hasProperty(subject, property)) {
-            Object val = subject.get(property);
-            final boolean isList = isList(val);
-            if (isList || val instanceof List) {
-                if (isList) {
-                    val = ((Map<String, Object>) val).get("@list");
-                }
-                for (final Object i : (List) val) {
-                    if (compareValues(value, i)) {
-                        rval = true;
-                        break;
-                    }
-                }
-            } else if (!(value instanceof List)) {
-                rval = compareValues(value, val);
-            }
-        }
-        return rval;
-    }
-
-    private static boolean hasProperty(Map<String, Object> subject, String property) {
-        boolean rval = false;
-        if (subject.containsKey(property)) {
-            final Object value = subject.get(property);
-            rval = (!(value instanceof List) || ((List) value).size() > 0);
-        }
-        return rval;
     }
 
     /**
@@ -712,49 +383,6 @@ public class JsonLdUtils {
     }
 
     /**
-     * Removes a value from a subject.
-     *
-     * @param subject
-     *            the subject.
-     * @param property
-     *            the property that relates the value to the subject.
-     * @param value
-     *            the value to remove.
-     * @param [options]
-     *            the options to use: [propertyIsArray] true if the property is
-     *            always an array, false if not (default: false).
-     */
-    static void removeValue(Map<String, Object> subject, String property,
-            Map<String, Object> value) {
-        removeValue(subject, property, value, false);
-    }
-
-    static void removeValue(Map<String, Object> subject, String property, Map<String, Object> value,
-            boolean propertyIsArray) {
-        // filter out value
-        final List<Object> values = new ArrayList<Object>();
-        if (subject.get(property) instanceof List) {
-            for (final Object e : ((List) subject.get(property))) {
-                if (!(value.equals(e))) {
-                    values.add(value);
-                }
-            }
-        } else {
-            if (!value.equals(subject.get(property))) {
-                values.add(subject.get(property));
-            }
-        }
-
-        if (values.size() == 0) {
-            subject.remove(property);
-        } else if (values.size() == 1 && !propertyIsArray) {
-            subject.put(property, values.get(0));
-        } else {
-            subject.put(property, values);
-        }
-    }
-
-    /**
      * Returns true if the given value is a blank node.
      *
      * @param v
@@ -768,86 +396,13 @@ public class JsonLdUtils {
         // 2. If it has an @id key its value begins with '_:'.
         // 3. It has no keys OR is not a @value, @set, or @list.
         if (v instanceof Map) {
-            if (((Map) v).containsKey("@id")) {
-                return ((String) ((Map) v).get("@id")).startsWith("_:");
+            final Map<String, Object> map = (Map<String, Object>) v;
+            if (map.containsKey("@id")) {
+                return ((String) map.get("@id")).startsWith("_:");
             } else {
-                return ((Map) v).size() == 0 || !(((Map) v).containsKey("@value")
-                        || ((Map) v).containsKey("@set") || ((Map) v).containsKey("@list"));
+                return map.isEmpty() || !map.containsKey("@value") || map.containsKey("@set")
+                        || map.containsKey("@list");
             }
-        }
-        return false;
-    }
-
-    /**
-     * Finds all @context URLs in the given JSON-LD input.
-     *
-     * @param input
-     *            the JSON-LD input.
-     * @param urls
-     *            a map of URLs (url => false/@contexts).
-     * @param replace
-     *            true to replace the URLs in the given input with the
-     * @contexts from the urls map, false not to.
-     *
-     * @return true if new URLs to resolve were found, false if not.
-     */
-    private static boolean findContextUrls(Object input, Map<String, Object> urls,
-            Boolean replace) {
-        final int count = urls.size();
-        if (input instanceof List) {
-            for (final Object i : (List) input) {
-                findContextUrls(i, urls, replace);
-            }
-            return count < urls.size();
-        } else if (input instanceof Map) {
-            for (final String key : ((Map<String, Object>) input).keySet()) {
-                if (!"@context".equals(key)) {
-                    findContextUrls(((Map) input).get(key), urls, replace);
-                    continue;
-                }
-
-                // get @context
-                final Object ctx = ((Map) input).get(key);
-
-                // array @context
-                if (ctx instanceof List) {
-                    int length = ((List) ctx).size();
-                    for (int i = 0; i < length; i++) {
-                        Object _ctx = ((List) ctx).get(i);
-                        if (_ctx instanceof String) {
-                            // replace w/@context if requested
-                            if (replace) {
-                                _ctx = urls.get(_ctx);
-                                if (_ctx instanceof List) {
-                                    // add flattened context
-                                    ((List) ctx).remove(i);
-                                    ((List) ctx).addAll((Collection) _ctx);
-                                    i += ((List) _ctx).size();
-                                    length += ((List) _ctx).size();
-                                } else {
-                                    ((List) ctx).set(i, _ctx);
-                                }
-                            }
-                            // @context JsonLdUrl found
-                            else if (!urls.containsKey(_ctx)) {
-                                urls.put((String) _ctx, Boolean.FALSE);
-                            }
-                        }
-                    }
-                }
-                // string @context
-                else if (ctx instanceof String) {
-                    // replace w/@context if requested
-                    if (replace) {
-                        ((Map) input).put(key, urls.get(ctx));
-                    }
-                    // @context JsonLdUrl found
-                    else if (!urls.containsKey(ctx)) {
-                        urls.put((String) ctx, Boolean.FALSE);
-                    }
-                }
-            }
-            return (count < urls.size());
         }
         return false;
     }
