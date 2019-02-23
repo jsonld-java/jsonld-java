@@ -40,11 +40,13 @@ public class Context extends LinkedHashMap<String, Object> {
 
     public Context(Map<String, Object> map, JsonLdOptions opts) {
         super(map);
+        checkEmptyKey(map);
         init(opts);
     }
 
     public Context(Map<String, Object> map) {
         super(map);
+        checkEmptyKey(map);
         init(new JsonLdOptions());
     }
 
@@ -213,7 +215,7 @@ public class Context extends LinkedHashMap<String, Object> {
                 // 3.3
                 throw new JsonLdError(Error.INVALID_LOCAL_CONTEXT, context);
             }
-
+            checkEmptyKey((Map<String, Object>) context);
             // 3.4
             if (!parsingARemoteContext
                     && ((Map<String, Object>) context).containsKey(JsonLdConsts.BASE)) {
@@ -282,6 +284,15 @@ public class Context extends LinkedHashMap<String, Object> {
             }
         }
         return result;
+    }
+
+    private void checkEmptyKey(final Map<String, Object> map) {
+        if (map.containsKey("")) {
+            // the term MUST NOT be an empty string ("")
+            // https://www.w3.org/TR/json-ld/#h3_terms
+            throw new JsonLdError(Error.INVALID_TERM_DEFINITION,
+                    String.format("empty key for value '%s'", map.get("")));
+        }
     }
 
     public Context parse(Object localContext) throws JsonLdError {
