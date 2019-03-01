@@ -151,7 +151,7 @@ Note that if you override DocumentLoader you should also support this setting fo
 
 Your application might be parsing JSONLD documents which reference external `@context` IRIs
 that are not available as file URIs on the classpath. In this case, the `jarcache.json`
-approch will not work. Instead you can inject the literal context file strings through
+approach will not work. Instead you can inject the literal context file strings through
 the `JsonLdOptions` object, as follows:
 
 ```java
