@@ -159,7 +159,7 @@ the `JsonLdOptions` object, as follows:
 DocumentLoader dl = new DocumentLoader();
 JsonLdOptions options = new JsonLdOptions();
 // ... the contents of "contexts/example.jsonld"
-String jsonContext = "{ \"@contxt\": { ... } }";
+String jsonContext = "{ \"@context\": { ... } }";
 dl.addInjectedDoc("http://www.example.com/context",  jsonContext);
 options.setDocumentLoader(dl);
 
