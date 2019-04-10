@@ -50,12 +50,12 @@ public class ContextTest {
     // See https://github.com/jsonld-java/jsonld-java/issues/248
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCompact_uriExpected() throws Exception {
+    public void testIssue248_uriExpected() {
         JsonLdProcessor.expand(ImmutableMap.of("roleName", "Production Company", "@context", schemaOrg));
     }
 
     @Test
-    public void testCompact_forceValue() throws Exception {
+    public void testIssue248_forceValue() {
         List<?> value = Arrays.asList(ImmutableMap.of("@value", "Production Company"));
         Map<String, Object> input = ImmutableMap.of("roleName", value, "@context", schemaOrg);
         Object output = JsonLdProcessor.expand(input);
@@ -63,7 +63,7 @@ public class ContextTest {
     }
 
     @Test
-    public void testCompact_overrideContext() throws Exception {
+    public void testIssue248_overrideContext() {
         List<?> context = Arrays.asList(schemaOrg,
                 ImmutableMap.of("roleName", ImmutableMap.of("@id", "http://schema.org/roleName")));
         Map<String, Object> input = ImmutableMap.of("roleName", "Production Company", "@context", context);
