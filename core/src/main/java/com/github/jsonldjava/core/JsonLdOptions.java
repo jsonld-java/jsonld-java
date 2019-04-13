@@ -35,6 +35,39 @@ public class JsonLdOptions {
         this.setBase(base);
     }
 
+    /**
+     * Creates a shallow copy of this JsonLdOptions object.
+     *
+     * It will share the same DocumentLoader unless that is overridden, and
+     * other mutable objects, so it isn't immutable.
+     *
+     * @return A copy of this JsonLdOptions object.
+     */
+    public JsonLdOptions copy() {
+        final JsonLdOptions copy = new JsonLdOptions(base);
+
+        copy.setCompactArrays(compactArrays);
+        copy.setExpandContext(expandContext);
+        copy.setProcessingMode(processingMode);
+        copy.setDocumentLoader(documentLoader);
+        copy.setEmbed(embed);
+        copy.setExplicit(explicit);
+        copy.setOmitDefault(omitDefault);
+        copy.setOmitGraph(omitGraph);
+        copy.setFrameExpansion(frameExpansion);
+        copy.setPruneBlankNodeIdentifiers(pruneBlankNodeIdentifiers);
+        copy.setRequireAll(requireAll);
+        copy.setAllowContainerSetOnType(allowContainerSetOnType);
+        copy.setUseRdfType(useRdfType);
+        copy.setUseNativeTypes(useNativeTypes);
+        copy.setProduceGeneralizedRdf(produceGeneralizedRdf);
+        copy.format = format;
+        copy.useNamespaces = useNamespaces;
+        copy.outputForm = outputForm;
+
+        return copy;
+    }
+
     // Base options : http://www.w3.org/TR/json-ld-api/#idl-def-JsonLdOptions
 
     /**
@@ -110,6 +143,25 @@ public class JsonLdOptions {
             this.embed = Embed.LAST;
             break;
         case "@link":
+            this.embed = Embed.LINK;
+            break;
+        default:
+            throw new JsonLdError(JsonLdError.Error.INVALID_EMBED_VALUE);
+        }
+    }
+
+    public void setEmbed(Embed embed) throws JsonLdError {
+        switch (embed) {
+        case ALWAYS:
+            this.embed = Embed.ALWAYS;
+            break;
+        case NEVER:
+            this.embed = Embed.NEVER;
+            break;
+        case LAST:
+            this.embed = Embed.LAST;
+            break;
+        case LINK:
             this.embed = Embed.LINK;
             break;
         default:

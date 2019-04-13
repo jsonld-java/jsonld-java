@@ -1862,8 +1862,8 @@ public class JsonLdApi {
     }
 
     private class Node {
-        private String predicate;
-        private RDFDataset.Node object;
+        private final String predicate;
+        private final RDFDataset.Node object;
 
         public Node(String predicate, RDFDataset.Node object) {
             this.predicate = predicate;
@@ -2101,10 +2101,10 @@ public class JsonLdApi {
             // 6.1)
             if (graphMap.containsKey(subject)) {
                 // 6.1.1)
-                List<Object> nextGraph = new ArrayList<Object>(4);
+                final List<Object> nextGraph = new ArrayList<Object>(4);
                 node.put(JsonLdConsts.GRAPH, nextGraph);
                 // 6.1.2)
-                Map<String, NodeMapNode> nextSubjectMap = graphMap.get(subject);
+                final Map<String, NodeMapNode> nextSubjectMap = graphMap.get(subject);
                 final List<String> keys = new ArrayList<String>(nextSubjectMap.keySet());
                 Collections.sort(keys);
                 for (final String s : keys) {

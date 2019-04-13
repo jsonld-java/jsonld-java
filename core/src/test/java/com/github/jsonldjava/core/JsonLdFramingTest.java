@@ -157,16 +157,18 @@ public class JsonLdFramingTest {
     public void testFrame0010() throws IOException, JsonLdError {
         final Object frame = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0010-frame.jsonld"));
-        //{
-        //    "@id": "http://example.com/main/id",
-        //    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": {
-        //      "@id": "http://example.com/rdf/id",
-        //      "http://www.w3.org/1999/02/22-rdf-syntax-ns#label": "someLabel"
-        //    }
-        //}
+        // {
+        // "@id": "http://example.com/main/id",
+        // "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": {
+        // "@id": "http://example.com/rdf/id",
+        // "http://www.w3.org/1999/02/22-rdf-syntax-ns#label": "someLabel"
+        // }
+        // }
         final RDFDataset ds = new RDFDataset();
-        ds.addTriple("http://example.com/main/id", "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://example.com/rdf/id");
-        ds.addTriple("http://example.com/rdf/id", "http://www.w3.org/1999/02/22-rdf-syntax-ns#label", "someLabel", null, null);
+        ds.addTriple("http://example.com/main/id",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://example.com/rdf/id");
+        ds.addTriple("http://example.com/rdf/id",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#label", "someLabel", null, null);
         final JsonLdOptions opts = new JsonLdOptions();
         opts.setProcessingMode(JsonLdOptions.JSON_LD_1_0);
 
@@ -185,7 +187,7 @@ public class JsonLdFramingTest {
         final Object in = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0011-in.jsonld"));
 
-        JsonLdOptions opts = new JsonLdOptions();
+        final JsonLdOptions opts = new JsonLdOptions();
         final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
 
         final Object out = JsonUtils

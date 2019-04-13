@@ -603,7 +603,7 @@ public class JsonLdProcessor {
      */
     public static Object normalize(Object input, JsonLdOptions options) throws JsonLdError {
 
-        final JsonLdOptions opts = new JsonLdOptions(options.getBase());
+        final JsonLdOptions opts = options.copy();
         opts.format = null;
         final RDFDataset dataset = (RDFDataset) toRDF(input, opts);
 
