@@ -261,16 +261,18 @@ public class JsonLdUrl {
         }
         try {
             URI uri = new URI(baseUri);
+            // "a base URI [...] does not allow a fragment" (https://tools.ietf.org/html/rfc3986#section-4.3)
+            uri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), uri.getQuery(), null);
             // query string parsing
             if (pathToResolve.startsWith("?")) {
-                // drop fragment from uri if it has one
-                if (uri.getFragment() != null) {
-                    uri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), null, null);
-                }
+                // drop query, https://tools.ietf.org/html/rfc3986#section-5.2.2: T.query = R.query;
+                uri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), null, null);
                 // add query to the end manually (as URI.resolve does it wrong)
                 return uri.toString() + pathToResolve;
+            } else if (pathToResolve.startsWith("#")) {
+                // add fragment to the end manually (as URI.resolve does it wrong)
+                return uri.toString() + pathToResolve;
             }
-
             uri = uri.resolve(pathToResolve);
             // java doesn't discard unnecessary dot segments
             String path = uri.getPath();
