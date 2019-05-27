@@ -65,7 +65,6 @@ public class ToRDFTest {
     }
 
     @Test
-    @Ignore
     // See https://github.com/jsonld-java/jsonld-java/issues/232#issuecomment-493454096
     public void toRdfWithOpaqueBaseIri() throws IOException, JsonLdError {
         testToRdf("/custom/toRdf-0001-in.jsonld", "/custom/toRdf-0003-out.nq", "tag:example/");
