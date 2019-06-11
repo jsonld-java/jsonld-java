@@ -863,6 +863,27 @@
       "purpose": "IRI resolution according to RFC3986.",
       "input": "toRdf-0129-in.jsonld",
       "expect": "toRdf-0129-out.nq"
+    }, {
+      "@id": "#t0130",
+      "@type": ["jld:PositiveEvaluationTest", "jld:ToRDFTest"],
+      "name": "IRI Resolution (10)",
+      "purpose": "IRI resolution according to RFC3986.",
+      "input": "toRdf-0130-in.jsonld",
+      "expect": "toRdf-0130-out.nq"
+    }, {
+      "@id": "#t0131",
+      "@type": ["jld:PositiveEvaluationTest", "jld:ToRDFTest"],
+      "name": "IRI Resolution (11)",
+      "purpose": "IRI resolution according to RFC3986.",
+      "input": "toRdf-0131-in.jsonld",
+      "expect": "toRdf-0131-out.nq"
+    }, {
+      "@id": "#t0132",
+      "@type": ["jld:PositiveEvaluationTest", "jld:ToRDFTest"],
+      "name": "IRI Resolution (12)",
+      "purpose": "IRI resolution according to RFC3986.",
+      "input": "toRdf-0132-in.jsonld",
+      "expect": "toRdf-0132-out.nq"
     }
   ]
 }
