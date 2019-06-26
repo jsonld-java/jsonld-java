@@ -261,21 +261,30 @@ public class JsonLdUrl {
         }
         try {
             URI uri = new URI(baseUri);
+            // URI#resolve drops base scheme for opaque URIs, https://github.com/jsonld-java/jsonld-java/issues/232
+            if (uri.isOpaque()) {
+                String basePath = uri.getPath() != null ? uri.getPath() : uri.getSchemeSpecificPart();
+                // Drop the last segment, see https://tools.ietf.org/html/rfc3986#section-5.2.3 (2nd bullet point)
+                basePath = basePath.contains("/") ? basePath.substring(0, basePath.lastIndexOf('/') + 1) : "";
+                return new URI(uri.getScheme(), basePath + pathToResolve, null).toString();
+            }
+            // "a base URI [...] does not allow a fragment" (https://tools.ietf.org/html/rfc3986#section-4.3)
+            uri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), uri.getQuery(), null);
             // query string parsing
             if (pathToResolve.startsWith("?")) {
-                // drop fragment from uri if it has one
-                if (uri.getFragment() != null) {
-                    uri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), null, null);
-                }
-                // add query to the end manually (as URI.resolve does it wrong)
+                // drop query, https://tools.ietf.org/html/rfc3986#section-5.2.2: T.query = R.query;
+                uri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), null, null);
+                // add query to the end manually (as URI#resolve does it wrong)
+                return uri.toString() + pathToResolve;
+            } else if (pathToResolve.startsWith("#")) {
+                // add fragment to the end manually (as URI#resolve does it wrong)
                 return uri.toString() + pathToResolve;
             }
-
             uri = uri.resolve(pathToResolve);
             // java doesn't discard unnecessary dot segments
             String path = uri.getPath();
             if (path != null) {
-                path = JsonLdUrl.removeDotSegments(uri.getPath(), true);
+                path = JsonLdUrl.removeDotSegments(path, true);
             }
             return new URI(uri.getScheme(), uri.getAuthority(), path, uri.getQuery(),
                     uri.getFragment()).toString();
