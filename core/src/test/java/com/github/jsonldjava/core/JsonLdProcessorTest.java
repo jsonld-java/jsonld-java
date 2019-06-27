@@ -46,6 +46,7 @@ import com.github.jsonldjava.utils.TestUtils;
 public class JsonLdProcessorTest {
 
     private static final String TEST_DIR = "json-ld.org";
+    private static final String MANIFEST_FILE = "manifest.jsonld";
 
     private static Map<String, Object> REPORT;
     private static List<Object> REPORT_GRAPH;
@@ -184,22 +185,37 @@ public class JsonLdProcessorTest {
         // https://github.com/json-ld/json-ld.org/tree/master/test-suite/tests
 
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        final File f = new File(cl.getResource(TEST_DIR).toURI());
-        final List<File> manifestfiles = Arrays.asList(f.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                if (name.contains("manifest") && name.endsWith(".jsonld")) {
-                    // System.out.println("Using manifest: " + dir + " "
-                    // + name);
-                    // Remote-doc tests are not currently supported
-                    if (name.contains("remote-doc")) {
-                        return false;
-                    }
-                    return true;
-                }
-                return false;
-            }
-        }));
+        final File testDir = new File(cl.getResource(TEST_DIR).toURI());
+        final File mainManifestFile = new File(testDir, MANIFEST_FILE);
+
+        final Map<String, Object> mainManifest = (Map<String, Object>) JsonUtils
+                .fromInputStream(new FileInputStream(mainManifestFile));
+
+        final List<String> manifestFileNames = (List<String>) mainManifest
+                        .get("sequence");
+
+        final List<File> manifestfiles = new ArrayList<File>();
+
+        for (final String manifestFileName : manifestFileNames) {
+          System.out.println("Using manifest: " + testDir + " " + manifestFileName);
+          manifestfiles.add(new File(testDir, manifestFileName));
+        }
+
+        // final List<File> manifestfiles = Arrays.asList(f.listFiles(new FilenameFilter() {
+        //     @Override
+        //     public boolean accept(File dir, String name) {
+        //         if (name.contains("manifest") && name.endsWith(".jsonld") && !name.equals("manifest.jsonld")) {
+        //             System.out.println("Using manifest: " + dir + " "
+        //             + name);
+        //             // Remote-doc tests are not currently supported
+        //             if (name.contains("remote-doc")) {
+        //                 return false;
+        //             }
+        //             return true;
+        //         }
+        //         return false;
+        //     }
+        // }));
 
         final Collection<Object[]> rdata = new ArrayList<Object[]>();
         for (final File in : manifestfiles) {

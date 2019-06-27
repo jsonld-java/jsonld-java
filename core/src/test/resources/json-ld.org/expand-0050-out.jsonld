@@ -1,6 +1,0 @@
-[
-  {
-    "http://example.com/issue/": [ { "@id": "http://json-ld.org/issue/1" } ],
-    "http://example.com/issue/raisedBy": [ { "@value": "Markus" } ]
-  }
-]

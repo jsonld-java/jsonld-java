@@ -1,0 +1,25 @@
+<html>
+<head>
+  <script type="application/ld+json;profile=http://www.w3.org/ns/json-ld#context">
+    {
+      "@context": {
+        "@vocab": "http://wrong.example.org/"
+      }
+    }
+  </script>
+  <!-- this will skip the profile'd version to use that identified by a fragment identifier -->
+  <script id="context" type="application/ld+json">
+    {
+      "@context": {
+        "t1": "http://example.com/t1",
+        "t2": "http://example.com/t2",
+        "term1": "http://example.com/term1",
+        "term2": "http://example.com/term2",
+        "term3": "http://example.com/term3",
+        "term4": "http://example.com/term4",
+        "term5": "http://example.com/term5"
+      }
+    }
+  </script>
+</head>
+</html>

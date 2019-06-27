@@ -1,25 +1,25 @@
 {
-  "@context": "http://json-ld.org/test-suite/context.jsonld",
+  "@context": "https://w3c.github.io/json-ld-api/tests/context.jsonld",
   "@id": "",
   "@type": "mf:Manifest",
-  "description": "Tests appropriate document loading behavior as defined in the API",
   "name": "Remote document",
-  "baseIri": "http://json-ld.org/test-suite/tests/",
+  "description": "Tests appropriate document loading behavior as defined in the API",
+  "baseIri": "https://w3c.github.io/json-ld-api/tests/",
   "sequence": [
     {
       "@id": "#t0001",
       "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
       "name": "load JSON-LD document",
       "purpose": "Document loader loads a JSON-LD document.",
-      "input": "remote-doc-0001-in.jsonld",
-      "expect": "remote-doc-0001-out.jsonld"
+      "input": "remote-doc/0001-in.jsonld",
+      "expect": "remote-doc/0001-out.jsonld"
     }, {
       "@id": "#t0002",
       "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
       "name": "load JSON document",
       "purpose": "Document loader loads a JSON document.",
-      "input": "remote-doc-0002-in.json",
-      "expect": "remote-doc-0002-out.jsonld"
+      "input": "remote-doc/0002-in.json",
+      "expect": "remote-doc/0002-out.jsonld"
     }, {
       "@id": "#t0003",
       "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
@@ -28,8 +28,8 @@
       "option": {
         "contentType": "application/jldTest+json"
       },
-      "input": "remote-doc-0003-in.jldt",
-      "expect": "remote-doc-0003-out.jsonld"
+      "input": "remote-doc/0003-in.jldt",
+      "expect": "remote-doc/0003-out.jsonld"
     }, {
       "@id": "#t0004",
       "@type": ["jld:NegativeEvaluationTest", "jld:ExpandTest"],
@@ -38,7 +38,7 @@
       "option": {
         "contentType": "application/jldTest"
       },
-      "input": "remote-doc-0004-in.jldte",
+      "input": "remote-doc/0004-in.jldte",
       "expect": "loading document failed"
     }, {
       "@id": "#t0005",
@@ -46,39 +46,39 @@
       "name": "Load JSON-LD through 301 redirect",
       "purpose": "Loading a document with a redirect should use the redirected URL as document base",
       "option": {
-        "redirectTo": "remote-doc-0001-in.jsonld",
+        "redirectTo": "remote-doc/0001-in.jsonld",
         "httpStatus": 301
       },
-      "input": "remote-doc-0005-in.jsonld",
-      "expect": "remote-doc-0001-out.jsonld"
+      "input": "remote-doc/0005-in.jsonld",
+      "expect": "remote-doc/0001-out.jsonld"
     }, {
       "@id": "#t0006",
       "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
       "name": "Load JSON-LD through 303 redirect",
       "purpose": "Loading a document with a redirect should use the redirected URL as document base",
       "option": {
-        "redirectTo": "remote-doc-0001-in.jsonld",
+        "redirectTo": "remote-doc/0001-in.jsonld",
         "httpStatus": 303
       },
-      "input": "remote-doc-0006-in.jsonld",
-      "expect": "remote-doc-0001-out.jsonld"
+      "input": "remote-doc/0006-in.jsonld",
+      "expect": "remote-doc/0001-out.jsonld"
     }, {
       "@id": "#t0007",
       "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
       "name": "Load JSON-LD through 307 redirect",
       "purpose": "Loading a document with a redirect should use the redirected URL as document base",
       "option": {
-        "redirectTo": "remote-doc-0001-in.jsonld",
+        "redirectTo": "remote-doc/0001-in.jsonld",
         "httpStatus": 307
       },
-      "input": "remote-doc-0007-in.jsonld",
-      "expect": "remote-doc-0001-out.jsonld"
+      "input": "remote-doc/0007-in.jsonld",
+      "expect": "remote-doc/0001-out.jsonld"
     }, {
       "@id": "#t0008",
       "@type": ["jld:NegativeEvaluationTest", "jld:ExpandTest"],
       "name": "Non-existant file (404)",
       "purpose": "Loading a non-existant file raises loading document failed error",
-      "input": "remote-doc-0008-in.jsonld",
+      "input": "remote-doc/missing-in.jsonld",
       "expect": "loading document failed"
     }, {
       "@id": "#t0009",
@@ -86,31 +86,31 @@
       "name": "load JSON-LD document with link",
       "purpose": "If a context is specified in a link header, it is not used for JSON-LD.",
       "option": {
-        "httpLink": "<remote-doc-0009-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\""
+        "httpLink": "<0009-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\""
       },
-      "input": "remote-doc-0009-in.jsonld",
-      "expect": "remote-doc-0009-out.jsonld"
+      "input": "remote-doc/0009-in.jsonld",
+      "expect": "remote-doc/0009-out.jsonld"
     }, {
       "@id": "#t0010",
       "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
       "name": "load JSON document with link",
       "purpose": "If a context is specified in a link header, it is used for JSON.",
       "option": {
-        "httpLink": "<remote-doc-0010-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\""
+        "httpLink": "<0010-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\""
       },
-      "input": "remote-doc-0010-in.json",
-      "expect": "remote-doc-0010-out.jsonld"
+      "input": "remote-doc/0010-in.json",
+      "expect": "remote-doc/0010-out.jsonld"
     }, {
       "@id": "#t0011",
       "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
       "name": "load JSON document with extension-type with link",
       "purpose": "If a context is specified in a link header, it is used for a JSON extension type.",
-      "input": "remote-doc-0011-in.jldt",
+      "input": "remote-doc/0011-in.jldt",
       "option": {
         "contentType": "application/jldTest+json",
-        "httpLink": "<remote-doc-0011-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\""
+        "httpLink": "<0011-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\""
       },
-      "expect": "remote-doc-0011-out.jsonld"
+      "expect": "remote-doc/0011-out.jsonld"
     }, {
       "@id": "#t0012",
       "@type": ["jld:NegativeEvaluationTest", "jld:ExpandTest"],
@@ -118,12 +118,22 @@
       "purpose": "Loading a file when multiple link headers are returned is an error",
       "option": {
         "httpLink": [
-          "<remote-doc-0012-context1.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"",
-          "<remote-doc-0012-context2.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\""
+          "<0012-context1.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"",
+          "<0012-context2.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\""
         ]
       },
-      "input": "remote-doc-0012-in.json",
+      "input": "remote-doc/0012-in.json",
       "expect": "multiple context link headers"
+    }, {
+      "@id": "#t0013",
+      "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
+      "name": "load JSON document with link to HTML document",
+      "purpose": "If a context is specified in a link header, it is used for JSON, extracting from HTML.",
+      "option": {
+        "httpLink": "<0013-context.html>; rel=\"http://www.w3.org/ns/json-ld#context\""
+      },
+      "input": "remote-doc/0013-in.json",
+      "expect": "remote-doc/0013-out.jsonld"
     }
   ]
 }

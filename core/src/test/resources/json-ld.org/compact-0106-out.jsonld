@@ -1,6 +1,0 @@
-{
-  "@context": {
-    "type": {"@id": "@type", "@container": "@set"}
-  },
-  "type": "http://example.org/type"
-}

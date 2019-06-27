@@ -1,5 +1,0 @@
-{
-  "@context": {
-    "type": {"@id": "@type", "@container": "@set"}
-  }
-}

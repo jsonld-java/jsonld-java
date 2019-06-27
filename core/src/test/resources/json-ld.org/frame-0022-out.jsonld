@@ -1,7 +1,0 @@
-{
-  "@context": {"ex": "http://example.org/"},
-  "@graph": [{
-    "@id": "ex:Sub1",
-    "@type": "ex:Type1"
-  }]
-}
