@@ -42,6 +42,8 @@
 		<httpclient.version>4.5.8</httpclient.version>
 		<httpcore.version>4.4.11</httpcore.version>
 		<jackson.version>2.9.9</jackson.version>
+		<!-- Point release fix for jackson-databind only -->
+		<jackson-databind.version>2.9.9.1</jackson-databind.version>
 		<junit.version>4.12</junit.version>
 		<slf4j.version>1.7.26</slf4j.version>
 
@@ -65,7 +67,7 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>${jackson.version}</version>
+				<version>${jackson-databind.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
