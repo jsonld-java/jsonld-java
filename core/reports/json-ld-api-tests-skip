@@ -56,11 +56,9 @@ https://w3c.github.io/json-ld-api/tests/compact-manifest#tc023
 https://w3c.github.io/json-ld-api/tests/compact-manifest#tc024
 https://w3c.github.io/json-ld-api/tests/compact-manifest#tc025
 https://w3c.github.io/json-ld-api/tests/compact-manifest#tc026
-https://w3c.github.io/json-ld-api/tests/compact-manifest#tc027
 https://w3c.github.io/json-ld-api/tests/compact-manifest#tdi01
 https://w3c.github.io/json-ld-api/tests/compact-manifest#tdi02
 https://w3c.github.io/json-ld-api/tests/compact-manifest#tdi03
-https://w3c.github.io/json-ld-api/tests/compact-manifest#tdi04
 https://w3c.github.io/json-ld-api/tests/compact-manifest#tdi05
 https://w3c.github.io/json-ld-api/tests/compact-manifest#tdi06
 https://w3c.github.io/json-ld-api/tests/compact-manifest#tdi07
@@ -193,8 +191,6 @@ https://w3c.github.io/json-ld-api/tests/expand-manifest#t0122
 https://w3c.github.io/json-ld-api/tests/expand-manifest#t0123
 https://w3c.github.io/json-ld-api/tests/expand-manifest#t0124
 https://w3c.github.io/json-ld-api/tests/expand-manifest#t0125
-https://w3c.github.io/json-ld-api/tests/expand-manifest#t0126
-https://w3c.github.io/json-ld-api/tests/expand-manifest#t0127
 https://w3c.github.io/json-ld-api/tests/expand-manifest#t0128
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tc001
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tc002
@@ -221,7 +217,6 @@ https://w3c.github.io/json-ld-api/tests/expand-manifest#tc023
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tc024
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tc025
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tc026
-https://w3c.github.io/json-ld-api/tests/expand-manifest#tc027
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tc028
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tc029
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tc030
@@ -371,10 +366,6 @@ https://w3c.github.io/json-ld-api/tests/expand-manifest#tn005
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tn006
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tn007
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tn008
-https://w3c.github.io/json-ld-api/tests/expand-manifest#tp001
-https://w3c.github.io/json-ld-api/tests/expand-manifest#tp002
-https://w3c.github.io/json-ld-api/tests/expand-manifest#tp003
-https://w3c.github.io/json-ld-api/tests/expand-manifest#tp004
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpi01
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpi02
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpi03
@@ -387,14 +378,12 @@ https://w3c.github.io/json-ld-api/tests/expand-manifest#tpi09
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpi10
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpi11
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpr01
-https://w3c.github.io/json-ld-api/tests/expand-manifest#tpr02
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpr03
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpr04
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpr05
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpr06
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpr08
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpr09
-https://w3c.github.io/json-ld-api/tests/expand-manifest#tpr10
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpr11
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpr12
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tpr13
@@ -432,7 +421,6 @@ https://w3c.github.io/json-ld-api/tests/expand-manifest#tso05
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tso06
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tso07
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tso08
-https://w3c.github.io/json-ld-api/tests/expand-manifest#tso09
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tso10
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tso11
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tso12
@@ -512,7 +500,6 @@ https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc023
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc024
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc025
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc026
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc027
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc028
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc029
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc030
@@ -522,9 +509,7 @@ https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc033
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc034
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tdi01
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tdi02
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tdi03
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tdi04
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tdi05
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tdi06
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tdi07
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tdi08
@@ -575,8 +560,6 @@ https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te122
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te123
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0124
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0125
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te126
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te127
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te128
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tec01
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tec02
@@ -708,10 +691,6 @@ https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tn005
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tn006
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tn007
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tn008
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tp001
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tp002
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tp003
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tp004
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpi01
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpi02
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpi03
@@ -724,14 +703,12 @@ https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpi09
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpi10
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpi11
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpr01
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpr02
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpr03
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpr04
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpr05
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpr06
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpr08
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpr09
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpr10
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpr11
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpr12
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tpr13
@@ -770,7 +747,6 @@ https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tso05
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tso06
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tso07
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tso08
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tso09
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tso10
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tso11
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tso12

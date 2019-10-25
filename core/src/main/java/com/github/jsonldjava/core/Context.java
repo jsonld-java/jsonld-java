@@ -215,6 +215,18 @@ public class Context extends LinkedHashMap<String, Object> {
                 // 3.3
                 throw new JsonLdError(Error.INVALID_LOCAL_CONTEXT, context);
             }
+            // 5.5 in 1.1 (https://w3c.github.io/json-ld-api/#context-processing-algorithm)
+            if (((Map<String, Object>) context).containsKey(JsonLdConsts.VERSION)) {
+                final Object version = ((Map<String, Object>) context).get(JsonLdConsts.VERSION);
+                // 5.5.1
+                if(!version.equals(Double.valueOf(1.1))) {
+                    throw new JsonLdError(Error.INVALID_VERSION_VALUE, context);
+                }
+                // 5.5.2
+                if(options.getProcessingMode().equals(JsonLdOptions.JSON_LD_1_0)) {
+                    throw new JsonLdError(Error.PROCESSING_MODE_CONFLICT, context);
+                }
+            }
             checkEmptyKey((Map<String, Object>) context);
             // 3.4
             if (!parsingARemoteContext
@@ -277,7 +289,7 @@ public class Context extends LinkedHashMap<String, Object> {
             final Map<String, Boolean> defined = new LinkedHashMap<String, Boolean>();
             for (final String key : ((Map<String, Object>) context).keySet()) {
                 if (JsonLdConsts.BASE.equals(key) || JsonLdConsts.VOCAB.equals(key)
-                        || JsonLdConsts.LANGUAGE.equals(key)) {
+                        || JsonLdConsts.LANGUAGE.equals(key) || JsonLdConsts.VERSION.equals(key)) {
                     continue;
                 }
                 result.createTermDefinition((Map<String, Object>) context, key, defined);
