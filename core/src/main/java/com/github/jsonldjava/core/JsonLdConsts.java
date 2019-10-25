@@ -58,6 +58,7 @@ public final class JsonLdConsts {
     public static final String VOCAB = "@vocab";
     public static final String BASE = "@base";
     public static final String REQUIRE_ALL = "@requireAll";
+    public static final String VERSION = "@version";
 
     public enum Embed {
         ALWAYS, NEVER, LAST, LINK;
