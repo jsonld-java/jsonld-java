@@ -86,7 +86,7 @@ public class JsonLdOptions {
     /**
      * http://www.w3.org/TR/json-ld-api/#widl-JsonLdOptions-processingMode
      */
-    private String processingMode = JSON_LD_1_0;
+    private String processingMode = JSON_LD_1_1;
     /**
      * http://www.w3.org/TR/json-ld-api/#widl-JsonLdOptions-documentLoader
      */
