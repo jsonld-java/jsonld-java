@@ -401,8 +401,6 @@ public class JsonLdProcessorTest {
             }
         } else if (testType.contains("jld:NegativeEvaluationTest")) {
             failure_expected = true;
-        } else {
-            assertFalse("Nothing to expect from this test, thus nothing to test if it works", true);
         }
 
         Object result = null;
@@ -512,7 +510,7 @@ public class JsonLdProcessorTest {
                     }
                 }
             } else {
-                testpassed = JsonLdUtils.deepCompare(expect, result);
+                testpassed = testType.contains("jld:PositiveSyntaxTest") || JsonLdUtils.deepCompare(expect, result);
             }
         } catch (final Exception e) {
             e.printStackTrace();
