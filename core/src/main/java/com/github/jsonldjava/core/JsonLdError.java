@@ -109,7 +109,7 @@ public class JsonLdError extends RuntimeException {
         // non spec related errors
         SYNTAX_ERROR("syntax error"),
 
-        NOT_IMPLEMENTED("not implemnted"),
+        NOT_IMPLEMENTED("not implemented"),
 
         UNKNOWN_FORMAT("unknown format"),
 
