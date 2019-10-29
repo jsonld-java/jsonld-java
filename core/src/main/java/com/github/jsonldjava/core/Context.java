@@ -4,6 +4,7 @@ import static com.github.jsonldjava.core.JsonLdUtils.compareShortestLeast;
 import static com.github.jsonldjava.utils.Obj.newMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -288,8 +289,12 @@ public class Context extends LinkedHashMap<String, Object> {
             // 3.7
             final Map<String, Boolean> defined = new LinkedHashMap<String, Boolean>();
             for (final String key : ((Map<String, Object>) context).keySet()) {
-                if (JsonLdConsts.BASE.equals(key) || JsonLdConsts.VOCAB.equals(key)
-                        || JsonLdConsts.LANGUAGE.equals(key) || JsonLdConsts.VERSION.equals(key)) {
+                // jsonld 1.1: 5.13 in https://w3c.github.io/json-ld-api/#algorithm
+                if (Arrays
+                        .asList(JsonLdConsts.BASE, JsonLdConsts.DIRECTION, JsonLdConsts.IMPORT,
+                                JsonLdConsts.LANGUAGE, JsonLdConsts.PROPAGATE,
+                                JsonLdConsts.PROTECTED, JsonLdConsts.VERSION, JsonLdConsts.VOCAB)
+                        .contains(key)) {
                     continue;
                 }
                 result.createTermDefinition((Map<String, Object>) context, key, defined);
