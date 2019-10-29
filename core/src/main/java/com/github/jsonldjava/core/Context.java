@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.github.jsonldjava.core.JsonLdError.Error;
 import com.github.jsonldjava.utils.JsonLdUrl;
@@ -413,13 +414,15 @@ public class Context extends LinkedHashMap<String, Object> {
             }
             definition.put(JsonLdConsts.ID, reverse);
             if (val.containsKey(JsonLdConsts.CONTAINER)) {
-                final String container = (String) val.get(JsonLdConsts.CONTAINER);
+                final Object containerObject = val.get(JsonLdConsts.CONTAINER);
+                final String container = selectContainer(checkValidContainerEntry(containerObject));
                 if (container == null || JsonLdConsts.SET.equals(container)
                         || JsonLdConsts.INDEX.equals(container)) {
                     definition.put(JsonLdConsts.CONTAINER, container);
                 } else {
                     throw new JsonLdError(Error.INVALID_REVERSE_PROPERTY,
-                            "reverse properties only support set- and index-containers");
+                            "reverse properties only support set- and index-containers, but was: "
+                                    + containerObject);
                 }
             }
             definition.put(JsonLdConsts.REVERSE, true);
@@ -476,12 +479,16 @@ public class Context extends LinkedHashMap<String, Object> {
 
         // 16)
         if (val.containsKey(JsonLdConsts.CONTAINER)) {
-            final String container = (String) val.get(JsonLdConsts.CONTAINER);
-            if (!JsonLdConsts.LIST.equals(container) && !JsonLdConsts.SET.equals(container)
-                    && !JsonLdConsts.INDEX.equals(container)
-                    && !JsonLdConsts.LANGUAGE.equals(container)) {
+            Object containerObject = val.get(JsonLdConsts.CONTAINER);
+            final List<?> allContainers = checkValidContainerEntry(containerObject);
+            if (allContainers.isEmpty()) {
+                throw new JsonLdError(Error.INVALID_CONTAINER_MAPPING, containerObject);
+            }
+            String container = selectContainer(allContainers);
+            if (container == null) {
                 throw new JsonLdError(Error.INVALID_CONTAINER_MAPPING,
-                        "@container must be either @list, @set, @index, or @language");
+                        "@container must be either @list, @set, @index, or @language, but was: "
+                                + allContainers);
             }
             definition.put(JsonLdConsts.CONTAINER, container);
             if (JsonLdConsts.TYPE.equals(term)) {
@@ -505,6 +512,36 @@ public class Context extends LinkedHashMap<String, Object> {
         // 18)
         this.termDefinitions.put(term, definition);
         defined.put(term, true);
+    }
+
+    private String selectContainer(final List<?> allContainers) {
+        Optional<?> supportedContainer = allContainers.stream()
+                .filter(c -> Arrays.asList(JsonLdConsts.LIST, JsonLdConsts.SET, JsonLdConsts.INDEX,
+                        JsonLdConsts.LANGUAGE, JsonLdConsts.GRAPH).contains(c))
+                .findFirst();
+        return (String) supportedContainer.orElse(null);
+    }
+
+    // jsonld 1.1: 22.1 in
+    // https://w3c.github.io/json-ld-api/#create-term-definition
+    private List<?> checkValidContainerEntry(final Object containerObject) {
+        List<?> container = (List<?>) (containerObject instanceof List ? containerObject
+                : Arrays.asList(containerObject));
+        boolean anyOneOf = Arrays.asList(JsonLdConsts.GRAPH, JsonLdConsts.ID, JsonLdConsts.INDEX,
+                JsonLdConsts.LANGUAGE, JsonLdConsts.LIST, JsonLdConsts.SET, JsonLdConsts.TYPE)
+                .stream().anyMatch(v -> container.contains(v)) && container.size() == 1;
+        boolean graphWithOthers = container.contains(JsonLdConsts.GRAPH)
+                && (container.contains(JsonLdConsts.ID) || container.contains(JsonLdConsts.INDEX)
+                        || container.contains(JsonLdConsts.SET));
+        boolean setWithOthers = container.contains(JsonLdConsts.SET)
+                && Arrays
+                        .asList(JsonLdConsts.INDEX, JsonLdConsts.ID, JsonLdConsts.TYPE,
+                                JsonLdConsts.LANGUAGE)
+                        .stream().anyMatch(v -> container.contains(v));
+        if (anyOneOf || graphWithOthers || setWithOthers) {
+            return container;
+        } else
+            return Collections.emptyList();
     }
 
     /**
