@@ -59,6 +59,10 @@ public final class JsonLdConsts {
     public static final String BASE = "@base";
     public static final String REQUIRE_ALL = "@requireAll";
     public static final String VERSION = "@version";
+    public static final String PROTECTED = "@protected";
+    public static final String PROPAGATE = "@propagate";
+    public static final String IMPORT = "@import";
+    public static final String DIRECTION = "@direction";
 
     public enum Embed {
         ALWAYS, NEVER, LAST, LINK;
