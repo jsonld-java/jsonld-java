@@ -188,7 +188,12 @@ public class JsonLdApi {
             // 4
             if (elem.containsKey(JsonLdConsts.VALUE) || elem.containsKey(JsonLdConsts.ID)) {
                 final Object compactedValue = activeCtx.compactValue(activeProperty, elem);
-                if (!(compactedValue instanceof Map || compactedValue instanceof List)) {
+                boolean isScalar = !(compactedValue instanceof Map || compactedValue instanceof List);
+                // jsonld 1.1: 7 in https://w3c.github.io/json-ld-api/#algorithm-6
+                boolean isJson = activeCtx.getTermDefinition(activeProperty) != null
+                        && JsonLdConsts.JSON.equals(
+                                activeCtx.getTermDefinition(activeProperty).get(JsonLdConsts.TYPE));
+                if (isScalar || isJson) {
                     return compactedValue;
                 }
             }
@@ -580,6 +585,8 @@ public class JsonLdApi {
                         throw new JsonLdError(Error.COLLIDING_KEYWORDS,
                                 expandedProperty + " already exists in result");
                     }
+                    // jsonld 1.1: 12 in https://w3c.github.io/json-ld-api/#algorithm-3
+                    Object inputType = elem.get(JsonLdConsts.TYPE);
                     // 7.4.3)
                     if (JsonLdConsts.ID.equals(expandedProperty)) {
                         if (value instanceof String) {
@@ -645,6 +652,13 @@ public class JsonLdApi {
                     }
                     // 7.4.6)
                     else if (JsonLdConsts.VALUE.equals(expandedProperty)) {
+                        // jsonld 1.1: 13.4.7.1 in https://w3c.github.io/json-ld-api/#algorithm-3
+                        if(JsonLdConsts.JSON.equals(inputType)) {
+                            expandedValue = value;
+                            if(opts.getProcessingMode().equals(JsonLdOptions.JSON_LD_1_0)) {
+                                throw new JsonLdError(Error.INVALID_VALUE_OBJECT_VALUE, value);
+                            }
+                        }
                         if (value != null && (value instanceof Map || value instanceof List)) {
                             throw new JsonLdError(Error.INVALID_VALUE_OBJECT_VALUE,
                                     "value of " + expandedProperty + " must be a scalar or null");
@@ -779,14 +793,26 @@ public class JsonLdApi {
                         expandedValue = expand(activeCtx, expandedProperty, value);
                     }
                     // 7.4.12)
-                    if (expandedValue != null) {
+                    // jsonld 1.1: 13.4.16 in https://w3c.github.io/json-ld-api/#algorithm-3
+                    if (!(expandedValue == null && JsonLdConsts.VALUE.equals(expandedProperty)
+                            && (inputType == null || JsonLdConsts.JSON.equals(inputType)))) {
                         result.put(expandedProperty, expandedValue);
                     }
                     // 7.4.13)
                     continue;
                 }
+                // jsonld 1.1: 13.5 in https://w3c.github.io/json-ld-api/#algorithm-3
+                String containerMapping = activeCtx.getContainer(key);
+                // jsonld 1.1: 13.6 in https://w3c.github.io/json-ld-api/#algorithm-3
+                if (activeCtx.getTermDefinition(key) != null
+                        && JsonLdConsts.JSON.equals(activeCtx.getTermDefinition(key).get(JsonLdConsts.TYPE))) {
+                    Map<String, Object> newMap = newMap();
+                    newMap.put(JsonLdConsts.VALUE, value);
+                    newMap.put(JsonLdConsts.TYPE, JsonLdConsts.JSON);
+                    expandedValue = newMap;
+                }
                 // 7.5
-                else if (JsonLdConsts.LANGUAGE.equals(activeCtx.getContainer(key))
+                else if (JsonLdConsts.LANGUAGE.equals(containerMapping)
                         && value instanceof Map) {
                     // 7.5.1)
                     expandedValue = new ArrayList<Object>();
@@ -937,8 +963,11 @@ public class JsonLdApi {
                     // null, so simply return it
                     return null;
                 }
+                else if (result.getOrDefault(JsonLdConsts.TYPE,"").equals(JsonLdConsts.JSON)) {
+                    // jsonld 1.1: 14.3 in https://w3c.github.io/json-ld-api/#algorithm-3
+                }
                 // 8.3)
-                if (!(rval instanceof String) && result.containsKey(JsonLdConsts.LANGUAGE)) {
+                else if (!(rval instanceof String) && result.containsKey(JsonLdConsts.LANGUAGE)) {
                     throw new JsonLdError(Error.INVALID_LANGUAGE_TAGGED_VALUE,
                             "when @language is used, @value must be a string");
                 }
