@@ -32,7 +32,9 @@ public class JsonLdUtils {
                 || "@language".equals(key) || "@list".equals(key) || "@omitDefault".equals(key)
                 || "@reverse".equals(key) || "@preserve".equals(key) || "@set".equals(key)
                 || "@type".equals(key) || "@value".equals(key) || "@vocab".equals(key)
-                || "@requireAll".equals(key);
+                || "@requireAll".equals(key) || "@version".equals(key)|| "@protected".equals(key)
+                || "@propagate".equals(key)|| "@import".equals(key)|| "@direction".equals(key)
+                || "@json".equals(key);
     }
 
     public static Boolean deepCompare(Object v1, Object v2, Boolean listOrderMatters) {

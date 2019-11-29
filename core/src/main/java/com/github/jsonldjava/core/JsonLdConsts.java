@@ -27,6 +27,7 @@ public final class JsonLdConsts {
     public static final String RDF_OBJECT = RDF_SYNTAX_NS + "object";
     public static final String RDF_LANGSTRING = RDF_SYNTAX_NS + "langString";
     public static final String RDF_LIST = RDF_SYNTAX_NS + "List";
+    public static final String RDF_JSON = RDF_SYNTAX_NS + "JSON";
 
     public static final String TEXT_TURTLE = "text/turtle";
     public static final String APPLICATION_NQUADS = "application/n-quads"; // https://www.w3.org/TR/n-quads/#sec-mediatype
@@ -63,6 +64,7 @@ public final class JsonLdConsts {
     public static final String PROPAGATE = "@propagate";
     public static final String IMPORT = "@import";
     public static final String DIRECTION = "@direction";
+    public static final String JSON = "@json";
 
     public enum Embed {
         ALWAYS, NEVER, LAST, LINK;

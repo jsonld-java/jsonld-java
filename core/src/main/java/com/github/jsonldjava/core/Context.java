@@ -384,9 +384,14 @@ public class Context extends LinkedHashMap<String, Object> {
                 }
                 throw new JsonLdError(Error.INVALID_TYPE_MAPPING, type, error);
             }
+            // jsonld 1.1: 13.3 in https://w3c.github.io/json-ld-api/#algorithm-0
+            if (JsonLdOptions.JSON_LD_1_0.equals(options.getProcessingMode())
+                    && (JsonLdConsts.NONE.equals(type) || JsonLdConsts.JSON.equals(type))) {
+                throw new JsonLdError(Error.INVALID_TYPE_MAPPING, type);
+            }
             // TODO: fix check for absoluteIri (blank nodes shouldn't count, at
             // least not here!)
-            if (JsonLdConsts.ID.equals(type) || JsonLdConsts.VOCAB.equals(type)
+            if (JsonLdConsts.ID.equals(type) || JsonLdConsts.VOCAB.equals(type) || JsonLdConsts.JSON.equals(type)
                     || (!type.startsWith(JsonLdConsts.BLANK_NODE_PREFIX)
                             && JsonLdUtils.isAbsoluteIri(type))) {
                 definition.put(JsonLdConsts.TYPE, type);
@@ -522,8 +527,7 @@ public class Context extends LinkedHashMap<String, Object> {
         return (String) supportedContainer.orElse(null);
     }
 
-    // jsonld 1.1: 22.1 in
-    // https://w3c.github.io/json-ld-api/#create-term-definition
+    // jsonld 1.1: 22.1 in https://w3c.github.io/json-ld-api/#create-term-definition
     private List<?> checkValidContainerEntry(final Object containerObject) {
         List<?> container = (List<?>) (containerObject instanceof List ? containerObject
                 : Arrays.asList(containerObject));
@@ -607,8 +611,6 @@ public class Context extends LinkedHashMap<String, Object> {
         // 6)
         else if (relative) {
             return JsonLdUrl.resolve((String) this.get(JsonLdConsts.BASE), value);
-        } else if (context != null && JsonLdUtils.isRelativeIri(value)) {
-            throw new JsonLdError(Error.INVALID_IRI_MAPPING, "not an absolute IRI: " + value);
         }
         // 7)
         return value;
