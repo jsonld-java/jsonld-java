@@ -65,6 +65,7 @@ public final class JsonLdConsts {
     public static final String IMPORT = "@import";
     public static final String DIRECTION = "@direction";
     public static final String JSON = "@json";
+    public static final String ANY = "@any";
 
     public enum Embed {
         ALWAYS, NEVER, LAST, LINK;
