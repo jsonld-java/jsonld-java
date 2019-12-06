@@ -1,0 +1,24 @@
+{
+  "@context": {
+    "ex": "http://example.org/"
+  },
+  "@graph": [{
+    "@id": "ex:a",
+    "@type": "ex:Node",
+    "ex:sees": {
+      "@id": "ex:b",
+      "@type": "ex:Node",
+      "ex:sees": {
+        "@id": "_:b0",
+        "ex:remember_me": "This value should not disappear."
+      }
+    }
+  }, {
+    "@id": "ex:b",
+    "@type": "ex:Node",
+    "ex:sees": {
+      "@id": "_:b0",
+      "ex:remember_me": "This value should not disappear."
+    }
+  }]
+}

@@ -45,7 +45,10 @@ import com.github.jsonldjava.utils.TestUtils;
 @RunWith(Parameterized.class)
 public class JsonLdProcessorTest {
 
-    private static final String TEST_DIR = "json-ld.org";
+    private static final String TEST_DIR = "json-ld-api-tests";
+    // option: run the old 1.0 test suite:
+    // private static final String TEST_DIR = "json-ld-1.0-tests";
+
     private static final String MANIFEST_FILE = "manifest.jsonld";
 
     private static Map<String, Object> REPORT;
@@ -186,36 +189,8 @@ public class JsonLdProcessorTest {
 
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
         final File testDir = new File(cl.getResource(TEST_DIR).toURI());
-        final File mainManifestFile = new File(testDir, MANIFEST_FILE);
 
-        final Map<String, Object> mainManifest = (Map<String, Object>) JsonUtils
-                .fromInputStream(new FileInputStream(mainManifestFile));
-
-        final List<String> manifestFileNames = (List<String>) mainManifest
-                        .get("sequence");
-
-        final List<File> manifestfiles = new ArrayList<File>();
-
-        for (final String manifestFileName : manifestFileNames) {
-          System.out.println("Using manifest: " + testDir + " " + manifestFileName);
-          manifestfiles.add(new File(testDir, manifestFileName));
-        }
-
-        // final List<File> manifestfiles = Arrays.asList(f.listFiles(new FilenameFilter() {
-        //     @Override
-        //     public boolean accept(File dir, String name) {
-        //         if (name.contains("manifest") && name.endsWith(".jsonld") && !name.equals("manifest.jsonld")) {
-        //             System.out.println("Using manifest: " + dir + " "
-        //             + name);
-        //             // Remote-doc tests are not currently supported
-        //             if (name.contains("remote-doc")) {
-        //                 return false;
-        //             }
-        //             return true;
-        //         }
-        //         return false;
-        //     }
-        // }));
+        final List<File> manifestfiles = loadManifestFiles(testDir);
 
         final Collection<Object[]> rdata = new ArrayList<Object[]>();
         for (final File in : manifestfiles) {
@@ -244,6 +219,40 @@ public class JsonLdProcessorTest {
             }
         }
         return rdata;
+    }
+
+    private static List<File> loadManifestFiles(final File testDir) {
+        List<File> manifestfiles = new ArrayList<File>();
+        if (testDir.getName().equals("json-ld-api-tests")) {
+            final File mainManifestFile = new File(testDir, MANIFEST_FILE);
+            Map<String, Object> mainManifest;
+            try {
+                mainManifest = (Map<String, Object>) JsonUtils.fromInputStream(new FileInputStream(mainManifestFile));
+                final List<String> manifestFileNames = (List<String>) mainManifest.get("sequence");
+                for (final String manifestFileName : manifestFileNames) {
+                    System.out.println("Using manifest: " + testDir + " " + manifestFileName);
+                    manifestfiles.add(new File(testDir, manifestFileName));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            manifestfiles = Arrays.asList(testDir.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    if (name.contains("manifest") && name.endsWith(".jsonld") && !name.equals("manifest.jsonld")) {
+                        System.out.println("Using manifest: " + dir + " " + name);
+                        // Remote-doc tests are not currently supported
+                        if (name.contains("remote-doc")) {
+                            return false;
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            }));
+        }
+        return manifestfiles;
     }
 
     private class TestDocumentLoader extends DocumentLoader {

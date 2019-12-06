@@ -85,6 +85,7 @@ public class JsonLdOptions {
     private Object expandContext = null;
     /**
      * http://www.w3.org/TR/json-ld-api/#widl-JsonLdOptions-processingMode
+     * jsonld 1.1: https://www.w3.org/TR/json-ld11/#dfn-processing-mode
      */
     private String processingMode = JSON_LD_1_1;
     /**

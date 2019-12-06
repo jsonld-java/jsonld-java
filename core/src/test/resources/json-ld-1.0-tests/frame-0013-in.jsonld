@@ -1,0 +1,21 @@
+{
+  "@context": {
+    "ex": "http://example.org/"
+  },
+  "@graph": [
+    {
+      "@id": "ex:looker",
+      "ex:canSee": [
+        {
+          "@id": "ex:forgotten"
+        },
+        {
+          "@id": "ex:spotted"
+        }
+      ]
+    },
+    {
+      "@id": "ex:spotted"
+    }
+  ]
+}
