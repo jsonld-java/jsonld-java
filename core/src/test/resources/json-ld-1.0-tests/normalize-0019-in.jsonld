@@ -1,0 +1,16 @@
+{
+  "@context": {
+    "e": "http://example.org/vocab#",
+    "e:self": {"@type": "@id"}
+  },
+  "@graph": [
+    {
+      "@id": "_:b0",
+      "e:self": "_:b0"
+    },
+    {
+      "@id": "_:b1",
+      "e:self": "_:b1"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "@context": {
+    "e": "http://example.org/vocab#",
+    "e:self": {"@type": "@id"}
+  },
+  "@id": "_:b0",
+  "e:self": "_:b0"
+}
