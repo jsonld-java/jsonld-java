@@ -43,6 +43,7 @@ import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.TestUtils;
 
 @RunWith(Parameterized.class)
+
 public class JsonLdProcessorTest {
 
     private static final String TEST_DIR = "json-ld-api-tests";
@@ -177,7 +178,7 @@ public class JsonLdProcessorTest {
         }
     }
 
-    @Parameters(name = "{0}{1}")
+    @Parameters(name = "{0}|{1}")
     public static Collection<Object[]> data() throws URISyntaxException, IOException {
 
         // TODO: look into getting the test data from github, which will help
@@ -210,8 +211,10 @@ public class JsonLdProcessorTest {
                         || testType.contains("jld:ToRDFTest")
                         || testType.contains("jld:NormalizeTest")) {
                     // System.out.println("Adding test: " + test.get("name"));
-                    rdata.add(new Object[] { (String) manifest.get("baseIri") + in.getName(),
-                            test.get("@id"), test });
+                    rdata.add(new Object[] { /*(String) manifest.get("baseIri") + in.getName(),*/
+                            manifest.get("name"),
+                            String.format("%s: %s (%s)", test.get("name"), test.get("purpose"), test.get("@id")),
+                            test });
                 } else {
                     // TODO: many disabled while implementation is incomplete
                     System.out.println("Skipping test: " + test.get("name"));
