@@ -1,0 +1,10 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "proof": {"@id": "ex:proof", "@container": "@graph"}
+  },
+  "@graph": {
+    "subject": {},
+    "proof": {}
+  }
+}

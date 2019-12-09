@@ -1,0 +1,21 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@vocab": "https://schema.org/"
+  },
+  "@graph": [
+    {
+      "@id": "1",
+      "@type": "Person",
+      "name": "John Doe",
+      "givenName": "John",
+      "familyName": "Doe"
+    },
+    {
+      "@id": "2",
+      "@type": "Person",
+      "name": "Jane Doe",
+      "givenName": "Jane"
+    }
+  ]
+}

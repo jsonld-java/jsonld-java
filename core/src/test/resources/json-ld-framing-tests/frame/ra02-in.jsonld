@@ -1,0 +1,17 @@
+[
+  {
+    "@context": {"ex": "http://example.org/"},
+    "@id": "ex:Sub1",
+    "@type": "ex:Type",
+    "ex:p": "foo"
+  }, {
+    "@context": { "ex":"http://example.org/"},
+    "@id": "ex:Sub2",
+    "@type": "ex:OtherType"
+  }, {
+    "@context": { "ex":"http://example.org/"},
+    "@id": "ex:Sub3",
+    "@type": "ex:Type",
+    "ex:p": "foo"
+  }
+]

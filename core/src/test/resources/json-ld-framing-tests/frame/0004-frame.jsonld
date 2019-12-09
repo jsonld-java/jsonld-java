@@ -1,0 +1,8 @@
+{
+  "@context": {
+    "dcterms": "http://purl.org/dc/terms/",
+    "ex": "http://example.org/vocab#",
+    "ex:contains": {"@type": "@id"}
+  },
+  "@type": "ex:Library"
+}

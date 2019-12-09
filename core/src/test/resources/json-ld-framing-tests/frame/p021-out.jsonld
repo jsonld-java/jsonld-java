@@ -1,0 +1,46 @@
+{
+  "@context": {
+    "dcterms": "http://purl.org/dc/terms/",
+    "ex": "http://example.org/vocab#",
+    "ex:list": {"@container": "@list"}
+  },
+  "@graph": [
+  {
+    "@id": "_:b0",
+    "dcterms:title": "Book type"
+  }, {
+    "@id": "http://example.org/library",
+    "@type": "ex:Library",
+    "ex:contains": {
+      "@id": "http://example.org/library/the-republic",
+      "@type": "_:b0",
+      "dcterms:creator": "Plato",
+      "dcterms:title": "The Republic",
+      "ex:contains": {
+        "@id": "http://example.org/library/the-republic#introduction",
+        "@type": "ex:Chapter",
+        "dcterms:description": "An introductory chapter on The Republic.",
+        "dcterms:title": "The Introduction",
+        "ex:list": [1, 2, 3, 4, 4, 4, 5]
+      }
+    }
+  }, {
+    "@id": "http://example.org/library/the-republic",
+    "@type": "_:b0",
+    "ex:contains": {
+      "@id": "http://example.org/library/the-republic#introduction",
+      "@type": "ex:Chapter",
+      "dcterms:description": "An introductory chapter on The Republic.",
+      "dcterms:title": "The Introduction",
+      "ex:list": [1, 2, 3, 4, 4, 4, 5]
+    },
+    "dcterms:creator": "Plato",
+    "dcterms:title": "The Republic"
+  }, {
+    "@id": "http://example.org/library/the-republic#introduction",
+    "@type": "ex:Chapter",
+    "dcterms:description": "An introductory chapter on The Republic.",
+    "ex:list": [1, 2, 3, 4, 4, 4, 5],
+    "dcterms:title": "The Introduction"
+  }]
+}

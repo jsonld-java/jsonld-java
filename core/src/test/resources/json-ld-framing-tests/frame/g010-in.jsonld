@@ -1,0 +1,21 @@
+{
+  "@id": "ex:cred",
+  "ex:subject": {
+    "@id": "ex:Subject",
+    "ex:name": "the subject",
+    "ex:knows": {
+      "@id": "ex:issuer",
+      "ex:name": "Someone else"
+    }
+  },
+  "ex:proof": {
+    "@graph": {
+      "@type": "ex:Proof",
+      "ex:name": "the proof",
+      "ex:signer": [{
+        "@id": "ex:Subject",
+        "ex:name": "something different"
+      }]
+    }
+  }
+}

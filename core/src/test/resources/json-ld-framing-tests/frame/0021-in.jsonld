@@ -1,0 +1,32 @@
+{
+  "@context": {
+    "dcterms": "http://purl.org/dc/terms/",
+    "ex": "http://example.org/vocab#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "ex:contains": {
+      "@type": "@id"
+    },
+    "ex:list": {"@container": "@list"}
+  },
+  "@graph": [
+  {
+    "@id": "_:Book",
+    "dcterms:title": "Book type"
+  }, {
+    "@id": "http://example.org/library",
+    "@type": "ex:Library",
+    "ex:contains": "http://example.org/library/the-republic"
+  }, {
+    "@id": "http://example.org/library/the-republic",
+    "@type": "_:Book",
+    "dcterms:creator": "Plato",
+    "dcterms:title": "The Republic",
+    "ex:contains": "http://example.org/library/the-republic#introduction"
+  }, {
+    "@id": "http://example.org/library/the-republic#introduction",
+    "@type": "ex:Chapter",
+    "dcterms:description": "An introductory chapter on The Republic.",
+    "dcterms:title": "The Introduction",
+    "ex:list": [1, 2, 3, 4, 4, 4, 5]
+  }]
+}

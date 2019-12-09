@@ -1,0 +1,77 @@
+{
+  "@context": {
+    "dcterms": "http://purl.org/dc/terms/",
+    "ex": "http://example.org/vocab#",
+    "dcterms:subject": {"@type": "@id"},
+    "ex:contains": {"@type": "@id"},
+    "ex:bookmark": {"@type": "@id"},
+    "ex:topic": {"@type": "@id"},
+    "ex:relatesTo": {"@type": "@id"}
+  },
+  "@graph": [
+    {
+      "@id": "http://example.org/test/#library",
+      "@type": "ex:Library",
+      "ex:contains": "http://example.org/test#book"
+    },
+    {
+      "@id": "http://example.org/test#book",
+      "@type": "ex:Book",
+      "dcterms:contributor": "Writer",
+      "dcterms:title": "My Book",
+      "ex:contains": [
+        "http://example.org/test#chapter",
+        "http://example.org/test#chapter2"
+      ],
+      "ex:bookmark": "http://example.org/test#chapter"
+    },
+    {
+      "@id": "http://example.org/test#chapter",
+      "@type": "ex:Chapter",
+      "dcterms:description": "Fun",
+      "dcterms:title": "Chapter One",
+      "dcterms:subject": "http://example.org/test/#library",
+      "ex:topic": [
+        "http://example.org/test#subject1",
+        "http://example.org/test#subject2",
+        "http://example.org/test#subject3"
+      ]
+    },
+    {
+      "@id": "http://example.org/test#chapter2",
+      "@type": "ex:Chapter",
+      "dcterms:description": "More Fun",
+      "dcterms:title": "Chapter Two",
+      "ex:topic": [
+        "http://example.org/test#subject1",
+        "http://example.org/test#subject4",
+        "http://example.org/test#subject5"
+      ]
+    },
+    {
+      "@id": "http://example.org/test#subject1",
+      "@type": "ex:Topic",
+      "dcterms:description": "Topic 1",
+      "ex:relatesTo": "http://example.org/test/#library"
+    },
+    {
+      "@id": "http://example.org/test#subject2",
+      "@type": "ex:Topic",
+      "dcterms:description": "Topic 2"
+    },
+    {
+      "@id": "http://example.org/test#subject3",
+      "@type": "ex:Topic",
+      "dcterms:description": "Topic 3"
+    },
+    {
+      "@id": "http://example.org/test#subject4",
+      "@type": "ex:Topic",
+      "dcterms:description": "Topic 4"
+    },
+    {
+      "@id": "http://example.org/test#subject5",
+      "@type": "ex:Topic",
+      "dcterms:description": "Topic 5"
+    }]
+}

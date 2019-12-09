@@ -1,0 +1,7 @@
+[{
+  "http://example.org/prop": [{"@value": "value"}],
+  "http://example.org/foo": [{"@value": "bar"}]
+}, {
+  "http://example.org/prop": [{"@value": "value2"}],
+  "http://example.org/foo": [{"@value": "bar"}]
+}]
