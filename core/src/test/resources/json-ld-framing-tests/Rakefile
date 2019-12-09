@@ -1,0 +1,16 @@
+require 'bundler/setup'
+require 'haml'
+require 'json'
+task default: %w(
+  manifest.html
+  frame-manifest.html)
+
+# Rule to build HTML files
+rule '.html' => ['.jsonld', 'template.haml'] do |task|
+  puts "build #{task.name} from #{task.prerequisites.first}"
+  @template ||= File.read(File.expand_path('../template.haml', __FILE__))
+  @engine ||= Haml::Engine.new(@template, format: :html5)
+  manifest = JSON.parse File.read(File.expand_path("../#{task.prerequisites.first}", __FILE__))
+  html = @engine.render(self, manifest: manifest, json_file: task.prerequisites.first)
+  File.open(File.expand_path("../#{task.name}", __FILE__), "w") {|f| f.write(html)}
+end

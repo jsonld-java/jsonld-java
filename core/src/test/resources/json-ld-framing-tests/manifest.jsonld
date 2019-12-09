@@ -1,0 +1,10 @@
+{
+  "@context": ["https://w3c.github.io/json-ld-api/tests/context.jsonld", {"@base": "manifest"}],
+  "@id": "",
+  "@type": "mf:Manifest",
+  "name": "JSON-LD Test Suite",
+  "description": "This manifest loads additional manifests for specific behavior tests",
+  "sequence": [
+    "frame-manifest.jsonld"
+  ]
+}

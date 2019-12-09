@@ -1,0 +1,4 @@
+{
+  "@context": {"ex": "http://example.org/"},
+  "ex:q": {"@value": "Q", "@type": ["ex:q", "ex:Q"]}
+}

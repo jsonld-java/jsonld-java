@@ -1,0 +1,15 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@vocab": "http://example.org/",
+    "included": {"@id": "@included", "@container": "@set"}
+  },
+  "@requireAll": true,
+  "foo": "bar",
+  "prop": "value",
+  "@included": [{
+    "@requireAll": true,
+    "foo": "bar",
+    "prop": "value2"
+  }]
+}

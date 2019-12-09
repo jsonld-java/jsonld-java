@@ -47,7 +47,11 @@ import com.github.jsonldjava.utils.TestUtils;
 public class JsonLdProcessorTest {
 
     private static final String TEST_DIR = "json-ld-api-tests";
+    // option: run the json-ld-framing test suite:
+    // (https://github.com/w3c/json-ld-framing/blob/master/tests/README.md)
+    // private static final String TEST_DIR = "json-ld-framing-tests";
     // option: run the old 1.0 test suite:
+    // (https://github.com/json-ld/json-ld.org/tree/master/test-suite/tests)
     // private static final String TEST_DIR = "json-ld-1.0-tests";
 
     private static final String MANIFEST_FILE = "manifest.jsonld";
@@ -226,7 +230,7 @@ public class JsonLdProcessorTest {
 
     private static List<File> loadManifestFiles(final File testDir) {
         List<File> manifestfiles = new ArrayList<File>();
-        if (testDir.getName().equals("json-ld-api-tests")) {
+        if (!testDir.getName().equals("json-ld-1.0-tests")) {
             final File mainManifestFile = new File(testDir, MANIFEST_FILE);
             Map<String, Object> mainManifest;
             try {

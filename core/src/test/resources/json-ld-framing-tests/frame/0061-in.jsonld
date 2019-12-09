@@ -1,0 +1,24 @@
+{
+  "@context": {
+    "@base": "http://example.org/",
+    "@vocab": "http://example.org/vocab#",
+    "@version": 1.1
+  },
+  "characters": {
+    "@id": "m3",
+    "@type": "ContinuousCells",
+    "label": "Continuous characters",
+    "format": {
+      "char": [
+        {
+          "@id": "ContinuousCharacter1",
+          "label": "this is character 1"
+        },
+        {"@id": "ContinuousCharacter2"},
+        {"@id": "ContinuousCharacter3"},
+        {"@id": "ContinuousCharacter4"},
+        {"@id": "ContinuousCharacter5"}
+      ]
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@vocab": "http://example.org/vocab#",
+    "@base": "http://example.org/base/",
+    "id": "@id",
+    "type": "@type",
+    "data": "@nest",
+    "attributes": "@nest",
+    "links": "@nest",
+    "relationships": "@nest",
+    "included": "@included",
+    "author": {"@type": "@id"},
+    "self": {"@type": "@id"},
+    "related": {"@type": "@id"},
+    "comments": {"@context": {"data": null}}
+  },
+  "id": "1",
+  "type": "articles",
+  "title": "JSON:API paints my bikeshed!",
+  "self": "http://example.com/articles/1",
+  "author": "9",
+  "comments": {
+    "self": "http://example.com/articles/1/relationships/comments",
+    "related": "http://example.com/articles/1/comments"
+  },
+  "included": [{
+    "id": "5",
+    "type": "comments",
+    "body": "First!",
+    "author": {"id": "2", "type": "people"},
+    "self": "http://example.com/comments/5"
+  }, {
+    "id": "9",
+    "type": "people",
+    "first-name": "Dan",
+    "last-name": "Gebhardt",
+    "twitter": "dgeb",
+    "self": [
+      "http://example.com/people/9",
+      "http://example.com/articles/1/relationships/author"
+    ],
+    "related": "http://example.com/articles/1/author"
+  }, {
+    "id": "12",
+    "type": "comments",
+    "body": "I like XML better",
+    "author": "9",
+    "self": "http://example.com/comments/12"
+  }]
+}

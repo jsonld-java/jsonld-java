@@ -1,0 +1,7 @@
+{
+  "@context": {
+    "ex": "http://www.example.com/#"
+  },
+  "@type": "ex:Thing",
+  "@embed": "@last"
+}

@@ -1,0 +1,44 @@
+{
+  "@context": {
+    "dcterms": "http://purl.org/dc/terms/",
+    "ex": "http://example.org/vocab#"
+  },
+  "@id": "http://example.org/town/#123",
+  "@type": "ex:Town",
+  "ex:name": "My town",
+  "ex:hasLibrary": [
+    {
+      "@id": "http://example.org/test/#library",
+      "@type": "ex:Library",
+      "ex:name": "My local library",
+      "ex:contains": {
+        "@id": "http://example.org/test#book",
+        "@type": "ex:Book",
+        "dcterms:contributor": "Writer",
+        "dcterms:title": "My Book about a library",
+        "ex:contains": {
+          "@id": "http://example.org/test#chapter",
+          "@type": "ex:Chapter",
+          "dcterms:description": "Fun",
+          "dcterms:title": "Chapter One",
+          "ex:topic": [
+            {
+              "@id": "http://example.org/test/#library"
+            },
+            {
+              "@id": "http://example.org/test/#library2",
+              "@type": "ex:Library",
+              "ex:name": "Another library"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "@id": "http://example.org/test/#library2",
+      "@type": "ex:Library",
+      "ex:contains": null,
+      "ex:name": "Another library"
+    }
+  ]
+}

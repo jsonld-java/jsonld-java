@@ -1,0 +1,11 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@vocab": "https://schema.org/"
+  },
+  "@id": "1",
+  "@type": "Person",
+  "familyName": "Doe",
+  "givenName": "John",
+  "name": "John Doe"
+}

@@ -1,0 +1,13 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "ex": "http://www.example.com/#"
+  },
+  "@type": "ex:Thing",
+  "ex:embed": {
+    "@embed": true
+  },
+  "ex:noembed": {
+    "@embed": false
+  }
+}
