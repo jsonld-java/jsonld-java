@@ -34,7 +34,8 @@ public class JsonLdUtils {
                 || "@type".equals(key) || "@value".equals(key) || "@vocab".equals(key)
                 || "@requireAll".equals(key) || "@version".equals(key)|| "@protected".equals(key)
                 || "@propagate".equals(key)|| "@import".equals(key)|| "@direction".equals(key)
-                || "@json".equals(key);
+                || "@json".equals(key) || "@none".equals(key) || "@included".equals(key)
+                || "@nest".equals(key) || "@prefix".equals(key);
     }
 
     public static Boolean deepCompare(Object v1, Object v2, Boolean listOrderMatters) {

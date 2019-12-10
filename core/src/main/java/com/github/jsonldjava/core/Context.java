@@ -262,12 +262,15 @@ public class Context extends LinkedHashMap<String, Object> {
                 final Object value = ((Map<String, Object>) context).get(JsonLdConsts.VOCAB);
                 if (value == null) {
                     result.remove(JsonLdConsts.VOCAB);
-                } else if (value instanceof String) {
-                    if (JsonLdUtils.isAbsoluteIri((String) value)) {
-                        result.put(JsonLdConsts.VOCAB, value);
+                }
+                // jsonld 1.1: 5.8.3 in https://w3c.github.io/json-ld-api/#algorithm
+                else if (value instanceof String) {
+                    if (((String) value).startsWith(JsonLdConsts.BLANK_NODE_PREFIX)
+                            || JsonLdUtils.isAbsoluteIri((String) value) || JsonLdUtils.isRelativeIri((String) value)) {
+                        result.put(JsonLdConsts.VOCAB,
+                                expandIri((String) value, true, true, ((Map<String, Object>) result), null));
                     } else {
-                        throw new JsonLdError(Error.INVALID_VOCAB_MAPPING,
-                                "@value must be an absolute IRI");
+                        throw new JsonLdError(Error.INVALID_VOCAB_MAPPING, value);
                     }
                 } else {
                     throw new JsonLdError(Error.INVALID_VOCAB_MAPPING,
@@ -391,13 +394,12 @@ public class Context extends LinkedHashMap<String, Object> {
             }
             // TODO: fix check for absoluteIri (blank nodes shouldn't count, at
             // least not here!)
-            if (JsonLdConsts.ID.equals(type) || JsonLdConsts.VOCAB.equals(type) || JsonLdConsts.JSON.equals(type)
-                    || (!type.startsWith(JsonLdConsts.BLANK_NODE_PREFIX)
-                            && JsonLdUtils.isAbsoluteIri(type))) {
-                definition.put(JsonLdConsts.TYPE, type);
-            } else {
+            else if (!JsonLdConsts.ID.equals(type) && !JsonLdConsts.VOCAB.equals(type)
+                    && !JsonLdConsts.JSON.equals(type) && !JsonLdConsts.NONE.equals(type)
+                    && (!JsonLdUtils.isAbsoluteIri(type) || type.startsWith(JsonLdConsts.BLANK_NODE_PREFIX))) {
                 throw new JsonLdError(Error.INVALID_TYPE_MAPPING, type);
             }
+            definition.put(JsonLdConsts.TYPE, type);
         }
 
         // 11)
@@ -455,7 +457,7 @@ public class Context extends LinkedHashMap<String, Object> {
                 definition.put(JsonLdConsts.ID, res);
             } else {
                 throw new JsonLdError(Error.INVALID_IRI_MAPPING,
-                        "resulting IRI mapping should be a keyword, absolute IRI or blank node");
+                        "resulting IRI mapping should be a keyword, absolute IRI or blank node, but was: " + res);
             }
         }
 
@@ -491,7 +493,7 @@ public class Context extends LinkedHashMap<String, Object> {
             }
             String container = selectContainer(allContainers);
             if (container == null) {
-                throw new JsonLdError(Error.NOT_IMPLEMENTED,
+                throw new JsonLdError(Error.INVALID_CONTAINER_MAPPING,
                         "@container must be either @list, @set, @index, or @language, but was: "
                                 + allContainers);
             }
@@ -1015,18 +1017,28 @@ public class Context extends LinkedHashMap<String, Object> {
                 typeLanguageMap.put(JsonLdConsts.TYPE, newMap());
                 containerMap.put(container, typeLanguageMap);
             }
-
+            // jsonld 1.1: 3.8 in https://w3c.github.io/json-ld-api/#inverse-context-creation
+            final Map<String, Object> typeMap = (Map<String, Object>) typeLanguageMap
+                    .get(JsonLdConsts.TYPE);
             // 3.8)
             if (Boolean.TRUE.equals(definition.get(JsonLdConsts.REVERSE))) {
-                final Map<String, Object> typeMap = (Map<String, Object>) typeLanguageMap
-                        .get(JsonLdConsts.TYPE);
                 if (!typeMap.containsKey(JsonLdConsts.REVERSE)) {
                     typeMap.put(JsonLdConsts.REVERSE, term);
                 }
-                // 3.9)
-            } else if (definition.containsKey(JsonLdConsts.TYPE)) {
-                final Map<String, Object> typeMap = (Map<String, Object>) typeLanguageMap
-                        .get(JsonLdConsts.TYPE);
+            }
+            // jsonld 1.1: 3.10 in https://w3c.github.io/json-ld-api/#inverse-context-creation
+            else if(JsonLdConsts.NONE.equals(definition.get(JsonLdConsts.TYPE))) {
+                final Map<String, Object> languageMap = (Map<String, Object>) typeLanguageMap
+                        .get(JsonLdConsts.LANGUAGE);
+                if(!languageMap.containsKey(JsonLdConsts.ANY)) {
+                    languageMap.put(JsonLdConsts.ANY, term);
+                }
+                if(!typeMap.containsKey(JsonLdConsts.ANY)) {
+                    typeMap.put(JsonLdConsts.ANY, term);
+                }
+            }
+            // 3.9)
+            else if (definition.containsKey(JsonLdConsts.TYPE)) {
                 if (!typeMap.containsKey(definition.get(JsonLdConsts.TYPE))) {
                     typeMap.put((String) definition.get(JsonLdConsts.TYPE), term);
                 }
@@ -1054,9 +1066,6 @@ public class Context extends LinkedHashMap<String, Object> {
                 if (!languageMap.containsKey(JsonLdConsts.NONE)) {
                     languageMap.put(JsonLdConsts.NONE, term);
                 }
-                // 3.11.4)
-                final Map<String, Object> typeMap = (Map<String, Object>) typeLanguageMap
-                        .get(JsonLdConsts.TYPE);
                 // 3.11.5)
                 if (!typeMap.containsKey(JsonLdConsts.NONE)) {
                     typeMap.put(JsonLdConsts.NONE, term);
