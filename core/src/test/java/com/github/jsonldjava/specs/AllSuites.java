@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ JsonLdApiSuite.class, JsonLdFramingSuite.class, JsonLd1Tests.class })
+@SuiteClasses({ JsonLdApiTests.class, JsonLdFramingTests.class, JsonLd1Tests.class })
 public class AllSuites {
 
 }

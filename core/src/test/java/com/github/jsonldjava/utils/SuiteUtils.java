@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +18,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +29,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.Assume;
+import org.junit.BeforeClass;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -166,6 +172,9 @@ public class SuiteUtils {
                         report);
             }
         }
+        if (skipFileWriter != null) {
+            skipFileWriter.close();
+        }
     }
 
     public static Collection<Object[]> getData(String dir) throws URISyntaxException, FileNotFoundException, IOException {
@@ -199,9 +208,9 @@ public class SuiteUtils {
                         || testType.contains("jld:ToRDFTest")
                         || testType.contains("jld:NormalizeTest")) {
                     // System.out.println("Adding test: " + test.get("name"));
-                    rdata.add(new Object[] { /*(String) manifest.get("baseIri") + in.getName(),*/
-                            manifest.get("name"),
-                            String.format("%s: %s (%s)", test.get("name"), test.get("purpose"), test.get("@id")),
+                    rdata.add(new Object[] {
+                            (String) manifest.get("baseIri") + in.getName().replace("jsonld", "html"),
+                            test.get("@id"),
                             test });
                 } else {
                     // TODO: many disabled while implementation is incomplete
@@ -302,7 +311,7 @@ public class SuiteUtils {
         }
     }
 
-    public static void run(String dir, String group, Map<String, Object> test, List<Object> reportGraph) throws URISyntaxException, IOException, JsonLdError {
+    public static void run(String dir, String group, String testId, Map<String, Object> test, List<Object> reportGraph) throws URISyntaxException, IOException, JsonLdError {
         // System.out.println("running test: " + group + test.get("@id") +
         // " :: " + test.get("name"));
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -311,6 +320,10 @@ public class SuiteUtils {
 
         final String inputFile = (String) test.get("input");
         final InputStream inputStream = cl.getResourceAsStream(dir + "/" + inputFile);
+        String skipId = skipId(group, testId);
+        if(inputStream == null) {
+            skipFileWriter.append(skipId+"\n");
+        }
         assertNotNull("unable to find input file: " + test.get("input"), inputStream);
         final String inputType = inputFile.substring(inputFile.lastIndexOf(".") + 1);
 
@@ -499,6 +512,11 @@ public class SuiteUtils {
             throw (JsonLdError) result;
         }
 
+        if(!testpassed && skipFileWriter != null){
+            System.err.println(skipId);
+            skipFileWriter.append(skipId+"\n");
+        }
+
         // write details to report
         final String manifest = group;
         final String id = (String) test.get("@id");
@@ -562,4 +580,38 @@ public class SuiteUtils {
                 testpassed);
     }
 
+    static FileWriter skipFileWriter = null;
+    static List<String> skipFileEntries = Collections.emptyList();
+
+    public static void runChecked(String testDir, String group, String id, Map<String, Object> test,
+            List<Object> graph) throws Exception {
+        Assume.assumeFalse("Skip: " + skipId(group, id),
+                skipFileEntries.contains(skipId(group, id)));
+        try {
+            SuiteUtils.run(testDir, group, id, test, graph);
+        } catch (Exception e) {
+            if (skipFileWriter != null) {
+                skipFileWriter.append(skipId(group, id) + "\n");
+            }
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public static void setUpSkipFile(String skipFileLocation) {
+        try {
+            File skipFile = new File(skipFileLocation);
+            if (skipFile.exists()) {
+                skipFileEntries = Files.readAllLines(Paths.get(skipFile.toURI()));
+            } else {
+                skipFileWriter = new FileWriter(skipFile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String skipId(String group, String id) {
+        return group + id;
+    }
 }

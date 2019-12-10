@@ -4,7 +4,7 @@
   "@type": "mf:Manifest",
   "name": "Framing",
   "description": "JSON-LD Framing tests.",
-  "baseIri": "https://w3c.github.io/json-ld-api/tests/",
+  "baseIri": "https://w3c.github.io/json-ld-framing/tests/",
   "sequence": [
     {
       "@id": "#t0001",
