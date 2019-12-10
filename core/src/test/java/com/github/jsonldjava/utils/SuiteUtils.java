@@ -1,4 +1,4 @@
-package com.github.jsonldjava.core;
+package com.github.jsonldjava.utils;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -26,27 +27,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.github.jsonldjava.core.DocumentLoader;
+import com.github.jsonldjava.core.JsonLdConsts;
+import com.github.jsonldjava.core.JsonLdError;
+import com.github.jsonldjava.core.JsonLdOptions;
+import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.core.JsonLdUtils;
+import com.github.jsonldjava.core.RemoteDocument;
 import com.github.jsonldjava.utils.JsonUtils;
 import com.github.jsonldjava.utils.Obj;
-import com.github.jsonldjava.utils.TestUtils;
 
-@RunWith(Parameterized.class)
+public class SuiteUtils {
 
-public class JsonLdProcessorTest {
-
-    private static final String TEST_DIR = "json-ld-api-tests";
+    // private static final String TEST_DIR = "json-ld-api-tests";
     // option: run the json-ld-framing test suite:
     // (https://github.com/w3c/json-ld-framing/blob/master/tests/README.md)
     // private static final String TEST_DIR = "json-ld-framing-tests";
@@ -54,15 +49,10 @@ public class JsonLdProcessorTest {
     // (https://github.com/json-ld/json-ld.org/tree/master/test-suite/tests)
     // private static final String TEST_DIR = "json-ld-1.0-tests";
 
-    private static final String MANIFEST_FILE = "manifest.jsonld";
-
-    private static Map<String, Object> REPORT;
-    private static List<Object> REPORT_GRAPH;
     private static String ASSERTOR = "http://tristan.github.com/foaf#me";
-
-    @BeforeClass
-    public static void prepareReportFrame() {
-        REPORT = new LinkedHashMap<String, Object>() {
+    
+    public static LinkedHashMap<String, Object> generateReport() {
+        return new LinkedHashMap<String, Object>() {
             {
                 // context
                 put("@context", new LinkedHashMap<String, Object>() {
@@ -158,13 +148,9 @@ public class JsonLdProcessorTest {
                 });
             }
         };
-        REPORT_GRAPH = (List<Object>) REPORT.get("@graph");
     }
 
-    private static final String reportOutputFile = "reports/report";
-
-    @AfterClass
-    public static void writeReport()
+    public static void writeReport(Object report, String reportOutputFile)
             throws JsonGenerationException, JsonMappingException, IOException, JsonLdError {
 
         // Only write reports if "-Dreport.format=..." is set
@@ -177,14 +163,12 @@ public class JsonLdProcessorTest {
                 JsonUtils.writePrettyPrint(
                         new OutputStreamWriter(new FileOutputStream(reportOutputFile + ".jsonld"),
                                 StandardCharsets.UTF_8),
-                        REPORT);
+                        report);
             }
         }
     }
 
-    @Parameters(name = "{0}|{1}")
-    public static Collection<Object[]> data() throws URISyntaxException, IOException {
-
+    public static Collection<Object[]> getData(String dir) throws URISyntaxException, FileNotFoundException, IOException {
         // TODO: look into getting the test data from github, which will help
         // more
         // with keeping up to date with the spec.
@@ -193,7 +177,7 @@ public class JsonLdProcessorTest {
         // https://github.com/json-ld/json-ld.org/tree/master/test-suite/tests
 
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        final File testDir = new File(cl.getResource(TEST_DIR).toURI());
+        final File testDir = new File(cl.getResource(dir).toURI());
 
         final List<File> manifestfiles = loadManifestFiles(testDir);
 
@@ -231,7 +215,7 @@ public class JsonLdProcessorTest {
     private static List<File> loadManifestFiles(final File testDir) {
         List<File> manifestfiles = new ArrayList<File>();
         if (!testDir.getName().equals("json-ld-1.0-tests")) {
-            final File mainManifestFile = new File(testDir, MANIFEST_FILE);
+            final File mainManifestFile = new File(testDir, "manifest.jsonld");
             Map<String, Object> mainManifest;
             try {
                 mainManifest = (Map<String, Object>) JsonUtils.fromInputStream(new FileInputStream(mainManifestFile));
@@ -262,11 +246,13 @@ public class JsonLdProcessorTest {
         return manifestfiles;
     }
 
-    private class TestDocumentLoader extends DocumentLoader {
+    static class TestDocumentLoader extends DocumentLoader {
 
         private final String base;
+        private String dir;
 
-        public TestDocumentLoader(String base) {
+        public TestDocumentLoader(String base, String dir) {
+            this.dir = dir;
             this.base = base;
         }
 
@@ -282,7 +268,7 @@ public class JsonLdProcessorTest {
                     final String classpath = url.substring(this.base.length());
                     final ClassLoader cl = Thread.currentThread().getContextClassLoader();
                     final InputStream inputStream = cl
-                            .getResourceAsStream(TEST_DIR + "/" + classpath);
+                            .getResourceAsStream(dir + "/" + classpath);
                     try {
                         return new RemoteDocument(url, JsonUtils.fromInputStream(inputStream));
                     } catch (final IOException e) {
@@ -316,30 +302,7 @@ public class JsonLdProcessorTest {
         }
     }
 
-    // @Rule
-    // public Timeout timeout = new Timeout(10000);
-
-    @Rule
-    public TemporaryFolder tempDir = new TemporaryFolder();
-
-    private File testDir;
-
-    private final String group;
-    private final Map<String, Object> test;
-
-    public JsonLdProcessorTest(final String group, final String id,
-            final Map<String, Object> test) {
-        this.group = group;
-        this.test = test;
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        testDir = tempDir.newFolder("jsonld");
-    }
-
-    @Test
-    public void runTest() throws URISyntaxException, IOException, JsonLdError {
+    public static void run(String dir, String group, Map<String, Object> test, List<Object> reportGraph) throws URISyntaxException, IOException, JsonLdError {
         // System.out.println("running test: " + group + test.get("@id") +
         // " :: " + test.get("name"));
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -347,7 +310,7 @@ public class JsonLdProcessorTest {
         final List<String> testType = (List<String>) test.get("@type");
 
         final String inputFile = (String) test.get("input");
-        final InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/" + inputFile);
+        final InputStream inputStream = cl.getResourceAsStream(dir + "/" + inputFile);
         assertNotNull("unable to find input file: " + test.get("input"), inputStream);
         final String inputType = inputFile.substring(inputFile.lastIndexOf(".") + 1);
 
@@ -375,7 +338,7 @@ public class JsonLdProcessorTest {
         final String expectFile = (String) test.get("expect");
         final String sparqlFile = (String) test.get("sparql");
         if (expectFile != null) {
-            final InputStream expectStream = cl.getResourceAsStream(TEST_DIR + "/" + expectFile);
+            final InputStream expectStream = cl.getResourceAsStream(dir + "/" + expectFile);
             if (expectStream == null && testType.contains("jld:NegativeEvaluationTest")) {
                 // in the case of negative evaluation tests the expect field can
                 // be a description of what should happen
@@ -407,7 +370,7 @@ public class JsonLdProcessorTest {
                 }
             }
         } else if (sparqlFile != null) {
-            final InputStream sparqlStream = cl.getResourceAsStream(TEST_DIR + "/" + sparqlFile);
+            final InputStream sparqlStream = cl.getResourceAsStream(dir + "/" + sparqlFile);
             assertNotNull("unable to find expect file: " + sparqlFile, sparqlStream);
             final BufferedReader buf = new BufferedReader(
                     new InputStreamReader(sparqlStream, "UTF-8"));
@@ -425,7 +388,7 @@ public class JsonLdProcessorTest {
         final JsonLdOptions options = new JsonLdOptions(
                 "http://json-ld.org/test-suite/tests/" + test.get("input"));
         final TestDocumentLoader testLoader = new TestDocumentLoader(
-                "http://json-ld.org/test-suite/tests/");
+                "http://json-ld.org/test-suite/tests/", dir);
         options.setDocumentLoader(testLoader);
         if (test.containsKey("option")) {
             final Map<String, Object> test_opts = (Map<String, Object>) test.get("option");
@@ -434,7 +397,7 @@ public class JsonLdProcessorTest {
             }
             if (test_opts.containsKey("expandContext")) {
                 final InputStream contextStream = cl
-                        .getResourceAsStream(TEST_DIR + "/" + test_opts.get("expandContext"));
+                        .getResourceAsStream(dir + "/" + test_opts.get("expandContext"));
                 options.setExpandContext(JsonUtils.fromInputStream(contextStream));
             }
             if (test_opts.containsKey("compactArrays")) {
@@ -481,13 +444,13 @@ public class JsonLdProcessorTest {
                 result = JsonLdProcessor.expand(input, options);
             } else if (testType.contains("jld:CompactTest")) {
                 final InputStream contextStream = cl
-                        .getResourceAsStream(TEST_DIR + "/" + test.get("context"));
+                        .getResourceAsStream(dir + "/" + test.get("context"));
                 final Object contextJson = JsonUtils.fromInputStream(contextStream);
                 result = JsonLdProcessor.compact(input, contextJson, options);
             } else if (testType.contains("jld:FlattenTest")) {
                 if (test.containsKey("context")) {
                     final InputStream contextStream = cl
-                            .getResourceAsStream(TEST_DIR + "/" + test.get("context"));
+                            .getResourceAsStream(dir + "/" + test.get("context"));
                     final Object contextJson = JsonUtils.fromInputStream(contextStream);
                     result = JsonLdProcessor.flatten(input, contextJson, options);
                 } else {
@@ -495,7 +458,7 @@ public class JsonLdProcessorTest {
                 }
             } else if (testType.contains("jld:FrameTest")) {
                 final InputStream frameStream = cl
-                        .getResourceAsStream(TEST_DIR + "/" + test.get("frame"));
+                        .getResourceAsStream(dir + "/" + test.get("frame"));
                 final Map<String, Object> frameJson = (Map<String, Object>) JsonUtils
                         .fromInputStream(frameStream);
                 result = JsonLdProcessor.frame(input, frameJson, options);
@@ -537,15 +500,15 @@ public class JsonLdProcessorTest {
         }
 
         // write details to report
-        final String manifest = this.group;
-        final String id = (String) this.test.get("@id");
+        final String manifest = group;
+        final String id = (String) test.get("@id");
         final Date d = new Date();
         final String dateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(d);
         String zone = new SimpleDateFormat("Z").format(d);
         zone = zone.substring(0, 3) + ":" + zone.substring(3);
         final String dateTimeZone = dateTime + zone;
         final Boolean passed = testpassed;
-        REPORT_GRAPH.add(new LinkedHashMap<String, Object>() {
+        reportGraph.add(new LinkedHashMap<String, Object>() {
             {
                 put("@type", "earl:Assertion");
                 put("earl:assertedBy", new LinkedHashMap<String, Object>() {
