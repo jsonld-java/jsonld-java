@@ -317,7 +317,9 @@ public class JsonLdApi {
 
                 // NOTE: expanded value must be an array due to expansion
                 // algorithm.
-
+                if (!(expandedValue instanceof List)) {
+                    throw new JsonLdError(Error.NOT_IMPLEMENTED, "no array: " + expandedValue);
+                }
                 // 7.5)
                 if (((List<Object>) expandedValue).size() == 0) {
                     // 7.5.1)
@@ -659,11 +661,16 @@ public class JsonLdApi {
                                 throw new JsonLdError(Error.INVALID_VALUE_OBJECT_VALUE, value);
                             }
                         }
-                        if (value != null && (value instanceof Map || value instanceof List)) {
+                        // jsonld 1.1: 13.4.7.2 in https://w3c.github.io/json-ld-api/#algorithm-3
+                        else if (value != null && (value instanceof Map || value instanceof List)) {
                             throw new JsonLdError(Error.INVALID_VALUE_OBJECT_VALUE,
-                                    "value of " + expandedProperty + " must be a scalar or null");
+                                    "value of " + expandedProperty + " must be a scalar or null, but was: " + value);
                         }
-                        expandedValue = value;
+                        // jsonld 1.1: 13.4.7.3 in https://w3c.github.io/json-ld-api/#algorithm-3
+                        else {
+                            expandedValue = value;
+                        }
+                        // jsonld 1.1: 13.4.7.4 in https://w3c.github.io/json-ld-api/#algorithm-3
                         if (expandedValue == null) {
                             result.put(JsonLdConsts.VALUE, null);
                             continue;
@@ -828,6 +835,10 @@ public class JsonLdApi {
                         }
                         // 7.5.2.2)
                         for (final Object item : (List<Object>) languageValue) {
+                            // jsonld 1.1: 13.7.4.2.1 in https://w3c.github.io/json-ld-api/#expansion-algorithm
+                            if(item == null) {
+                                continue;
+                            }
                             // 7.5.2.2.1)
                             if (!(item instanceof String)) {
                                 throw new JsonLdError(Error.INVALID_LANGUAGE_MAP_VALUE,
