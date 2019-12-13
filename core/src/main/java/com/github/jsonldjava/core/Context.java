@@ -265,12 +265,13 @@ public class Context extends LinkedHashMap<String, Object> {
                 }
                 // jsonld 1.1: 5.8.3 in https://w3c.github.io/json-ld-api/#algorithm
                 else if (value instanceof String) {
-                    if (((String) value).startsWith(JsonLdConsts.BLANK_NODE_PREFIX)
+                    if (JsonLdUtils.isBlankNode((String) value)
                             || JsonLdUtils.isAbsoluteIri((String) value) || JsonLdUtils.isRelativeIri((String) value)) {
                         result.put(JsonLdConsts.VOCAB,
                                 expandIri((String) value, true, true, ((Map<String, Object>) result), null));
                     } else {
-                        throw new JsonLdError(Error.INVALID_VOCAB_MAPPING, value);
+                        throw new JsonLdError(Error.INVALID_VOCAB_MAPPING,
+                                "@value must be an IRI or a blank node, but was: "+value);
                     }
                 } else {
                     throw new JsonLdError(Error.INVALID_VOCAB_MAPPING,
@@ -301,6 +302,7 @@ public class Context extends LinkedHashMap<String, Object> {
                         .contains(key)) {
                     continue;
                 }
+                // TODO: passing result for active context and the value of the @protected entry from context, if any
                 result.createTermDefinition((Map<String, Object>) context, key, defined);
             }
         }
@@ -420,6 +422,7 @@ public class Context extends LinkedHashMap<String, Object> {
                         "Non-absolute @reverse IRI: " + reverse);
             }
             definition.put(JsonLdConsts.ID, reverse);
+            // jsonld 1.1: 14.5 in https://w3c.github.io/json-ld-api/#algorithm-0
             if (val.containsKey(JsonLdConsts.CONTAINER)) {
                 final Object containerObject = val.get(JsonLdConsts.CONTAINER);
                 final String container = selectContainer(checkValidContainerEntry(containerObject));
@@ -447,10 +450,10 @@ public class Context extends LinkedHashMap<String, Object> {
                 throw new JsonLdError(Error.INVALID_IRI_MAPPING,
                         "expected value of @id to be a string");
             }
-
+            // jsonld 1.1: 16.4 in https://w3c.github.io/json-ld-api/#algorithm-0
             final String res = this.expandIri((String) val.get(JsonLdConsts.ID), false, true,
                     context, defined);
-            if (JsonLdUtils.isKeyword(res) || JsonLdUtils.isAbsoluteIri(res)) {
+            if (JsonLdUtils.isKeyword(res) || JsonLdUtils.isAbsoluteIri(res) || JsonLdUtils.isBlankNode(res)) {
                 if (JsonLdConsts.CONTEXT.equals(res)) {
                     throw new JsonLdError(Error.INVALID_KEYWORD_ALIAS, "cannot alias @context");
                 }
@@ -485,6 +488,7 @@ public class Context extends LinkedHashMap<String, Object> {
         }
 
         // 16)
+        // jsonld 1.1: 21 in https://w3c.github.io/json-ld-api/#algorithm-0
         if (val.containsKey(JsonLdConsts.CONTAINER)) {
             Object containerObject = val.get(JsonLdConsts.CONTAINER);
             final List<?> allContainers = checkValidContainerEntry(containerObject);
@@ -494,7 +498,7 @@ public class Context extends LinkedHashMap<String, Object> {
             String container = selectContainer(allContainers);
             if (container == null) {
                 throw new JsonLdError(Error.INVALID_CONTAINER_MAPPING,
-                        "@container must be either @list, @set, @index, or @language, but was: "
+                        "@container must be either @graph, @id, @index, @language, @list, @set or @type, but was: "
                                 + allContainers);
             }
             definition.put(JsonLdConsts.CONTAINER, container);
