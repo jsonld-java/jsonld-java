@@ -15,6 +15,20 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonUtilsTest {
+    @Test
+    public void resolveTest() {
+        final String baseUri = "http://mysite.net";
+        final String pathToResolve = "picture.jpg";
+        String resolve = "";
+
+        try {
+            resolve = JsonLdUrl.resolve(baseUri, pathToResolve);
+        } catch (final Exception e) {
+            assertTrue(false);
+        }
+
+        assertTrue(resolve.equals(baseUri + "/" + pathToResolve));
+    }
 
     @SuppressWarnings("unchecked")
     @Test
