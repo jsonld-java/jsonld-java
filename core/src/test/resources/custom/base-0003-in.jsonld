@@ -1,0 +1,17 @@
+{
+    "@context": {
+        "@base": "http://mysite.net",
+        "DataSet": "http://schema.org/DataSet",
+        "CreativeWork": "http://schema.org/CreativeWork"
+    },
+    "@graph": [
+        {
+            "@type": "CreativeWork",
+            "@id": "picture.jpg"
+        },
+        {
+            "@id": "./",
+            "@type": "DataSet"
+        }
+    ]
+}

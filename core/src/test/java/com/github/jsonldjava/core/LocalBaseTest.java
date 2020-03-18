@@ -1,12 +1,14 @@
 package com.github.jsonldjava.core;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -53,6 +55,27 @@ public class LocalBaseTest {
         final Object output = JsonUtils.fromReader(outReader);
         assertNotNull(output);
         assertEquals(expanded, output);
+    }
+
+    @Test
+    public void testUriResolveWhenExpandingBase() throws Exception {
+
+        final Reader reader = new BufferedReader(new InputStreamReader(
+                this.getClass().getResourceAsStream("/custom/base-0003-in.jsonld"),
+                Charset.forName("UTF-8")));
+        final Object input = JsonUtils.fromReader(reader);
+        assertNotNull(input);
+
+        final JsonLdOptions options = new JsonLdOptions();
+        final List<Object> expanded = JsonLdProcessor.expand(input, options);
+        assertFalse("expanded form must not be empty", expanded.isEmpty());
+
+        final Reader outReader = new BufferedReader(new InputStreamReader(
+                this.getClass().getResourceAsStream("/custom/base-0003-out.jsonld"),
+                Charset.forName("UTF-8")));
+        final Object expected = JsonLdProcessor.expand(JsonUtils.fromReader(outReader), options);
+        assertNotNull(expected);
+        assertEquals(expected, expanded);
     }
 
 }

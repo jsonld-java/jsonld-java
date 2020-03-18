@@ -1,5 +1,7 @@
 package com.github.jsonldjava.utils;
 
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -26,8 +28,7 @@ public class JsonUtilsTest {
         } catch (final Exception e) {
             assertTrue(false);
         }
-
-        assertTrue(resolve.equals(baseUri + "/" + pathToResolve));
+        assertEquals(baseUri + "/" + pathToResolve, resolve);
     }
 
     @SuppressWarnings("unchecked")
