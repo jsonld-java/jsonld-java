@@ -25,10 +25,10 @@ public class JsonUtilsTest {
 
         try {
             resolve = JsonLdUrl.resolve(baseUri, pathToResolve);
+            assertEquals(baseUri + "/" + pathToResolve, resolve);
         } catch (final Exception e) {
             assertTrue(false);
         }
-        assertEquals(baseUri + "/" + pathToResolve, resolve);
     }
 
     @SuppressWarnings("unchecked")
@@ -40,12 +40,11 @@ public class JsonUtilsTest {
 
         try {
             obj = JsonUtils.fromString(testString);
+            assertTrue(((Map<String, Object>) obj).containsKey("seq"));
+            assertTrue(((Map<String, Object>) obj).get("seq") instanceof Number);
         } catch (final Exception e) {
             assertTrue(false);
         }
-
-        assertTrue(((Map<String, Object>) obj).containsKey("seq"));
-        assertTrue(((Map<String, Object>) obj).get("seq") instanceof Number);
 
         try {
             obj = JsonUtils.fromString(testFailure);
