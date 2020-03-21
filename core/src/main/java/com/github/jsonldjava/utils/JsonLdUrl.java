@@ -280,6 +280,10 @@ public class JsonLdUrl {
                 // add fragment to the end manually (as URI#resolve does it wrong)
                 return uri.toString() + pathToResolve;
             }
+            // ensure a slash between the authority and the path of a URL
+            if (uri.getSchemeSpecificPart().startsWith("//") && !uri.getSchemeSpecificPart().matches("//.*/.*")) {
+                uri = new URI(uri + "/");
+            }
             uri = uri.resolve(pathToResolve);
             // java doesn't discard unnecessary dot segments
             String path = uri.getPath();
