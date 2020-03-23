@@ -398,10 +398,9 @@ public class SuiteUtils {
         Object result = null;
 
         // OPTIONS SETUP
-        final JsonLdOptions options = new JsonLdOptions(
-                "http://json-ld.org/test-suite/tests/" + test.get("input"));
-        final TestDocumentLoader testLoader = new TestDocumentLoader(
-                "http://json-ld.org/test-suite/tests/", dir);
+        final String base = group.substring(0, group.lastIndexOf('/') + 1);
+        final JsonLdOptions options = new JsonLdOptions(base + test.get("input"));
+        final TestDocumentLoader testLoader = new TestDocumentLoader(base, dir);
         options.setDocumentLoader(testLoader);
         if (test.containsKey("option")) {
             final Map<String, Object> test_opts = (Map<String, Object>) test.get("option");
