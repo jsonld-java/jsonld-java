@@ -1,0 +1,17 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/"
+  },
+  "@graph": [
+    {
+      "@id": "JOHN",
+      "@type": "Person",
+      "givenName": "John"
+    },
+    {
+      "@id": "JANE",
+      "@type": "Person",
+      "givenName": "Jane"
+    }
+  ]
+}

@@ -25,7 +25,8 @@
     All JSON-LD tests have an input file referenced using
     `mf:action` (aliased as "input" in test manifest).
     Positive and Negative Evaluation Tests also have a result file
-    referenced using `mf:result` (aliased as "expect" in test manifest).
+    referenced using `mf:result` (aliased as "expect" and "expectErrorCode" for
+    respectively Positive and Negative Evaluation Tests in test manifest).
     Other tests may take different inputs and options as defined for each test class.
     Tests should be run with the processingMode option set to "json-ld-1.1",
     unless specified explicitly as a test option.
@@ -44,13 +45,13 @@
   """ .
 
 :NegativeEvaluationTest a rdfs:Class ;
-  rdfs:label "Positive Evaluation Test" ;
+  rdfs:label "Negative Evaluation Test" ;
   rdfs:subClassOf :Test ;
   rdfs:comment """
     A Negative Evaluation test is successful when the result of processing
     the input file specified as `mf:action` (aliased as "input" in test manifest)
     results in the error identified by the literal value of
-    `mf:result` (aliased as "expect" in test manifest).
+    `mf:result` (aliased as "expectErrorCode" in test manifest).
     The specifics of invoking test, including
     the interpretation of options (`:option`) and other input files are
     specified through another class.
@@ -112,6 +113,15 @@
   rdfs:comment """
     A `FromRDFTest` modifies either a `PositiveEvaluationTest`, `NegativeEvaluationTest`,
     `PositiveSyntaxTest` or `NegativeSyntaxTest`.
+  """ .
+
+:HtmlTest a rdfs:Class ;
+  rdfs:subClassOf :Test ;
+  rdfs:label "HTML Evaluation Test" ;
+  rdfs:comment """
+    An `HtmlTest` modifies either a `PositiveEvaluationTest` or `NegativeEvaluationTest`
+    indicating that the source is of type text/html, which requires optional
+    _HTML script extraction_ support.
   """ .
 
 :HttpTest a rdfs:Class ;
@@ -223,6 +233,14 @@
   rdfs:domain	 :Option ;
   rdfs:range   xsd:boolean .
 
+:useJCS a rdf:Property ;
+  rdfs:label "use JCS";
+  rdfs:comment """
+    Requires the use of JSON Canonicalization Scheme when generating RDF literals from JSON literal values.
+    """ ;
+  rdfs:domain	 :Option ;
+  rdfs:range   xsd:boolean .
+
 :useRdfType a rdf:Property ;
   rdfs:label "use RDF types";
   rdfs:comment """
@@ -285,3 +303,16 @@
   """ ;
   rdfs:domain	 :Option ;
   rdfs:range   xsd:string .
+
+# Test requirements (mf:requires)
+:I18nDatatype a mf:Requirement ;
+  rdfs:label "I18nDatatype" ;
+  rdfs:comment "Optional test to serialize text direction using `i18n-datatype`" .
+
+:CompoundLiteral a mf:Requirement ;
+  rdfs:label "CompoundLiteral" ;
+  rdfs:comment "Optional test to serialize text direction using `compound-literal`" .
+
+:GeneralizedRdf a mf:Requirement ;
+  rdfs:label "GeneralizedRdf" ;
+  rdfs:comment "Test generates Generalized RDF" .

@@ -23,6 +23,8 @@
         - classes.each do |cls|
           %dt<
             %strong<~cls["rdfs:label"]
+            = surround '(', ')' do
+              %strong<~cls['@id']
           %dd<
             :markdown
               #{cls["rdfs:comment"].to_s.gsub(/^\s+/, '')}
@@ -32,8 +34,32 @@
         - properties.each do |prop|
           %dt<
             %strong<~prop["rdfs:label"]
+            = surround '(', ')' do
+              %strong<~prop['@id']
           %dd<
             :markdown
               #{prop["rdfs:comment"].to_s.gsub(/^\s+/, '')}
+            %dl
+              - if prop['rdfs:domain']
+                %dt="Domain"
+                %dd<
+                  %strong=prop['rdfs:domain']
+              - if prop['rdfs:range']
+                %dt="Range"
+                %dd<
+                  %strong=prop['rdfs:range']
+
+    %section
+      %h2<="Requirements"
+      %dl
+        - requirements.each do |req|
+          %dt<
+            %strong<~req["rdfs:label"]
+            = surround '(', ')' do
+              %strong<~req['@id']
+          %dd<
+            :markdown
+              #{req["rdfs:comment"].to_s.gsub(/^\s+/, '')}
+        
     %footer
       %span<= ontology["dc11:publisher"]

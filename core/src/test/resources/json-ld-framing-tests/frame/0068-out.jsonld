@@ -1,0 +1,11 @@
+{
+  "@context": {
+    "ex": "http://example.com#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  },
+  "@id": "ex:entity1",
+  "@type": ["ex:Type1", "ex:Type2", "ex:Type3"],
+  "ex:multipleValues": ["ex:One", "ex:Two", "ex:Three"],
+  "ex:tags": "tag1 tag2",
+  "ex:title": "some title"
+}

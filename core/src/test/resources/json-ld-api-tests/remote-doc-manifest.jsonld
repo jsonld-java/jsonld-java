@@ -1,9 +1,9 @@
 {
-  "@context": "https://w3c.github.io/json-ld-api/tests/context.jsonld",
+  "@context": ["context.jsonld", {"@base": "remote-doc-manifest"}],
   "@id": "",
   "@type": "mf:Manifest",
   "name": "Remote document",
-  "description": "Tests appropriate document loading behavior as defined in the API",
+  "description": "JSON-LD Remote Document tests.",
   "baseIri": "https://w3c.github.io/json-ld-api/tests/",
   "sequence": [
     {
@@ -39,7 +39,7 @@
         "contentType": "application/jldTest"
       },
       "input": "remote-doc/0004-in.jldte",
-      "expect": "loading document failed"
+      "expectErrorCode": "loading document failed"
     }, {
       "@id": "#t0005",
       "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
@@ -79,7 +79,7 @@
       "name": "Non-existant file (404)",
       "purpose": "Loading a non-existant file raises loading document failed error",
       "input": "remote-doc/missing-in.jsonld",
-      "expect": "loading document failed"
+      "expectErrorCode": "loading document failed"
     }, {
       "@id": "#t0009",
       "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
@@ -123,7 +123,7 @@
         ]
       },
       "input": "remote-doc/0012-in.json",
-      "expect": "multiple context link headers"
+      "expectErrorCode": "multiple context link headers"
     }, {
       "@id": "#t0013",
       "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
@@ -134,6 +134,56 @@
       },
       "input": "remote-doc/0013-in.json",
       "expect": "remote-doc/0013-out.jsonld"
+    }, {
+      "@id": "#tla01",
+      "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
+      "name": "Redirects if type is text/html",
+      "purpose": "Load an alternate link if type is not ld+json and rel=alternate.",
+      "option": {
+        "httpLink": "<la01-alternate.jsonld>; rel=\"alternate\"; type=\"application/ld+json\""
+      },
+      "input": "remote-doc/la01-in.html",
+      "expect": "remote-doc/la01-out.jsonld"
+    }, {
+      "@id": "#tla02",
+      "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
+      "name": "Does not redirect if type is application/ld+json",
+      "purpose": "Load an alternate link if type is not ld+json and rel=alternate.",
+      "option": {
+        "httpLink": "<la02-alternate.jsonld>; rel=\"alternate\"; type=\"application/ld+json\""
+      },
+      "input": "remote-doc/la02-in.jsonld",
+      "expect": "remote-doc/la02-out.jsonld"
+    }, {
+      "@id": "#tla03",
+      "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
+      "name": "Does not redirect if link type is not application/ld+json",
+      "purpose": "Load an alternate link if type is not ld+json and rel=alternate.",
+      "option": {
+        "httpLink": "<la03-alternate.json>; rel=\"alternate\"; type=\"application/json\""
+      },
+      "input": "remote-doc/la03-in.json",
+      "expect": "remote-doc/la03-out.jsonld"
+    }, {
+      "@id": "#tla04",
+      "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
+      "name": "Does not redirect if type is application/json",
+      "purpose": "Load an alternate link if type is not ld+json and rel=alternate.",
+      "option": {
+        "httpLink": "<la04-alternate.jsonld>; rel=\"alternate\"; type=\"application/ld+json\""
+      },
+      "input": "remote-doc/la04-in.json",
+      "expect": "remote-doc/la04-out.jsonld"
+    }, {
+      "@id": "#tla05",
+      "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
+      "name": "Base is that of the alternate URL",
+      "purpose": "Load an alternate link if type is not ld+json and rel=alternate.",
+      "option": {
+        "httpLink": "<la05-alternate.jsonld>; rel=\"alternate\"; type=\"application/ld+json\""
+      },
+      "input": "remote-doc/la05-in.html",
+      "expect": "remote-doc/la05-out.jsonld"
     }
   ]
 }
