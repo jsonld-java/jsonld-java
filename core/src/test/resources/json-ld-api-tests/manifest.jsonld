@@ -1,5 +1,5 @@
 {
-  "@context": "context.jsonld",
+  "@context": ["context.jsonld", {"@base": "manifest"}],
   "@id": "",
   "@type": "mf:Manifest",
   "name": "JSON-LD Test Suite",
@@ -10,6 +10,7 @@
     "flatten-manifest.jsonld",
     "fromRdf-manifest.jsonld",
     "remote-doc-manifest.jsonld",
-    "toRdf-manifest.jsonld"
+    "toRdf-manifest.jsonld",
+    "html-manifest.jsonld"
   ]
 }

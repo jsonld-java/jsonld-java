@@ -517,7 +517,7 @@
       "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
       "name": "Frame matching with no matching value in list",
       "purpose": "Lists match on any matching value.",
-      "option": {"specVersion": "json-ld-1.1"},
+      "option": {"specVersion": "json-ld-1.1", "omitGraph": false},
       "input": "frame/0058-in.jsonld",
       "frame": "frame/0058-frame.jsonld",
       "expect": "frame/0058-out.jsonld"
@@ -574,6 +574,42 @@
       "input": "frame/0064-in.jsonld",
       "frame": "frame/0064-frame.jsonld",
       "expect": "frame/0064-out.jsonld",
+      "option": {"specVersion": "json-ld-1.1"}
+    }, {
+      "@id": "#t0065",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Match on value",
+      "purpose": "Value matching.",
+      "input": "frame/0065-in.jsonld",
+      "frame": "frame/0065-frame.jsonld",
+      "expect": "frame/0065-out.jsonld",
+      "option": {"specVersion": "json-ld-1.1"}
+    }, {
+      "@id": "#t0066",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Match on value reference",
+      "purpose": "Value reference matching.",
+      "input": "frame/0066-in.jsonld",
+      "frame": "frame/0066-frame.jsonld",
+      "expect": "frame/0066-out.jsonld",
+      "option": {"specVersion": "json-ld-1.1"}
+    }, {
+      "@id": "#t0067",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Match on list value",
+      "purpose": "List value matching.",
+      "input": "frame/0067-in.jsonld",
+      "frame": "frame/0067-frame.jsonld",
+      "expect": "frame/0067-out.jsonld",
+      "option": {"specVersion": "json-ld-1.1"}
+    }, {
+      "@id": "#t0068",
+      "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
+      "name": "Merge @type from different graphs",
+      "purpose": "When merging nodes, ensure that @type values from each node are retained.",
+      "input": "frame/0068-in.jsonld",
+      "frame": "frame/0068-frame.jsonld",
+      "expect": "frame/0068-out.jsonld",
       "option": {"specVersion": "json-ld-1.1"}
     }, {
       "@id": "#teo01",
@@ -678,7 +714,7 @@
       "@id": "#tin01",
       "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
       "name": "Basic Included array",
-      "purpose": "Tests included maps.",
+      "purpose": "Tests included blocks.",
       "input": "frame/in01-in.jsonld",
       "frame": "frame/in01-frame.jsonld",
       "expect": "frame/in01-out.jsonld",
@@ -687,7 +723,7 @@
       "@id": "#tin02",
       "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
       "name": "Basic Included object",
-      "purpose": "Tests included maps.",
+      "purpose": "Tests included blocks.",
       "input": "frame/in02-in.jsonld",
       "frame": "frame/in02-frame.jsonld",
       "expect": "frame/in02-out.jsonld",
@@ -696,7 +732,7 @@
       "@id": "#tin03",
       "@type": ["jld:PositiveEvaluationTest", "jld:FrameTest"],
       "name": "json.api example",
-      "purpose": "Tests included maps.",
+      "purpose": "Tests included blocks.",
       "input": "frame/in03-in.jsonld",
       "frame": "frame/in03-frame.jsonld",
       "expect": "frame/in03-out.jsonld",

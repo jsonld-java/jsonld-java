@@ -11,7 +11,7 @@
   "mylist": ["foo"],
   "myset": ["foo"],
   "myid": {"http://example/id": {"@type": "http://example/type"}},
-  "mytype": {"http://example/type": {"@id": "http://example/id"}},
+  "mytype": {"http://example/type": "http://example/id"},
   "mylanguage": {"en": "foo"},
   "myindex": {"bar": "foo"}
 }

@@ -8,6 +8,7 @@
     "jld": "https://w3c.github.io/json-ld-api/tests/vocab#",
     "jld:Test": {"@type": "@id"},
     "dc11:identifier": {"@type": "@id"},
+    "requires": {"@id": "mf:requires", "@type": "@vocab", "@container": "@set"},
     "rdfs:subClassOf": {"@type": "@id"},
     "rdfs:domain": {"@type": "@id"},
     "rdfs:range": {"@type": "@id"}

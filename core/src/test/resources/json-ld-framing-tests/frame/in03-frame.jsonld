@@ -5,17 +5,12 @@
     "@base": "http://example.org/base/",
     "id": "@id",
     "type": "@type",
-    "data": "@nest",
-    "attributes": "@nest",
-    "links": "@nest",
-    "relationships": "@nest",
-    "included": "@included",
+    "included": {"@id": "@included", "@container": "@set"},
     "author": {"@type": "@id"},
     "self": {"@type": "@id"},
-    "related": {"@type": "@id"},
-    "comments": {"@context": {"data": null}}
+    "related": {"@type": "@id"}
   },
-  "data": {"type": "articles"},
+  "type": "articles",
   "included": {
     "@requireAll": true,
     "type": ["comments", "people"],

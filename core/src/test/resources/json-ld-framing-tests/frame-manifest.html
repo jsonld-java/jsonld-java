@@ -92,7 +92,7 @@ to the <a href="mailto:json-ld-wg@w3.org">JSON-LD Working Group mailing list</a>
   COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE DOCUMENT OR THE PERFORMANCE OR IMPLEMENTATION OF THE CONTENTS THEREOF.</p>
 <dl>
 <dt>baseIri</dt>
-<dd>https://w3c.github.io/json-ld-api/tests/</dd>
+<dd>https://w3c.github.io/json-ld-framing/tests/</dd>
 </dl>
 <p>JSON-LD Framing tests.</p>
 <section>
@@ -1918,6 +1918,8 @@ Test t0058 Frame matching with no matching value in list
 <dl class='options'>
 <dt>specVersion</dt>
 <dd>json-ld-1.1</dd>
+<dt>omitGraph</dt>
+<dd>false</dd>
 </dl>
 </dd>
 </dl>
@@ -2108,6 +2110,134 @@ Test t0064 Using @default in @type.
 <dt>expect</dt>
 <dd>
 <a href='frame/0064-out.jsonld'>frame/0064-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0065'>
+Test t0065 Match on value
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0065</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value matching.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0065-in.jsonld'>frame/0065-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0065-frame.jsonld'>frame/0065-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0065-out.jsonld'>frame/0065-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0066'>
+Test t0066 Match on value reference
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0066</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value reference matching.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0066-in.jsonld'>frame/0066-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0066-frame.jsonld'>frame/0066-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0066-out.jsonld'>frame/0066-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0067'>
+Test t0067 Match on list value
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0067</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>List value matching.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0067-in.jsonld'>frame/0067-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0067-frame.jsonld'>frame/0067-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0067-out.jsonld'>frame/0067-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0068'>
+Test t0068 Merge @type from different graphs
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0068</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>When merging nodes, ensure that @type values from each node are retained.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0068-in.jsonld'>frame/0068-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0068-frame.jsonld'>frame/0068-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0068-out.jsonld'>frame/0068-out.jsonld</a>
 </dd>
 <dt>Options</dt>
 <dd>
@@ -2482,7 +2612,7 @@ Test tin01 Basic Included array
 <dt>Type</dt>
 <dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
 <dt>Purpose</dt>
-<dd>Tests included maps.</dd>
+<dd>Tests included blocks.</dd>
 <dt>input</dt>
 <dd>
 <a href='frame/in01-in.jsonld'>frame/in01-in.jsonld</a>
@@ -2514,7 +2644,7 @@ Test tin02 Basic Included object
 <dt>Type</dt>
 <dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
 <dt>Purpose</dt>
-<dd>Tests included maps.</dd>
+<dd>Tests included blocks.</dd>
 <dt>input</dt>
 <dd>
 <a href='frame/in02-in.jsonld'>frame/in02-in.jsonld</a>
@@ -2546,7 +2676,7 @@ Test tin03 json.api example
 <dt>Type</dt>
 <dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
 <dt>Purpose</dt>
-<dd>Tests included maps.</dd>
+<dd>Tests included blocks.</dd>
 <dt>input</dt>
 <dd>
 <a href='frame/in03-in.jsonld'>frame/in03-in.jsonld</a>

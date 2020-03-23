@@ -26,6 +26,7 @@ File.open("vocab.jsonld", "w") do |f|
         ontology: compacted['@graph'].detect {|o| o['@id'] == "https://w3c.github.io/json-ld-api/tests/vocab#"},
         classes: compacted['@graph'].select {|o| o['@type'] == "rdfs:Class"}.sort_by {|o| o['rdfs:label']},
         properties: compacted['@graph'].select {|o| o['@type'] == "rdf:Property"}.sort_by {|o| o['rdfs:label']},
+        requirements: compacted['@graph'].select {|o| o['@type'] == "mf:Requirement"}.sort_by {|o| o['rdfs:label']},
         source: compacted.to_json(JSON::LD::JSON_STATE)
       )
       File.open("vocab.html", "w") {|fh| fh.write html}

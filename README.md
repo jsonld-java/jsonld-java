@@ -258,6 +258,46 @@ mvn test -pl core
 
 to run only core package tests
 
+### Update local spec tests
+
+Note: This assumes a local checkout of the [https://github.com/w3c/json-ld-api](https://github.com/w3c/json-ld-api) repo on the same level as `jsonld-java`. Adapt these steps for the `json-ld-framing` tests and [https://github.com/w3c/json-ld-framing](https://github.com/w3c/json-ld-framing) repo.
+
+Update the local `json-ld-api` tests:
+
+```bash
+cd ../json-ld-api ; git pull ; cd ../jsonld-java
+```
+
+Copy local `json-ld-api` tests to `jsonld-java`:
+
+
+```bash
+cp -r ../json-ld-api/tests/* core/src/test/resources/json-ld-api-tests/
+```
+
+Rerun all local spec tests (second run will pass):
+
+```bash
+rm core/reports/*-skip ; mvn clean test
+```
+
+Commit the new tests and updated skip files so we get a useful diff when rerunning skipped spec tests:
+
+```bash
+git add .
+git commit -m 'Update json-ld-api tests'
+```
+
+### Rerun skipped spec tests
+
+Implement your fix or feature, then rerun all local spec tests (second run will pass):
+
+```bash
+rm core/reports/*-skip ; mvn clean test
+```
+
+The diff on the `core/reports/*-skip` files shows which spec tests were enabled.
+
 ### Code style
 
 The JSONLD-Java project uses custom Eclipse formatting and cleanup style guides to ensure that Pull Requests are fairly simple to merge.
