@@ -209,7 +209,7 @@ public class SuiteUtils {
                         || testType.contains("jld:NormalizeTest")) {
                     // System.out.println("Adding test: " + test.get("name"));
                     rdata.add(new Object[] {
-                            (String) manifest.get("baseIri") + in.getName().replace("jsonld", "html"),
+                            (String) manifest.get("baseIri") + in.getName().replace(".jsonld", ""),
                             test.get("@id"),
                             test });
                 } else {
