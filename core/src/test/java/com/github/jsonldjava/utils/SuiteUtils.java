@@ -208,8 +208,11 @@ public class SuiteUtils {
                         || testType.contains("jld:ToRDFTest")
                         || testType.contains("jld:NormalizeTest")) {
                     // System.out.println("Adding test: " + test.get("name"));
+                    final String id = (String) manifest.get("baseIri") + in.getName();
                     rdata.add(new Object[] {
-                            (String) manifest.get("baseIri") + in.getName().replace(".jsonld", ""),
+                            // e.g. http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0003
+                            // vs https://w3c.github.io/json-ld-api/tests/flatten-manifest#t0003
+                            dir.contains("json-ld-1.0") ? id : id.replace(".jsonld", ""),
                             test.get("@id"),
                             test });
                 } else {

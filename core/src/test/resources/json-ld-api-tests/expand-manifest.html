@@ -28,7 +28,7 @@ comprehensive JSON-LD testing solution for developers creating JSON-LD Processor
 
 <h2>General instructions for running the JSON-LD Test suites</h2>
 
-<h3><a href="expand-manifest.jsonld">expand</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
+<h3><a href="expand-manifest.html">expand</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
 
 <p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output.</p>
 
@@ -3170,6 +3170,48 @@ Test t0128 Two scoped context may include a shared context
 </dd>
 </dl>
 </dd>
+<dt id='t0129'>
+Test t0129 Base without trailing slash, without path
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0129</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Verify URI resolution relative to base (without trailing slash, without path) according to RFC 3986</dd>
+<dt>input</dt>
+<dd>
+<a href='expand/0129-in.jsonld'>expand/0129-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='expand/0129-out.jsonld'>expand/0129-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0130'>
+Test t0130 Base without trailing slash, with path
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0130</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Verify URI resolution relative to base (without trailing slash, with path) according to RFC 3986</dd>
+<dt>input</dt>
+<dd>
+<a href='expand/0130-in.jsonld'>expand/0130-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='expand/0130-out.jsonld'>expand/0130-out.jsonld</a>
+</dd>
+</dl>
+</dd>
 <dt id='tc001'>
 Test tc001 adding new term
 </dt>
@@ -4114,6 +4156,34 @@ Test tc034 Remote scoped context.
 <dt>expect</dt>
 <dd>
 <a href='expand/c034-out.jsonld'>expand/c034-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc035'>
+Test tc035 Term scoping with embedded contexts.
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc035</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Terms should make use of @vocab relative to the scope in which the term was defined.</dd>
+<dt>input</dt>
+<dd>
+<a href='expand/c035-in.jsonld'>expand/c035-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='expand/c035-out.jsonld'>expand/c035-out.jsonld</a>
 </dd>
 <dt>Options</dt>
 <dd>
@@ -5772,6 +5842,27 @@ Test ter52 Definition for the empty term
 <dt>expect</dt>
 <dd>
 invalid term definition
+</dd>
+</dl>
+</dd>
+<dt id='ter53'>
+Test ter53 Invalid prefix value
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#ter53</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Verifies that an exception is raised on expansion when a context contains an invalid @prefix value</dd>
+<dt>input</dt>
+<dd>
+<a href='expand/er53-in.jsonld'>expand/er53-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid @prefix value
 </dd>
 </dl>
 </dd>
