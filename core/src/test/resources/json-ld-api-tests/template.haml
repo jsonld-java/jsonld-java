@@ -30,7 +30,7 @@
 
     - if manifest['sequence'].first.is_a?(String) || manifest['sequence'].any? {|te| te['@type'].include?('jld:CompactTest')}
       :markdown
-        ### [compact](compact-manifest.jsonld) tests have _input_, _expected_ and _context_ documents.
+        ### [compact](compact-manifest.html) tests have _input_, _expected_ and _context_ documents.
 
         The _expected_ results can be compared using [JSON-LD object comparison](#json-ld-object-comparison) with the processor output. Additionally, if the `ordered` option is not set, result should be expanded and compared with the expanded _expected_ document also using [JSON-LD object comparison](#json-ld-object-comparison).
 
@@ -38,7 +38,7 @@
 
     - if manifest['sequence'].first.is_a?(String) || manifest['sequence'].any? {|te| te['@type'].include?('jld:ExpandTest')}
       :markdown
-        ### [expand](expand-manifest.jsonld) tests have _input_ and _expected_ documents.
+        ### [expand](expand-manifest.html) tests have _input_ and _expected_ documents.
 
         The _expected_ results can be compared using [JSON-LD object comparison](#json-ld-object-comparison) with the processor output.
 
@@ -49,7 +49,7 @@
 
     - if manifest['sequence'].first.is_a?(String) || manifest['sequence'].any? {|te| te['@type'].include?('jld:HtmlTest')}
       :markdown
-        ### [html](html.jsonld) tests have _input_ and _expected_ documents and an optional _context_ document.
+        ### [html](html-manifest.html) tests have _input_ and _expected_ documents and an optional _context_ document.
 
         The _expected_ results can be compared using [JSON-LD object comparison](#json-ld-object-comparison) with the processor output after potentially remapping blank node identifiers (see below). Additionally, if the result is compacted and the `ordered` option is not set, result should be expanded and compared with the expanded _expected_ document also using [JSON-LD object comparison](#json-ld-object-comparison).
 
@@ -57,7 +57,7 @@
 
     - if manifest['sequence'].first.is_a?(String) || manifest['sequence'].any? {|te| te['@type'].include?('jld:FlattenTest')}
       :markdown
-        ### [flatten](flatten-manifest.jsonld) tests have _input_ and _expected_ documents and an optional _context_ document.
+        ### [flatten](flatten-manifest.html) tests have _input_ and _expected_ documents and an optional _context_ document.
 
         The _expected_ results can be compared using [JSON-LD object comparison](#json-ld-object-comparison) with the processor output after potentially remapping blank node identifiers (see below). Additionally, if the result is compacted and the `ordered` option is not set, result should be expanded and compared with the expanded _expected_ document also using [JSON-LD object comparison](#json-ld-object-comparison).
 
@@ -65,7 +65,7 @@
 
     - if manifest['sequence'].first.is_a?(String) || manifest['name'].include?('Remote')
       :markdown
-        ### [remote-doc](remote-doc-manifest.jsonld) tests have _input_ and _expected_ documents.
+        ### [remote-doc](remote-doc-manifest.html) tests have _input_ and _expected_ documents.
 
         The _expected_ results can be compared using [JSON-LD object comparison](#json-ld-object-comparison) with the processor output.
 
@@ -80,13 +80,13 @@
 
     - if manifest['sequence'].first.is_a?(String) || manifest['sequence'].any? {|te| te['@type'].include?('jld:FromRdfTest')}
       :markdown
-        ### [fromRdf](fromRdf-manifest.jsonld) tests have _input_ and _expected_ documents.
+        ### [fromRdf](fromRdf-manifest.html) tests have _input_ and _expected_ documents.
 
         The _expected_ results  can be compared using [JSON-LD object comparison](#json-ld-object-comparison) with the processor output.
 
     - if manifest['sequence'].first.is_a?(String) || manifest['sequence'].any? {|te| te['@type'].include?('jld:ToRdfTest')}
       :markdown
-        ### [toRdf](toRdf-manifest.jsonld) tests have _input_ and _expected_ documents.
+        ### [toRdf](toRdf-manifest.html) tests have _input_ and _expected_ documents.
 
         Some tests require the use of [JSON Canonicalization Scheme](https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-05) to properly generate RDF Literals from JSON literal values. This algorithm is non-normative, but is assumed to be used to properly compare results. These tests are marked using the `useJCS` option.
 

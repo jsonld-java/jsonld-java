@@ -28,12 +28,12 @@ comprehensive JSON-LD testing solution for developers creating JSON-LD Processor
 
 <h2>General instructions for running the JSON-LD Test suites</h2>
 
-<h3><a href="compact-manifest.jsonld">compact</a> tests have <em>input</em>, <em>expected</em> and <em>context</em> documents.</h3>
+<h3><a href="compact-manifest.html">compact</a> tests have <em>input</em>, <em>expected</em> and <em>context</em> documents.</h3>
 
 <p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output. Additionally, if the <code>ordered</code> option is not set, result should be expanded and compared with the expanded <em>expected</em> document also using <a href="#json-ld-object-comparison">JSON-LD object comparison</a>.</p>
 
 <p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
-<h3><a href="expand-manifest.jsonld">expand</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
+<h3><a href="expand-manifest.html">expand</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
 
 <p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output.</p>
 
@@ -41,17 +41,17 @@ comprehensive JSON-LD testing solution for developers creating JSON-LD Processor
 as an IRI relative to the manifest.</p>
 
 <p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
-<h3><a href="html.jsonld">html</a> tests have <em>input</em> and <em>expected</em> documents and an optional <em>context</em> document.</h3>
+<h3><a href="html-manifest.html">html</a> tests have <em>input</em> and <em>expected</em> documents and an optional <em>context</em> document.</h3>
 
 <p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output after potentially remapping blank node identifiers (see below). Additionally, if the result is compacted and the <code>ordered</code> option is not set, result should be expanded and compared with the expanded <em>expected</em> document also using <a href="#json-ld-object-comparison">JSON-LD object comparison</a>.</p>
 
 <p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
-<h3><a href="flatten-manifest.jsonld">flatten</a> tests have <em>input</em> and <em>expected</em> documents and an optional <em>context</em> document.</h3>
+<h3><a href="flatten-manifest.html">flatten</a> tests have <em>input</em> and <em>expected</em> documents and an optional <em>context</em> document.</h3>
 
 <p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output after potentially remapping blank node identifiers (see below). Additionally, if the result is compacted and the <code>ordered</code> option is not set, result should be expanded and compared with the expanded <em>expected</em> document also using <a href="#json-ld-object-comparison">JSON-LD object comparison</a>.</p>
 
 <p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
-<h3><a href="remote-doc-manifest.jsonld">remote-doc</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
+<h3><a href="remote-doc-manifest.html">remote-doc</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
 
 <p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output.</p>
 
@@ -65,10 +65,10 @@ as an IRI relative to the manifest.</p>
 <li><em>redirectTo</em>: The HTTP <em>Content-Location</em> header value.</li>
 <li><em>httpLink</em>: The HTTP <em>Link</em> header value.</li>
 </ul>
-<h3><a href="fromRdf-manifest.jsonld">fromRdf</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
+<h3><a href="fromRdf-manifest.html">fromRdf</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
 
 <p>The <em>expected</em> results  can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output.</p>
-<h3><a href="toRdf-manifest.jsonld">toRdf</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
+<h3><a href="toRdf-manifest.html">toRdf</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
 
 <p>Some tests require the use of <a href="https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-05">JSON Canonicalization Scheme</a> to properly generate RDF Literals from JSON literal values. This algorithm is non-normative, but is assumed to be used to properly compare results. These tests are marked using the <code>useJCS</code> option.</p>
 

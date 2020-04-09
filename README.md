@@ -275,13 +275,13 @@ Copy local `json-ld-api` tests to `jsonld-java`:
 cp -r ../json-ld-api/tests/* core/src/test/resources/json-ld-api-tests/
 ```
 
-Rerun all local spec tests (second run will pass):
+Run all local spec tests, re-generate reports, and update skip files:
 
 ```bash
-rm core/reports/*-skip ; mvn clean test
+rm core/reports/*-skip ; mvn clean test -Dreport.format=jsonld
 ```
 
-Commit the new tests and updated skip files so we get a useful diff when rerunning skipped spec tests:
+Commit the new tests, reports, and skip files so we get a useful diff when rerunning skipped spec tests:
 
 ```bash
 git add .

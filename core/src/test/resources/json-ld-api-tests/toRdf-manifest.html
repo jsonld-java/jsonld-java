@@ -2223,6 +2223,34 @@ Test tc034 Remote scoped context.
 </dd>
 </dl>
 </dd>
+<dt id='tc035'>
+Test tc035 Term scoping with embedded contexts.
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc035</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest</dd>
+<dt>Purpose</dt>
+<dd>Terms should make use of @vocab relative to the scope in which the term was defined.</dd>
+<dt>input</dt>
+<dd>
+<a href='toRdf/c035-in.jsonld'>toRdf/c035-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='toRdf/c035-out.nq'>toRdf/c035-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
 <dt id='tdi01'>
 Test tdi01 Expand string using default and term directions
 </dt>
@@ -5645,6 +5673,62 @@ Test te128 Two scoped context may include a shared context
 </dd>
 </dl>
 </dd>
+<dt id='te129'>
+Test te129 Base without trailing slash, without path
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te129</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest</dd>
+<dt>Purpose</dt>
+<dd>Verify URI resolution relative to base (without trailing slash, without path) according to RFC 3986</dd>
+<dt>input</dt>
+<dd>
+<a href='toRdf/e129-in.jsonld'>toRdf/e129-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='toRdf/e129-out.nq'>toRdf/e129-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te130'>
+Test te130 Base without trailing slash, with path
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te130</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest</dd>
+<dt>Purpose</dt>
+<dd>Verify URI resolution relative to base (without trailing slash, with path) according to RFC 3986</dd>
+<dt>input</dt>
+<dd>
+<a href='toRdf/e130-in.jsonld'>toRdf/e130-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='toRdf/e130-out.nq'>toRdf/e130-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
 <dt id='tec01'>
 Test tec01 Invalid keyword in term definition
 </dt>
@@ -7041,6 +7125,27 @@ Test ter52 Definition for the empty term
 <dt>expect</dt>
 <dd>
 invalid term definition
+</dd>
+</dl>
+</dd>
+<dt id='ter53'>
+Test ter53 Invalid prefix value
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#ter53</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ToRDFTest</dd>
+<dt>Purpose</dt>
+<dd>Verifies that an exception is raised on expansion when a context contains an invalid @prefix value</dd>
+<dt>input</dt>
+<dd>
+<a href='toRdf/er53-in.jsonld'>toRdf/er53-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid @prefix value
 </dd>
 </dl>
 </dd>

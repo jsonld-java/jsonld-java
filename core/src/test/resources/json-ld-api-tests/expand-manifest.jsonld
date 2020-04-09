@@ -965,6 +965,20 @@
       "expect": "expand/0128-out.jsonld",
       "option": {"specVersion": "json-ld-1.1"}
     }, {
+      "@id": "#t0129",
+      "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
+      "name": "Base without trailing slash, without path",
+      "purpose": "Verify URI resolution relative to base (without trailing slash, without path) according to RFC 3986",
+      "input": "expand/0129-in.jsonld",
+      "expect": "expand/0129-out.jsonld"
+    }, {
+      "@id": "#t0130",
+      "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
+      "name": "Base without trailing slash, with path",
+      "purpose": "Verify URI resolution relative to base (without trailing slash, with path) according to RFC 3986",
+      "input": "expand/0130-in.jsonld",
+      "expect": "expand/0130-out.jsonld"
+    }, {
       "@id": "#tc001",
       "@type": ["jld:PositiveEvaluationTest", "jld:ExpandTest"],
       "name": "adding new term",
@@ -1751,6 +1765,13 @@
       "purpose": "Verifies that an exception is raised on expansion when a context contains a definition for the empty term",
       "input": "expand/er52-in.jsonld",
       "expectErrorCode": "invalid term definition"
+    }, {
+     "@id": "#ter53",
+     "@type": [ "jld:NegativeEvaluationTest", "jld:ExpandTest" ],
+     "name": "Invalid prefix value",
+     "purpose": "Verifies that an exception is raised on expansion when a context contains an invalid @prefix value",
+     "input": "expand/er53-in.jsonld",
+     "expectErrorCode": "invalid @prefix value"
    }, {
       "@id": "#tes01",
       "@type": ["jld:NegativeEvaluationTest", "jld:ExpandTest"],

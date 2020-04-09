@@ -1741,6 +1741,22 @@
       "expect": "toRdf/e128-out.nq",
       "option": {"specVersion": "json-ld-1.1"}
     }, {
+      "@id": "#te129",
+      "@type": [ "jld:PositiveEvaluationTest", "jld:ToRDFTest" ],
+      "name": "Base without trailing slash, without path",
+      "purpose": "Verify URI resolution relative to base (without trailing slash, without path) according to RFC 3986",
+      "input": "toRdf/e129-in.jsonld",
+      "expect": "toRdf/e129-out.nq",
+      "option": {"specVersion": "json-ld-1.1"}
+    }, {
+      "@id": "#te130",
+      "@type": [ "jld:PositiveEvaluationTest", "jld:ToRDFTest" ],
+      "name": "Base without trailing slash, with path",
+      "purpose": "Verify URI resolution relative to base (without trailing slash, with path) according to RFC 3986",
+      "input": "toRdf/e130-in.jsonld",
+      "expect": "toRdf/e130-out.nq",
+      "option": {"specVersion": "json-ld-1.1"}
+    }, {
       "@id": "#tec01",
       "@type": [ "jld:NegativeEvaluationTest", "jld:ToRDFTest" ],
       "name": "Invalid keyword in term definition",
@@ -2175,6 +2191,13 @@
       "purpose": "Verifies that an exception is raised on expansion when a context contains a definition for the empty term",
       "input": "toRdf/er52-in.jsonld",
       "expectErrorCode": "invalid term definition"
+    }, {
+      "@id": "#ter53",
+      "@type": [ "jld:NegativeEvaluationTest", "jld:ToRDFTest" ],
+      "name": "Invalid prefix value",
+      "purpose": "Verifies that an exception is raised on expansion when a context contains an invalid @prefix value",
+      "input": "toRdf/er53-in.jsonld",
+      "expectErrorCode": "invalid @prefix value"
     }, {
       "@id": "#tin01",
       "@type": ["jld:PositiveEvaluationTest", "jld:ToRDFTest"],

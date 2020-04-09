@@ -22,7 +22,7 @@ Tests driven from a top-level [manifest](manifest.jsonld) and are defined into [
   as an IRI relative to the manifest.
 
   For *NegativeEvaluationTests*, the result is a string associated with the expected error code.
-* [html](html.jsonld) tests have _input_ and _expected_ documents and an optional _context_ document.
+* [html](html-manifest.jsonld) tests have _input_ and _expected_ documents and an optional _context_ document.
   The _expected_ results can be compared using [JSON-LD object comparison](#json-ld-object-comparison) with the processor output
   after potentially remapping blank node identifiers (see below).
   Additionally, if the result is compacted and the `ordered` option is not set, result should be expanded and compared with the expanded _expected_ document also using [JSON-LD object comparison](#json-ld-object-comparison).
