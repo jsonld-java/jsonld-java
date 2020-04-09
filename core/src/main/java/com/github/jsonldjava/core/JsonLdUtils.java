@@ -26,6 +26,7 @@ public class JsonLdUtils {
         if (!isString(key)) {
             return false;
         }
+        // GK: Note that this set is somewhat dependent on the processing mode.
         return "@base".equals(key) || "@context".equals(key) || "@container".equals(key)
                 || "@default".equals(key) || "@embed".equals(key) || "@explicit".equals(key)
                 || "@graph".equals(key) || "@id".equals(key) || "@index".equals(key)

@@ -521,6 +521,7 @@ public class JsonLdApi {
             return null;
         }
 
+        // GK: This would be the point to set `propertyScopedContext` to the `@context` entry for any term definition associated with `activeProperty`.
         // 3)
         if (element instanceof List) {
             // 3.1)
@@ -553,14 +554,19 @@ public class JsonLdApi {
             // access helper
             final Map<String, Object> elem = (Map<String, Object>) element;
             // 5)
+            // This would be the place to revert the active context from any previous type-scoped context if the active context has a `previousContext` entry (with some exceptions when called from a map, or if it's a value object or a subject reference).
+            // GK: If we found a `propertyScopedContext` above, we can parse it to create a new activeCtx using the `override protected` option
             if (elem.containsKey(JsonLdConsts.CONTEXT)) {
                 activeCtx = activeCtx.parse(elem.get(JsonLdConsts.CONTEXT));
             }
+            // GK: This would be the place to remember this version of activeCtx as `typeScopedContext`.
             // 6)
             Map<String, Object> result = newMap();
             // 7)
             final List<String> keys = new ArrayList<String>(elem.keySet());
             Collections.sort(keys);
+            // GK: This is the place to check for a type-scoped context by checking any key that expands to `@type` to see the current context has a term that equals that key where the term definition includes `@context`, updating the activeCtx as you go (but using termScopedContext when checking the keys).
+            // GK: 1.1 made the following loop somewhat recursive, due to nesting, so might want to extract into a method.
             for (final String key : keys) {
                 final Object value = elem.get(key);
                 // 7.1)
@@ -787,6 +793,7 @@ public class JsonLdApi {
                                 }
                             }
                         }
+                        // GK: Also, `@included`, `@graph`, and `@direction`
                         // 7.4.11.4)
                         continue;
                     }
@@ -853,9 +860,12 @@ public class JsonLdApi {
                     }
                 }
                 // 7.6)
+                // GK: Also a place to see if key is `@json` for JSON literals.
                 else if (JsonLdConsts.INDEX.equals(activeCtx.getContainer(key))
                         && value instanceof Map) {
                     // 7.6.1)
+                    // GK: `@index` also supports property indexing, if the term definition includes `@index`.
+                    // GK: A map can also include `@none`.
                     expandedValue = new ArrayList<Object>();
                     // 7.6.2)
                     final List<String> indexKeys = new ArrayList<String>(
@@ -903,6 +913,7 @@ public class JsonLdApi {
                         ((Map<String, Object>) expandedValue).put(JsonLdConsts.LIST, tmp);
                     }
                 }
+                // GK: Other container possibilities including `@graph`, `@id`, and `@type` along with variations.
                 // 7.10)
                 if (activeCtx.isReverseProperty(key)) {
                     // 7.10.1)
