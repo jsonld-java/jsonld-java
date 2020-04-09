@@ -1,0 +1,7 @@
+[ {
+  "@id" : "http://mysite.net/picture.jpg",
+  "@type" : [ "http://schema.org/CreativeWork" ]
+}, {
+  "@id" : "http://mysite.net/",
+  "@type" : [ "http://schema.org/DataSet" ]
+} ]

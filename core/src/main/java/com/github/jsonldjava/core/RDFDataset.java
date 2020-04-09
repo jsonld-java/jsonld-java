@@ -7,6 +7,7 @@ import static com.github.jsonldjava.core.JsonLdConsts.RDF_REST;
 import static com.github.jsonldjava.core.JsonLdConsts.RDF_TYPE;
 import static com.github.jsonldjava.core.JsonLdConsts.RDF_JSON;
 import static com.github.jsonldjava.core.JsonLdConsts.XSD_BOOLEAN;
+import static com.github.jsonldjava.core.JsonLdConsts.XSD_DECIMAL;
 import static com.github.jsonldjava.core.JsonLdConsts.XSD_DOUBLE;
 import static com.github.jsonldjava.core.JsonLdConsts.XSD_INTEGER;
 import static com.github.jsonldjava.core.JsonLdConsts.XSD_STRING;
@@ -680,7 +681,10 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                         return new Literal(Float.toString((float) value),
                                 datatype == null ? XSD_DOUBLE : (String) datatype, null);
                     } else {
-                        // canonical double representation
+                        // Only canonicalize representation if datatype is not XSD_DECIMAL
+                        if (XSD_DECIMAL.equals(datatype)) {
+                            return new Literal(value.toString(), XSD_DECIMAL, null);
+                        }
                         final DecimalFormat df = new DecimalFormat("0.0###############E0");
                         df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
                         return new Literal(df.format(value),
