@@ -74,6 +74,7 @@
 					<artifactSet>
 						<includes>
 							<include>com.google.guava:guava</include>
+							<include>com.google.guava:failureaccess</include>
 						</includes>
 					</artifactSet>
 					<relocations>
@@ -86,6 +87,12 @@
 					<filters>
 						<filter>
 							<artifact>com.google.guava:guava</artifact>
+							<excludes>
+								<exclude>META-INF/maven/**</exclude>
+							</excludes>
+						</filter>
+						<filter>
+							<artifact>com.google.guava:failureaccess</artifact>
 							<excludes>
 								<exclude>META-INF/maven/**</exclude>
 							</excludes>
