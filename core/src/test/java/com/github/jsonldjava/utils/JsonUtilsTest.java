@@ -1,5 +1,7 @@
 package com.github.jsonldjava.utils;
 
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -15,6 +17,19 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonUtilsTest {
+    @Test
+    public void resolveTest() {
+        final String baseUri = "http://mysite.net";
+        final String pathToResolve = "picture.jpg";
+        String resolve = "";
+
+        try {
+            resolve = JsonLdUrl.resolve(baseUri, pathToResolve);
+            assertEquals(baseUri + "/" + pathToResolve, resolve);
+        } catch (final Exception e) {
+            assertTrue(false);
+        }
+    }
 
     @SuppressWarnings("unchecked")
     @Test
@@ -25,12 +40,11 @@ public class JsonUtilsTest {
 
         try {
             obj = JsonUtils.fromString(testString);
+            assertTrue(((Map<String, Object>) obj).containsKey("seq"));
+            assertTrue(((Map<String, Object>) obj).get("seq") instanceof Number);
         } catch (final Exception e) {
             assertTrue(false);
         }
-
-        assertTrue(((Map<String, Object>) obj).containsKey("seq"));
-        assertTrue(((Map<String, Object>) obj).get("seq") instanceof Number);
 
         try {
             obj = JsonUtils.fromString(testFailure);

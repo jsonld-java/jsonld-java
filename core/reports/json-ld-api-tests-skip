@@ -196,7 +196,6 @@ https://w3c.github.io/json-ld-api/tests/expand-manifest#t0125
 https://w3c.github.io/json-ld-api/tests/expand-manifest#t0126
 https://w3c.github.io/json-ld-api/tests/expand-manifest#t0127
 https://w3c.github.io/json-ld-api/tests/expand-manifest#t0128
-https://w3c.github.io/json-ld-api/tests/expand-manifest#t0129
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tc001
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tc002
 https://w3c.github.io/json-ld-api/tests/expand-manifest#tc003
@@ -486,16 +485,8 @@ https://w3c.github.io/json-ld-api/tests/remote-doc-manifest#tla01
 https://w3c.github.io/json-ld-api/tests/remote-doc-manifest#tla03
 https://w3c.github.io/json-ld-api/tests/remote-doc-manifest#tla04
 https://w3c.github.io/json-ld-api/tests/remote-doc-manifest#tla05
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0120
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0122
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0123
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0124
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0125
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0126
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0128
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0130
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0131
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0132
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc001
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc002
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tc003
@@ -587,7 +578,6 @@ https://w3c.github.io/json-ld-api/tests/toRdf-manifest#t0125
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te126
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te127
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te128
-https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te129
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tec01
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tec02
 https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tem01

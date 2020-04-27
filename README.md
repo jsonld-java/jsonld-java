@@ -16,7 +16,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.12.4</version>
+        <version>0.13.0</version>
     </dependency>
 
 Code example
@@ -363,11 +363,11 @@ Here is the basic outline for what your module's pom.xml should look like
   <parent>
     <groupId>com.github.jsonld-java</groupId>
     <artifactId>jsonld-java-parent</artifactId>
-    <version>0.12.4</version>
+    <version>0.13.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jsonld-java-{your module}</artifactId>
-  <version>0.12.4-SNAPSHOT</version>
+  <version>0.13.0-SNAPSHOT</version>
   <name>JSONLD Java :: {your module name}</name>
   <description>JSON-LD Java integration module for {RDF Library your module integrates}</description>
   <packaging>jar</packaging>
@@ -489,6 +489,17 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 
 CHANGELOG
 =========
+
+### 2019-11-28
+* Release 0.13.0
+* Bump Jackson versions to latest for security updates (Patch by @afs)
+* Do not canonicalise XSD Decimal typed values (Patch by @jhg023)
+* Bump dependency and plugin versions
+
+### 2019-08-03
+* Release 0.12.5
+* Bump Jackson versions to latest for security updates (Patches by @afs)
+* IRI resolution fixes (Patch by @fsteeg)
 
 ### 2019-04-20
 * Release 0.12.4
