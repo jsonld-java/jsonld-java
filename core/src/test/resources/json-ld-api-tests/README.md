@@ -1,3 +1,4 @@
+(this is a copy of https://github.com/w3c/json-ld-api/blob/master/tests/README.md made 2020-04-09 )
 # Introduction
 
 The JSON-LD Test Suite is a set of tests that can
