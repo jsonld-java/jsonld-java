@@ -83,7 +83,6 @@
 							<shadedPattern>com.github.jsonldjava.shaded.com.google.common</shadedPattern>
 						</relocation>
 					</relocations>
-					<minimizeJar>true</minimizeJar>
 					<filters>
 						<filter>
 							<artifact>com.google.guava:guava</artifact>
