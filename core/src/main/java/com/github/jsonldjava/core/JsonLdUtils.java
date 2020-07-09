@@ -26,13 +26,17 @@ public class JsonLdUtils {
         if (!isString(key)) {
             return false;
         }
+        // GK: Note that this set is somewhat dependent on the processing mode.
         return "@base".equals(key) || "@context".equals(key) || "@container".equals(key)
                 || "@default".equals(key) || "@embed".equals(key) || "@explicit".equals(key)
                 || "@graph".equals(key) || "@id".equals(key) || "@index".equals(key)
                 || "@language".equals(key) || "@list".equals(key) || "@omitDefault".equals(key)
                 || "@reverse".equals(key) || "@preserve".equals(key) || "@set".equals(key)
                 || "@type".equals(key) || "@value".equals(key) || "@vocab".equals(key)
-                || "@requireAll".equals(key);
+                || "@requireAll".equals(key) || "@version".equals(key)|| "@protected".equals(key)
+                || "@propagate".equals(key)|| "@import".equals(key)|| "@direction".equals(key)
+                || "@json".equals(key) || "@none".equals(key) || "@included".equals(key)
+                || "@nest".equals(key) || "@prefix".equals(key);
     }
 
     public static Boolean deepCompare(Object v1, Object v2, Boolean listOrderMatters) {
