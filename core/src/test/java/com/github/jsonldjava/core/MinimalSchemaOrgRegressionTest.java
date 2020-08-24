@@ -19,7 +19,6 @@ import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.jsonldjava.utils.JarCacheStorage;
@@ -27,37 +26,34 @@ import com.github.jsonldjava.utils.JsonUtils;
 
 public class MinimalSchemaOrgRegressionTest {
 
-    private static final String ACCEPT_HEADER = "application/ld+json, application/json;q=0.9, application/javascript;q=0.5, text/javascript;q=0.5, text/plain;q=0.2, */*;q=0.1";
-
-    @Ignore("Java API does not have any way of redirecting automatically from HTTP to HTTPS, which breaks schema.org usage with it")
+    /**
+     * Tests getting JSON from schema.org with the HTTP Accept header set to
+     * {@value com.github.jsonldjava.utils.JsonUtils#ACCEPT_HEADER}? .
+     */
     @Test
-    public void testHttpURLConnection() throws Exception {
+    public void testApacheHttpClient() throws Exception {
         final URL url = new URL("http://schema.org/");
-        final boolean followRedirectsSetting = HttpURLConnection.getFollowRedirects();
-        try {
-            HttpURLConnection.setFollowRedirects(true);
-            final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-            urlConn.setInstanceFollowRedirects(true);
-            urlConn.addRequestProperty("Accept", ACCEPT_HEADER);
-
-            final InputStream directStream = urlConn.getInputStream();
-            verifyInputStream(directStream);
-        } finally {
-            HttpURLConnection.setFollowRedirects(followRedirectsSetting);
-        }
-    }
-
-    private void verifyInputStream(InputStream directStream) throws IOException {
-        assertNotNull("InputStream was null", directStream);
-        final StringWriter output = new StringWriter();
-        try {
-            IOUtils.copy(directStream, output, StandardCharsets.UTF_8);
-        } finally {
-            directStream.close();
-            output.flush();
-        }
-        final String outputString = output.toString();
-        checkBasicConditions(outputString);
+        // Common CacheConfig for both the JarCacheStorage and the underlying
+        // BasicHttpCacheStorage
+        final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
+        .setMaxObjectSize(1024 * 128).build();
+        
+        final CloseableHttpClient httpClient = CachingHttpClientBuilder.create()
+        // allow caching
+        .setCacheConfig(cacheConfig)
+        // Wrap the local JarCacheStorage around a BasicHttpCacheStorage
+        .setHttpCacheStorage(new JarCacheStorage(null, cacheConfig,
+        new BasicHttpCacheStorage(cacheConfig)))
+        // Support compressed data
+        // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
+        .addInterceptorFirst(new RequestAcceptEncoding())
+        .addInterceptorFirst(new ResponseContentEncoding())
+        .setRedirectStrategy(DefaultRedirectStrategy.INSTANCE)
+        // use system defaults for proxy etc.
+        .useSystemProperties().build();
+        
+        Object content = JsonUtils.fromURL(url, httpClient);
+        checkBasicConditions(content.toString());
     }
 
     private void checkBasicConditions(final String outputString) {
@@ -68,31 +64,5 @@ public class MinimalSchemaOrgRegressionTest {
                 outputString.isEmpty());
         assertTrue("Unexpected length: " + outputString.length(), outputString.length() > 100000);
     }
-
-    @Test
-    public void testApacheHttpClient() throws Exception {
-        final URL url = new URL("http://schema.org/");
-        // Common CacheConfig for both the JarCacheStorage and the underlying
-        // BasicHttpCacheStorage
-        final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
-                .setMaxObjectSize(1024 * 128).build();
-
-        final CloseableHttpClient httpClient = CachingHttpClientBuilder.create()
-                // allow caching
-                .setCacheConfig(cacheConfig)
-                // Wrap the local JarCacheStorage around a BasicHttpCacheStorage
-                .setHttpCacheStorage(new JarCacheStorage(null, cacheConfig,
-                        new BasicHttpCacheStorage(cacheConfig)))
-                // Support compressed data
-                // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/httpagent.html#d5e1238
-                .addInterceptorFirst(new RequestAcceptEncoding())
-                .addInterceptorFirst(new ResponseContentEncoding())
-                .setRedirectStrategy(DefaultRedirectStrategy.INSTANCE)
-                // use system defaults for proxy etc.
-                .useSystemProperties().build();
-
-        Object content = JsonUtils.fromURL(url, httpClient);
-        checkBasicConditions(content.toString());
-    }
-
+    
 }
