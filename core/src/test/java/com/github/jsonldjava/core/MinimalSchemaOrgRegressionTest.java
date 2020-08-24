@@ -26,6 +26,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.jsonldjava.utils.JarCacheStorage;
+import com.github.jsonldjava.utils.JsonUtils;
 
 public class MinimalSchemaOrgRegressionTest {
 
@@ -59,10 +60,13 @@ public class MinimalSchemaOrgRegressionTest {
             output.flush();
         }
         final String outputString = output.toString();
-        // System.out.println(outputString);
+        checkBasicConditions(outputString);
+    }
+
+    private void checkBasicConditions(final String outputString) {
         // Test for some basic conditions without including the JSON/JSON-LD
         // parsing code here
-        // assertTrue(outputString, outputString.endsWith("}"));
+        assertTrue(outputString, outputString.endsWith("}"));
         assertFalse("Output string should not be empty: " + outputString.length(),
                 outputString.isEmpty());
         assertTrue("Unexpected length: " + outputString.length(), outputString.length() > 100000);
@@ -90,30 +94,8 @@ public class MinimalSchemaOrgRegressionTest {
                 // use system defaults for proxy etc.
                 .useSystemProperties().build();
 
-        try {
-            final HttpUriRequest request = new HttpGet(url.toExternalForm());
-            // We prefer application/ld+json, but fallback to application/json
-            // or whatever is available
-            request.addHeader("Accept", ACCEPT_HEADER);
-
-            final CloseableHttpResponse response = httpClient.execute(request);
-            try {
-                final int status = response.getStatusLine().getStatusCode();
-                if (status != 200 && status != 203) {
-                    throw new IOException("Can't retrieve " + url + ", status code: " + status);
-                }
-                final InputStream content = response.getEntity().getContent();
-                verifyInputStream(content);
-            } finally {
-                if (response != null) {
-                    response.close();
-                }
-            }
-        } finally {
-            if (httpClient != null) {
-                httpClient.close();
-            }
-        }
+        Object content = JsonUtils.fromURL(url, httpClient);
+        checkBasicConditions(content.toString());
     }
 
 }
