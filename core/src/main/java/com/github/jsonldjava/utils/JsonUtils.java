@@ -338,50 +338,35 @@ public class JsonUtils {
         final String protocol = url.getProtocol();
         // We can only use the Apache HTTPClient for HTTP/HTTPS, so use the
         // native java client for the others
-        CloseableHttpResponse response = null;
-        InputStream in = null;
-        try {
-            if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
-                // Can't use the HTTP client for those!
-                // Fallback to Java's built-in JsonLdUrl handler. No need for
-                // Accept headers as it's likely to be file: or jar:
-                in = url.openStream();
-            } else {
-                in = getJsonLdViaHttpUri(url, httpClient, response);
-            }
-            return fromInputStream(in);
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } finally {
-                if (response != null) {
-                    response.close();
-                }
-            }
+        if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
+            // Can't use the HTTP client for those!
+            // Fallback to Java's built-in JsonLdUrl handler. No need for
+            // Accept headers as it's likely to be file: or jar:
+            return fromInputStream(url.openStream());
+        } else {
+            return fromInputStream(getJsonLdViaHttpUri(url, httpClient));
         }
     }
 
-    private static InputStream getJsonLdViaHttpUri(final URL url, final CloseableHttpClient httpClient,
-            CloseableHttpResponse response) throws IOException {
+    private static InputStream getJsonLdViaHttpUri(final URL url, final CloseableHttpClient httpClient)
+            throws IOException {
         final HttpUriRequest request = new HttpGet(url.toExternalForm());
         // We prefer application/ld+json, but fallback to application/json
         // or whatever is available
         request.addHeader("Accept", ACCEPT_HEADER);
-        response = httpClient.execute(request);
-
-        final int status = response.getStatusLine().getStatusCode();
-        if (status != 200 && status != 203) {
-            throw new IOException("Can't retrieve " + url + ", status code: " + status);
+        try (CloseableHttpResponse response = httpClient.execute(request)) {
+            final int status = response.getStatusLine().getStatusCode();
+            if (status != 200 && status != 203) {
+                throw new IOException("Can't retrieve " + url + ", status code: " + status);
+            }
+            // follow alternate document location
+            // https://www.w3.org/TR/json-ld11/#alternate-document-location
+            URL alternateLink = alternateLink(url, response);
+            if (alternateLink != null) {
+                return getJsonLdViaHttpUri(alternateLink, httpClient);
+            }
+            return response.getEntity().getContent();
         }
-        // follow alternate document location
-        // https://www.w3.org/TR/json-ld11/#alternate-document-location
-        URL alternateLink = alternateLink(url, response);
-        if (alternateLink != null) {
-            return getJsonLdViaHttpUri(alternateLink, httpClient, response);
-        }
-        return response.getEntity().getContent();
     }
 
     private static URL alternateLink(URL url, CloseableHttpResponse response)
