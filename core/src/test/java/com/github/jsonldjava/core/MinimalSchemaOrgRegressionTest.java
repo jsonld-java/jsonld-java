@@ -1,17 +1,13 @@
 package com.github.jsonldjava.core;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.io.IOUtils;
+import com.github.jsonldjava.utils.JarCacheStorage;
+import com.github.jsonldjava.utils.JsonUtils;
+
 import org.apache.http.client.protocol.RequestAcceptEncoding;
 import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -20,9 +16,6 @@ import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
 import org.junit.Test;
-
-import com.github.jsonldjava.utils.JarCacheStorage;
-import com.github.jsonldjava.utils.JsonUtils;
 
 public class MinimalSchemaOrgRegressionTest {
 
