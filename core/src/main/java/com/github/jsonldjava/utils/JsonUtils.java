@@ -344,11 +344,11 @@ public class JsonUtils {
             // Accept headers as it's likely to be file: or jar:
             return fromInputStream(url.openStream());
         } else {
-            return fromInputStream(getJsonLdViaHttpUri(url, httpClient));
+            return fromJsonLdViaHttpUri(url, httpClient);
         }
     }
 
-    private static InputStream getJsonLdViaHttpUri(final URL url, final CloseableHttpClient httpClient)
+    private static Object fromJsonLdViaHttpUri(final URL url, final CloseableHttpClient httpClient)
             throws IOException {
         final HttpUriRequest request = new HttpGet(url.toExternalForm());
         // We prefer application/ld+json, but fallback to application/json
@@ -363,9 +363,9 @@ public class JsonUtils {
             // https://www.w3.org/TR/json-ld11/#alternate-document-location
             URL alternateLink = alternateLink(url, response);
             if (alternateLink != null) {
-                return getJsonLdViaHttpUri(alternateLink, httpClient);
+                return fromJsonLdViaHttpUri(alternateLink, httpClient);
             }
-            return response.getEntity().getContent();
+            return fromInputStream(response.getEntity().getContent());
         }
     }
 
