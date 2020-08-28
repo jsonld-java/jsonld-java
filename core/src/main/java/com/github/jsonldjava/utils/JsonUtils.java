@@ -383,7 +383,7 @@ public class JsonUtils {
 
     private static URL alternateLink(URL url, CloseableHttpResponse response)
             throws MalformedURLException, IOException {
-        if (response.getEntity().getContentLength() > 0
+        if (response.getEntity().getContentType() != null
                 && !response.getEntity().getContentType().getValue().equals("application/ld+json")) {
             for (Header header : response.getAllHeaders()) {
                 if (header.getName().equalsIgnoreCase("link")) {
