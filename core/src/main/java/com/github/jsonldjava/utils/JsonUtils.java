@@ -391,13 +391,14 @@ public class JsonUtils {
                     boolean relAlternate = false;
                     boolean jsonld = false;
                     for (String value : header.getValue().split(";")) {
-                        if (value.trim().startsWith("<")) {
-                            alternateLink = value.replaceAll("<(.*)>", "$1");
+                        value=value.trim();
+                        if (value.startsWith("<") && value.endsWith(">")) {
+                            alternateLink = value.substring(1, value.length() - 1);
                         }
-                        if (value.trim().startsWith("type=\"application/ld+json\"")) {
+                        if (value.startsWith("type=\"application/ld+json\"")) {
                             jsonld = true;
                         }
-                        if (value.trim().startsWith("rel=\"alternate\"")) {
+                        if (value.startsWith("rel=\"alternate\"")) {
                             relAlternate = true;
                         }
                     }
