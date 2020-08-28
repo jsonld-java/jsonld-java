@@ -42,6 +42,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Functions used to make loading, parsing, and serializing JSON easy using
@@ -69,6 +71,10 @@ public class JsonUtils {
     private static final JsonFactory JSON_FACTORY = new JsonFactory(JSON_MAPPER);
 
     private static volatile CloseableHttpClient DEFAULT_HTTP_CLIENT;
+    // Avoid possible endless loop when following alternate locations
+    private static final int MAX_LINKS_FOLLOW = 20;
+    private static final Logger log = LoggerFactory.getLogger(JsonUtils.class);
+
 
     static {
         // Disable default Jackson behaviour to close
@@ -344,11 +350,11 @@ public class JsonUtils {
             // Accept headers as it's likely to be file: or jar:
             return fromInputStream(url.openStream());
         } else {
-            return fromJsonLdViaHttpUri(url, httpClient);
+            return fromJsonLdViaHttpUri(url, httpClient, 0);
         }
     }
 
-    private static Object fromJsonLdViaHttpUri(final URL url, final CloseableHttpClient httpClient)
+    private static Object fromJsonLdViaHttpUri(final URL url, final CloseableHttpClient httpClient, int linksFollowed)
             throws IOException {
         final HttpUriRequest request = new HttpGet(url.toExternalForm());
         // We prefer application/ld+json, but fallback to application/json
@@ -363,7 +369,13 @@ public class JsonUtils {
             // https://www.w3.org/TR/json-ld11/#alternate-document-location
             URL alternateLink = alternateLink(url, response);
             if (alternateLink != null) {
-                return fromJsonLdViaHttpUri(alternateLink, httpClient);
+                linksFollowed++;
+                if (linksFollowed > MAX_LINKS_FOLLOW) {
+                    log.warn("Too many alternate links followed. This may indicate a cycle. Aborting.");
+                    return null;
+                }
+                return linksFollowed > MAX_LINKS_FOLLOW ? null
+                        : fromJsonLdViaHttpUri(alternateLink, httpClient, linksFollowed);
             }
             return fromInputStream(response.getEntity().getContent());
         }
