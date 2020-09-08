@@ -116,6 +116,10 @@ public class JsonUtils {
                 }
             }
             return fromInputStream(bOMInputStream, charset);
+        } finally {
+            if (input != null) {
+                input.close();
+            }
         }
     }
 
