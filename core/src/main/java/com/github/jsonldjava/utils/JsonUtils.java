@@ -73,8 +73,6 @@ public class JsonUtils {
     private static volatile CloseableHttpClient DEFAULT_HTTP_CLIENT;
     // Avoid possible endless loop when following alternate locations
     private static final int MAX_LINKS_FOLLOW = 20;
-    private static final Logger log = LoggerFactory.getLogger(JsonUtils.class);
-
 
     static {
         // Disable default Jackson behaviour to close
@@ -371,18 +369,16 @@ public class JsonUtils {
             if (alternateLink != null) {
                 linksFollowed++;
                 if (linksFollowed > MAX_LINKS_FOLLOW) {
-                    log.warn("Too many alternate links followed. This may indicate a cycle. Aborting.");
-                    return null;
+                    throw new IOException("Too many alternate links followed. This may indicate a cycle. Aborting.");
                 }
-                return linksFollowed > MAX_LINKS_FOLLOW ? null
-                        : fromJsonLdViaHttpUri(alternateLink, httpClient, linksFollowed);
+                return fromJsonLdViaHttpUri(alternateLink, httpClient, linksFollowed);
             }
             return fromInputStream(response.getEntity().getContent());
         }
     }
 
     private static URL alternateLink(URL url, CloseableHttpResponse response)
-            throws MalformedURLException, IOException {
+            throws MalformedURLException {
         if (response.getEntity().getContentType() != null
                 && !response.getEntity().getContentType().getValue().equals("application/ld+json")) {
             for (Header header : response.getAllHeaders()) {
