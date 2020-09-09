@@ -9,25 +9,12 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.io.ByteOrderMark;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.input.BOMInputStream;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.RequestAcceptEncoding;
-import org.apache.http.client.protocol.ResponseContentEncoding;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
-import org.apache.http.impl.client.cache.CacheConfig;
-import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -39,6 +26,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jsonldjava.core.DocumentLoader;
 import com.github.jsonldjava.core.JsonLdApi;
 import com.github.jsonldjava.core.JsonLdProcessor;
+
+import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
+import org.apache.http.Header;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.RequestAcceptEncoding;
+import org.apache.http.client.protocol.ResponseContentEncoding;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
+import org.apache.http.impl.client.cache.CacheConfig;
+import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Functions used to make loading, parsing, and serializing JSON easy using
@@ -66,6 +71,8 @@ public class JsonUtils {
     private static final JsonFactory JSON_FACTORY = new JsonFactory(JSON_MAPPER);
 
     private static volatile CloseableHttpClient DEFAULT_HTTP_CLIENT;
+    // Avoid possible endless loop when following alternate locations
+    private static final int MAX_LINKS_FOLLOW = 20;
 
     static {
         // Disable default Jackson behaviour to close
@@ -109,6 +116,10 @@ public class JsonUtils {
                 }
             }
             return fromInputStream(bOMInputStream, charset);
+        } finally {
+            if (input != null) {
+                input.close();
+            }
         }
     }
 
@@ -335,40 +346,69 @@ public class JsonUtils {
         final String protocol = url.getProtocol();
         // We can only use the Apache HTTPClient for HTTP/HTTPS, so use the
         // native java client for the others
-        CloseableHttpResponse response = null;
-        InputStream in = null;
-        try {
-            if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
-                // Can't use the HTTP client for those!
-                // Fallback to Java's built-in JsonLdUrl handler. No need for
-                // Accept headers as it's likely to be file: or jar:
-                in = url.openStream();
-            } else {
-                final HttpUriRequest request = new HttpGet(url.toExternalForm());
-                // We prefer application/ld+json, but fallback to
-                // application/json
-                // or whatever is available
-                request.addHeader("Accept", ACCEPT_HEADER);
+        if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
+            // Can't use the HTTP client for those!
+            // Fallback to Java's built-in JsonLdUrl handler. No need for
+            // Accept headers as it's likely to be file: or jar:
+            return fromInputStream(url.openStream());
+        } else {
+            return fromJsonLdViaHttpUri(url, httpClient, 0);
+        }
+    }
 
-                response = httpClient.execute(request);
-                final int status = response.getStatusLine().getStatusCode();
-                if (status != 200 && status != 203) {
-                    throw new IOException("Can't retrieve " + url + ", status code: " + status);
-                }
-                in = response.getEntity().getContent();
+    private static Object fromJsonLdViaHttpUri(final URL url, final CloseableHttpClient httpClient, int linksFollowed)
+            throws IOException {
+        final HttpUriRequest request = new HttpGet(url.toExternalForm());
+        // We prefer application/ld+json, but fallback to application/json
+        // or whatever is available
+        request.addHeader("Accept", ACCEPT_HEADER);
+        try (CloseableHttpResponse response = httpClient.execute(request)) {
+            final int status = response.getStatusLine().getStatusCode();
+            if (status != 200 && status != 203) {
+                throw new IOException("Can't retrieve " + url + ", status code: " + status);
             }
-            return fromInputStream(in);
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
+            // follow alternate document location
+            // https://www.w3.org/TR/json-ld11/#alternate-document-location
+            URL alternateLink = alternateLink(url, response);
+            if (alternateLink != null) {
+                linksFollowed++;
+                if (linksFollowed > MAX_LINKS_FOLLOW) {
+                    throw new IOException("Too many alternate links followed. This may indicate a cycle. Aborting.");
                 }
-            } finally {
-                if (response != null) {
-                    response.close();
+                return fromJsonLdViaHttpUri(alternateLink, httpClient, linksFollowed);
+            }
+            return fromInputStream(response.getEntity().getContent());
+        }
+    }
+
+    private static URL alternateLink(URL url, CloseableHttpResponse response)
+            throws MalformedURLException {
+        if (response.getEntity().getContentType() != null
+                && !response.getEntity().getContentType().getValue().equals("application/ld+json")) {
+            for (Header header : response.getAllHeaders()) {
+                if (header.getName().equalsIgnoreCase("link")) {
+                    String alternateLink = "";
+                    boolean relAlternate = false;
+                    boolean jsonld = false;
+                    for (String value : header.getValue().split(";")) {
+                        value=value.trim();
+                        if (value.startsWith("<") && value.endsWith(">")) {
+                            alternateLink = value.substring(1, value.length() - 1);
+                        }
+                        if (value.startsWith("type=\"application/ld+json\"")) {
+                            jsonld = true;
+                        }
+                        if (value.startsWith("rel=\"alternate\"")) {
+                            relAlternate = true;
+                        }
+                    }
+                    if (jsonld && relAlternate && !alternateLink.isEmpty()) {
+                        return new URL(url.getProtocol() + "://" + url.getAuthority() + alternateLink);
+                    }
                 }
             }
         }
+        return null;
     }
 
     /**
@@ -384,7 +424,7 @@ public class JsonUtils {
      * @throws IOException
      *             If there was an IO error during parsing.
      */
-    public static Object fromURLJavaNet(java.net.URL url) throws JsonParseException, IOException {
+    public static Object fromURLJavaNet(URL url) throws JsonParseException, IOException {
         final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.addRequestProperty("Accept", ACCEPT_HEADER);
 
