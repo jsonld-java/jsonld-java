@@ -5,7 +5,6 @@ import static com.github.jsonldjava.core.JsonLdConsts.RDF_LANGSTRING;
 import static com.github.jsonldjava.core.JsonLdConsts.RDF_NIL;
 import static com.github.jsonldjava.core.JsonLdConsts.RDF_REST;
 import static com.github.jsonldjava.core.JsonLdConsts.RDF_TYPE;
-import static com.github.jsonldjava.core.JsonLdConsts.RDF_JSON;
 import static com.github.jsonldjava.core.JsonLdConsts.XSD_BOOLEAN;
 import static com.github.jsonldjava.core.JsonLdConsts.XSD_DECIMAL;
 import static com.github.jsonldjava.core.JsonLdConsts.XSD_DOUBLE;
@@ -18,7 +17,6 @@ import static com.github.jsonldjava.core.JsonLdUtils.isString;
 import static com.github.jsonldjava.core.JsonLdUtils.isValue;
 import static com.github.jsonldjava.utils.Obj.newMap;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -29,8 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import com.github.jsonldjava.utils.JsonUtils;
 
 /**
  * Starting to migrate away from using plain java Maps as the internal RDF
@@ -244,18 +240,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                     else {
                         rval.put("@type", type);
                     }
-                }
-                // jsonld 1.1: 2.5 in https://w3c.github.io/json-ld-api/#algorithm-16
-                else if(RDF_JSON.equals(type)) {
-                    rval.put("@type", "@json");
-                    try {
-                        rval.put("@value", JsonUtils.fromString(value));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        throw new JsonLdError(JsonLdError.Error.INVALID_JSON_LITERAL, value, e);
-                    }
-                }
-                else if (!XSD_STRING.equals(type)) {
+                } else if (!XSD_STRING.equals(type)) {
                     rval.put("@type", type);
                 }
             }
@@ -699,17 +684,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                 return new Literal((String) value,
                         datatype == null ? RDF_LANGSTRING : (String) datatype,
                         (String) ((Map<String, Object>) item).get("@language"));
-            }
-            // jsonld 1.1: 8 in https://w3c.github.io/json-ld-api/#algorithm-13
-            else if(JsonLdConsts.JSON.equals(datatype)) {
-                try {
-                    return new Literal(JsonUtils.toString(value), RDF_JSON, null);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-            else {
+            } else {
                 return new Literal((String) value,
                         datatype == null ? XSD_STRING : (String) datatype, null);
             }

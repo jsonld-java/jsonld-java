@@ -188,12 +188,7 @@ public class JsonLdApi {
             // 4
             if (elem.containsKey(JsonLdConsts.VALUE) || elem.containsKey(JsonLdConsts.ID)) {
                 final Object compactedValue = activeCtx.compactValue(activeProperty, elem);
-                boolean isScalar = !(compactedValue instanceof Map || compactedValue instanceof List);
-                // jsonld 1.1: 7 in https://w3c.github.io/json-ld-api/#algorithm-6
-                boolean isJson = activeCtx.getTermDefinition(activeProperty) != null
-                        && JsonLdConsts.JSON.equals(
-                                activeCtx.getTermDefinition(activeProperty).get(JsonLdConsts.TYPE));
-                if (isScalar || isJson) {
+                if (!(compactedValue instanceof Map || compactedValue instanceof List)) {
                     return compactedValue;
                 }
             }
@@ -317,9 +312,7 @@ public class JsonLdApi {
 
                 // NOTE: expanded value must be an array due to expansion
                 // algorithm.
-                if (!(expandedValue instanceof List)) {
-                    throw new JsonLdError(Error.NOT_IMPLEMENTED, "no array: " + expandedValue);
-                }
+
                 // 7.5)
                 if (((List<Object>) expandedValue).size() == 0) {
                     // 7.5.1)
@@ -521,7 +514,6 @@ public class JsonLdApi {
             return null;
         }
 
-        // GK: This would be the point to set `propertyScopedContext` to the `@context` entry for any term definition associated with `activeProperty`.
         // 3)
         if (element instanceof List) {
             // 3.1)
@@ -554,19 +546,14 @@ public class JsonLdApi {
             // access helper
             final Map<String, Object> elem = (Map<String, Object>) element;
             // 5)
-            // This would be the place to revert the active context from any previous type-scoped context if the active context has a `previousContext` entry (with some exceptions when called from a map, or if it's a value object or a subject reference).
-            // GK: If we found a `propertyScopedContext` above, we can parse it to create a new activeCtx using the `override protected` option
             if (elem.containsKey(JsonLdConsts.CONTEXT)) {
                 activeCtx = activeCtx.parse(elem.get(JsonLdConsts.CONTEXT));
             }
-            // GK: This would be the place to remember this version of activeCtx as `typeScopedContext`.
             // 6)
             Map<String, Object> result = newMap();
             // 7)
             final List<String> keys = new ArrayList<String>(elem.keySet());
             Collections.sort(keys);
-            // GK: This is the place to check for a type-scoped context by checking any key that expands to `@type` to see the current context has a term that equals that key where the term definition includes `@context`, updating the activeCtx as you go (but using termScopedContext when checking the keys).
-            // GK: 1.1 made the following loop somewhat recursive, due to nesting, so might want to extract into a method.
             for (final String key : keys) {
                 final Object value = elem.get(key);
                 // 7.1)
@@ -593,8 +580,6 @@ public class JsonLdApi {
                         throw new JsonLdError(Error.COLLIDING_KEYWORDS,
                                 expandedProperty + " already exists in result");
                     }
-                    // jsonld 1.1: 12 in https://w3c.github.io/json-ld-api/#algorithm-3
-                    Object inputType = elem.get(JsonLdConsts.TYPE);
                     // 7.4.3)
                     if (JsonLdConsts.ID.equals(expandedProperty)) {
                         if (value instanceof String) {
@@ -660,23 +645,11 @@ public class JsonLdApi {
                     }
                     // 7.4.6)
                     else if (JsonLdConsts.VALUE.equals(expandedProperty)) {
-                        // jsonld 1.1: 13.4.7.1 in https://w3c.github.io/json-ld-api/#algorithm-3
-                        if(JsonLdConsts.JSON.equals(inputType)) {
-                            expandedValue = value;
-                            if(opts.getProcessingMode().equals(JsonLdOptions.JSON_LD_1_0)) {
-                                throw new JsonLdError(Error.INVALID_VALUE_OBJECT_VALUE, value);
-                            }
-                        }
-                        // jsonld 1.1: 13.4.7.2 in https://w3c.github.io/json-ld-api/#algorithm-3
-                        else if (value != null && (value instanceof Map || value instanceof List)) {
+                        if (value != null && (value instanceof Map || value instanceof List)) {
                             throw new JsonLdError(Error.INVALID_VALUE_OBJECT_VALUE,
-                                    "value of " + expandedProperty + " must be a scalar or null, but was: " + value);
+                                    "value of " + expandedProperty + " must be a scalar or null");
                         }
-                        // jsonld 1.1: 13.4.7.3 in https://w3c.github.io/json-ld-api/#algorithm-3
-                        else {
-                            expandedValue = value;
-                        }
-                        // jsonld 1.1: 13.4.7.4 in https://w3c.github.io/json-ld-api/#algorithm-3
+                        expandedValue = value;
                         if (expandedValue == null) {
                             result.put(JsonLdConsts.VALUE, null);
                             continue;
@@ -793,7 +766,6 @@ public class JsonLdApi {
                                 }
                             }
                         }
-                        // GK: Also, `@included`, `@graph`, and `@direction`
                         // 7.4.11.4)
                         continue;
                     }
@@ -808,26 +780,13 @@ public class JsonLdApi {
                     }
                     // 7.4.12)
                     if (expandedValue != null) {
-                    /* jsonld 1.1: 13.4.16 in https://w3c.github.io/json-ld-api/#algorithm-3
-                    if (!(expandedValue == null && JsonLdConsts.VALUE.equals(expandedProperty)
-                            && (inputType == null || JsonLdConsts.JSON.equals(inputType)))) { */
                         result.put(expandedProperty, expandedValue);
                     }
                     // 7.4.13)
                     continue;
                 }
-                // jsonld 1.1: 13.5 in https://w3c.github.io/json-ld-api/#algorithm-3
-                String containerMapping = activeCtx.getContainer(key);
-                // jsonld 1.1: 13.6 in https://w3c.github.io/json-ld-api/#algorithm-3
-                if (activeCtx.getTermDefinition(key) != null
-                        && JsonLdConsts.JSON.equals(activeCtx.getTermDefinition(key).get(JsonLdConsts.TYPE))) {
-                    Map<String, Object> newMap = newMap();
-                    newMap.put(JsonLdConsts.VALUE, value);
-                    newMap.put(JsonLdConsts.TYPE, JsonLdConsts.JSON);
-                    expandedValue = newMap;
-                }
                 // 7.5
-                else if (JsonLdConsts.LANGUAGE.equals(containerMapping)
+                else if (JsonLdConsts.LANGUAGE.equals(activeCtx.getContainer(key))
                         && value instanceof Map) {
                     // 7.5.1)
                     expandedValue = new ArrayList<Object>();
@@ -842,10 +801,6 @@ public class JsonLdApi {
                         }
                         // 7.5.2.2)
                         for (final Object item : (List<Object>) languageValue) {
-                            // jsonld 1.1: 13.7.4.2.1 in https://w3c.github.io/json-ld-api/#expansion-algorithm
-                            if(item == null) {
-                                continue;
-                            }
                             // 7.5.2.2.1)
                             if (!(item instanceof String)) {
                                 throw new JsonLdError(Error.INVALID_LANGUAGE_MAP_VALUE,
@@ -860,12 +815,9 @@ public class JsonLdApi {
                     }
                 }
                 // 7.6)
-                // GK: Also a place to see if key is `@json` for JSON literals.
                 else if (JsonLdConsts.INDEX.equals(activeCtx.getContainer(key))
                         && value instanceof Map) {
                     // 7.6.1)
-                    // GK: `@index` also supports property indexing, if the term definition includes `@index`.
-                    // GK: A map can also include `@none`.
                     expandedValue = new ArrayList<Object>();
                     // 7.6.2)
                     final List<String> indexKeys = new ArrayList<String>(
@@ -913,7 +865,6 @@ public class JsonLdApi {
                         ((Map<String, Object>) expandedValue).put(JsonLdConsts.LIST, tmp);
                     }
                 }
-                // GK: Other container possibilities including `@graph`, `@id`, and `@type` along with variations.
                 // 7.10)
                 if (activeCtx.isReverseProperty(key)) {
                     // 7.10.1)
@@ -986,11 +937,8 @@ public class JsonLdApi {
                     // null, so simply return it
                     return null;
                 }
-                else if (result.getOrDefault(JsonLdConsts.TYPE,"").equals(JsonLdConsts.JSON)) {
-                    // jsonld 1.1: 14.3 in https://w3c.github.io/json-ld-api/#algorithm-3
-                }
                 // 8.3)
-                else if (!(rval instanceof String) && result.containsKey(JsonLdConsts.LANGUAGE)) {
+                if (!(rval instanceof String) && result.containsKey(JsonLdConsts.LANGUAGE)) {
                     throw new JsonLdError(Error.INVALID_LANGUAGE_TAGGED_VALUE,
                             "when @language is used, @value must be a string");
                 }

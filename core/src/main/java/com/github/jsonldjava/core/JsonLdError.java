@@ -102,22 +102,16 @@ public class JsonLdError extends RuntimeException {
 
         INVALID_EMBED_VALUE("invalid @embed value"),
 
-        INVALID_VERSION_VALUE("invalid @version value"),
-
-        PROCESSING_MODE_CONFLICT("processing mode conflict"),
-
         // non spec related errors
         SYNTAX_ERROR("syntax error"),
 
-        NOT_IMPLEMENTED("not implemented"),
+        NOT_IMPLEMENTED("not implemnted"),
 
         UNKNOWN_FORMAT("unknown format"),
 
         INVALID_INPUT("invalid input"),
 
         PARSE_ERROR("parse error"),
-
-        INVALID_JSON_LITERAL("invalid JSON literal"),
 
         UNKNOWN_ERROR("unknown error");
 
