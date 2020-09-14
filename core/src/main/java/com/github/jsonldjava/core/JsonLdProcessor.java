@@ -2,9 +2,11 @@ package com.github.jsonldjava.core;
 
 import static com.github.jsonldjava.utils.Obj.newMap;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +53,9 @@ public class JsonLdProcessor {
         if (context instanceof Map
                 && ((Map<String, Object>) context).containsKey(JsonLdConsts.CONTEXT)) {
             context = ((Map<String, Object>) context).get(JsonLdConsts.CONTEXT);
+            if(context instanceof String) {
+                context = new LinkedList<>(Arrays.asList((String) context));
+            }
         }
         Context activeCtx = new Context(opts);
         activeCtx = activeCtx.parse(context);
