@@ -53,9 +53,6 @@ public class JsonLdProcessor {
         if (context instanceof Map
                 && ((Map<String, Object>) context).containsKey(JsonLdConsts.CONTEXT)) {
             context = ((Map<String, Object>) context).get(JsonLdConsts.CONTEXT);
-            if(context instanceof String) {
-                context = new LinkedList<>(Arrays.asList((String) context));
-            }
         }
         Context activeCtx = new Context(opts);
         activeCtx = activeCtx.parse(context);
@@ -75,19 +72,12 @@ public class JsonLdProcessor {
                 compacted = tmp;
             }
         }
-        if (compacted != null && context != null) {
-            // TODO: figure out if we can make "@context" appear at the start of
-            // the keySet
-            if ((context instanceof Map && !((Map<String, Object>) context).isEmpty())
-                    || (context instanceof List && !((List<Object>) context).isEmpty())) {
-
-                if (context instanceof List && ((List<Object>) context).size() == 1
-                        && opts.getCompactArrays()) {
-                    ((Map<String, Object>) compacted).put(JsonLdConsts.CONTEXT,
-                            ((List<Object>) context).get(0));
-                } else {
-                    ((Map<String, Object>) compacted).put(JsonLdConsts.CONTEXT, context);
-                }
+        if (compacted != null) {
+            final Object returnedContext = returnedContext(context, opts);
+            if(returnedContext != null) {
+                // TODO: figure out if we can make "@context" appear at the start of
+                // the keySet
+                ((Map<String, Object>) compacted).put(JsonLdConsts.CONTEXT, returnedContext);
             }
         }
 
@@ -324,14 +314,18 @@ public class JsonLdProcessor {
         // to a new empty
         // context, otherwise.
         final JsonLdApi api = new JsonLdApi(expandedInput, opts);
-        final Context activeCtx = api.context
-                .parse(((Map<String, Object>) frame).get(JsonLdConsts.CONTEXT));
+        final Object context = ((Map<String, Object>) frame).get(JsonLdConsts.CONTEXT);
+        final Context activeCtx = api.context.parse(context);
         final List<Object> framed = api.frame(expandedInput, expandedFrame);
         if (opts.getPruneBlankNodeIdentifiers()) {
             JsonLdUtils.pruneBlankNodes(framed);
         }
         Object compacted = api.compact(activeCtx, null, framed, opts.getCompactArrays());
-        final Map<String, Object> rval = activeCtx.serialize();
+        final Map<String, Object> rval = newMap();
+        final Object returnedContext = returnedContext(context, opts);
+        if(returnedContext != null) {
+            rval.put(JsonLdConsts.CONTEXT, context);
+        }
         final boolean addGraph = ((!(compacted instanceof List)) && !opts.getOmitGraph());
         if (addGraph && !(compacted instanceof List)) {
             final List<Object> tmp = new ArrayList<Object>();
@@ -346,6 +340,22 @@ public class JsonLdProcessor {
         }
         JsonLdUtils.removePreserve(activeCtx, rval, opts);
         return rval;
+    }
+
+    private static Object returnedContext(Object context, JsonLdOptions opts) {
+        if (context != null &&
+                ((context instanceof Map && !((Map<String, Object>) context).isEmpty())
+                        || (context instanceof List && !((List<Object>) context).isEmpty())
+                        || (context instanceof String && !((String) context).isEmpty()))) {
+
+            if (context instanceof List && ((List<Object>) context).size() == 1
+                    && opts.getCompactArrays()) {
+                return ((List<Object>) context).get(0);
+            }
+            return context;
+        } else {
+            return null;
+        }
     }
 
     /**

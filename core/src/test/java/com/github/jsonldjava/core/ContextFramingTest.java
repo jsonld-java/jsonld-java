@@ -11,12 +11,11 @@ import java.util.Map;
 import com.github.jsonldjava.utils.JsonUtils;
 import org.junit.Test;
 
-
-public class ContextCompactionTest {
+public class ContextFramingTest {
 
     // @Ignore("Disable until schema.org is fixed")
     @Test
-    public void testCompaction() throws Exception {
+    public void testFraming() throws Exception {
 
         final Map<String, Object> contextAbbrevs = new HashMap<String, Object>();
         contextAbbrevs.put("so", "http://schema.org/");
@@ -35,40 +34,44 @@ public class ContextCompactionTest {
         final JsonLdOptions options = new JsonLdOptions();
         options.setBase("http://schema.org/");
         options.setCompactArrays(true);
+        options.setOmitGraph(true);
 
         // System.out.println("Before compact");
         // System.out.println(JsonUtils.toPrettyString(json));
 
-        final List<String> newContexts = new LinkedList<String>();
-        newContexts.add("http://schema.org/");
-        final Map<String, Object> compacted = JsonLdProcessor.compact(json, newContexts, options);
+        final String frameStr = "{\"@id\": \"http://schema.org/myid\", \"@context\": \"http://schema.org/\"}";
+        final Object frame = JsonUtils.fromString(frameStr);
+
+        final Map<String, Object> compacted = JsonLdProcessor.frame(json, frame, options);
 
         // System.out.println("\n\nAfter compact:");
         // System.out.println(JsonUtils.toPrettyString(compacted));
 
-        assertTrue("Compaction removed the context", compacted.containsKey("@context"));
-        assertFalse("Compaction of context should be a string, not a list",
+        assertTrue("Framing removed the context", compacted.containsKey("@context"));
+        assertFalse("Framing of context should be a string, not a list",
                 compacted.get("@context") instanceof List);
     }
 
     @Test
-    public void testCompactionSingleRemoteContext() throws Exception {
-        final String jsonString = "[{\"@type\": [\"http://schema.org/Person\"] } ]";
-        final String ctxStr = "{\"@context\": \"http://schema.org/\"}";
+    public void testFramingRemoteContext() throws Exception {
+        final String jsonString = "{\"@id\": \"http://schema.org/myid\", \"@type\": [\"http://schema.org/Person\"]}";
+        final String frameStr = "{\"@id\": \"http://schema.org/myid\", \"@context\": \"http://schema.org/\"}";
 
         final Object json = JsonUtils.fromString(jsonString);
-        final Object ctx = JsonUtils.fromString(ctxStr);
+        final Object frame = JsonUtils.fromString(frameStr);
 
         final JsonLdOptions options = new JsonLdOptions();
+        options.setOmitGraph(true);
 
-        final Map<String, Object> compacted = JsonLdProcessor.compact(json, ctx, options);
+        final Map<String, Object> compacted = JsonLdProcessor.frame(json, frame, options);
 
-         // System.out.println("\n\nAfter compact:");
-         // System.out.println(JsonUtils.toPrettyString(compacted));
+        // System.out.println("\n\nAfter compact:");
+        // System.out.println(JsonUtils.toPrettyString(compacted));
 
-        assertEquals("Wrong compaction context", "http://schema.org/", compacted.get("@context"));
+        assertEquals("Wrong framing context", "http://schema.org/", compacted.get("@context"));
+        assertEquals("Wrong framing id", "schema:myid", compacted.get("id"));
         assertEquals("Wrong framing type", "Person", compacted.get("type"));
-        assertEquals("Wrong number of Json entries",2, compacted.size());
+        assertEquals("Wrong number of Json entries",3, compacted.size());
     }
 
 }
