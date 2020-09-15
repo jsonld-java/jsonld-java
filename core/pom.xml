@@ -82,6 +82,10 @@
 							<pattern>com.google.common</pattern>
 							<shadedPattern>com.github.jsonldjava.shaded.com.google.common</shadedPattern>
 						</relocation>
+						<relocation>
+							<pattern>com.google.thirdparty</pattern>
+							<shadedPattern>com.github.jsonldjava.shaded.com.google.thirdparty</shadedPattern>
+						</relocation>
 					</relocations>
 					<filters>
 						<filter>
