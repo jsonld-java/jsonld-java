@@ -342,6 +342,12 @@ public class JsonLdProcessor {
         return rval;
     }
 
+    /**
+     * Builds the context to be returned in framing and compaction algorithms.
+     * In cases where the context is empty or from an unexpected type, it returns null.
+     * When JsonLdOptions compactArrays is set to true and the context contains a List with a single element,
+     * the element is returned instead of the list
+     */
     private static Object returnedContext(Object context, JsonLdOptions opts) {
         if (context != null &&
                 ((context instanceof Map && !((Map<String, Object>) context).isEmpty())

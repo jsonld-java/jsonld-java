@@ -17,14 +17,14 @@ public class ContextFramingTest {
     @Test
     public void testFraming() throws Exception {
 
-        final Map<String, Object> contextAbbrevs = new HashMap<String, Object>();
+        final Map<String, Object> contextAbbrevs = new HashMap<>();
         contextAbbrevs.put("so", "http://schema.org/");
 
-        final Map<String, Object> json = new HashMap<String, Object>();
+        final Map<String, Object> json = new HashMap<>();
         json.put("@context", contextAbbrevs);
         json.put("@id", "http://example.org/my_work");
 
-        final List<Object> types = new LinkedList<Object>();
+        final List<Object> types = new LinkedList<>();
         types.add("so:CreativeWork");
 
         json.put("@type", types);
@@ -36,20 +36,20 @@ public class ContextFramingTest {
         options.setCompactArrays(true);
         options.setOmitGraph(true);
 
-        // System.out.println("Before compact");
+        // System.out.println("Before framing");
         // System.out.println(JsonUtils.toPrettyString(json));
 
         final String frameStr = "{\"@id\": \"http://schema.org/myid\", \"@context\": \"http://schema.org/\"}";
         final Object frame = JsonUtils.fromString(frameStr);
 
-        final Map<String, Object> compacted = JsonLdProcessor.frame(json, frame, options);
+        final Map<String, Object> framed = JsonLdProcessor.frame(json, frame, options);
 
-        // System.out.println("\n\nAfter compact:");
-        // System.out.println(JsonUtils.toPrettyString(compacted));
+        // System.out.println("\n\nAfter framing:");
+        // System.out.println(JsonUtils.toPrettyString(framed));
 
-        assertTrue("Framing removed the context", compacted.containsKey("@context"));
+        assertTrue("Framing removed the context", framed.containsKey("@context"));
         assertFalse("Framing of context should be a string, not a list",
-                compacted.get("@context") instanceof List);
+                framed.get("@context") instanceof List);
     }
 
     @Test
@@ -63,15 +63,15 @@ public class ContextFramingTest {
         final JsonLdOptions options = new JsonLdOptions();
         options.setOmitGraph(true);
 
-        final Map<String, Object> compacted = JsonLdProcessor.frame(json, frame, options);
+        final Map<String, Object> framed = JsonLdProcessor.frame(json, frame, options);
 
-        // System.out.println("\n\nAfter compact:");
-        // System.out.println(JsonUtils.toPrettyString(compacted));
+        // System.out.println("\n\nAfter framing:");
+        // System.out.println(JsonUtils.toPrettyString(framed));
 
-        assertEquals("Wrong framing context", "http://schema.org/", compacted.get("@context"));
-        assertEquals("Wrong framing id", "schema:myid", compacted.get("id"));
-        assertEquals("Wrong framing type", "Person", compacted.get("type"));
-        assertEquals("Wrong number of Json entries",3, compacted.size());
+        assertEquals("Wrong framing context", "http://schema.org/", framed.get("@context"));
+        assertEquals("Wrong framing id", "schema:myid", framed.get("id"));
+        assertEquals("Wrong framing type", "Person", framed.get("type"));
+        assertEquals("Wrong number of Json entries",3, framed.size());
     }
 
 }
