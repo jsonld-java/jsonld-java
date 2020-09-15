@@ -245,7 +245,11 @@ public class JsonLdProcessor {
                 compacted = tmp;
             }
             final String alias = activeCtx.compactIri(JsonLdConsts.GRAPH);
-            final Map<String, Object> rval = activeCtx.serialize();
+            final Map<String, Object> rval = newMap();
+            final Object returnedContext = returnedContext(context, opts);
+            if(returnedContext != null) {
+                rval.put(JsonLdConsts.CONTEXT, returnedContext);
+            }
             rval.put(alias, compacted);
             return rval;
         }
@@ -343,7 +347,7 @@ public class JsonLdProcessor {
     }
 
     /**
-     * Builds the context to be returned in framing and compaction algorithms.
+     * Builds the context to be returned in framing, flattening and compaction algorithms.
      * In cases where the context is empty or from an unexpected type, it returns null.
      * When JsonLdOptions compactArrays is set to true and the context contains a List with a single element,
      * the element is returned instead of the list

@@ -66,8 +66,8 @@ public class ContextCompactionTest {
          // System.out.println("\n\nAfter compact:");
          // System.out.println(JsonUtils.toPrettyString(compacted));
 
-        assertEquals("Wrong compaction context", "http://schema.org/", compacted.get("@context"));
-        assertEquals("Wrong framing type", "Person", compacted.get("type"));
+        assertEquals("Wrong returned context", "http://schema.org/", compacted.get("@context"));
+        assertEquals("Wrong type", "Person", compacted.get("type"));
         assertEquals("Wrong number of Json entries",2, compacted.size());
     }
 

@@ -68,9 +68,9 @@ public class ContextFramingTest {
         // System.out.println("\n\nAfter framing:");
         // System.out.println(JsonUtils.toPrettyString(framed));
 
-        assertEquals("Wrong framing context", "http://schema.org/", framed.get("@context"));
-        assertEquals("Wrong framing id", "schema:myid", framed.get("id"));
-        assertEquals("Wrong framing type", "Person", framed.get("type"));
+        assertEquals("Wrong returned context", "http://schema.org/", framed.get("@context"));
+        assertEquals("Wrong id", "schema:myid", framed.get("id"));
+        assertEquals("Wrong type", "Person", framed.get("type"));
         assertEquals("Wrong number of Json entries",3, framed.size());
     }
 
