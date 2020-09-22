@@ -35,16 +35,10 @@ public class ContextFlatteningTest {
         options.setCompactArrays(true);
         options.setOmitGraph(true);
 
-        // System.out.println("Before flattening");
-        // System.out.println(JsonUtils.toPrettyString(json));
-
         final String flattenStr = "{\"@id\": \"http://schema.org/myid\", \"@context\": \"http://schema.org/\"}";
         final Object flatten = JsonUtils.fromString(flattenStr);
 
         final Map<String, Object> flattened = ((Map<String, Object>)JsonLdProcessor.flatten(json, flatten, options));
-
-        // System.out.println("\n\nAfter flattening:");
-        // System.out.println(JsonUtils.toPrettyString(flattened));
 
         assertTrue("Flattening removed the context", flattened.containsKey("@context"));
         assertFalse("Flattening of context should be a string, not a list",
@@ -60,16 +54,10 @@ public class ContextFlatteningTest {
         final Object json = JsonUtils.fromString(jsonString);
         final Object flatten = JsonUtils.fromString(flattenStr);
 
-         // System.out.println("Before flattening");
-         // System.out.println(JsonUtils.toPrettyString(json));
-
         final JsonLdOptions options = new JsonLdOptions();
         options.setOmitGraph(true);
 
         final Map<String, Object> flattened = ((Map<String, Object>)JsonLdProcessor.flatten(json, flatten, options));
-
-         // System.out.println("\n\nAfter flattened:");
-         // System.out.println(JsonUtils.toPrettyString(flattened));
 
         assertEquals("Wrong returned context", "http://schema.org/", flattened.get("@context"));
         assertEquals("Wrong number of Json entries",2, flattened.size());

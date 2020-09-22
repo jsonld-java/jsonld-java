@@ -14,9 +14,8 @@ import org.junit.Test;
 
 public class ContextCompactionTest {
 
-    // @Ignore("Disable until schema.org is fixed")
     @Test
-    public void testCompaction() throws Exception {
+    public void testCompaction() {
 
         final Map<String, Object> contextAbbrevs = new HashMap<String, Object>();
         contextAbbrevs.put("so", "http://schema.org/");
@@ -36,15 +35,9 @@ public class ContextCompactionTest {
         options.setBase("http://schema.org/");
         options.setCompactArrays(true);
 
-        // System.out.println("Before compact");
-        // System.out.println(JsonUtils.toPrettyString(json));
-
         final List<String> newContexts = new LinkedList<String>();
         newContexts.add("http://schema.org/");
         final Map<String, Object> compacted = JsonLdProcessor.compact(json, newContexts, options);
-
-        // System.out.println("\n\nAfter compact:");
-        // System.out.println(JsonUtils.toPrettyString(compacted));
 
         assertTrue("Compaction removed the context", compacted.containsKey("@context"));
         assertFalse("Compaction of context should be a string, not a list",
@@ -62,9 +55,6 @@ public class ContextCompactionTest {
         final JsonLdOptions options = new JsonLdOptions();
 
         final Map<String, Object> compacted = JsonLdProcessor.compact(json, ctx, options);
-
-         // System.out.println("\n\nAfter compact:");
-         // System.out.println(JsonUtils.toPrettyString(compacted));
 
         assertEquals("Wrong returned context", "http://schema.org/", compacted.get("@context"));
         assertEquals("Wrong type", "Person", compacted.get("type"));

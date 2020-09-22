@@ -2,11 +2,9 @@ package com.github.jsonldjava.core;
 
 import static com.github.jsonldjava.utils.Obj.newMap;
 
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -328,7 +326,7 @@ public class JsonLdProcessor {
         final Map<String, Object> rval = newMap();
         final Object returnedContext = returnedContext(context, opts);
         if(returnedContext != null) {
-            rval.put(JsonLdConsts.CONTEXT, context);
+            rval.put(JsonLdConsts.CONTEXT, returnedContext);
         }
         final boolean addGraph = ((!(compacted instanceof List)) && !opts.getOmitGraph());
         if (addGraph && !(compacted instanceof List)) {

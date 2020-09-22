@@ -13,7 +13,6 @@ import org.junit.Test;
 
 public class ContextFramingTest {
 
-    // @Ignore("Disable until schema.org is fixed")
     @Test
     public void testFraming() throws Exception {
 
@@ -36,16 +35,10 @@ public class ContextFramingTest {
         options.setCompactArrays(true);
         options.setOmitGraph(true);
 
-        // System.out.println("Before framing");
-        // System.out.println(JsonUtils.toPrettyString(json));
-
         final String frameStr = "{\"@id\": \"http://schema.org/myid\", \"@context\": \"http://schema.org/\"}";
         final Object frame = JsonUtils.fromString(frameStr);
 
         final Map<String, Object> framed = JsonLdProcessor.frame(json, frame, options);
-
-        // System.out.println("\n\nAfter framing:");
-        // System.out.println(JsonUtils.toPrettyString(framed));
 
         assertTrue("Framing removed the context", framed.containsKey("@context"));
         assertFalse("Framing of context should be a string, not a list",
@@ -64,9 +57,6 @@ public class ContextFramingTest {
         options.setOmitGraph(true);
 
         final Map<String, Object> framed = JsonLdProcessor.frame(json, frame, options);
-
-        // System.out.println("\n\nAfter framing:");
-        // System.out.println(JsonUtils.toPrettyString(framed));
 
         assertEquals("Wrong returned context", "http://schema.org/", framed.get("@context"));
         assertEquals("Wrong id", "schema:myid", framed.get("id"));
