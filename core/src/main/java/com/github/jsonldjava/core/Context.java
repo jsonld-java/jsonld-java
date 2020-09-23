@@ -1144,4 +1144,58 @@ public class Context extends LinkedHashMap<String, Object> {
         }
         return rval;
     }
+
+    @Deprecated
+    public Map<String, Object> serialize() {
+        final Map<String, Object> ctx = newMap();
+        if (this.get(JsonLdConsts.BASE) != null
+                && !this.get(JsonLdConsts.BASE).equals(options.getBase())) {
+            ctx.put(JsonLdConsts.BASE, this.get(JsonLdConsts.BASE));
+        }
+        if (this.get(JsonLdConsts.LANGUAGE) != null) {
+            ctx.put(JsonLdConsts.LANGUAGE, this.get(JsonLdConsts.LANGUAGE));
+        }
+        if (this.get(JsonLdConsts.VOCAB) != null) {
+            ctx.put(JsonLdConsts.VOCAB, this.get(JsonLdConsts.VOCAB));
+        }
+        for (final String term : termDefinitions.keySet()) {
+            final Map<String, Object> definition = (Map<String, Object>) termDefinitions.get(term);
+            if (definition.get(JsonLdConsts.LANGUAGE) == null
+                    && definition.get(JsonLdConsts.CONTAINER) == null
+                    && definition.get(JsonLdConsts.TYPE) == null
+                    && (definition.get(JsonLdConsts.REVERSE) == null
+                            || Boolean.FALSE.equals(definition.get(JsonLdConsts.REVERSE)))) {
+                final String cid = this.compactIri((String) definition.get(JsonLdConsts.ID));
+                ctx.put(term, term.equals(cid) ? definition.get(JsonLdConsts.ID) : cid);
+            } else {
+                final Map<String, Object> defn = newMap();
+                final String cid = this.compactIri((String) definition.get(JsonLdConsts.ID));
+                final Boolean reverseProperty = Boolean.TRUE
+                        .equals(definition.get(JsonLdConsts.REVERSE));
+                if (!(term.equals(cid) && !reverseProperty)) {
+                    defn.put(reverseProperty ? JsonLdConsts.REVERSE : JsonLdConsts.ID, cid);
+                }
+                final String typeMapping = (String) definition.get(JsonLdConsts.TYPE);
+                if (typeMapping != null) {
+                    defn.put(JsonLdConsts.TYPE, JsonLdUtils.isKeyword(typeMapping) ? typeMapping
+                            : compactIri(typeMapping, true));
+                }
+                if (definition.get(JsonLdConsts.CONTAINER) != null) {
+                    defn.put(JsonLdConsts.CONTAINER, definition.get(JsonLdConsts.CONTAINER));
+                }
+                final Object lang = definition.get(JsonLdConsts.LANGUAGE);
+                if (definition.get(JsonLdConsts.LANGUAGE) != null) {
+                    defn.put(JsonLdConsts.LANGUAGE, Boolean.FALSE.equals(lang) ? null : lang);
+                }
+                ctx.put(term, defn);
+            }
+        }
+
+        final Map<String, Object> rval = newMap();
+        if (!(ctx == null || ctx.isEmpty())) {
+            rval.put(JsonLdConsts.CONTEXT, ctx);
+        }
+        return rval;
+    }
+
 }
