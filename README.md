@@ -16,7 +16,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.13.0</version>
+        <version>0.13.2</version>
     </dependency>
 
 Code example
@@ -323,11 +323,11 @@ Here is the basic outline for what your module's pom.xml should look like
   <parent>
     <groupId>com.github.jsonld-java</groupId>
     <artifactId>jsonld-java-parent</artifactId>
-    <version>0.13.0</version>
+    <version>0.13.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jsonld-java-{your module}</artifactId>
-  <version>0.13.0-SNAPSHOT</version>
+  <version>0.13.2-SNAPSHOT</version>
   <name>JSONLD Java :: {your module name}</name>
   <description>JSON-LD Java integration module for {RDF Library your module integrates}</description>
   <packaging>jar</packaging>
@@ -449,6 +449,19 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 
 CHANGELOG
 =========
+
+### 2020-09-24
+* Release 0.13.2
+* Fix Guava dependency shading (Reported by @ggrasso)
+* Fix @context issues when using a remote context (Patch by @umbreak)
+* Deprecate Context.serialize (Patch by @umbreak)
+
+### 2020-09-09
+* Release 0.13.1
+* Fix java.net.URI resolution (Reported by @ebremer and @afs, Patch by @dr0i)
+* Shade Guava failureaccess module (Patch by @peacekeeper)
+* Don't minimize Guava class shading (Patch by @elahrvivaz)
+* Follow link headers to @context files (Patch by @dr0i and @fsteeg)
 
 ### 2019-11-28
 * Release 0.13.0
