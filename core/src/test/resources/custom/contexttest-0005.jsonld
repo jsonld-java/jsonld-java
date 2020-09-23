@@ -1,0 +1,12 @@
+﻿{
+  "@context": {
+    "@base": "http://ex.com/base/",
+    "@vocab": "http://ex.com/vocab/",
+    "xsd": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "integer": {
+      "@id": "http://example.com/vocab/integer",
+      "@type": "xsd:integer"
+    },
+    "@language": "en"
+  }
+}
