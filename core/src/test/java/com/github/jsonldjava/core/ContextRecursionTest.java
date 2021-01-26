@@ -24,7 +24,7 @@ public class ContextRecursionTest {
     }
 
     @Test
-    public void testAllowedRecursion() throws IOException {
+    public void testIssue302_allowedRecursion() throws IOException {
 
         final String contextB = "{\"@context\": [\"http://localhost/d\", {\"b\": \"http://localhost/b\"} ] }";
         final String contextC = "{\"@context\": [\"http://localhost/d\", {\"c\": \"http://localhost/c\"} ] }";
@@ -67,8 +67,8 @@ public class ContextRecursionTest {
             JsonLdProcessor.expand(json, options);
             fail("it should throw");
         } catch(JsonLdError err) {
-            assertEquals(err.getType(), JsonLdError.Error.RECURSIVE_CONTEXT_INCLUSION);
-            assertEquals(err.getMessage(), "recursive context inclusion: http://localhost/c");
+            assertEquals(JsonLdError.Error.RECURSIVE_CONTEXT_INCLUSION, err.getType());
+            assertEquals("recursive context inclusion: http://localhost/c", err.getMessage());
         }
     }
 
