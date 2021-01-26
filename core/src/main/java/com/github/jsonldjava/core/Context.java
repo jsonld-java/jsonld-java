@@ -187,7 +187,11 @@ public class Context extends LinkedHashMap<String, Object> {
             }
             // 3.2)
             else if (context instanceof String) {
-                String uri = (String) result.get(JsonLdConsts.BASE);
+                String uri = null;
+                // @base is ignored when processing remote contexts, https://github.com/jsonld-java/jsonld-java/issues/304
+                if (!context.toString().matches("^[hH][tT][tT][pP][sS]?://.*")) {
+                    uri = (String) result.get(JsonLdConsts.BASE);
+                }
                 uri = JsonLdUrl.resolve(uri, (String) context);
                 // 3.2.2
                 if (remoteContexts.contains(uri)) {

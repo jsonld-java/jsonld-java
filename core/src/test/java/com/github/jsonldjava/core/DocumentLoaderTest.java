@@ -381,11 +381,19 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void injectContext() throws Exception {
+    public void testInjectContext() throws Exception {
+        injectContext(new JsonLdOptions());
+    }
+
+    @Test
+    public void testIssue304_remoteContextAndBaseIri() throws Exception {
+        injectContext(new JsonLdOptions("testing:baseIri"));
+    }
+
+    private void injectContext(final JsonLdOptions options) throws Exception {
 
         final Object jsonObject = JsonUtils.fromString(
                 "{ \"@context\":\"http://nonexisting.example.com/thing\", \"pony\":5 }");
-        final JsonLdOptions options = new JsonLdOptions();
 
         // Verify fails to find context by default
         try {
