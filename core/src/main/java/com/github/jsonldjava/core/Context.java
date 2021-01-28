@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.github.jsonldjava.core.JsonLdError.Error;
 import com.github.jsonldjava.utils.JsonLdUrl;
@@ -25,6 +26,7 @@ public class Context extends LinkedHashMap<String, Object> {
 
     private static final long serialVersionUID = 2894534897574805571L;
 
+    private static final Pattern URL_PATTERN = Pattern.compile("^https?://.*$", Pattern.CASE_INSENSITIVE);
     private JsonLdOptions options;
     private Map<String, Object> termDefinitions;
     public Map<String, Object> inverse = null;
@@ -189,7 +191,7 @@ public class Context extends LinkedHashMap<String, Object> {
             else if (context instanceof String) {
                 String uri = null;
                 // @base is ignored when processing remote contexts, https://github.com/jsonld-java/jsonld-java/issues/304
-                if (!context.toString().matches("^[hH][tT][tT][pP][sS]?://.*")) {
+                if (!URL_PATTERN.matcher(context.toString()).matches()) {
                     uri = (String) result.get(JsonLdConsts.BASE);
                 }
                 uri = JsonLdUrl.resolve(uri, (String) context);
