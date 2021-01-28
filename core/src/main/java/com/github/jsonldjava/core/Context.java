@@ -143,6 +143,9 @@ public class Context extends LinkedHashMap<String, Object> {
      */
     @SuppressWarnings("unchecked")
     public Context parse(Object localContext, List<String> remoteContexts) throws JsonLdError {
+        if (remoteContexts == null) {
+            remoteContexts = new ArrayList<String>();
+        }
         return parse(localContext, remoteContexts, false);
     }
 
@@ -163,11 +166,8 @@ public class Context extends LinkedHashMap<String, Object> {
      * @throws JsonLdError
      *             If there is an error parsing the contexts.
      */
-    private Context parse(Object localContext, List<String> remoteContexts,
+    private Context parse(Object localContext, final List<String> remoteContexts,
             boolean parsingARemoteContext) throws JsonLdError {
-        if (remoteContexts == null) {
-            remoteContexts = new ArrayList<String>();
-        }
         // 1. Initialize result to the result of cloning active context.
         Context result = this.clone(); // TODO: clone?
         // 2)
@@ -193,7 +193,8 @@ public class Context extends LinkedHashMap<String, Object> {
                 if (remoteContexts.contains(uri)) {
                     throw new JsonLdError(Error.RECURSIVE_CONTEXT_INCLUSION, uri);
                 }
-                remoteContexts.add(uri);
+                List<String> nextRemoteContexts = new ArrayList<>(remoteContexts);
+                nextRemoteContexts.add(uri);
 
                 // 3.2.3: Dereference context
                 final RemoteDocument rd = this.options.getDocumentLoader().loadDocument(uri);
@@ -208,7 +209,7 @@ public class Context extends LinkedHashMap<String, Object> {
                         .get(JsonLdConsts.CONTEXT);
 
                 // 3.2.4
-                result = result.parse(tempContext, remoteContexts, true);
+                result = result.parse(tempContext, nextRemoteContexts, true);
                 // 3.2.5
                 continue;
             } else if (!(context instanceof Map)) {
