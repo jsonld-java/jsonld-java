@@ -143,7 +143,6 @@ public class Context extends LinkedHashMap<String, Object> {
      * @throws JsonLdError
      *             If there is an error parsing the contexts.
      */
-    @SuppressWarnings("unchecked")
     public Context parse(Object localContext, List<String> remoteContexts) throws JsonLdError {
         return parse(localContext, remoteContexts, false);
     }
