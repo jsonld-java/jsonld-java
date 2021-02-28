@@ -152,6 +152,132 @@
       "purpose": "Tests the proper formatting of @type (even with useRdfType to false) into rdf:type when the object contains more triples.",
       "input": "fromRdf-0020-in.nq",
       "expect": "fromRdf-0020-out.jsonld"
+    },
+    {
+      "@id": "#tjs01",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:FromRDFTest"
+      ],
+      "name": "JSON literal (boolean true)",
+      "purpose": "Tests creating property with rdf:type rdf:JSON to a JSON literal (boolean true).",
+      "input": "fromRdf-js01-in.nq",
+      "expect": "fromRdf-js01-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs02",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:FromRDFTest"
+      ],
+      "name": "JSON literal (boolean false)",
+      "purpose": "Tests creating property with rdf:type rdf:JSON to a JSON literal (boolean false).",
+      "input": "fromRdf-js02-in.nq",
+      "expect": "fromRdf-js02-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs03",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:FromRDFTest"
+      ],
+      "name": "JSON literal (double)",
+      "purpose": "Tests creating property with rdf:type rdf:JSON to a JSON literal (double).",
+      "input": "fromRdf-js03-in.nq",
+      "expect": "fromRdf-js03-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs04",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:FromRDFTest"
+      ],
+      "name": "JSON literal (double-zero)",
+      "purpose": "Tests creating property with rdf:type rdf:JSON to a JSON literal (double-zero).",
+      "input": "fromRdf-js04-in.nq",
+      "expect": "fromRdf-js04-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs05",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:FromRDFTest"
+      ],
+      "name": "JSON literal (integer)",
+      "purpose": "Tests creating property with rdf:type rdf:JSON to a JSON literal (integer).",
+      "input": "fromRdf-js05-in.nq",
+      "expect": "fromRdf-js05-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs06",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:FromRDFTest"
+      ],
+      "name": "JSON literal (object)",
+      "purpose": "Tests creating property with rdf:type rdf:JSON to a JSON literal (object).",
+      "input": "fromRdf-js06-in.nq",
+      "expect": "fromRdf-js06-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs07",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:FromRDFTest"
+      ],
+      "name": "JSON literal (array)",
+      "purpose": "Tests creating property with rdf:type rdf:JSON to a JSON literal (array).",
+      "input": "fromRdf-js07-in.nq",
+      "expect": "fromRdf-js07-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs10",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:FromRDFTest"
+      ],
+      "name": "JSON literal (string)",
+      "purpose": "Tests creating property with rdf:type rdf:JSON to a JSON literal (string).",
+      "input": "fromRdf-js10-in.nq",
+      "expect": "fromRdf-js10-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs11",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:FromRDFTest"
+      ],
+      "name": "JSON literal (null)",
+      "purpose": "Tests creating property with rdf:type rdf:JSON to a JSON literal (null).",
+      "input": "fromRdf-js11-in.nq",
+      "expect": "fromRdf-js11-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
     }
   ]
 }

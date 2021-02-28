@@ -8,6 +8,7 @@ import static com.github.jsonldjava.core.JsonLdConsts.RDF_TYPE;
 import static com.github.jsonldjava.core.JsonLdUtils.isKeyword;
 import static com.github.jsonldjava.utils.Obj.newMap;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.github.jsonldjava.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,7 +190,9 @@ public class JsonLdApi {
             // 4
             if (elem.containsKey(JsonLdConsts.VALUE) || elem.containsKey(JsonLdConsts.ID)) {
                 final Object compactedValue = activeCtx.compactValue(activeProperty, elem);
-                if (!(compactedValue instanceof Map || compactedValue instanceof List)) {
+                if (!(compactedValue instanceof Map || compactedValue instanceof List) ||
+                        opts.isProcessingMode11() &&
+                                JsonLdConsts.JSON.equals(activeCtx.getTypeMapping(activeProperty))) {
                     return compactedValue;
                 }
             }
@@ -645,7 +649,8 @@ public class JsonLdApi {
                     }
                     // 7.4.6)
                     else if (JsonLdConsts.VALUE.equals(expandedProperty)) {
-                        if (value != null && (value instanceof Map || value instanceof List)) {
+                        if (value != null && (value instanceof Map || value instanceof List) &&
+                                !opts.isProcessingMode11()) {
                             throw new JsonLdError(Error.INVALID_VALUE_OBJECT_VALUE,
                                     "value of " + expandedProperty + " must be a scalar or null");
                         }
@@ -784,6 +789,12 @@ public class JsonLdApi {
                     }
                     // 7.4.13)
                     continue;
+                }
+                // 13.6 (from the Json-LD 1.1 spec)
+                else if (opts.isProcessingMode11() && JsonLdConsts.JSON.equals(activeCtx.getTypeMapping(key))) {
+                    Map<String, Object> temp = newMap(JsonLdConsts.TYPE, JsonLdConsts.JSON);
+                    temp.put(JsonLdConsts.VALUE, value);
+                    expandedValue = temp;
                 }
                 // 7.5
                 else if (JsonLdConsts.LANGUAGE.equals(activeCtx.getContainer(key))
@@ -926,16 +937,22 @@ public class JsonLdApi {
                 keySet.remove(JsonLdConsts.INDEX);
                 final boolean langremoved = keySet.remove(JsonLdConsts.LANGUAGE);
                 final boolean typeremoved = keySet.remove(JsonLdConsts.TYPE);
+                final boolean isJsonType = JsonLdConsts.JSON.equals(result.get(JsonLdConsts.TYPE));
                 if ((langremoved && typeremoved) || !keySet.isEmpty()) {
                     throw new JsonLdError(Error.INVALID_VALUE_OBJECT,
                             "value object has unknown keys");
                 }
                 // 8.2)
                 final Object rval = result.get(JsonLdConsts.VALUE);
-                if (rval == null) {
+                if (rval == null && !opts.isProcessingMode11()) {
                     // nothing else is possible with result if we set it to
                     // null, so simply return it
                     return null;
+                }
+                // 13.4.7.1 (from the Json-LD 1.1. spec)
+                if(opts.isProcessingMode11() && (rval instanceof Map || rval instanceof List) && !isJsonType) {
+                    throw new JsonLdError(Error.INVALID_VALUE_OBJECT_VALUE,
+                            "value of " + activeProperty + " must be a scalar or null");
                 }
                 // 8.3)
                 if (!(rval instanceof String) && result.containsKey(JsonLdConsts.LANGUAGE)) {
@@ -947,7 +964,9 @@ public class JsonLdApi {
                     // TODO: is this enough for "is an IRI"
                     if (!(result.get(JsonLdConsts.TYPE) instanceof String)
                             || ((String) result.get(JsonLdConsts.TYPE)).startsWith("_:")
-                            || !((String) result.get(JsonLdConsts.TYPE)).contains(":")) {
+                            || (!((String) result.get(JsonLdConsts.TYPE)).contains(":") &&
+                            JsonLdConsts.JSON.equals(result.get(JsonLdConsts.TYPE)) &&
+                            !opts.isProcessingMode11())) {
                         throw new JsonLdError(Error.INVALID_TYPED_VALUE,
                                 "value of @type must be an IRI");
                     }
@@ -1997,6 +2016,18 @@ public class JsonLdApi {
                     // 3.5.3)
                     if ((object.isIRI() || object.isBlankNode())) {
                         nodeMap.computeIfAbsent(object.getValue(), k -> new NodeMapNode(k));
+                    }
+
+                    if (opts.isProcessingMode11() && JsonLdConsts.RDF_JSON.equals(object.getDatatype())) {
+                        try {
+                            final Object json = JsonUtils.fromString(object.getValue());
+                            Map<String, Object> entries = newMap(JsonLdConsts.TYPE, JsonLdConsts.JSON);
+                            entries.put(JsonLdConsts.VALUE, json);
+                            JsonLdUtils.mergeValue(node, predicate, entries);
+                        } catch (IOException e) {
+                            throw new JsonLdError(JsonLdError.Error.INVALID_JSON_LITERAL);
+                        }
+                        continue;
                     }
 
                     // 3.5.4)

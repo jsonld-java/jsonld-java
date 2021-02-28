@@ -1,5 +1,7 @@
 package com.github.jsonldjava.core;
 
+import com.github.jsonldjava.utils.JsonUtils;
+
 import static com.github.jsonldjava.core.JsonLdConsts.RDF_FIRST;
 import static com.github.jsonldjava.core.JsonLdConsts.RDF_LANGSTRING;
 import static com.github.jsonldjava.core.JsonLdConsts.RDF_NIL;
@@ -10,6 +12,7 @@ import static com.github.jsonldjava.core.JsonLdConsts.XSD_DECIMAL;
 import static com.github.jsonldjava.core.JsonLdConsts.XSD_DOUBLE;
 import static com.github.jsonldjava.core.JsonLdConsts.XSD_INTEGER;
 import static com.github.jsonldjava.core.JsonLdConsts.XSD_STRING;
+import static com.github.jsonldjava.core.JsonLdConsts.RDF_JSON;
 import static com.github.jsonldjava.core.JsonLdUtils.isKeyword;
 import static com.github.jsonldjava.core.JsonLdUtils.isList;
 import static com.github.jsonldjava.core.JsonLdUtils.isObject;
@@ -17,6 +20,7 @@ import static com.github.jsonldjava.core.JsonLdUtils.isString;
 import static com.github.jsonldjava.core.JsonLdUtils.isValue;
 import static com.github.jsonldjava.utils.Obj.newMap;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -645,14 +649,21 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
      *            the JSON-LD value or node object.
      * @return the RDF literal or RDF resource.
      */
-    private Node objectToRDF(Object item) {
+    private Node objectToRDF(Object item) throws JsonLdError {
         // convert value object to RDF
         if (isValue(item)) {
             final Object value = ((Map<String, Object>) item).get("@value");
             final Object datatype = ((Map<String, Object>) item).get("@type");
 
             // convert to XSD datatypes as appropriate
-            if (value instanceof Boolean || value instanceof Number) {
+            if(api.opts.isProcessingMode11() && "@json".equals(datatype)) {
+                try {
+                    return new Literal(JsonUtils.toString(value), RDF_JSON, null);
+                } catch (IOException e) {
+                    throw new JsonLdError(JsonLdError.Error.INVALID_JSON_LITERAL);
+                }
+            }
+            else if (value instanceof Boolean || value instanceof Number) {
                 // convert to XSD datatype
                 if (value instanceof Boolean) {
                     return new Literal(value.toString(),

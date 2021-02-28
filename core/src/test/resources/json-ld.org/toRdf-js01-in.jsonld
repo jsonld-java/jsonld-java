@@ -1,0 +1,9 @@
+{
+  "@context": {
+    "e": {
+      "@id": "http://example.org/vocab#bool",
+      "@type": "@json"
+    }
+  },
+  "e": true
+}

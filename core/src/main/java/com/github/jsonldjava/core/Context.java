@@ -374,7 +374,8 @@ public class Context extends LinkedHashMap<String, Object> {
             // least not here!)
             if (JsonLdConsts.ID.equals(type) || JsonLdConsts.VOCAB.equals(type)
                     || (!type.startsWith(JsonLdConsts.BLANK_NODE_PREFIX)
-                            && JsonLdUtils.isAbsoluteIri(type))) {
+                            && JsonLdUtils.isAbsoluteIri(type)) ||
+                    options.isProcessingMode11() && JsonLdConsts.JSON.equals(type)) {
                 definition.put(JsonLdConsts.TYPE, type);
             } else {
                 throw new JsonLdError(Error.INVALID_TYPE_MAPPING, type);

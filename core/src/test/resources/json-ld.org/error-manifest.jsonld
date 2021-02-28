@@ -316,6 +316,34 @@
       "purpose": "Verifies that an exception is raised on expansion when processing an invalid context attempting to define @container on a keyword",
       "input": "expand-e042-in.jsonld",
       "expect": "keyword redefinition"
+    },
+    {
+      "@id": "#tjs08",
+      "@type": [
+        "jld:NegativeEvaluationTest",
+        "jld:FromRDFTest"
+      ],
+      "name": "Invalid JSON literal (bare-word)",
+      "purpose": "Processors must generate an error when deserializing an invalid JSON literal.",
+      "input": "fromRdf-js08-in.nq",
+      "expect": "invalid JSON literal",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs09",
+      "@type": [
+        "jld:NegativeEvaluationTest",
+        "jld:FromRDFTest"
+      ],
+      "name": "Invalid JSON literal (invalid structure)",
+      "purpose": "Processors must generate an error when deserializing an invalid JSON literal.",
+      "input": "fromRdf-js09-in.nq",
+      "expect": "invalid JSON literal",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
     }
   ]
 }

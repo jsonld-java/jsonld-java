@@ -245,6 +245,10 @@ public class JsonLdOptions {
         return processingMode;
     }
 
+    public boolean isProcessingMode11() {
+        return JSON_LD_1_1.equals(getProcessingMode());
+    }
+
     public void setProcessingMode(String processingMode) {
         this.processingMode = processingMode;
         if (processingMode.equals(JSON_LD_1_1)) {

@@ -615,6 +615,171 @@
       "context": "compact-0106-context.jsonld",
       "expect": "compact-0106-out.jsonld",
       "option": {"processingMode": "json-ld-1.0", "specVersion": "json-ld-1.1"}
+    },
+    {
+      "@id": "#tjs01",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:CompactTest"
+      ],
+      "name": "Compact JSON literal (boolean true)",
+      "purpose": "Tests compacting property with @type @json to a JSON literal (boolean true).",
+      "input": "compact-js01-in.jsonld",
+      "context": "compact-js01-context.jsonld",
+      "expect": "compact-js01-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs02",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:CompactTest"
+      ],
+      "name": "Compact JSON literal (boolean false)",
+      "purpose": "Tests compacting property with @type @json to a JSON literal (boolean false).",
+      "input": "compact-js02-in.jsonld",
+      "context": "compact-js02-context.jsonld",
+      "expect": "compact-js02-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs03",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:CompactTest"
+      ],
+      "name": "Compact JSON literal (double)",
+      "purpose": "Tests compacting property with @type @json to a JSON literal (double).",
+      "input": "compact-js03-in.jsonld",
+      "context": "compact-js03-context.jsonld",
+      "expect": "compact-js03-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs04",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:CompactTest"
+      ],
+      "name": "Compact JSON literal (double-zero)",
+      "purpose": "Tests compacting property with @type @json to a JSON literal (double-zero).",
+      "input": "compact-js04-in.jsonld",
+      "context": "compact-js04-context.jsonld",
+      "expect": "compact-js04-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs05",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:CompactTest"
+      ],
+      "name": "Compact JSON literal (integer)",
+      "purpose": "Tests compacting property with @type @json to a JSON literal (integer).",
+      "input": "compact-js05-in.jsonld",
+      "context": "compact-js05-context.jsonld",
+      "expect": "compact-js05-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs06",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:CompactTest"
+      ],
+      "name": "Compact JSON literal (object)",
+      "purpose": "Tests compacting property with @type @json to a JSON literal (object).",
+      "input": "compact-js06-in.jsonld",
+      "context": "compact-js06-context.jsonld",
+      "expect": "compact-js06-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs07",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:CompactTest"
+      ],
+      "name": "Compact JSON literal (array)",
+      "purpose": "Tests compacting property with @type @json to a JSON literal (array).",
+      "input": "compact-js07-in.jsonld",
+      "context": "compact-js07-context.jsonld",
+      "expect": "compact-js07-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs08",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:CompactTest"
+      ],
+      "name": "Compact already expanded JSON literal",
+      "purpose": "Tests compacting JSON literal does not expand terms inside json.",
+      "input": "compact-js08-in.jsonld",
+      "context": "compact-js08-context.jsonld",
+      "expect": "compact-js08-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs09",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:CompactTest"
+      ],
+      "name": "Compact already expanded JSON literal with aliased keys",
+      "purpose": "Tests compacting JSON literal in expanded form.",
+      "input": "compact-js09-in.jsonld",
+      "context": "compact-js09-context.jsonld",
+      "expect": "compact-js09-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs10",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:CompactTest"
+      ],
+      "name": "Compact JSON literal (string)",
+      "purpose": "Tests compacting property with @type @json to a JSON literal (string).",
+      "input": "compact-js10-in.jsonld",
+      "context": "compact-js10-context.jsonld",
+      "expect": "compact-js10-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs11",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:CompactTest"
+      ],
+      "name": "Compact JSON literal (null)",
+      "purpose": "Tests compacting property with @type @json to a JSON literal (null).",
+      "input": "compact-js11-in.jsonld",
+      "context": "compact-js11-context.jsonld",
+      "expect": "compact-js11-out.jsonld",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
     }
   ]
 }

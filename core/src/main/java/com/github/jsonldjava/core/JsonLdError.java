@@ -113,7 +113,9 @@ public class JsonLdError extends RuntimeException {
 
         PARSE_ERROR("parse error"),
 
-        UNKNOWN_ERROR("unknown error");
+        UNKNOWN_ERROR("unknown error"),
+
+        INVALID_JSON_LITERAL("invalid JSON literal");
 
         private final String error;
 

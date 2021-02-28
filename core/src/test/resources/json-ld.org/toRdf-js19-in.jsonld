@@ -1,0 +1,11 @@
+{
+  "@context": {
+    "type": "@type"
+  },
+  "ex:foo": {
+    "type": "@json",
+    "@value": {
+      "test": 1
+    }
+  }
+}

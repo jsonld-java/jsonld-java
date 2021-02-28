@@ -1,0 +1,6 @@
+{
+  "@context": {
+    "e": {"@id": "http://example.org/vocab#string", "@type": "@json"}
+  },
+  "e": "string"
+}
