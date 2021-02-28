@@ -21,13 +21,10 @@ import static com.github.jsonldjava.core.JsonLdUtils.isValue;
 import static com.github.jsonldjava.utils.Obj.newMap;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -658,7 +655,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
             // convert to XSD datatypes as appropriate
             if(api.opts.isProcessingMode11() && "@json".equals(datatype)) {
                 try {
-                    return new Literal(JsonUtils.toString(value), RDF_JSON, null);
+                    return new Literal(JsonUtils.toCanonical(value), RDF_JSON, null);
                 } catch (IOException e) {
                     throw new JsonLdError(JsonLdError.Error.INVALID_JSON_LITERAL);
                 }
@@ -681,14 +678,11 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                         if (XSD_DECIMAL.equals(datatype)) {
                             return new Literal(value.toString(), XSD_DECIMAL, null);
                         }
-                        final DecimalFormat df = new DecimalFormat("0.0###############E0");
-                        df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
-                        return new Literal(df.format(value),
+                        return new Literal(JsonLdConsts.DOUBLE_DECIMAL_FORMAT.format(value),
                                 datatype == null ? XSD_DOUBLE : (String) datatype, null);
                     }
                 } else {
-                    final DecimalFormat df = new DecimalFormat("0");
-                    return new Literal(df.format(value),
+                    return new Literal(JsonLdConsts.INT_DECIMAL_FORMAT.format(value),
                             datatype == null ? XSD_INTEGER : (String) datatype, null);
                 }
             } else if (((Map<String, Object>) item).containsKey("@language")) {

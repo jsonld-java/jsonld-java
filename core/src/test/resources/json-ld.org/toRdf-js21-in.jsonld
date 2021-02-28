@@ -1,0 +1,11 @@
+{
+  "@context": {
+    "ex:foo": {
+      "@type": "@json"
+    }
+  },
+  "ex:foo": {
+    "@context": "ex:not:a:context",
+    "test": 1
+  }
+}

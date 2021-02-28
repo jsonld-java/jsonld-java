@@ -1,0 +1,13 @@
+{
+  "@context": {
+    "e": {"@id": "http://example.org/vocab#c14n", "@type": "@json"}
+  },
+  "e": [
+    56,
+    {
+      "d": true,
+      "10": null,
+      "1": [ ]
+    }
+  ]
+}

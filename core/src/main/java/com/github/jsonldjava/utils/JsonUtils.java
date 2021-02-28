@@ -16,15 +16,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.jsonldjava.core.DocumentLoader;
 import com.github.jsonldjava.core.JsonLdApi;
+import com.github.jsonldjava.core.JsonLdConsts;
 import com.github.jsonldjava.core.JsonLdProcessor;
 
 import org.apache.commons.io.ByteOrderMark;
@@ -42,8 +40,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Functions used to make loading, parsing, and serializing JSON easy using
@@ -69,6 +65,16 @@ public class JsonUtils {
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final JsonFactory JSON_FACTORY = new JsonFactory(JSON_MAPPER);
+    private static final ObjectMapper CANONICAL_MAPPER = JsonMapper.builder().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true).build();
+    private static final SimpleModule module = new SimpleModule();
+    private static final JsonFactory CANONICAL_FACTORY = new JsonFactory(CANONICAL_MAPPER);
+
+    private static final JsonSerializer<Double> doubleSerializer = new JsonSerializer<Double>() {
+        @Override
+        public void serialize(Double value, JsonGenerator jgen, SerializerProvider serializerProvider) throws IOException {
+            jgen.writeNumber(JsonLdConsts.DOUBLE_CANONICAL.format(value));
+        }
+    };
 
     private static volatile CloseableHttpClient DEFAULT_HTTP_CLIENT;
     // Avoid possible endless loop when following alternate locations
@@ -83,6 +89,10 @@ public class JsonUtils {
         // where a wide range of URIs are used for subjects and predicates
         JSON_FACTORY.disable(JsonFactory.Feature.INTERN_FIELD_NAMES);
         JSON_FACTORY.disable(JsonFactory.Feature.CANONICALIZE_FIELD_NAMES);
+        //adding our custom serializer
+        module.addSerializer(Double.class ,doubleSerializer);
+        //registering the module with ObjectMapper
+        CANONICAL_MAPPER.registerModule(module);
     }
 
     /**
@@ -259,13 +269,10 @@ public class JsonUtils {
      * @param jsonObject
      *            The JSON-LD Object to serialize.
      * @return A JSON document serialised to a String.
-     * @throws JsonGenerationException
-     *             If there is a JSON error during serialization.
      * @throws IOException
      *             If there is an IO error during serialization.
      */
-    public static String toPrettyString(Object jsonObject)
-            throws JsonGenerationException, IOException {
+    public static String toPrettyString(Object jsonObject) throws IOException {
         final StringWriter sw = new StringWriter();
         writePrettyPrint(sw, jsonObject);
         return sw.toString();
@@ -277,14 +284,33 @@ public class JsonUtils {
      * @param jsonObject
      *            The JSON-LD Object to serialize.
      * @return A JSON document serialised to a String.
-     * @throws JsonGenerationException
-     *             If there is a JSON error during serialization.
      * @throws IOException
      *             If there is an IO error during serialization.
      */
-    public static String toString(Object jsonObject) throws JsonGenerationException, IOException {
+    public static String toString(Object jsonObject) throws IOException {
         final StringWriter sw = new StringWriter();
         write(sw, jsonObject);
+        return sw.toString();
+    }
+
+    /**
+     * Writes the given JSON-LD Object out to a String as JSON Canonicalization Scheme (JCS).
+     *
+     * @param jsonObject
+     *            The JSON-LD Object to serialize.
+     * @return A JSON document serialised to a String.
+     * @throws IOException
+     *             If there is an IO error during serialization.
+     */
+    public static String toCanonical(Object jsonObject)  throws IOException {
+        if(jsonObject == null) {
+            return "null";
+        }
+
+        final StringWriter sw = new StringWriter();
+
+        final JsonGenerator jw = CANONICAL_FACTORY.createGenerator(sw);
+        jw.writeObject(jsonObject);
         return sw.toString();
     }
 
@@ -295,13 +321,10 @@ public class JsonUtils {
      *            The writer that is to receive the serialized JSON-LD object.
      * @param jsonObject
      *            The JSON-LD Object to serialize.
-     * @throws JsonGenerationException
-     *             If there is a JSON error during serialization.
      * @throws IOException
      *             If there is an IO error during serialization.
      */
-    public static void write(Writer writer, Object jsonObject)
-            throws JsonGenerationException, IOException {
+    public static void write(Writer writer, Object jsonObject) throws IOException {
         final JsonGenerator jw = JSON_FACTORY.createGenerator(writer);
         jw.writeObject(jsonObject);
     }
@@ -314,13 +337,11 @@ public class JsonUtils {
      *            The writer that is to receive the serialized JSON-LD object.
      * @param jsonObject
      *            The JSON-LD Object to serialize.
-     * @throws JsonGenerationException
-     *             If there is a JSON error during serialization.
      * @throws IOException
      *             If there is an IO error during serialization.
      */
     public static void writePrettyPrint(Writer writer, Object jsonObject)
-            throws JsonGenerationException, IOException {
+            throws IOException {
         final JsonGenerator jw = JSON_FACTORY.createGenerator(writer);
         jw.useDefaultPrettyPrinter();
         jw.writeObject(jsonObject);

@@ -1,0 +1,8 @@
+{
+  "@context": {
+    "e": {"@id": "http://example.org/vocab#c14n", "@type": "@json"}
+  },
+  "e": {
+    "Unnormalized Unicode":"A\u030a"
+  }
+}

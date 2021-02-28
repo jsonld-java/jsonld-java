@@ -1,5 +1,9 @@
 package com.github.jsonldjava.core;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 /**
  * URI Constants used in the JSON-LD parser.
  */
@@ -60,6 +64,17 @@ public final class JsonLdConsts {
     public static final String BASE = "@base";
     public static final String JSON = "@json";
     public static final String REQUIRE_ALL = "@requireAll";
+
+    public final static DecimalFormat DOUBLE_DECIMAL_FORMAT = new DecimalFormat("0.0###############E0",
+            DecimalFormatSymbols.getInstance(Locale.US));
+
+    public final static DecimalFormat INT_DECIMAL_FORMAT = new DecimalFormat("0",
+            DecimalFormatSymbols.getInstance(Locale.US));
+
+    public final static DecimalFormat DOUBLE_CANONICAL = new DecimalFormat("0.#######",
+            DecimalFormatSymbols.getInstance(Locale.US));
+
+
 
     public enum Embed {
         ALWAYS, NEVER, LAST, LINK;

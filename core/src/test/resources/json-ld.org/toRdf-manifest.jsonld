@@ -928,6 +928,20 @@
       }
     },
     {
+      "@id": "#tjs04",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:ToRDFTest"
+      ],
+      "name": "Transform JSON literal (double-zero)",
+      "purpose": "Tests transforming property with @type @json to a JSON literal (double-zero).",
+      "input": "toRdf-js04-in.jsonld",
+      "expect": "toRdf-js04-out.nq",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
       "@id": "#tjs05",
       "@type": [
         "jld:PositiveEvaluationTest",
@@ -970,6 +984,20 @@
       }
     },
     {
+      "@id": "#tjs08",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:ToRDFTest"
+      ],
+      "name": "Transform JSON literal with array canonicalization",
+      "purpose": "Tests transforming JSON literal with array canonicalization.",
+      "input": "toRdf-js08-in.jsonld",
+      "expect": "toRdf-js08-out.nq",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
       "@id": "#tjs09",
       "@type": [
         "jld:PositiveEvaluationTest",
@@ -979,6 +1007,90 @@
       "purpose": "Tests transforming JSON literal with string canonicalization.",
       "input": "toRdf-js09-in.jsonld",
       "expect": "toRdf-js09-out.nq",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs10",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:ToRDFTest"
+      ],
+      "name": "Transform JSON literal with structural canonicalization",
+      "purpose": "Tests transforming JSON literal with structural canonicalization.",
+      "input": "toRdf-js10-in.jsonld",
+      "expect": "toRdf-js10-out.nq",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs14",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:ToRDFTest"
+      ],
+      "name": "Transform JSON literal without expanding contents",
+      "purpose": "Tests transforming JSON literal does not expand terms inside json.",
+      "input": "toRdf-js14-in.jsonld",
+      "expect": "toRdf-js14-out.nq",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs15",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:ToRDFTest"
+      ],
+      "name": "Transform JSON literal aleady in expanded form",
+      "purpose": "Tests transforming JSON literal in expanded form.",
+      "input": "toRdf-js15-in.jsonld",
+      "expect": "toRdf-js15-out.nq",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs16",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:ToRDFTest"
+      ],
+      "name": "Transform JSON literal aleady in expanded form with aliased keys",
+      "purpose": "Tests transforming JSON literal in expanded form with aliased keys in value object.",
+      "input": "toRdf-js16-in.jsonld",
+      "expect": "toRdf-js16-out.nq",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs17",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:ToRDFTest"
+      ],
+      "name": "Transform JSON literal (string)",
+      "purpose": "Tests transforming property with @type @json to a JSON literal (string).",
+      "input": "toRdf-js17-in.jsonld",
+      "expect": "toRdf-js17-out.nq",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs18",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:ToRDFTest"
+      ],
+      "name": "Transform JSON literal (null)",
+      "purpose": "Tests transforming property with @type @json to a JSON literal (null).",
+      "input": "toRdf-js18-in.jsonld",
+      "expect": "toRdf-js18-out.nq",
       "option": {
         "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
       }
@@ -1007,6 +1119,34 @@
       "purpose": "Tests transforming JSON literal with aliased @value.",
       "input": "toRdf-js20-in.jsonld",
       "expect": "toRdf-js20-out.nq",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs21",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:ToRDFTest"
+      ],
+      "name": "Transform JSON literal with @context",
+      "purpose": "Tests transforming JSON literal with a @context.",
+      "input": "toRdf-js21-in.jsonld",
+      "expect": "toRdf-js21-out.nq",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs22",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:ToRDFTest"
+      ],
+      "name": "Transform JSON literal (null) aleady in expanded form.",
+      "purpose": "Tests transforming property with @type @json to a JSON literal (null).",
+      "input": "toRdf-js22-in.jsonld",
+      "expect": "toRdf-js22-out.nq",
       "option": {
         "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
       }
