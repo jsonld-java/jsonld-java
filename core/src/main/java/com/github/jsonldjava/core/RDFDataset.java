@@ -655,7 +655,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
             // convert to XSD datatypes as appropriate
             if(api.opts.isProcessingMode11() && "@json".equals(datatype)) {
                 try {
-                    return new Literal(JsonUtils.toCanonical(value), RDF_JSON, null);
+                    return new Literal(JsonUtils.toJcsString(value), RDF_JSON, null);
                 } catch (IOException e) {
                     throw new JsonLdError(JsonLdError.Error.INVALID_JSON_LITERAL);
                 }

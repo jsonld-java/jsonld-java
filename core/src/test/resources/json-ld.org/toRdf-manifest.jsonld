@@ -1026,6 +1026,34 @@
       }
     },
     {
+      "@id": "#tjs11",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:ToRDFTest"
+      ],
+      "name": "Transform JSON literal with unicode canonicalization",
+      "purpose": "Tests transforming JSON literal with unicode canonicalization.",
+      "input": "toRdf-js11-in.jsonld",
+      "expect": "toRdf-js11-out.nq",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
+      "@id": "#tjs13",
+      "@type": [
+        "jld:PositiveEvaluationTest",
+        "jld:ToRDFTest"
+      ],
+      "name": "Transform JSON literal with wierd canonicalization",
+      "purpose": "Tests transforming JSON literal with wierd canonicalization.",
+      "input": "toRdf-js13-in.jsonld",
+      "expect": "toRdf-js13-out.nq",
+      "option": {
+        "processingMode": "json-ld-1.1", "specVersion": "json-ld-1.1"
+      }
+    },
+    {
       "@id": "#tjs14",
       "@type": [
         "jld:PositiveEvaluationTest",

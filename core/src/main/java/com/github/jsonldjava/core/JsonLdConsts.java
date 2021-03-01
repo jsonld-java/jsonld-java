@@ -71,11 +71,6 @@ public final class JsonLdConsts {
     public final static DecimalFormat INT_DECIMAL_FORMAT = new DecimalFormat("0",
             DecimalFormatSymbols.getInstance(Locale.US));
 
-    public final static DecimalFormat DOUBLE_CANONICAL = new DecimalFormat("0.#######",
-            DecimalFormatSymbols.getInstance(Locale.US));
-
-
-
     public enum Embed {
         ALWAYS, NEVER, LAST, LINK;
     }

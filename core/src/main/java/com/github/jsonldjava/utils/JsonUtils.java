@@ -13,7 +13,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.*;
@@ -65,14 +68,32 @@ public class JsonUtils {
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final JsonFactory JSON_FACTORY = new JsonFactory(JSON_MAPPER);
-    private static final ObjectMapper CANONICAL_MAPPER = JsonMapper.builder().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true).build();
+    private static final ObjectMapper JCS_MAPPER = JsonMapper.builder().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true).build();
     private static final SimpleModule module = new SimpleModule();
-    private static final JsonFactory CANONICAL_FACTORY = new JsonFactory(CANONICAL_MAPPER);
+    private static final JsonFactory jcs_FACTORY = new JsonFactory(JCS_MAPPER);
 
     private static final JsonSerializer<Double> doubleSerializer = new JsonSerializer<Double>() {
+
+        private DecimalFormat bigDecimalFor(String exponentSeparator) {
+            DecimalFormatSymbols symbol = DecimalFormatSymbols.getInstance(Locale.US);
+            symbol.setExponentSeparator(exponentSeparator);
+            return new DecimalFormat("0E00", symbol);
+        }
+
+        private final DecimalFormat DOUBLE_JCS = new DecimalFormat("0.#######",
+                DecimalFormatSymbols.getInstance(Locale.US));
+        private final DecimalFormat BIG_POSITIVE_DOUBLE_JCS = bigDecimalFor("e+");
+        private final DecimalFormat BIG_NEGATIVE_DOUBLE_JCS = bigDecimalFor("e");
+
         @Override
         public void serialize(Double value, JsonGenerator jgen, SerializerProvider serializerProvider) throws IOException {
-            jgen.writeNumber(JsonLdConsts.DOUBLE_CANONICAL.format(value));
+            if(value >= 1.0E21)
+                jgen.writeNumber(BIG_POSITIVE_DOUBLE_JCS.format(value).toLowerCase());
+            else if (value != 0 && value <= 1.0E-21)
+                jgen.writeNumber(BIG_NEGATIVE_DOUBLE_JCS.format(value).toLowerCase());
+            else
+                jgen.writeNumber(DOUBLE_JCS.format(value));
+
         }
     };
 
@@ -92,7 +113,7 @@ public class JsonUtils {
         //adding our custom serializer
         module.addSerializer(Double.class ,doubleSerializer);
         //registering the module with ObjectMapper
-        CANONICAL_MAPPER.registerModule(module);
+        JCS_MAPPER.registerModule(module);
     }
 
     /**
@@ -302,14 +323,14 @@ public class JsonUtils {
      * @throws IOException
      *             If there is an IO error during serialization.
      */
-    public static String toCanonical(Object jsonObject)  throws IOException {
+    public static String toJcsString(Object jsonObject)  throws IOException {
         if(jsonObject == null) {
             return "null";
         }
 
         final StringWriter sw = new StringWriter();
 
-        final JsonGenerator jw = CANONICAL_FACTORY.createGenerator(sw);
+        final JsonGenerator jw = jcs_FACTORY.createGenerator(sw);
         jw.writeObject(jsonObject);
         return sw.toString();
     }
