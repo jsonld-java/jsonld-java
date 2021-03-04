@@ -1,0 +1,9 @@
+{
+  "@context": {
+    "ex": "http://www.example.com/#"
+  },
+  "@type": "ex:Thing",
+  "ex:embed": {
+    "@embed": "@sometimes"
+  }
+}

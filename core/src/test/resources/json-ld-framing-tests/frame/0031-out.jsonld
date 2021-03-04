@@ -1,0 +1,5 @@
+{
+  "@context": {"ex": "http://example.org/"},
+  "@id": "ex:Sub2",
+  "ex:p": "Bar"
+}

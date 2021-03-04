@@ -1,0 +1,32 @@
+
+{
+  "@context": {
+    "@vocab": "https://schema.org/"
+  },
+  "@graph": [
+    {
+      "@id": "ALICE",
+      "@type": "Person",
+      "givenName": "Alice",
+      "follows": {
+        "@list": [
+          {
+            "@id": "https://schema.org/JANE"
+          }
+        ]
+      }
+    },
+    {
+      "@id": "JOHN",
+      "@type": "Person",
+      "givenName": "John",
+      "follows": {
+        "@list": [
+          {
+            "@id": "https://schema.org/JANE"
+          }
+        ]
+      }
+    }
+  ]
+}

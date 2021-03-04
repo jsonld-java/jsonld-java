@@ -1,0 +1,30 @@
+{
+  "@context": {
+    "dcterms": "http://purl.org/dc/terms/",
+    "ex": "http://example.org/vocab#",
+    "ex:contains": {
+      "@type": "@id"
+    },
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@graph": [
+    {
+      "@id": "http://example.org/test/#library",
+      "@type": "ex:Library",
+      "ex:contains": "http://example.org/test#book"
+    },
+    {
+      "@id": "http://example.org/test#book",
+      "@type": "ex:Book",
+      "dcterms:contributor": "Writer",
+      "dcterms:title": "My Book",
+      "ex:contains": "http://example.org/test#chapter"
+    },
+    {
+      "@id": "http://example.org/test#chapter",
+      "@type": "ex:Chapter",
+      "dcterms:description": "Fun",
+      "dcterms:title": "Chapter One"
+    }
+  ]
+}

@@ -1,0 +1,2960 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='text/html;charset=utf-8' http-equiv='Content-Type'>
+<title>
+Framing
+</title>
+<link href='frame-manifest.jsonld' rel='alternate'>
+<link href='https://www.w3.org/StyleSheets/TR/base' rel='stylesheet'>
+</head>
+<body>
+<p>
+<a href='http://www.w3.org/'>
+<img alt='W3C' height='48' src='http://www.w3.org/Icons/w3c_home' width='72'>
+</a>
+</p>
+<h1>Framing</h1>
+<p>This is an HTML version of a test manifest. The JSON-LD version of this manifest may be found at
+<a href="frame-manifest.jsonld">frame-manifest.jsonld</a>. The manifest vocabulary is described in the <a href="vocab.html">JSON-LD Test Vocabulary</a> (<a href="vocab.jsonld">JSON-LD</a>, <a href="vocab.ttl">Turtle</a>) and is based on the <a href="http://www.w3.org/TR/2014/NOTE-rdf11-testcases-20140225/">RDF Test Vocabulary</a>.</p>
+
+<p>The JSON-LD Test Suite is a set of tests that can
+be used to verify JSON-LD Processor conformance to the set of specifications
+that constitute JSON-LD. The goal of the suite is to provide an easy and
+comprehensive JSON-LD testing solution for developers creating JSON-LD Processors.</p>
+
+<p>The <a href="https://w3.org/TR/json-ld11-api">JSON-LD API Specification</a> maintains its own
+<a href="https://w3c.github.io/json-ld-api/tests/">test suite</a>.</p>
+
+<h2>General instructions for running the JSON-LD Test suites</h2>
+
+<h3><a href="frame-manifest.jsonld">frame</a> tests have <em>input</em>, <em>frame</em> and <em>expected</em> documents.</h3>
+
+<p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output.</p>
+
+<p>Additionally, if the <code>ordered</code> option is not set, result should be expanded and compared with the expanded <em>expected</em> document also using <a href="#json-ld-object-comparison">JSON-LD object comparison</a>.</p>
+
+<p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
+
+<p>Unless <code>processingMode</code> is set explicitly in a test entry, <code>processingMode</code> is compatible with both <code>json-ld-1.0</code> and <code>json-ld-1.1</code>.</p>
+
+<p>Test results that include a context input presume that the context is provided locally, and not from the referenced location, thus the results will include the content of the context file, rather than a reference.</p>
+
+<p>Developers are encouraged to make a local copy of the test suite (available on <a href="http://github.com/w3c/json-ld-api/tests/">GitHub</a>) and simulate the behavior of fetching test files remotely and setting HTTP headers as described in a particular test entry.</p>
+
+<h2 id="json-ld-object-comparison">JSON-LD Object comparison</h2>
+
+<p>If algorithms are invoked with the <code>ordered</code> flag set to <code>true</code>, simple JSON Object comparison may be used, as the order of all arrays will be preserved (except for <em>fromRdf</em>, unless the input quads are also ordered). If <code>ordered</code> is <code>false</code>, then the following algorithm will ensure arrays other than values of <code>@list</code> are compared without regard to order.</p>
+
+<p>JSON-LD Object comparison compares JSON objects, arrays, and values recursively for equality.</p>
+
+<ul>
+<li>JSON objects are compared entry by entry without regard to the ordering of entries within the object. Each entry must have a corresponding entry in the object being compared to. Values are compared recursively.</li>
+<li>JSON arrays are generally compared without regard to order (the lone exception being if the referencing key is <code>@list</code>). Each item within the array must be equivalent to an item in the array being compared to by using the comparison algorithm recursively. For values of <code>@list</code>, the order of these items is significant.</li>
+<li>JSON values are compared using strict equality.</li>
+<li>Values of <code>@language</code>, and other places where language tags may be used are specified in lowercase in the test results. Implementations should either normalize language tags for testing purposes, or compare language tags in a case-independent way.</li>
+</ul>
+
+<p>Note that some tests require re-expansion and comparison, as list values may exist as values of properties that have <code>@container: @list</code> and the comparison algorithm will not consider ordering significant.</p>
+
+<h1>Running tests</h1>
+
+<p>The top-level <a href="manifest.jsonld">manifest</a> references the specific test manifests, which in turn reference each test associated with a particular type of behavior.
+Implementations create their own infrastructure for running the test suite. In particular, the following should be considered:</p>
+
+<ul>
+<li><em>remote-doc</em> tests will likely not return expected HTTP headers, so the <em>options</em> should be used to determine what headers are associated with the input document.</li>
+<li>Some algorithms, particularly <em>fromRdf</em>, may not preserve the order of statements listed in the input document, and provision should be taken for performing unordered array comparison, for arrays other than values of <code>@list</code>. (This may be difficult for compacted results, where array value ordering is dependent on the associated term definition).</li>
+<li>When comparing documents after flattening, framing or generating RDF, blank node identifiers may not be predictable. Implementations using the JSON-LD 1.0 algorithm, where output is always sorted and blank node identifiers are generated sequentially from <code>_:b0</code> may continue to use a simple object comparison. Otherwise, implementations should take this into consideration. (One way to do this may be to reduce both results and <em>expected</em> to datsets to extract a bijective mapping of blank node labels between the two datasets as described in <a href="https://www.w3.org/TR/rdf11-concepts/#dfn-dataset-isomorphism">RDF Dataset Isomorphism</a>).</li>
+</ul>
+
+<h1>Contributing Tests</h1>
+
+<p>If you would like to contribute a new test or a fix to an existing test,
+please follow these steps:</p>
+
+<ol>
+<li>Notify the JSON-LD mailing list, public-json-ld-wg@w3.org,
+that you will be creating a new test or fix and the purpose of the
+change.</li>
+<li>Clone the git repository: git://github.com/w3c/json-ld-framing.git</li>
+<li>Make your changes and submit them via github, or via a &#39;git format-patch&#39;
+to the <a href="mailto:json-ld-wg@w3.org">JSON-LD Working Group mailing list</a>.</li>
+</ol>
+
+<h2>Distribution</h2>
+
+<p>Distributed under the <a href="http://www.w3.org/Consortium/Legal/2008/04-testsuite-license">W3C Test Suite License</a>. To contribute to a W3C Test Suite, see the <a href="http://www.w3.org/2004/10/27-testcases">policies and contribution forms</a>.</p>
+
+<h2>Disclaimer</h2>
+
+<p>UNDER THE EXCLUSIVE LICENSE, THIS DOCUMENT AND ALL DOCUMENTS, TESTS AND SOFTWARE THAT LINK THIS STATEMENT ARE PROVIDED &quot;AS IS,&quot; AND COPYRIGHT HOLDERS MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF THE DOCUMENT ARE SUITABLE FOR ANY PURPOSE; NOR THAT THE IMPLEMENTATION OF SUCH CONTENTS WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
+  COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE DOCUMENT OR THE PERFORMANCE OR IMPLEMENTATION OF THE CONTENTS THEREOF.</p>
+<dl>
+<dt>baseIri</dt>
+<dd>https://w3c.github.io/json-ld-framing/tests/</dd>
+</dl>
+<p>JSON-LD Framing tests.</p>
+<section>
+<h2>
+Test sequence:
+</h2>
+<dl class='entries'>
+<dt id='t0001'>
+Test t0001 Library framing example
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Basic example used in playgrond and spec examples.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0001-in.jsonld'>frame/0001-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0001-frame.jsonld'>frame/0001-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0001-out.jsonld'>frame/0001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0002'>
+Test t0002 reframe w/extra CURIE value.
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Append extra values to output.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0002-in.jsonld'>frame/0002-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0002-frame.jsonld'>frame/0002-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0002-out.jsonld'>frame/0002-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0003'>
+Test t0003 reframe (null)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Do not match without a matching @type</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0003-in.jsonld'>frame/0003-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0003-frame.jsonld'>frame/0003-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0003-out.jsonld'>frame/0003-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0004'>
+Test t0004 reframe (type)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0004</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Multiple matches on @type.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0004-in.jsonld'>frame/0004-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0004-frame.jsonld'>frame/0004-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0004-out.jsonld'>frame/0004-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0005'>
+Test t0005 reframe (explicit)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0005</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>If property is not in frame, and explicit is true, do not add any values for property to output.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0005-in.jsonld'>frame/0005-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0005-frame.jsonld'>frame/0005-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0005-out.jsonld'>frame/0005-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0006'>
+Test t0006 reframe (non-explicit)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0006</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Unless the explicit is false, processors append extra values to output.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0006-in.jsonld'>frame/0006-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0006-frame.jsonld'>frame/0006-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0006-out.jsonld'>frame/0006-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0007'>
+Test t0007 input has multiple types
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0007</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>If property is a keyword, processors add property and objects to output.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0007-in.jsonld'>frame/0007-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0007-frame.jsonld'>frame/0007-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0007-out.jsonld'>frame/0007-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0008'>
+Test t0008 array framing cases
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0008</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Various cases showing array output for @container: @set, and non-embedding of node values if @embed: false.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0008-in.jsonld'>frame/0008-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0008-frame.jsonld'>frame/0008-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0008-out.jsonld'>frame/0008-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0009'>
+Test t0009 default value
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0009</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Processors MUST skip property and property frame if property frame contains @omitDefault with a value of true. Processors MUST add property to output with a new dictionary having a property @preserve and a value that is a copy of the value of @default in frame if it exists, or the string @null otherwise.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0009-in.jsonld'>frame/0009-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0009-frame.jsonld'>frame/0009-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0009-out.jsonld'>frame/0009-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0010'>
+Test t0010 property CURIE conflict
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0010</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>(Not really framing) A term looking like a CURIE becomes a CURIE when framing/compacting if defined as such in frame/context in json-ld-1.0.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0010-in.jsonld'>frame/0010-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0010-frame.jsonld'>frame/0010-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0010-out.jsonld'>frame/0010-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0011'>
+Test t0011 @embed true/false
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0011</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>@embed within a frame controls the object embed flag when processing that frame (true and false values) in json-ld-1.0 mode.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0011-in.jsonld'>frame/0011-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0011-frame.jsonld'>frame/0011-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0011-out.jsonld'>frame/0011-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0012'>
+Test t0012 Array frame
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0012</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Multiple values for @type in frame match different nodes having one or the other type. With @embed false, nodes are serialized as multiple array values of @graph.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0012-in.jsonld'>frame/0012-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0012-frame.jsonld'>frame/0012-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0012-out.jsonld'>frame/0012-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0013'>
+Test t0013 Replace existing embed
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0013</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>An empty frame matches all objects, even if embedded, causing them to be serialized under @graph.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0013-in.jsonld'>frame/0013-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0013-frame.jsonld'>frame/0013-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0013-out.jsonld'>frame/0013-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0014'>
+Test t0014 Replace existing embed on 2nd pass
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0014</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>An embedded node which matches the top-level frame (on @type) is framed under @graph and continues to be embedded. Other nodes continue to be embedded.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0014-in.jsonld'>frame/0014-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0014-frame.jsonld'>frame/0014-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0014-out.jsonld'>frame/0014-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0015'>
+Test t0015 Replace deeply-nested embed
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0015</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Torture test.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0015-in.jsonld'>frame/0015-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0015-frame.jsonld'>frame/0015-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0015-out.jsonld'>frame/0015-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0016'>
+Test t0016 Use @type in ducktype filter
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0016</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Match if node has a @type property and frame has a @type property containing only an empty dictionary.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0016-in.jsonld'>frame/0016-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0016-frame.jsonld'>frame/0016-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0016-out.jsonld'>frame/0016-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0017'>
+Test t0017 Non-flat input
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0017</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Framing flattens expanded input, allowing for deeply embedded input to be re-framed.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0017-in.jsonld'>frame/0017-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0017-frame.jsonld'>frame/0017-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0017-out.jsonld'>frame/0017-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0018'>
+Test t0018 no frame @context but @graph output
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0018</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Set framing context to the value of @context from frame, if it exists, or to a new empty context, otherwise.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0018-in.jsonld'>frame/0018-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0018-frame.jsonld'>frame/0018-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0018-out.jsonld'>frame/0018-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0019'>
+Test t0019 Resources can be re-embedded again in each top-level frame match
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0019</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>@type matching matches nodes at top-level, and embedding causes them be embedded where referenced.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0019-in.jsonld'>frame/0019-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0019-frame.jsonld'>frame/0019-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0019-out.jsonld'>frame/0019-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0020'>
+Test t0020 Blank nodes in an array
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0020</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Empty frame matches all nodes at top-level, and repeats where embedded in json-ld-1.0 mode.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0020-in.jsonld'>frame/0020-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0020-frame.jsonld'>frame/0020-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0020-out.jsonld'>frame/0020-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0021'>
+Test t0021 Blank nodes in @type
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0021</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Empty frame matches all nodes at top-level, and repeats where embedded (with list content) in json-ld-1.0 mode.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0021-in.jsonld'>frame/0021-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0021-frame.jsonld'>frame/0021-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0021-out.jsonld'>frame/0021-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0022'>
+Test t0022 Match on @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0022</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Match if node and frame both have the same @id property.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0022-in.jsonld'>frame/0022-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0022-frame.jsonld'>frame/0022-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0022-out.jsonld'>frame/0022-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0023'>
+Test t0023 No match on []
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0023</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>No match if node has a property where frame has an empty array for that same property.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0023-in.jsonld'>frame/0023-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0023-frame.jsonld'>frame/0023-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0023-out.jsonld'>frame/0023-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0024'>
+Test t0024 match on any common properties if @requireAll: false
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0024</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Match if @requireAll is false and both node and frame contain common non-keyword properties of any value.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0024-in.jsonld'>frame/0024-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0024-frame.jsonld'>frame/0024-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0024-out.jsonld'>frame/0024-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0025'>
+Test t0025 @requireAll with missing values and @default
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0025</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Match if @requireAll is true and frame contains a non-keyword key not present in node, where the value is a JSON object containing only the key @default with any value.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0025-in.jsonld'>frame/0025-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0025-frame.jsonld'>frame/0025-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0025-out.jsonld'>frame/0025-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0026'>
+Test t0026 explicitly excludes unframed properties (@explicit: true)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0026</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>If property is not in frame, and explicit is true, processors must not add any values for property to output.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0026-in.jsonld'>frame/0026-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0026-frame.jsonld'>frame/0026-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0026-out.jsonld'>frame/0026-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0027'>
+Test t0027 non-existent framed properties create null property
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0027</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Recursively, replace all key-value pairs in compacted results where the key is @preserve with the value from the key-pair. If the value from the key-pair is @null, replace the value with null.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0027-in.jsonld'>frame/0027-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0027-frame.jsonld'>frame/0027-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0027-out.jsonld'>frame/0027-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0028'>
+Test t0028 embed matched frames with @reverse
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0028</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>If frame has the property @reverse, then for each reverse property and sub frame that are the values of @reverse in frame.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0028-in.jsonld'>frame/0028-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0028-frame.jsonld'>frame/0028-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0028-out.jsonld'>frame/0028-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0029'>
+Test t0029 embed matched frames with reversed property
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0029</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>If frame has the property @reverse, then for each reverse property and sub frame that are the values of @reverse in frame.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0029-in.jsonld'>frame/0029-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0029-frame.jsonld'>frame/0029-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0029-out.jsonld'>frame/0029-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0030'>
+Test t0030 @embed @always/@never
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0030</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>@embed within a frame controls the object embed flag when processing that frame (@always and @never values).</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0030-in.jsonld'>frame/0030-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0030-frame.jsonld'>frame/0030-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0030-out.jsonld'>frame/0030-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0031'>
+Test t0031 match none @type match
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0031</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Do not match objects with @type, if frame uses @type: [].</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0031-in.jsonld'>frame/0031-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0031-frame.jsonld'>frame/0031-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0031-out.jsonld'>frame/0031-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0032'>
+Test t0032 single @id match
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0032</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Match on a specific node with frame uses @id.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0032-in.jsonld'>frame/0032-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0032-frame.jsonld'>frame/0032-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0032-out.jsonld'>frame/0032-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0033'>
+Test t0033 multiple @id match
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0033</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Match on a specific node with frame uses @id with an array of IRIs.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0033-in.jsonld'>frame/0033-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0033-frame.jsonld'>frame/0033-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0033-out.jsonld'>frame/0033-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0034'>
+Test t0034 wildcard and match none
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0034</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Match/reject properties using both wildcard and match none.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0034-in.jsonld'>frame/0034-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0034-frame.jsonld'>frame/0034-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0034-out.jsonld'>frame/0034-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0035'>
+Test t0035 matches a deep node pattern
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0035</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Node patterns that don't match all levels, don't match top level.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0035-in.jsonld'>frame/0035-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0035-frame.jsonld'>frame/0035-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0035-out.jsonld'>frame/0035-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0036'>
+Test t0036 matches exact value pattern
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0036</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value objects matching value patterns are output, others are filtered.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0036-in.jsonld'>frame/0036-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0036-frame.jsonld'>frame/0036-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0036-out.jsonld'>frame/0036-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0037'>
+Test t0037 matches wildcard @value in value pattern
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0037</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value objects matching value patterns are output, others are filtered.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0037-in.jsonld'>frame/0037-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0037-frame.jsonld'>frame/0037-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0037-out.jsonld'>frame/0037-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0038'>
+Test t0038 matches wildcard @type in value pattern
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0038</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value objects matching value patterns are output, others are filtered.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0038-in.jsonld'>frame/0038-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0038-frame.jsonld'>frame/0038-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0038-out.jsonld'>frame/0038-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0039'>
+Test t0039 matches wildcard @language in value pattern
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0039</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value objects matching value patterns are output, others are filtered.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0039-in.jsonld'>frame/0039-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0039-frame.jsonld'>frame/0039-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0039-out.jsonld'>frame/0039-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0040'>
+Test t0040 matches match none @type in value pattern
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0040</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value objects matching value patterns are output, others are filtered.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0040-in.jsonld'>frame/0040-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0040-frame.jsonld'>frame/0040-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0040-out.jsonld'>frame/0040-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0041'>
+Test t0041 matches match none @language in value pattern
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0041</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value objects matching value patterns are output, others are filtered.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0041-in.jsonld'>frame/0041-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0041-frame.jsonld'>frame/0041-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0041-out.jsonld'>frame/0041-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0042'>
+Test t0042 matches some @value in value pattern
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0042</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value objects matching value patterns are output, others are filtered.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0042-in.jsonld'>frame/0042-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0042-frame.jsonld'>frame/0042-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0042-out.jsonld'>frame/0042-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0043'>
+Test t0043 matches some @type in value pattern
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0043</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value objects matching value patterns are output, others are filtered.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0043-in.jsonld'>frame/0043-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0043-frame.jsonld'>frame/0043-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0043-out.jsonld'>frame/0043-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0044'>
+Test t0044 matches some @language in value pattern
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0044</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value objects matching value patterns are output, others are filtered.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0044-in.jsonld'>frame/0044-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0044-frame.jsonld'>frame/0044-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0044-out.jsonld'>frame/0044-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0045'>
+Test t0045 excludes non-matched values in value pattern
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0045</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value objects matching value patterns are output, others are filtered.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0045-in.jsonld'>frame/0045-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0045-frame.jsonld'>frame/0045-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0045-out.jsonld'>frame/0045-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0046'>
+Test t0046 Merge graphs if no outer @graph is used
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0046</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Unless @graph exists at the top level, framing uses merged node objects in json-ld-1.0 mode.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0046-in.jsonld'>frame/0046-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0046-frame.jsonld'>frame/0046-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0046-out.jsonld'>frame/0046-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0047'>
+Test t0047 Frame default graph if outer @graph is used
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0047</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>If @graph exists at the top level, framing uses the default graph.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0047-in.jsonld'>frame/0047-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0047-frame.jsonld'>frame/0047-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0047-out.jsonld'>frame/0047-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0048'>
+Test t0048 Merge one graph and preserve another
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0048</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>@graph used within a property value frames embedded values from a named graph.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0048-in.jsonld'>frame/0048-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0048-frame.jsonld'>frame/0048-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0048-out.jsonld'>frame/0048-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0049'>
+Test t0049 Merge one graph and deep preserve another
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0049</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>@graph used within a property value frames embedded values from a named graph in json-ld-1.0 mode.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0049-in.jsonld'>frame/0049-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0049-frame.jsonld'>frame/0049-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0049-out.jsonld'>frame/0049-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0050'>
+Test t0050 Library example with named graphs
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0050</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd></dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0050-in.jsonld'>frame/0050-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0050-frame.jsonld'>frame/0050-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0050-out.jsonld'>frame/0050-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0051'>
+Test t0051 Compacting values of @preserve
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0051</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>When compacting the value of a property using @preserve, use the term definition for term to properly compact the value of @preserve.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0051-in.jsonld'>frame/0051-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0051-frame.jsonld'>frame/0051-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0051-out.jsonld'>frame/0051-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0052'>
+Test t0052 @id must not include a blank node identifier
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0052</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Node matching does not consider blank nodes.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0052-in.jsonld'>frame/0052-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0052-frame.jsonld'>frame/0052-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid frame
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0053'>
+Test t0053 @type must not include a blank node identifier
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0053</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Node matching does not consider blank nodes.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0053-in.jsonld'>frame/0053-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0053-frame.jsonld'>frame/0053-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid frame
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0054'>
+Test t0054 Out of range @embed value
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0054</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Any other value for @embed is invalid and indicates that an invalid @embed value error has been detected and processing is aborted.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0054-in.jsonld'>frame/0054-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0054-frame.jsonld'>frame/0054-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid @embed value
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0055'>
+Test t0055 Framing list with mixed values
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0055</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Framing list values which are mixed.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0055-in.jsonld'>frame/0055-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0055-frame.jsonld'>frame/0055-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0055-out.jsonld'>frame/0055-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0056'>
+Test t0056 Frame matching on matching value in list
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0056</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Lists match on any matching value.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0056-in.jsonld'>frame/0056-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0056-frame.jsonld'>frame/0056-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0056-out.jsonld'>frame/0056-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0057'>
+Test t0057 Frame matching on any matching value in list
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0057</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Lists match on any matching value.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0057-in.jsonld'>frame/0057-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0057-frame.jsonld'>frame/0057-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0057-out.jsonld'>frame/0057-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0058'>
+Test t0058 Frame matching with no matching value in list
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0058</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Lists match on any matching value.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0058-in.jsonld'>frame/0058-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0058-frame.jsonld'>frame/0058-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0058-out.jsonld'>frame/0058-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>omitGraph</dt>
+<dd>false</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0059'>
+Test t0059 @embed: @last replaces previous embed values with node reference
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0059</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Verify that within a matched node, by default only the last reference will be embedded in json-ld-1.0 mode.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0059-in.jsonld'>frame/0059-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0059-frame.jsonld'>frame/0059-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0059-out.jsonld'>frame/0059-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0060'>
+Test t0060 @embed: @once only embeds first value with node reference
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0060</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Verify that within a matched node and @embed: @first, by only the first reference will be embedded.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0060-in.jsonld'>frame/0060-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0060-frame.jsonld'>frame/0060-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0060-out.jsonld'>frame/0060-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>ordered</dt>
+<dd>true</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0061'>
+Test t0061 Matching embedded nodes with @default
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0061</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Verify that embedded nodes match with @default and a wildcard @id.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0061-in.jsonld'>frame/0061-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0061-frame.jsonld'>frame/0061-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0061-out.jsonld'>frame/0061-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0062'>
+Test t0062 An array with a single value remains an array if container is @set.
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0062</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Cleaning up @preserve/@null does not violate container: @set.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0062-in.jsonld'>frame/0062-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0062-frame.jsonld'>frame/0062-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0062-out.jsonld'>frame/0062-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0063'>
+Test t0063 Using @null in @default.
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0063</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>@null may be used as an @default value and is preserved in output.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0063-in.jsonld'>frame/0063-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0063-frame.jsonld'>frame/0063-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0063-out.jsonld'>frame/0063-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0064'>
+Test t0064 Using @default in @type.
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0064</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>@type may have a default value.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0064-in.jsonld'>frame/0064-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0064-frame.jsonld'>frame/0064-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0064-out.jsonld'>frame/0064-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0065'>
+Test t0065 Match on value
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0065</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value matching.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0065-in.jsonld'>frame/0065-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0065-frame.jsonld'>frame/0065-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0065-out.jsonld'>frame/0065-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0066'>
+Test t0066 Match on value reference
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0066</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Value reference matching.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0066-in.jsonld'>frame/0066-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0066-frame.jsonld'>frame/0066-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0066-out.jsonld'>frame/0066-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0067'>
+Test t0067 Match on list value
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0067</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>List value matching.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0067-in.jsonld'>frame/0067-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0067-frame.jsonld'>frame/0067-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0067-out.jsonld'>frame/0067-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0068'>
+Test t0068 Merge @type from different graphs
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0068</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>When merging nodes, ensure that @type values from each node are retained.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0068-in.jsonld'>frame/0068-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0068-frame.jsonld'>frame/0068-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/0068-out.jsonld'>frame/0068-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='teo01'>
+Test teo01 @embed true/false
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#teo01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>@embed within a frame controls the object embed flag when processing that frame (true and false values).</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/eo01-in.jsonld'>frame/eo01-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/eo01-frame.jsonld'>frame/eo01-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/eo01-out.jsonld'>frame/eo01-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tg001'>
+Test tg001 Library framing example with @graph and omitGraph is true.
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tg001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Basic example used in playground and spec examples.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/g001-in.jsonld'>frame/g001-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/g001-frame.jsonld'>frame/g001-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/g001-out.jsonld'>frame/g001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>omitGraph</dt>
+<dd>true</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tg002'>
+Test tg002 Simple embed
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tg002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Test embedded graphs</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/g002-in.jsonld'>frame/g002-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/g002-frame.jsonld'>frame/g002-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/g002-out.jsonld'>frame/g002-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tg003'>
+Test tg003 Embed with direct circular reference
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tg003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Test embedded graphs</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/g003-in.jsonld'>frame/g003-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/g003-frame.jsonld'>frame/g003-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/g003-out.jsonld'>frame/g003-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tg004'>
+Test tg004 Embed with indirect circular reference
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tg004</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Test embedded graphs</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/g004-in.jsonld'>frame/g004-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/g004-frame.jsonld'>frame/g004-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/g004-out.jsonld'>frame/g004-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tg005'>
+Test tg005 Embed with indirect circular reference via set
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tg005</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Test embedded graphs</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/g005-in.jsonld'>frame/g005-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/g005-frame.jsonld'>frame/g005-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/g005-out.jsonld'>frame/g005-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tg006'>
+Test tg006 Embed with nested indirect circular reference via set
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tg006</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Test embedded graphs</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/g006-in.jsonld'>frame/g006-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/g006-frame.jsonld'>frame/g006-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/g006-out.jsonld'>frame/g006-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tg007'>
+Test tg007 Multi-level simple embeds
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tg007</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Test embedded graphs</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/g007-in.jsonld'>frame/g007-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/g007-frame.jsonld'>frame/g007-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/g007-out.jsonld'>frame/g007-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tg008'>
+Test tg008 A tangle of nastiness
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tg008</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Test embedded graphs</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/g008-in.jsonld'>frame/g008-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/g008-frame.jsonld'>frame/g008-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/g008-out.jsonld'>frame/g008-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tg009'>
+Test tg009 Recursive property embed w/o circular reference
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tg009</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Test embedded graphs</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/g009-in.jsonld'>frame/g009-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/g009-frame.jsonld'>frame/g009-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/g009-out.jsonld'>frame/g009-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tg010'>
+Test tg010 Framing blank node unnamed graphs
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tg010</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Test embedded graphs</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/g010-in.jsonld'>frame/g010-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/g010-frame.jsonld'>frame/g010-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/g010-out.jsonld'>frame/g010-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin01'>
+Test tin01 Basic Included array
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/in01-in.jsonld'>frame/in01-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/in01-frame.jsonld'>frame/in01-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/in01-out.jsonld'>frame/in01-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin02'>
+Test tin02 Basic Included object
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin02</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/in02-in.jsonld'>frame/in02-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/in02-frame.jsonld'>frame/in02-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/in02-out.jsonld'>frame/in02-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin03'>
+Test tin03 json.api example
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin03</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/in03-in.jsonld'>frame/in03-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/in03-frame.jsonld'>frame/in03-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/in03-out.jsonld'>frame/in03-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp020'>
+Test tp020 Blank nodes in an array (prune bnodes)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp020</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Empty frame matches all nodes at top-level, and repeats where embedded.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0020-in.jsonld'>frame/0020-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0020-frame.jsonld'>frame/0020-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/p020-out.jsonld'>frame/p020-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp021'>
+Test tp021 Blank nodes in @type (prune bnodes)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp021</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Empty frame matches all nodes at top-level, and repeats where embedded (with list content).</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0021-in.jsonld'>frame/0021-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0021-frame.jsonld'>frame/0021-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/p021-out.jsonld'>frame/p021-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp046'>
+Test tp046 Merge graphs if no outer @graph is used (prune bnodes)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp046</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>Unless @graph exists at the top level, framing uses merged node objects.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0046-in.jsonld'>frame/0046-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0046-frame.jsonld'>frame/0046-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/p046-out.jsonld'>frame/p046-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp049'>
+Test tp049 Merge one graph and deep preserve another (prune bnodes)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp049</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>@graph used within a property value frames embedded values from a named graph.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/0049-in.jsonld'>frame/0049-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/0049-frame.jsonld'>frame/0049-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/p049-out.jsonld'>frame/p049-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp050'>
+Test tp050 Prune blank nodes with alias of @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp050</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>If @id is aliased in a frame, an unreferenced blank node is still pruned.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/p050-in.jsonld'>frame/p050-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/p050-frame.jsonld'>frame/p050-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/p050-out.jsonld'>frame/p050-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tra01'>
+Test tra01 @requireAll only matches if @type and other properties are present
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tra01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>If @requireAll is true, then all listed properties, including @type, must be present to match.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/ra01-in.jsonld'>frame/ra01-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/ra01-frame.jsonld'>frame/ra01-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/ra01-out.jsonld'>frame/ra01-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tra02'>
+Test tra02 @requireAll only matches if @id and @type match
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tra02</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>If @requireAll is true, then all listed properties, including @id and @type, must be present to match.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/ra02-in.jsonld'>frame/ra02-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/ra02-frame.jsonld'>frame/ra02-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/ra02-out.jsonld'>frame/ra02-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tra03'>
+Test tra03 @requireAll with type and properties
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tra03</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FrameTest</dd>
+<dt>Purpose</dt>
+<dd>If @requireAll is true, then all listed properties, including @type, must be present to match.</dd>
+<dt>input</dt>
+<dd>
+<a href='frame/ra03-in.jsonld'>frame/ra03-in.jsonld</a>
+</dd>
+<dt>frame</dt>
+<dd>
+<a href='frame/ra03-frame.jsonld'>frame/ra03-frame.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='frame/ra03-out.jsonld'>frame/ra03-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@vocab": "http://example.org/vocab#",
+    "@base": "http://example.org/base/",
+    "id": "@id",
+    "type": "@type",
+    "included": {"@id": "@included", "@container": "@set"},
+    "author": {"@type": "@id"},
+    "self": {"@type": "@id"},
+    "related": {"@type": "@id"}
+  },
+  "type": "articles",
+  "included": {
+    "@requireAll": true,
+    "type": ["comments", "people"],
+    "self": {}
+  }
+}

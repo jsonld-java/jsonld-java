@@ -1,0 +1,6 @@
+{
+  "@context": {"ex": "http://example.org/"},
+  "@requireAll": true,
+  "@id": ["ex:Sub1", "ex:Sub2"],
+  "@type": "ex:Type"
+}

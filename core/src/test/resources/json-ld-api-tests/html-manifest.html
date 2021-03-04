@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='text/html;charset=utf-8' http-equiv='Content-Type'>
+<title>
+HTML
+</title>
+<link href='html-manifest.jsonld' rel='alternate'>
+<link href='https://www.w3.org/StyleSheets/TR/base' rel='stylesheet'>
+</head>
+<body>
+<p>
+<a href='http://www.w3.org/'>
+<img alt='W3C' height='48' src='http://www.w3.org/Icons/w3c_home' width='72'>
+</a>
+</p>
+<h1>HTML</h1>
+<p>This is an HTML version of a test manifest. The JSON-LD version of this manifest may be found at
+<a href="html-manifest.jsonld">html-manifest.jsonld</a>. The manifest vocabulary is described in the <a href="vocab.html">JSON-LD Test Vocabulary</a> (<a href="vocab.jsonld">JSON-LD</a>, <a href="vocab.ttl">Turtle</a>) and is based on the <a href="http://www.w3.org/TR/2014/NOTE-rdf11-testcases-20140225/">RDF Test Vocabulary</a>.</p>
+
+<p>The JSON-LD Test Suite is a set of tests that can
+be used to verify JSON-LD Processor conformance to the set of specifications
+that constitute JSON-LD. The goal of the suite is to provide an easy and
+comprehensive JSON-LD testing solution for developers creating JSON-LD Processors.</p>
+
+<p>The <a href="https://w3.org/TR/json-ld11-framing">JSON-LD Framing Specification</a> maintains its own
+<a href="https://w3c.github.io/json-ld-framing/tests/">test suite</a>.</p>
+
+<h2>General instructions for running the JSON-LD Test suites</h2>
+
+<h3><a href="compact-manifest.html">compact</a> tests have <em>input</em>, <em>expected</em> and <em>context</em> documents.</h3>
+
+<p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output. Additionally, if the <code>ordered</code> option is not set, result should be expanded and compared with the expanded <em>expected</em> document also using <a href="#json-ld-object-comparison">JSON-LD object comparison</a>.</p>
+
+<p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
+<h3><a href="expand-manifest.html">expand</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
+
+<p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output.</p>
+
+<p>Expansion tests may have a <code>expandContext</code> option, which is treated
+as an IRI relative to the manifest.</p>
+
+<p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
+<h3><a href="html-manifest.html">html</a> tests have <em>input</em> and <em>expected</em> documents and an optional <em>context</em> document.</h3>
+
+<p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output after potentially remapping blank node identifiers (see below). Additionally, if the result is compacted and the <code>ordered</code> option is not set, result should be expanded and compared with the expanded <em>expected</em> document also using <a href="#json-ld-object-comparison">JSON-LD object comparison</a>.</p>
+
+<p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
+<h3><a href="flatten-manifest.html">flatten</a> tests have <em>input</em> and <em>expected</em> documents and an optional <em>context</em> document.</h3>
+
+<p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output after potentially remapping blank node identifiers (see below). Additionally, if the result is compacted and the <code>ordered</code> option is not set, result should be expanded and compared with the expanded <em>expected</em> document also using <a href="#json-ld-object-comparison">JSON-LD object comparison</a>.</p>
+
+<p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
+<p>Unless <code>processingMode</code> is set explicitly in a test entry, <code>processingMode</code> is compatible with both <code>json-ld-1.0</code> and <code>json-ld-1.1</code>.</p>
+
+<p>Test results that include a context input presume that the context is provided locally, and not from the referenced location, thus the results will include the content of the context file, rather than a reference.</p>
+
+<p>Developers are encouraged to make a local copy of the test suite (available on <a href="http://github.com/w3c/json-ld-api/tests/">GitHub</a>) and simulate the behavior of fetching test files remotely and setting HTTP headers as described in a particular test entry.</p>
+
+<h2 id="json-ld-object-comparison">JSON-LD Object comparison</h2>
+
+<p>If algorithms are invoked with the <code>ordered</code> flag set to <code>true</code>, simple JSON Object comparison may be used, as the order of all arrays will be preserved (except for <em>fromRdf</em>, unless the input quads are also ordered). If <code>ordered</code> is <code>false</code>, then the following algorithm will ensure arrays other than values of <code>@list</code> are compared without regard to order.</p>
+
+<p>JSON-LD Object comparison compares JSON objects, arrays, and values recursively for equality.</p>
+
+<ul>
+<li>JSON objects are compared entry by entry without regard to the ordering of entries within the object. Each entry must have a corresponding entry in the object being compared to. Values are compared recursively.</li>
+<li>JSON arrays are generally compared without regard to order (the lone exception being if the referencing key is <code>@list</code>). Each item within the array must be equivalent to an item in the array being compared to by using the comparison algorithm recursively. For values of <code>@list</code>, the order of these items is significant.</li>
+<li>JSON values are compared using strict equality.</li>
+<li>Values of <code>@language</code>, and other places where language tags may be used are specified in lowercase in the test results. Implementations should either normalize language tags for testing purposes, or compare language tags in a case-independent way.</li>
+</ul>
+
+<p>Note that some tests require re-expansion and comparison, as list values may exist as values of properties that have <code>@container: @list</code> and the comparison algorithm will not consider ordering significant.</p>
+
+<h1>Running tests</h1>
+
+<p>The top-level <a href="manifest.jsonld">manifest</a> references the specific test manifests, which in turn reference each test associated with a particular type of behavior.</p>
+
+<p>Implementations create their own infrastructure for running the test suite. In particular, the following should be considered:</p>
+
+<ul>
+<li><em>remote-doc</em> tests will likely not return expected HTTP headers, so the <em>options</em> should be used to determine what headers are associated with the input document.</li>
+<li>Test case properties identifying a file (<em>input</em>, <em>output</em>, <em>context</em>, <em>expectContext</em>, and <em>frame</em>) are presumed to have a media type appropriate for the file extension.
+
+<ul>
+<li><code>application/ld+json</code> for <code>.jsonld</code></li>
+<li><code>text/html</code> for <code>.html</code></li>
+<li><code>application/n-quads</code> for <code>.nq</code></li>
+</ul></li>
+<li>The media type for the file associated with the <em>input</em> property can be overridden using the <code>contentType</code> option.</li>
+<li>Some algorithms, particularly <em>fromRdf</em>, may not preserve the order of statements listed in the input document, and provision should be taken for performing unordered array comparison, for arrays other than values of <code>@list</code>. (This may be difficult for compacted results, where array value ordering is dependent on the associated term definition).</li>
+<li>Some <em>toRdf</em> tests require the use of <a href="https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-05">JSON Canonicalization Scheme</a> to properly generate RDF Literals from JSON literal values. This algorithm is non-normative, but is assumed to be used to properly compare results using <a href="https://www.w3.org/TR/rdf11-concepts/#dfn-dataset-isomorphism">RDF Dataset Isomorphism</a>. These tests are marked using the <code>useJCS</code> option.</li>
+<li>When comparing documents after flattening, framing or generating RDF, blank node identifiers may not be predictable. Implementations using the JSON-LD 1.0 algorithm, where output is always sorted and blank node identifiers are generated sequentially from <code>_:b0</code> may continue to use a simple object comparison. Otherwise, implementations should take this into consideration. (One way to do this may be to reduce both results and <em>expected</em> to datsets to extract a bijective mapping of blank node labels between the two datasets as described in <a href="https://www.w3.org/TR/rdf11-concepts/#dfn-dataset-isomorphism">RDF Dataset Isomorphism</a>).</li>
+<li>Some tests may have a <code>requires</code> property, indicating some optional behavior described by a test vocabulary term.</li>
+</ul>
+
+<h1>Contributing Tests</h1>
+
+<p>If you would like to contribute a new test or a fix to an existing test,
+please follow these steps:</p>
+
+<ol>
+<li>Notify the JSON-LD mailing list, public-json-ld-wg@w3.org,
+that you will be creating a new test or fix and the purpose of the
+change.</li>
+<li>Clone the git repository: git://github.com/w3c/json-ld-api.git</li>
+<li>Make your changes and submit them via github, or via a &#39;git format-patch&#39;
+to the <a href="mailto:json-ld-wg@w3.org">JSON-LD Working Group mailing list</a>.</li>
+</ol>
+
+<h2>Distribution</h2>
+
+<p>Distributed under the <a href="http://www.w3.org/Consortium/Legal/2008/04-testsuite-license">W3C Test Suite License</a>. To contribute to a W3C Test Suite, see the <a href="http://www.w3.org/2004/10/27-testcases">policies and contribution forms</a>.</p>
+
+<h2>Disclaimer</h2>
+
+<p>UNDER THE EXCLUSIVE LICENSE, THIS DOCUMENT AND ALL DOCUMENTS, TESTS AND SOFTWARE THAT LINK THIS STATEMENT ARE PROVIDED &quot;AS IS,&quot; AND COPYRIGHT HOLDERS MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF THE DOCUMENT ARE SUITABLE FOR ANY PURPOSE; NOR THAT THE IMPLEMENTATION OF SUCH CONTENTS WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
+  COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE DOCUMENT OR THE PERFORMANCE OR IMPLEMENTATION OF THE CONTENTS THEREOF.</p>
+<dl>
+<dt>baseIri</dt>
+<dd>https://w3c.github.io/json-ld-api/tests/</dd>
+</dl>
+<p>JSON-LD HTML tests</p>
+<section>
+<h2>
+Test sequence:
+</h2>
+<dl class='entries'>
+<dt id='te001'>
+Test te001 Expands embedded JSON-LD script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e001-in.html'>html/e001-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e001-out.jsonld'>html/e001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tex01'>
+Test tex01 Expands embedded JSON-LD script element (xhtml)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tex01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in XHTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e001-in.html'>html/e001-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e001-out.jsonld'>html/e001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>contentType</dt>
+<dd>application/xhtml+xml</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te002'>
+Test te002 Expands first embedded JSON-LD script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e002-in.html'>html/e002-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e002-out.jsonld'>html/e002-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te003'>
+Test te003 Expands targeted JSON-LD script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with fragment identifier</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e003-in.html#second'>html/e003-in.html#second</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e003-out.jsonld'>html/e003-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te004'>
+Test te004 Expands all embedded JSON-LD script elements with extractAllScripts option
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te004</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML extracting all elements</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e004-in.html'>html/e004-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e004-out.jsonld'>html/e004-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>extractAllScripts</dt>
+<dd>true</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te005'>
+Test te005 Expands multiple embedded JSON-LD script elements where one is an array
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te005</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML extracting all elements with array</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e005-in.html'>html/e005-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e005-out.jsonld'>html/e005-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>extractAllScripts</dt>
+<dd>true</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te006'>
+Test te006 Expands as empty with no embedded JSON-LD script elements
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te006</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML when none exist</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e006-in.html'>html/e006-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+loading document failed
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te007'>
+Test te007 Expands as empty with no embedded JSON-LD script elements and extractAllScripts
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te007</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML when none exist extracting all elements</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e007-in.html'>html/e007-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e007-out.jsonld'>html/e007-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>extractAllScripts</dt>
+<dd>true</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te010'>
+Test te010 Expands embedded JSON-LD script element with HTML character references
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te010</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with character references</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e010-in.html'>html/e010-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e010-out.jsonld'>html/e010-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te011'>
+Test te011 Errors if no element found at target
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te011</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with fragment identifier that doesn't exist</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e011-in.html#third'>html/e011-in.html#third</a>
+</dd>
+<dt>expect</dt>
+<dd>
+loading document failed
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te012'>
+Test te012 Errors if targeted element is not a script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te012</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML which isn't a script element</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e012-in.html#first'>html/e012-in.html#first</a>
+</dd>
+<dt>expect</dt>
+<dd>
+loading document failed
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te013'>
+Test te013 Errors if targeted element does not have type application/ld+json
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te013</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with wrong type</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e013-in.html#first'>html/e013-in.html#first</a>
+</dd>
+<dt>expect</dt>
+<dd>
+loading document failed
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te014'>
+Test te014 Errors if uncommented script text contains comment
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te014</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with comments leftover</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e014-in.html'>html/e014-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid script element
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te015'>
+Test te015 Errors if end comment missing
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te015</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with unballanced comments</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e015-in.html'>html/e015-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid script element
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te016'>
+Test te016 Errors if start comment missing
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te016</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with unballanced comments</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e016-in.html'>html/e016-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid script element
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te017'>
+Test te017 Errors if uncommented script is not valid JSON
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te017</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML which is invalid JSON</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e017-in.html'>html/e017-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid script element
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te018'>
+Test te018 Expands embedded JSON-LD script element relative to document base
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te018</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e018-in.html'>html/e018-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e018-out.jsonld'>html/e018-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te019'>
+Test te019 Expands embedded JSON-LD script element relative to base option
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te019</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e019-in.html'>html/e019-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e019-out.jsonld'>html/e019-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>base</dt>
+<dd>http://a.example.com/doc</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te020'>
+Test te020 Expands embedded JSON-LD script element relative to HTML base
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te020</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e020-in.html'>html/e020-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e020-out.jsonld'>html/e020-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>base</dt>
+<dd>http://a.example.com/doc</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te021'>
+Test te021 Expands embedded JSON-LD script element relative to relative HTML base
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te021</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e021-in.html'>html/e021-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e021-out.jsonld'>html/e021-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>base</dt>
+<dd>http://a.example.com/doc</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te022'>
+Test te022 Expands targeted JSON-LD script element with fragment and HTML base
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te022</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with fragment identifier</dd>
+<dt>input</dt>
+<dd>
+<a href='html/e022-in.html#second'>html/e022-in.html#second</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/e022-out.jsonld'>html/e022-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc001'>
+Test tc001 Compacts embedded JSON-LD script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/c001-in.html'>html/c001-in.html</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='html/c001-context.jsonld'>html/c001-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/c001-out.jsonld'>html/c001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc002'>
+Test tc002 Compacts first embedded JSON-LD script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/c002-in.html'>html/c002-in.html</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='html/c002-context.jsonld'>html/c002-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/c002-out.jsonld'>html/c002-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc003'>
+Test tc003 Compacts targeted JSON-LD script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with fragment identifier</dd>
+<dt>input</dt>
+<dd>
+<a href='html/c003-in.html#second'>html/c003-in.html#second</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='html/c003-context.jsonld'>html/c003-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/c003-out.jsonld'>html/c003-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc004'>
+Test tc004 Compacts all embedded JSON-LD script elements with extractAllScripts option
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc004</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML extracting all elements</dd>
+<dt>input</dt>
+<dd>
+<a href='html/c004-in.html'>html/c004-in.html</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='html/c004-context.jsonld'>html/c004-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/c004-out.jsonld'>html/c004-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>extractAllScripts</dt>
+<dd>true</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tf001'>
+Test tf001 Flattens embedded JSON-LD script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tf001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/f001-in.html'>html/f001-in.html</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='html/f001-context.jsonld'>html/f001-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/f001-out.jsonld'>html/f001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tf002'>
+Test tf002 Flattens first embedded JSON-LD script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tf002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/f002-in.html'>html/f002-in.html</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='html/f002-context.jsonld'>html/f002-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/f002-out.jsonld'>html/f002-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>extractAllScripts</dt>
+<dd>false</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tf003'>
+Test tf003 Flattens targeted JSON-LD script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tf003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with fragment identifier</dd>
+<dt>input</dt>
+<dd>
+<a href='html/f003-in.html#second'>html/f003-in.html#second</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='html/f003-context.jsonld'>html/f003-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/f003-out.jsonld'>html/f003-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tf004'>
+Test tf004 Flattens all script elements by default
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tf004</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML multiple script elements</dd>
+<dt>input</dt>
+<dd>
+<a href='html/f004-in.html'>html/f004-in.html</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='html/f004-context.jsonld'>html/f004-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/f004-out.jsonld'>html/f004-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr001'>
+Test tr001 Transforms embedded JSON-LD script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r001-in.html'>html/r001-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r001-out.nq'>html/r001-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr002'>
+Test tr002 Transforms first embedded JSON-LD script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r002-in.html'>html/r002-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r002-out.nq'>html/r002-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>extractAllScripts</dt>
+<dd>false</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr003'>
+Test tr003 Transforms targeted JSON-LD script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with fragment identifier</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r003-in.html#second'>html/r003-in.html#second</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r003-out.nq'>html/r003-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr004'>
+Test tr004 Expands all embedded JSON-LD script elements with extractAllScripts option
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr004</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML extracting all elements</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r004-in.html'>html/r004-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r004-out.nq'>html/r004-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>extractAllScripts</dt>
+<dd>true</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr005'>
+Test tr005 Expands multiple embedded JSON-LD script elements where one is an array
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr005</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML extracting all elements with array</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r005-in.html'>html/r005-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r005-out.nq'>html/r005-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>extractAllScripts</dt>
+<dd>true</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr006'>
+Test tr006 Expands as empty with no embedded JSON-LD script elements
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr006</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML when none exist</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r006-in.html'>html/r006-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r006-out.nq'>html/r006-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr007'>
+Test tr007 Expands as empty with no embedded JSON-LD script elements and extractAllScripts
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr007</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML when none exist extracting all elements</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r007-in.html'>html/r007-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r007-out.nq'>html/r007-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>extractAllScripts</dt>
+<dd>true</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr010'>
+Test tr010 Expands embedded JSON-LD script element with HTML character references
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr010</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with character references</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r010-in.html'>html/r010-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r010-out.nq'>html/r010-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr011'>
+Test tr011 Errors if no element found at target
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr011</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with fragment identifier that doesn't exist</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r011-in.html#third'>html/r011-in.html#third</a>
+</dd>
+<dt>expect</dt>
+<dd>
+loading document failed
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr012'>
+Test tr012 Errors if targeted element is not a script element
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr012</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML which isn't a script element</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r012-in.html#first'>html/r012-in.html#first</a>
+</dd>
+<dt>expect</dt>
+<dd>
+loading document failed
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr013'>
+Test tr013 Errors if targeted element does not have type application/ld+json
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr013</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with wrong type</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r013-in.html#first'>html/r013-in.html#first</a>
+</dd>
+<dt>expect</dt>
+<dd>
+loading document failed
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr014'>
+Test tr014 Errors if uncommented script text contains comment
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr014</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with comments leftover</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r014-in.html'>html/r014-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid script element
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr015'>
+Test tr015 Errors if end comment missing
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr015</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with unballanced comments</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r015-in.html'>html/r015-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid script element
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr016'>
+Test tr016 Errors if start comment missing
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr016</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with unballanced comments</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r016-in.html'>html/r016-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid script element
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr017'>
+Test tr017 Errors if uncommented script is not valid JSON
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr017</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML which is invalid JSON</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r017-in.html'>html/r017-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid script element
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr018'>
+Test tr018 Expands embedded JSON-LD script element relative to document base
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr018</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r018-in.html'>html/r018-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r018-out.nq'>html/r018-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr019'>
+Test tr019 Expands embedded JSON-LD script element relative to base option
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr019</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r019-in.html'>html/r019-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r019-out.nq'>html/r019-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>base</dt>
+<dd>http://a.example.com/doc</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr020'>
+Test tr020 Expands embedded JSON-LD script element relative to HTML base
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr020</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r020-in.html'>html/r020-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r020-out.nq'>html/r020-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>base</dt>
+<dd>http://a.example.com/doc</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr021'>
+Test tr021 Expands embedded JSON-LD script element relative to relative HTML base
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr021</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r021-in.html'>html/r021-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r021-out.nq'>html/r021-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>base</dt>
+<dd>http://a.example.com/doc</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr022'>
+Test tr022 Expands targeted JSON-LD script element with fragment and HTML base
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr022</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ToRDFTest, jld:HtmlTest</dd>
+<dt>Purpose</dt>
+<dd>Tests embedded JSON-LD in HTML with fragment identifier</dd>
+<dt>input</dt>
+<dd>
+<a href='html/r022-in.html#second'>html/r022-in.html#second</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='html/r022-out.nq'>html/r022-out.nq</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</body>
+</html>

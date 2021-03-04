@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='text/html;charset=utf-8' http-equiv='Content-Type'>
+<title>
+Remote document
+</title>
+<link href='remote-doc-manifest.jsonld' rel='alternate'>
+<link href='https://www.w3.org/StyleSheets/TR/base' rel='stylesheet'>
+</head>
+<body>
+<p>
+<a href='http://www.w3.org/'>
+<img alt='W3C' height='48' src='http://www.w3.org/Icons/w3c_home' width='72'>
+</a>
+</p>
+<h1>Remote document</h1>
+<p>This is an HTML version of a test manifest. The JSON-LD version of this manifest may be found at
+<a href="remote-doc-manifest.jsonld">remote-doc-manifest.jsonld</a>. The manifest vocabulary is described in the <a href="vocab.html">JSON-LD Test Vocabulary</a> (<a href="vocab.jsonld">JSON-LD</a>, <a href="vocab.ttl">Turtle</a>) and is based on the <a href="http://www.w3.org/TR/2014/NOTE-rdf11-testcases-20140225/">RDF Test Vocabulary</a>.</p>
+
+<p>The JSON-LD Test Suite is a set of tests that can
+be used to verify JSON-LD Processor conformance to the set of specifications
+that constitute JSON-LD. The goal of the suite is to provide an easy and
+comprehensive JSON-LD testing solution for developers creating JSON-LD Processors.</p>
+
+<p>The <a href="https://w3.org/TR/json-ld11-framing">JSON-LD Framing Specification</a> maintains its own
+<a href="https://w3c.github.io/json-ld-framing/tests/">test suite</a>.</p>
+
+<h2>General instructions for running the JSON-LD Test suites</h2>
+
+<h3><a href="expand-manifest.html">expand</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
+
+<p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output.</p>
+
+<p>Expansion tests may have a <code>expandContext</code> option, which is treated
+as an IRI relative to the manifest.</p>
+
+<p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
+<h3><a href="remote-doc-manifest.html">remote-doc</a> tests have <em>input</em> and <em>expected</em> documents.</h3>
+
+<p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output.</p>
+
+<p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
+
+<p>Options may be present to describe the intended HTTP behavior:</p>
+
+<ul>
+<li><em>contentType</em>: Content-Type of the returned HTTP payload, defaults to the appropriate type for the <em>input</em> suffix.</li>
+<li><em>httpStatus</em>: The HTTP status code to return, defaults to <code>200</code>.</li>
+<li><em>redirectTo</em>: The HTTP <em>Content-Location</em> header value.</li>
+<li><em>httpLink</em>: The HTTP <em>Link</em> header value.</li>
+</ul>
+<p>Unless <code>processingMode</code> is set explicitly in a test entry, <code>processingMode</code> is compatible with both <code>json-ld-1.0</code> and <code>json-ld-1.1</code>.</p>
+
+<p>Test results that include a context input presume that the context is provided locally, and not from the referenced location, thus the results will include the content of the context file, rather than a reference.</p>
+
+<p>Developers are encouraged to make a local copy of the test suite (available on <a href="http://github.com/w3c/json-ld-api/tests/">GitHub</a>) and simulate the behavior of fetching test files remotely and setting HTTP headers as described in a particular test entry.</p>
+
+<h2 id="json-ld-object-comparison">JSON-LD Object comparison</h2>
+
+<p>If algorithms are invoked with the <code>ordered</code> flag set to <code>true</code>, simple JSON Object comparison may be used, as the order of all arrays will be preserved (except for <em>fromRdf</em>, unless the input quads are also ordered). If <code>ordered</code> is <code>false</code>, then the following algorithm will ensure arrays other than values of <code>@list</code> are compared without regard to order.</p>
+
+<p>JSON-LD Object comparison compares JSON objects, arrays, and values recursively for equality.</p>
+
+<ul>
+<li>JSON objects are compared entry by entry without regard to the ordering of entries within the object. Each entry must have a corresponding entry in the object being compared to. Values are compared recursively.</li>
+<li>JSON arrays are generally compared without regard to order (the lone exception being if the referencing key is <code>@list</code>). Each item within the array must be equivalent to an item in the array being compared to by using the comparison algorithm recursively. For values of <code>@list</code>, the order of these items is significant.</li>
+<li>JSON values are compared using strict equality.</li>
+<li>Values of <code>@language</code>, and other places where language tags may be used are specified in lowercase in the test results. Implementations should either normalize language tags for testing purposes, or compare language tags in a case-independent way.</li>
+</ul>
+
+<p>Note that some tests require re-expansion and comparison, as list values may exist as values of properties that have <code>@container: @list</code> and the comparison algorithm will not consider ordering significant.</p>
+
+<h1>Running tests</h1>
+
+<p>The top-level <a href="manifest.jsonld">manifest</a> references the specific test manifests, which in turn reference each test associated with a particular type of behavior.</p>
+
+<p>Implementations create their own infrastructure for running the test suite. In particular, the following should be considered:</p>
+
+<ul>
+<li><em>remote-doc</em> tests will likely not return expected HTTP headers, so the <em>options</em> should be used to determine what headers are associated with the input document.</li>
+<li>Test case properties identifying a file (<em>input</em>, <em>output</em>, <em>context</em>, <em>expectContext</em>, and <em>frame</em>) are presumed to have a media type appropriate for the file extension.
+
+<ul>
+<li><code>application/ld+json</code> for <code>.jsonld</code></li>
+<li><code>text/html</code> for <code>.html</code></li>
+<li><code>application/n-quads</code> for <code>.nq</code></li>
+</ul></li>
+<li>The media type for the file associated with the <em>input</em> property can be overridden using the <code>contentType</code> option.</li>
+<li>Some algorithms, particularly <em>fromRdf</em>, may not preserve the order of statements listed in the input document, and provision should be taken for performing unordered array comparison, for arrays other than values of <code>@list</code>. (This may be difficult for compacted results, where array value ordering is dependent on the associated term definition).</li>
+<li>Some <em>toRdf</em> tests require the use of <a href="https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-05">JSON Canonicalization Scheme</a> to properly generate RDF Literals from JSON literal values. This algorithm is non-normative, but is assumed to be used to properly compare results using <a href="https://www.w3.org/TR/rdf11-concepts/#dfn-dataset-isomorphism">RDF Dataset Isomorphism</a>. These tests are marked using the <code>useJCS</code> option.</li>
+<li>When comparing documents after flattening, framing or generating RDF, blank node identifiers may not be predictable. Implementations using the JSON-LD 1.0 algorithm, where output is always sorted and blank node identifiers are generated sequentially from <code>_:b0</code> may continue to use a simple object comparison. Otherwise, implementations should take this into consideration. (One way to do this may be to reduce both results and <em>expected</em> to datsets to extract a bijective mapping of blank node labels between the two datasets as described in <a href="https://www.w3.org/TR/rdf11-concepts/#dfn-dataset-isomorphism">RDF Dataset Isomorphism</a>).</li>
+<li>Some tests may have a <code>requires</code> property, indicating some optional behavior described by a test vocabulary term.</li>
+</ul>
+
+<h1>Contributing Tests</h1>
+
+<p>If you would like to contribute a new test or a fix to an existing test,
+please follow these steps:</p>
+
+<ol>
+<li>Notify the JSON-LD mailing list, public-json-ld-wg@w3.org,
+that you will be creating a new test or fix and the purpose of the
+change.</li>
+<li>Clone the git repository: git://github.com/w3c/json-ld-api.git</li>
+<li>Make your changes and submit them via github, or via a &#39;git format-patch&#39;
+to the <a href="mailto:json-ld-wg@w3.org">JSON-LD Working Group mailing list</a>.</li>
+</ol>
+
+<h2>Distribution</h2>
+
+<p>Distributed under the <a href="http://www.w3.org/Consortium/Legal/2008/04-testsuite-license">W3C Test Suite License</a>. To contribute to a W3C Test Suite, see the <a href="http://www.w3.org/2004/10/27-testcases">policies and contribution forms</a>.</p>
+
+<h2>Disclaimer</h2>
+
+<p>UNDER THE EXCLUSIVE LICENSE, THIS DOCUMENT AND ALL DOCUMENTS, TESTS AND SOFTWARE THAT LINK THIS STATEMENT ARE PROVIDED &quot;AS IS,&quot; AND COPYRIGHT HOLDERS MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF THE DOCUMENT ARE SUITABLE FOR ANY PURPOSE; NOR THAT THE IMPLEMENTATION OF SUCH CONTENTS WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
+  COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE DOCUMENT OR THE PERFORMANCE OR IMPLEMENTATION OF THE CONTENTS THEREOF.</p>
+<dl>
+<dt>baseIri</dt>
+<dd>https://w3c.github.io/json-ld-api/tests/</dd>
+</dl>
+<p>JSON-LD Remote Document tests.</p>
+<section>
+<h2>
+Test sequence:
+</h2>
+<dl class='entries'>
+<dt id='t0001'>
+Test t0001 load JSON-LD document
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Document loader loads a JSON-LD document.</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/0001-in.jsonld'>remote-doc/0001-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/0001-out.jsonld'>remote-doc/0001-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0002'>
+Test t0002 load JSON document
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Document loader loads a JSON document.</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/0002-in.json'>remote-doc/0002-in.json</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/0002-out.jsonld'>remote-doc/0002-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0003'>
+Test t0003 load JSON document with extension-type
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Document loader loads a JSON document having an extension mime-subtype.</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/0003-in.jldt'>remote-doc/0003-in.jldt</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/0003-out.jsonld'>remote-doc/0003-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>contentType</dt>
+<dd>application/jldTest+json</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0004'>
+Test t0004 loading an unknown type raises loading document failed
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0004</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Loading a document with a non-JSON mime type raises loading document failed</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/0004-in.jldte'>remote-doc/0004-in.jldte</a>
+</dd>
+<dt>expect</dt>
+<dd>
+loading document failed
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>contentType</dt>
+<dd>application/jldTest</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0005'>
+Test t0005 Load JSON-LD through 301 redirect
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0005</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Loading a document with a redirect should use the redirected URL as document base</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/0005-in.jsonld'>remote-doc/0005-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/0001-out.jsonld'>remote-doc/0001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>redirectTo</dt>
+<dd>remote-doc/0001-in.jsonld</dd>
+<dt>httpStatus</dt>
+<dd>301</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0006'>
+Test t0006 Load JSON-LD through 303 redirect
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0006</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Loading a document with a redirect should use the redirected URL as document base</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/0006-in.jsonld'>remote-doc/0006-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/0001-out.jsonld'>remote-doc/0001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>redirectTo</dt>
+<dd>remote-doc/0001-in.jsonld</dd>
+<dt>httpStatus</dt>
+<dd>303</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0007'>
+Test t0007 Load JSON-LD through 307 redirect
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0007</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Loading a document with a redirect should use the redirected URL as document base</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/0007-in.jsonld'>remote-doc/0007-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/0001-out.jsonld'>remote-doc/0001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>redirectTo</dt>
+<dd>remote-doc/0001-in.jsonld</dd>
+<dt>httpStatus</dt>
+<dd>307</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0008'>
+Test t0008 Non-existant file (404)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0008</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Loading a non-existant file raises loading document failed error</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/missing-in.jsonld'>remote-doc/missing-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+loading document failed
+</dd>
+</dl>
+</dd>
+<dt id='t0009'>
+Test t0009 load JSON-LD document with link
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0009</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>If a context is specified in a link header, it is not used for JSON-LD.</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/0009-in.jsonld'>remote-doc/0009-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/0009-out.jsonld'>remote-doc/0009-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>httpLink</dt>
+<dd><0009-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0010'>
+Test t0010 load JSON document with link
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0010</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>If a context is specified in a link header, it is used for JSON.</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/0010-in.json'>remote-doc/0010-in.json</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/0010-out.jsonld'>remote-doc/0010-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>httpLink</dt>
+<dd><0010-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0011'>
+Test t0011 load JSON document with extension-type with link
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0011</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>If a context is specified in a link header, it is used for a JSON extension type.</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/0011-in.jldt'>remote-doc/0011-in.jldt</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/0011-out.jsonld'>remote-doc/0011-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>contentType</dt>
+<dd>application/jldTest+json</dd>
+<dt>httpLink</dt>
+<dd><0011-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0012'>
+Test t0012 Multiple context link headers
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0012</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Loading a file when multiple link headers are returned is an error</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/0012-in.json'>remote-doc/0012-in.json</a>
+</dd>
+<dt>expect</dt>
+<dd>
+multiple context link headers
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>httpLink</dt>
+<dd>["<0012-context1.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"", "<0012-context2.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\""]</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0013'>
+Test t0013 load JSON document with link to HTML document
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0013</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>If a context is specified in a link header, it is used for JSON, extracting from HTML.</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/0013-in.json'>remote-doc/0013-in.json</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/0013-out.jsonld'>remote-doc/0013-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>httpLink</dt>
+<dd><0013-context.html>; rel="http://www.w3.org/ns/json-ld#context"</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tla01'>
+Test tla01 Redirects if type is text/html
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tla01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Load an alternate link if type is not ld+json and rel=alternate.</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/la01-in.html'>remote-doc/la01-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/la01-out.jsonld'>remote-doc/la01-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>httpLink</dt>
+<dd><la01-alternate.jsonld>; rel="alternate"; type="application/ld+json"</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tla02'>
+Test tla02 Does not redirect if type is application/ld+json
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tla02</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Load an alternate link if type is not ld+json and rel=alternate.</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/la02-in.jsonld'>remote-doc/la02-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/la02-out.jsonld'>remote-doc/la02-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>httpLink</dt>
+<dd><la02-alternate.jsonld>; rel="alternate"; type="application/ld+json"</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tla03'>
+Test tla03 Does not redirect if link type is not application/ld+json
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tla03</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Load an alternate link if type is not ld+json and rel=alternate.</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/la03-in.json'>remote-doc/la03-in.json</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/la03-out.jsonld'>remote-doc/la03-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>httpLink</dt>
+<dd><la03-alternate.json>; rel="alternate"; type="application/json"</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tla04'>
+Test tla04 Does not redirect if type is application/json
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tla04</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Load an alternate link if type is not ld+json and rel=alternate.</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/la04-in.json'>remote-doc/la04-in.json</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/la04-out.jsonld'>remote-doc/la04-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>httpLink</dt>
+<dd><la04-alternate.jsonld>; rel="alternate"; type="application/ld+json"</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tla05'>
+Test tla05 Base is that of the alternate URL
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tla05</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:ExpandTest</dd>
+<dt>Purpose</dt>
+<dd>Load an alternate link if type is not ld+json and rel=alternate.</dd>
+<dt>input</dt>
+<dd>
+<a href='remote-doc/la05-in.html'>remote-doc/la05-in.html</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='remote-doc/la05-out.jsonld'>remote-doc/la05-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>httpLink</dt>
+<dd><la05-alternate.jsonld>; rel="alternate"; type="application/ld+json"</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</body>
+</html>

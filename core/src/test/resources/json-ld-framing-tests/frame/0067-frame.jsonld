@@ -1,0 +1,11 @@
+
+{
+  "@context": {
+    "@vocab": "https://schema.org/"
+  },
+  "follows": {
+    "@list": [{
+      "@id": "https://schema.org/JANE"
+    }]
+  }
+}

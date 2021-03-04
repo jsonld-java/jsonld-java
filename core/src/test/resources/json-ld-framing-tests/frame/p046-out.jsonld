@@ -1,0 +1,6 @@
+{
+  "@context": {"@vocab": "urn:"},
+  "@id": "urn:id-1",
+  "@type": "Class",
+  "preserve": {}
+}

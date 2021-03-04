@@ -1,0 +1,13 @@
+{
+  "@context": {
+    "ex": "http://www.example.com/#"
+  },
+  "@graph": [
+    {
+      "@id": "http://example/outer",
+      "@type": "ex:Thing",
+      "ex:embed1": {"@id": "http://example/embedded"},
+      "ex:embed2": {"@id": "http://example/embedded", "ex:name": "Embedded"}
+    }
+  ]
+}

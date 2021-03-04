@@ -1,0 +1,16 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@vocab": "http://example.org/vocab#"
+  },
+  "@id": "http://example.org/1",
+  "@type": "HumanMadeObject",
+  "produced_by": {
+    "@type": "Production",
+    "_label": "Top Production",
+    "part": {
+      "@type": "Production",
+      "_label": "Test Part"
+    }
+  }
+}

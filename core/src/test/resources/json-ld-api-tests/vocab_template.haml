@@ -1,0 +1,65 @@
+%html{lang: :en}
+  %head
+    %meta{charset: 'utf-8'}
+    %title<= ontology['dc11:title']
+    %link{href: "http://www.w3.org/StyleSheets/2016/base.css", rel: :stylesheet}
+    %script{type: 'application/ld+json'}
+      = source
+  %body
+    %h1<=ontology['dc11:title']
+    %p<
+      %a{href: 'http://www.w3.org/'}<
+        %img(src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72")
+    %p
+      Alternate versions of the test vocabulary definition exist in
+      %a(rel="alternate" href="vocab.ttl")<="Turtle"
+      and
+      = " "
+      %a(rel="alternate" href="vocab.jsonld")<>="JSON-LD"
+      = "."
+    %section
+      %h2<="Test Case Classes"
+      %dl
+        - classes.each do |cls|
+          %dt<
+            %strong<~cls["rdfs:label"]
+            = surround '(', ')' do
+              %strong<~cls['@id']
+          %dd<
+            :markdown
+              #{cls["rdfs:comment"].to_s.gsub(/^\s+/, '')}
+    %section
+      %h2<="Test Case Properties"
+      %dl
+        - properties.each do |prop|
+          %dt<
+            %strong<~prop["rdfs:label"]
+            = surround '(', ')' do
+              %strong<~prop['@id']
+          %dd<
+            :markdown
+              #{prop["rdfs:comment"].to_s.gsub(/^\s+/, '')}
+            %dl
+              - if prop['rdfs:domain']
+                %dt="Domain"
+                %dd<
+                  %strong=prop['rdfs:domain']
+              - if prop['rdfs:range']
+                %dt="Range"
+                %dd<
+                  %strong=prop['rdfs:range']
+
+    %section
+      %h2<="Requirements"
+      %dl
+        - requirements.each do |req|
+          %dt<
+            %strong<~req["rdfs:label"]
+            = surround '(', ')' do
+              %strong<~req['@id']
+          %dd<
+            :markdown
+              #{req["rdfs:comment"].to_s.gsub(/^\s+/, '')}
+        
+    %footer
+      %span<= ontology["dc11:publisher"]

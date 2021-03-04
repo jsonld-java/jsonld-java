@@ -1,0 +1,13 @@
+{
+  "@context": {
+    "dcterms": "http://purl.org/dc/terms/",
+    "ex": "http://example.org/vocab#"
+  },
+  "@type": "ex:Library",
+  "ex:contains": {
+    "@type": "ex:Book",
+    "ex:contains": {
+      "@type": "ex:Chapter"
+    }
+  }
+}

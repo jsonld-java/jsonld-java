@@ -1,0 +1,9 @@
+
+{
+  "@context": {
+    "@vocab": "https://schema.org/"
+  },
+  "@id": "JOHN",
+  "@type": "Person",
+  "givenName": "John"
+}

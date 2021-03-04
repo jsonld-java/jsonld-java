@@ -1,0 +1,7278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='text/html;charset=utf-8' http-equiv='Content-Type'>
+<title>
+Compaction
+</title>
+<link href='compact-manifest.jsonld' rel='alternate'>
+<link href='https://www.w3.org/StyleSheets/TR/base' rel='stylesheet'>
+</head>
+<body>
+<p>
+<a href='http://www.w3.org/'>
+<img alt='W3C' height='48' src='http://www.w3.org/Icons/w3c_home' width='72'>
+</a>
+</p>
+<h1>Compaction</h1>
+<p>This is an HTML version of a test manifest. The JSON-LD version of this manifest may be found at
+<a href="compact-manifest.jsonld">compact-manifest.jsonld</a>. The manifest vocabulary is described in the <a href="vocab.html">JSON-LD Test Vocabulary</a> (<a href="vocab.jsonld">JSON-LD</a>, <a href="vocab.ttl">Turtle</a>) and is based on the <a href="http://www.w3.org/TR/2014/NOTE-rdf11-testcases-20140225/">RDF Test Vocabulary</a>.</p>
+
+<p>The JSON-LD Test Suite is a set of tests that can
+be used to verify JSON-LD Processor conformance to the set of specifications
+that constitute JSON-LD. The goal of the suite is to provide an easy and
+comprehensive JSON-LD testing solution for developers creating JSON-LD Processors.</p>
+
+<p>The <a href="https://w3.org/TR/json-ld11-framing">JSON-LD Framing Specification</a> maintains its own
+<a href="https://w3c.github.io/json-ld-framing/tests/">test suite</a>.</p>
+
+<h2>General instructions for running the JSON-LD Test suites</h2>
+
+<h3><a href="compact-manifest.html">compact</a> tests have <em>input</em>, <em>expected</em> and <em>context</em> documents.</h3>
+
+<p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output. Additionally, if the <code>ordered</code> option is not set, result should be expanded and compared with the expanded <em>expected</em> document also using <a href="#json-ld-object-comparison">JSON-LD object comparison</a>.</p>
+
+<p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
+<p>Unless <code>processingMode</code> is set explicitly in a test entry, <code>processingMode</code> is compatible with both <code>json-ld-1.0</code> and <code>json-ld-1.1</code>.</p>
+
+<p>Test results that include a context input presume that the context is provided locally, and not from the referenced location, thus the results will include the content of the context file, rather than a reference.</p>
+
+<p>Developers are encouraged to make a local copy of the test suite (available on <a href="http://github.com/w3c/json-ld-api/tests/">GitHub</a>) and simulate the behavior of fetching test files remotely and setting HTTP headers as described in a particular test entry.</p>
+
+<h2 id="json-ld-object-comparison">JSON-LD Object comparison</h2>
+
+<p>If algorithms are invoked with the <code>ordered</code> flag set to <code>true</code>, simple JSON Object comparison may be used, as the order of all arrays will be preserved (except for <em>fromRdf</em>, unless the input quads are also ordered). If <code>ordered</code> is <code>false</code>, then the following algorithm will ensure arrays other than values of <code>@list</code> are compared without regard to order.</p>
+
+<p>JSON-LD Object comparison compares JSON objects, arrays, and values recursively for equality.</p>
+
+<ul>
+<li>JSON objects are compared entry by entry without regard to the ordering of entries within the object. Each entry must have a corresponding entry in the object being compared to. Values are compared recursively.</li>
+<li>JSON arrays are generally compared without regard to order (the lone exception being if the referencing key is <code>@list</code>). Each item within the array must be equivalent to an item in the array being compared to by using the comparison algorithm recursively. For values of <code>@list</code>, the order of these items is significant.</li>
+<li>JSON values are compared using strict equality.</li>
+<li>Values of <code>@language</code>, and other places where language tags may be used are specified in lowercase in the test results. Implementations should either normalize language tags for testing purposes, or compare language tags in a case-independent way.</li>
+</ul>
+
+<p>Note that some tests require re-expansion and comparison, as list values may exist as values of properties that have <code>@container: @list</code> and the comparison algorithm will not consider ordering significant.</p>
+
+<h1>Running tests</h1>
+
+<p>The top-level <a href="manifest.jsonld">manifest</a> references the specific test manifests, which in turn reference each test associated with a particular type of behavior.</p>
+
+<p>Implementations create their own infrastructure for running the test suite. In particular, the following should be considered:</p>
+
+<ul>
+<li><em>remote-doc</em> tests will likely not return expected HTTP headers, so the <em>options</em> should be used to determine what headers are associated with the input document.</li>
+<li>Test case properties identifying a file (<em>input</em>, <em>output</em>, <em>context</em>, <em>expectContext</em>, and <em>frame</em>) are presumed to have a media type appropriate for the file extension.
+
+<ul>
+<li><code>application/ld+json</code> for <code>.jsonld</code></li>
+<li><code>text/html</code> for <code>.html</code></li>
+<li><code>application/n-quads</code> for <code>.nq</code></li>
+</ul></li>
+<li>The media type for the file associated with the <em>input</em> property can be overridden using the <code>contentType</code> option.</li>
+<li>Some algorithms, particularly <em>fromRdf</em>, may not preserve the order of statements listed in the input document, and provision should be taken for performing unordered array comparison, for arrays other than values of <code>@list</code>. (This may be difficult for compacted results, where array value ordering is dependent on the associated term definition).</li>
+<li>Some <em>toRdf</em> tests require the use of <a href="https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-05">JSON Canonicalization Scheme</a> to properly generate RDF Literals from JSON literal values. This algorithm is non-normative, but is assumed to be used to properly compare results using <a href="https://www.w3.org/TR/rdf11-concepts/#dfn-dataset-isomorphism">RDF Dataset Isomorphism</a>. These tests are marked using the <code>useJCS</code> option.</li>
+<li>When comparing documents after flattening, framing or generating RDF, blank node identifiers may not be predictable. Implementations using the JSON-LD 1.0 algorithm, where output is always sorted and blank node identifiers are generated sequentially from <code>_:b0</code> may continue to use a simple object comparison. Otherwise, implementations should take this into consideration. (One way to do this may be to reduce both results and <em>expected</em> to datsets to extract a bijective mapping of blank node labels between the two datasets as described in <a href="https://www.w3.org/TR/rdf11-concepts/#dfn-dataset-isomorphism">RDF Dataset Isomorphism</a>).</li>
+<li>Some tests may have a <code>requires</code> property, indicating some optional behavior described by a test vocabulary term.</li>
+</ul>
+
+<h1>Contributing Tests</h1>
+
+<p>If you would like to contribute a new test or a fix to an existing test,
+please follow these steps:</p>
+
+<ol>
+<li>Notify the JSON-LD mailing list, public-json-ld-wg@w3.org,
+that you will be creating a new test or fix and the purpose of the
+change.</li>
+<li>Clone the git repository: git://github.com/w3c/json-ld-api.git</li>
+<li>Make your changes and submit them via github, or via a &#39;git format-patch&#39;
+to the <a href="mailto:json-ld-wg@w3.org">JSON-LD Working Group mailing list</a>.</li>
+</ol>
+
+<h2>Distribution</h2>
+
+<p>Distributed under the <a href="http://www.w3.org/Consortium/Legal/2008/04-testsuite-license">W3C Test Suite License</a>. To contribute to a W3C Test Suite, see the <a href="http://www.w3.org/2004/10/27-testcases">policies and contribution forms</a>.</p>
+
+<h2>Disclaimer</h2>
+
+<p>UNDER THE EXCLUSIVE LICENSE, THIS DOCUMENT AND ALL DOCUMENTS, TESTS AND SOFTWARE THAT LINK THIS STATEMENT ARE PROVIDED &quot;AS IS,&quot; AND COPYRIGHT HOLDERS MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF THE DOCUMENT ARE SUITABLE FOR ANY PURPOSE; NOR THAT THE IMPLEMENTATION OF SUCH CONTENTS WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
+  COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE DOCUMENT OR THE PERFORMANCE OR IMPLEMENTATION OF THE CONTENTS THEREOF.</p>
+<dl>
+<dt>baseIri</dt>
+<dd>https://w3c.github.io/json-ld-api/tests/</dd>
+</dl>
+<p>JSON-LD Compaction tests.</p>
+<section>
+<h2>
+Test sequence:
+</h2>
+<dl class='entries'>
+<dt id='t0001'>
+Test t0001 drop free-floating nodes
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Unreferenced nodes not containing properties are dropped</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0001-in.jsonld'>compact/0001-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0001-context.jsonld'>compact/0001-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0001-out.jsonld'>compact/0001-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0002'>
+Test t0002 basic
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Basic term and value compaction</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0002-in.jsonld'>compact/0002-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0002-context.jsonld'>compact/0002-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0002-out.jsonld'>compact/0002-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0003'>
+Test t0003 drop null and unmapped properties
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Properties mapped to null or which are never mapped are dropped</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0003-in.jsonld'>compact/0003-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0003-context.jsonld'>compact/0003-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0003-out.jsonld'>compact/0003-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0004'>
+Test t0004 optimize @set, keep empty arrays
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0004</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Containers mapped to @set keep empty arrays</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0004-in.jsonld'>compact/0004-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0004-context.jsonld'>compact/0004-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0004-out.jsonld'>compact/0004-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0005'>
+Test t0005 @type and prefix compaction
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0005</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact uses prefixes in @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0005-in.jsonld'>compact/0005-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0005-context.jsonld'>compact/0005-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0005-out.jsonld'>compact/0005-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0006'>
+Test t0006 keep expanded object format if @type doesn't match
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0006</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Values not matching a coerced @type remain in expanded form</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0006-in.jsonld'>compact/0006-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0006-context.jsonld'>compact/0006-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0006-out.jsonld'>compact/0006-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0007'>
+Test t0007 add context
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0007</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>External context is added to the compacted document</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0007-in.jsonld'>compact/0007-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0007-context.jsonld'>compact/0007-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0007-out.jsonld'>compact/0007-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0008'>
+Test t0008 alias keywords
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0008</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Aliases for keywords are used in compacted document</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0008-in.jsonld'>compact/0008-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0008-context.jsonld'>compact/0008-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0008-out.jsonld'>compact/0008-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0009'>
+Test t0009 compact @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0009</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Value with @id is compacted to string if property cast to @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0009-in.jsonld'>compact/0009-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0009-context.jsonld'>compact/0009-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0009-out.jsonld'>compact/0009-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0010'>
+Test t0010 array to @graph
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0010</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>An array of objects is serialized with @graph</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0010-in.jsonld'>compact/0010-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0010-context.jsonld'>compact/0010-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0010-out.jsonld'>compact/0010-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0011'>
+Test t0011 compact date
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0011</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Expanded value with type xsd:dateTime is represented as string with type coercion</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0011-in.jsonld'>compact/0011-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0011-context.jsonld'>compact/0011-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0011-out.jsonld'>compact/0011-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0012'>
+Test t0012 native types
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0012</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Native values are unmodified during compaction</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0012-in.jsonld'>compact/0012-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0012-context.jsonld'>compact/0012-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0012-out.jsonld'>compact/0012-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0013'>
+Test t0013 @value with @language
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0013</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Values with @language remain in expanded form by default</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0013-in.jsonld'>compact/0013-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0013-context.jsonld'>compact/0013-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0013-out.jsonld'>compact/0013-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0014'>
+Test t0014 array to aliased @graph
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0014</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Aliasing @graph uses alias in compacted document</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0014-in.jsonld'>compact/0014-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0014-context.jsonld'>compact/0014-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0014-out.jsonld'>compact/0014-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0015'>
+Test t0015 best match compaction
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0015</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Property with values of different types use most appropriate term when compacting</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0015-in.jsonld'>compact/0015-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0015-context.jsonld'>compact/0015-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0015-out.jsonld'>compact/0015-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0016'>
+Test t0016 recursive named graphs
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0016</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting a document with multiple embedded uses of @graph</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0016-in.jsonld'>compact/0016-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0016-context.jsonld'>compact/0016-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0016-out.jsonld'>compact/0016-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0017'>
+Test t0017 A term mapping to null removes the mapping
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0017</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Mapping a term to null causes the property and its values to be removed from the compacted document</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0017-in.jsonld'>compact/0017-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0017-context.jsonld'>compact/0017-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0017-out.jsonld'>compact/0017-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0018'>
+Test t0018 best matching term for lists
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0018</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Lists with values of different types use best term in compacted document</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0018-in.jsonld'>compact/0018-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0018-context.jsonld'>compact/0018-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0018-out.jsonld'>compact/0018-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0019'>
+Test t0019 Keep duplicate values in @list and @set
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0019</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Duplicate values in @list or @set are retained in compacted document</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0019-in.jsonld'>compact/0019-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0019-context.jsonld'>compact/0019-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0019-out.jsonld'>compact/0019-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0020'>
+Test t0020 Compact @id that is a property IRI when @container is @list
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0020</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>A term with @container: @list is also used as the value of an @id, if appropriate</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0020-in.jsonld'>compact/0020-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0020-context.jsonld'>compact/0020-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0020-out.jsonld'>compact/0020-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0021'>
+Test t0021 Compact properties and types using @vocab
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0021</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>@vocab is used to create relative properties and types if no other term matches</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0021-in.jsonld'>compact/0021-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0021-context.jsonld'>compact/0021-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0021-out.jsonld'>compact/0021-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0022'>
+Test t0022 @list compaction of nested properties
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0022</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact nested properties using @list containers</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0022-in.jsonld'>compact/0022-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0022-context.jsonld'>compact/0022-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0022-out.jsonld'>compact/0022-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0023'>
+Test t0023 prefer @vocab over compacted IRIs
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0023</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>@vocab takes precedence over prefixes - even if the result is longer</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0023-in.jsonld'>compact/0023-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0023-context.jsonld'>compact/0023-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0023-out.jsonld'>compact/0023-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0024'>
+Test t0024 most specific term matching in @list.
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0024</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>The most specific term that matches all of the elements in the list, taking into account the default language, must be selected.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0024-in.jsonld'>compact/0024-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0024-context.jsonld'>compact/0024-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0024-out.jsonld'>compact/0024-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0025'>
+Test t0025 Language maps
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0025</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Multiple values with different languages use language maps if property has @container: @language</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0025-in.jsonld'>compact/0025-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0025-context.jsonld'>compact/0025-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0025-out.jsonld'>compact/0025-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0026'>
+Test t0026 Language map term selection with complications
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0026</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Test appropriate property use given language maps with @vocab, a default language, and a competing term</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0026-in.jsonld'>compact/0026-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0026-context.jsonld'>compact/0026-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0026-out.jsonld'>compact/0026-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0027'>
+Test t0027 @container: @set with multiple values
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0027</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Fall back to term with @set container if term with language map is defined</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0027-in.jsonld'>compact/0027-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0027-context.jsonld'>compact/0027-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0027-out.jsonld'>compact/0027-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0028'>
+Test t0028 Alias keywords and use @vocab
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0028</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Combination of keyword aliases and @vocab</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0028-in.jsonld'>compact/0028-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0028-context.jsonld'>compact/0028-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0028-out.jsonld'>compact/0028-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0029'>
+Test t0029 Simple @index map
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0029</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Output uses index mapping if term is defined with @container: @index</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0029-in.jsonld'>compact/0029-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0029-context.jsonld'>compact/0029-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0029-out.jsonld'>compact/0029-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0030'>
+Test t0030 non-matching @container: @index
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0030</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Preserve @index tags if not compacted to an index map</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0030-in.jsonld'>compact/0030-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0030-context.jsonld'>compact/0030-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0030-out.jsonld'>compact/0030-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0031'>
+Test t0031 Compact @reverse
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0031</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact traverses through @reverse</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0031-in.jsonld'>compact/0031-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0031-context.jsonld'>compact/0031-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0031-out.jsonld'>compact/0031-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0032'>
+Test t0032 Compact keys in reverse-maps
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0032</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact traverses through @reverse</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0032-in.jsonld'>compact/0032-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0032-context.jsonld'>compact/0032-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0032-out.jsonld'>compact/0032-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0033'>
+Test t0033 Compact reverse-map to reverse property
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0033</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>A reverse map is replaced with a matching property defined with @reverse</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0033-in.jsonld'>compact/0033-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0033-context.jsonld'>compact/0033-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0033-out.jsonld'>compact/0033-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0034'>
+Test t0034 Skip property with @reverse if no match
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0034</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Do not use reverse property if no other property matches as normal property</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0034-in.jsonld'>compact/0034-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0034-context.jsonld'>compact/0034-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0034-out.jsonld'>compact/0034-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0035'>
+Test t0035 Compact @reverse node references using strings
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0035</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact node references to strings for reverse properties using @type: @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0035-in.jsonld'>compact/0035-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0035-context.jsonld'>compact/0035-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0035-out.jsonld'>compact/0035-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0036'>
+Test t0036 Compact reverse properties using index containers
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0036</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact using both reverse properties and index containers</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0036-in.jsonld'>compact/0036-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0036-context.jsonld'>compact/0036-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0036-out.jsonld'>compact/0036-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0037'>
+Test t0037 Compact keys in @reverse using @vocab
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0037</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact keys in @reverse using @vocab</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0037-in.jsonld'>compact/0037-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0037-context.jsonld'>compact/0037-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0037-out.jsonld'>compact/0037-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0038'>
+Test t0038 Index map round-tripping
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0038</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Complex round-tripping use case from Drupal</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0038-in.jsonld'>compact/0038-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0038-context.jsonld'>compact/0038-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0038-out.jsonld'>compact/0038-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='ta038'>
+Test ta038 Index map round-tripping
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#ta038</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Complex round-tripping use case from Drupal</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0038-in.jsonld'>compact/0038-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0038-context.jsonld'>compact/0038-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0038a-out.jsonld'>compact/0038a-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0039'>
+Test t0039 @graph is array
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0039</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Value of @graph is always an array</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0039-in.jsonld'>compact/0039-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0039-context.jsonld'>compact/0039-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0039-out.jsonld'>compact/0039-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0040'>
+Test t0040 @list is array
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0040</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure that value of @list is always an array</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0040-in.jsonld'>compact/0040-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0040-context.jsonld'>compact/0040-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0040-out.jsonld'>compact/0040-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0041'>
+Test t0041 index rejects term having @list
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0041</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>If an index is present, a term having an @list container is not selected</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0041-in.jsonld'>compact/0041-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0041-context.jsonld'>compact/0041-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0041-out.jsonld'>compact/0041-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0042'>
+Test t0042 @list keyword aliasing
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0042</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Make sure keyword aliasing works if a list can't be compacted</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0042-in.jsonld'>compact/0042-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0042-context.jsonld'>compact/0042-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0042-out.jsonld'>compact/0042-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0043'>
+Test t0043 select term over @vocab
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0043</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure that @vocab compaction isn't used if the result collides with a term</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0043-in.jsonld'>compact/0043-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0043-context.jsonld'>compact/0043-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0043-out.jsonld'>compact/0043-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0044'>
+Test t0044 @type: @vocab in reverse-map
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0044</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Prefer properties with @type: @vocab in reverse-maps if the value can be compacted to a term</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0044-in.jsonld'>compact/0044-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0044-context.jsonld'>compact/0044-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0044-out.jsonld'>compact/0044-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0045'>
+Test t0045 @id value uses relative IRI, not term
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0045</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Values of @id are transformed to relative IRIs, terms are ignored</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0045-in.jsonld'>compact/0045-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0045-context.jsonld'>compact/0045-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0045-out.jsonld'>compact/0045-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0046'>
+Test t0046 multiple objects without @context use @graph
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0046</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Wrap top-level array into @graph even if no context is passed</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0046-in.jsonld'>compact/0046-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0046-context.jsonld'>compact/0046-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0046-out.jsonld'>compact/0046-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0047'>
+Test t0047 Round-trip relative URLs
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0047</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Relative URLs remain relative after compaction</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0047-in.jsonld'>compact/0047-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0047-context.jsonld'>compact/0047-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0047-out.jsonld'>compact/0047-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0048'>
+Test t0048 term with @language: null
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0048</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Prefer terms with a language mapping set to null over terms without language-mapping for non-strings</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0048-in.jsonld'>compact/0048-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0048-context.jsonld'>compact/0048-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0048-out.jsonld'>compact/0048-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0049'>
+Test t0049 Round tripping of lists that contain just IRIs
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0049</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>List compaction without @container: @list still uses strings if @type: @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0049-in.jsonld'>compact/0049-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0049-context.jsonld'>compact/0049-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0049-out.jsonld'>compact/0049-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0050'>
+Test t0050 Reverse properties require @type: @id to use string values
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0050</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Node references in reverse properties are not compacted to strings without explicit type-coercion</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0050-in.jsonld'>compact/0050-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0050-context.jsonld'>compact/0050-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0050-out.jsonld'>compact/0050-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0051'>
+Test t0051 Round tripping @list with scalar
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0051</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Native values survive round-tripping with @list</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0051-in.jsonld'>compact/0051-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0051-context.jsonld'>compact/0051-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0051-out.jsonld'>compact/0051-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0052'>
+Test t0052 Round tripping @list with scalar and @graph alias
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0052</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Native values survive round-tripping with @list and @graph alias</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0052-in.jsonld'>compact/0052-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0052-context.jsonld'>compact/0052-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0052-out.jsonld'>compact/0052-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0053'>
+Test t0053 Use @type: @vocab if no @type: @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0053</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact to @type: @vocab when no @type: @id term available</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0053-in.jsonld'>compact/0053-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0053-context.jsonld'>compact/0053-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0053-out.jsonld'>compact/0053-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0054'>
+Test t0054 Compact to @type: @vocab and compact @id to term
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0054</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact to @type: @vocab and compact @id to term</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0054-in.jsonld'>compact/0054-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0054-context.jsonld'>compact/0054-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0054-out.jsonld'>compact/0054-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0055'>
+Test t0055 Round tripping @type: @vocab
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0055</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting IRI value of property with @type: @vocab can use term</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0055-in.jsonld'>compact/0055-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0055-context.jsonld'>compact/0055-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0055-out.jsonld'>compact/0055-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0056'>
+Test t0056 Prefer @type: @vocab over @type: @id for terms
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0056</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting IRI value of property with @type: @vocab can use term</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0056-in.jsonld'>compact/0056-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0056-context.jsonld'>compact/0056-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0056-out.jsonld'>compact/0056-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0057'>
+Test t0057 Complex round tripping @type: @vocab and @type: @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0057</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting IRI value of property with @type: @vocab can use term; more complex</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0057-in.jsonld'>compact/0057-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0057-context.jsonld'>compact/0057-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0057-out.jsonld'>compact/0057-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0058'>
+Test t0058 Prefer @type: @id over @type: @vocab for non-terms
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0058</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Choose a term having @type: @id over @type: @value if value is not a term</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0058-in.jsonld'>compact/0058-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0058-context.jsonld'>compact/0058-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0058-out.jsonld'>compact/0058-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0059'>
+Test t0059 Term with @type: @vocab if no @type: @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0059</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>If there's no term with @type: @id, use terms with @type: @vocab for IRIs not mapped to terms</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0059-in.jsonld'>compact/0059-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0059-context.jsonld'>compact/0059-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0059-out.jsonld'>compact/0059-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0060'>
+Test t0060 Term with @type: @id if no @type: @vocab and term value
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0060</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>If there's no term with @type: @vocab, use terms with @type: @id for IRIs mapped to terms</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0060-in.jsonld'>compact/0060-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0060-context.jsonld'>compact/0060-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0060-out.jsonld'>compact/0060-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0061'>
+Test t0061 @type: @vocab/@id with values matching either
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0061</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Separate IRIs for the same property to use term with more specific @type (@id vs. @vocab)</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0061-in.jsonld'>compact/0061-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0061-context.jsonld'>compact/0061-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0061-out.jsonld'>compact/0061-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0062'>
+Test t0062 @type: @vocab and relative IRIs
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0062</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Relative IRIs don't round-trip with @type: @vocab</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0062-in.jsonld'>compact/0062-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0062-context.jsonld'>compact/0062-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0062-out.jsonld'>compact/0062-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0063'>
+Test t0063 Compact IRI round-tripping with @type: @vocab
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0063</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Term with @type: @vocab will use compact IRIs</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0063-in.jsonld'>compact/0063-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0063-context.jsonld'>compact/0063-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0063-out.jsonld'>compact/0063-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0064'>
+Test t0064 Compact language-tagged and indexed strings to index-map
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0064</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Given values with both @index and @language and term index-map term, use index map</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0064-in.jsonld'>compact/0064-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0064-context.jsonld'>compact/0064-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0064-out.jsonld'>compact/0064-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0065'>
+Test t0065 Language-tagged and indexed strings with language-map
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0065</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Language-tagged and indexed strings don't compact to language-map</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0065-in.jsonld'>compact/0065-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0065-context.jsonld'>compact/0065-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0065-out.jsonld'>compact/0065-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0066'>
+Test t0066 Relative IRIs
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0066</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Complex use cases for relative IRI compaction</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0066-in.jsonld'>compact/0066-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0066-context.jsonld'>compact/0066-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0066-out.jsonld'>compact/0066-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0067'>
+Test t0067 Reverse properties with blank nodes
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0067</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact reverse property whose values are unlabeled blank nodes</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0067-in.jsonld'>compact/0067-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0067-context.jsonld'>compact/0067-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0067-out.jsonld'>compact/0067-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0068'>
+Test t0068 Single value reverse properties
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0068</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Single values of reverse properties are compacted as values of ordinary properties</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0068-in.jsonld'>compact/0068-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0068-context.jsonld'>compact/0068-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0068-out.jsonld'>compact/0068-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0069'>
+Test t0069 Single value reverse properties with @set
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0069</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Single values are kept in array form for reverse properties if the container is to @set</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0069-in.jsonld'>compact/0069-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0069-context.jsonld'>compact/0069-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0069-out.jsonld'>compact/0069-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0070'>
+Test t0070 compactArrays option
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0070</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Setting compactArrays to false causes single element arrays to be retained</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0070-in.jsonld'>compact/0070-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0070-context.jsonld'>compact/0070-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0070-out.jsonld'>compact/0070-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>compactArrays</dt>
+<dd>false</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0071'>
+Test t0071 Input has multiple @contexts, output has one
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0071</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Expanding input with multiple @contexts and compacting with just one doesn't output undefined properties</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0071-in.jsonld'>compact/0071-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0071-context.jsonld'>compact/0071-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0071-out.jsonld'>compact/0071-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0072'>
+Test t0072 Default language and unmapped properties
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0072</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure that the default language is handled correctly for unmapped properties</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0072-in.jsonld'>compact/0072-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0072-context.jsonld'>compact/0072-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0072-out.jsonld'>compact/0072-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0073'>
+Test t0073 Mapped @id and @type
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0073</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure that compaction works with mapped @id and @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0073-in.jsonld'>compact/0073-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0073-context.jsonld'>compact/0073-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0073-out.jsonld'>compact/0073-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0074'>
+Test t0074 Container as a list with type of @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0074</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure that compaction works for empty list when property has container declared as @list and type as @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0074-in.jsonld'>compact/0074-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0074-context.jsonld'>compact/0074-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0074-out.jsonld'>compact/0074-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0075'>
+Test t0075 Compact using relative fragment identifier
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0075</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting a relative round-trips</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0075-in.jsonld'>compact/0075-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0075-context.jsonld'>compact/0075-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0075-out.jsonld'>compact/0075-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+<dt>base</dt>
+<dd>http://example.org/</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0076'>
+Test t0076 Compacting IRI equivalent to base
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0076</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting IRI equivalent to base, uses last path segment of base ending in '/'</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0076-in.jsonld'>compact/0076-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0076-context.jsonld'>compact/0076-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0076-out.jsonld'>compact/0076-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0077'>
+Test t0077 Compact a @graph container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0077</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact a @graph container</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0077-in.jsonld'>compact/0077-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0077-context.jsonld'>compact/0077-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0077-out.jsonld'>compact/0077-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0078'>
+Test t0078 Compact a [@graph, @set] container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0078</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact with [@graph, @set]</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0078-in.jsonld'>compact/0078-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0078-context.jsonld'>compact/0078-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0078-out.jsonld'>compact/0078-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0079'>
+Test t0079 Compact a @graph container having @index
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0079</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Verify that having both @graph and @index allows @graph container compaction</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0079-in.jsonld'>compact/0079-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0079-context.jsonld'>compact/0079-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0079-out.jsonld'>compact/0079-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0080'>
+Test t0080 Do not compact a graph having @id with a term having an @graph container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0080</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Graph compaction works only on simple graphs</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0080-in.jsonld'>compact/0080-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0080-context.jsonld'>compact/0080-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0080-out.jsonld'>compact/0080-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0081'>
+Test t0081 Compact a [@graph, @index] container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0081</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact a @graph container with @index</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0081-in.jsonld'>compact/0081-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0081-context.jsonld'>compact/0081-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0081-out.jsonld'>compact/0081-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0082'>
+Test t0082 Compact a [@graph, @index, @set] container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0082</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact a @graph container with @index and @set</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0082-in.jsonld'>compact/0082-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0082-context.jsonld'>compact/0082-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0082-out.jsonld'>compact/0082-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0083'>
+Test t0083 [@graph, @index] does not compact graph with @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0083</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Graph compaction with @graph and @index works only on simple graphs</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0083-in.jsonld'>compact/0083-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0083-context.jsonld'>compact/0083-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0083-out.jsonld'>compact/0083-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0084'>
+Test t0084 Compact a simple graph with a [@graph, @id] container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0084</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact a simple graph using a @graph container with @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0084-in.jsonld'>compact/0084-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0084-context.jsonld'>compact/0084-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0084-out.jsonld'>compact/0084-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0085'>
+Test t0085 Compact a named graph with a [@graph, @id] container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0085</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact a named graph using a @graph container with @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0085-in.jsonld'>compact/0085-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0085-context.jsonld'>compact/0085-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0085-out.jsonld'>compact/0085-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0086'>
+Test t0086 Compact a simple graph with a [@graph, @id, @set] container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0086</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact a simple graph using a @graph container with @id and @set</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0086-in.jsonld'>compact/0086-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0086-context.jsonld'>compact/0086-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0086-out.jsonld'>compact/0086-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0087'>
+Test t0087 Compact a named graph with a [@graph, @id, @set] container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0087</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact a named graph using a @graph container with @id and @set</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0087-in.jsonld'>compact/0087-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0087-context.jsonld'>compact/0087-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0087-out.jsonld'>compact/0087-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0088'>
+Test t0088 Compact a graph with @index using a [@graph, @id] container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0088</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact a @graph container with @id and @set, discarding an @index value</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0088-in.jsonld'>compact/0088-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0088-context.jsonld'>compact/0088-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0088-out.jsonld'>compact/0088-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0089'>
+Test t0089 Language map term selection with complications
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0089</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Test appropriate property use given language maps with @vocab, a default language, no language, and competing terms</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0089-in.jsonld'>compact/0089-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0089-context.jsonld'>compact/0089-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0089-out.jsonld'>compact/0089-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0090'>
+Test t0090 Compact input with @graph container to output without @graph container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0090</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0090-in.jsonld'>compact/0090-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0090-context.jsonld'>compact/0090-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0090-out.jsonld'>compact/0090-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0091'>
+Test t0091 Compact input with @graph container to output without @graph container with compactArrays unset
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0091</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output with compactArrays unset</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0091-in.jsonld'>compact/0091-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0091-context.jsonld'>compact/0091-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0091-out.jsonld'>compact/0091-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>compactArrays</dt>
+<dd>false</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0092'>
+Test t0092 Compact input with [@graph, @set] container to output without [@graph, @set] container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0092</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0092-in.jsonld'>compact/0092-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0092-context.jsonld'>compact/0092-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0092-out.jsonld'>compact/0092-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0093'>
+Test t0093 Compact input with [@graph, @set] container to output without [@graph, @set] container with compactArrays unset
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0093</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output with compactArrays unset</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0093-in.jsonld'>compact/0093-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0093-context.jsonld'>compact/0093-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0093-out.jsonld'>compact/0093-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>compactArrays</dt>
+<dd>false</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0094'>
+Test t0094 Compact input with [@graph, @set] container to output without [@graph, @set] container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0094</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0094-in.jsonld'>compact/0094-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0094-context.jsonld'>compact/0094-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0094-out.jsonld'>compact/0094-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0095'>
+Test t0095 Relative propererty IRIs with @vocab: ''
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0095</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Complex use cases for relative IRI compaction or properties</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0095-in.jsonld'>compact/0095-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0095-context.jsonld'>compact/0095-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0095-out.jsonld'>compact/0095-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0096'>
+Test t0096 Compact @graph container (multiple graphs)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0096</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0096-in.jsonld'>compact/0096-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0096-context.jsonld'>compact/0096-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0096-out.jsonld'>compact/0096-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0097'>
+Test t0097 Compact [@graph, @set] container (multiple graphs)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0097</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0097-in.jsonld'>compact/0097-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0097-context.jsonld'>compact/0097-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0097-out.jsonld'>compact/0097-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0098'>
+Test t0098 Compact [@graph, @index] container (multiple indexed objects)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0098</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0098-in.jsonld'>compact/0098-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0098-context.jsonld'>compact/0098-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0098-out.jsonld'>compact/0098-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0099'>
+Test t0099 Compact [@graph, @index, @set] container (multiple indexed objects)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0099</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0099-in.jsonld'>compact/0099-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0099-context.jsonld'>compact/0099-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0099-out.jsonld'>compact/0099-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0100'>
+Test t0100 Compact [@graph, @id] container (multiple indexed objects)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0100</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0100-in.jsonld'>compact/0100-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0100-context.jsonld'>compact/0100-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0100-out.jsonld'>compact/0100-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0101'>
+Test t0101 Compact [@graph, @id, @set] container (multiple indexed objects)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0101</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0101-in.jsonld'>compact/0101-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0101-context.jsonld'>compact/0101-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0101-out.jsonld'>compact/0101-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0102'>
+Test t0102 Compact [@graph, @index] container (multiple indexes and objects)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0102</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0102-in.jsonld'>compact/0102-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0102-context.jsonld'>compact/0102-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0102-out.jsonld'>compact/0102-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0103'>
+Test t0103 Compact [@graph, @id] container (multiple ids and objects)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0103</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensure @graph appears properly in output</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0103-in.jsonld'>compact/0103-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0103-context.jsonld'>compact/0103-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0103-out.jsonld'>compact/0103-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0104'>
+Test t0104 Compact @type with @container: @set
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0104</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensures that a single @type value is represented as an array</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0104-in.jsonld'>compact/0104-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0104-context.jsonld'>compact/0104-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0104-out.jsonld'>compact/0104-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0105'>
+Test t0105 Compact @type with @container: @set using an alias of @type
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0105</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensures that a single @type value is represented as an array</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0105-in.jsonld'>compact/0105-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0105-context.jsonld'>compact/0105-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0105-out.jsonld'>compact/0105-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0106'>
+Test t0106 Do not compact @type with @container: @set to an array using an alias of @type
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0106</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Ensures that a single @type value is not represented as an array in 1.0</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0106-in.jsonld'>compact/0106-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0106-context.jsonld'>compact/0106-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0106-out.jsonld'>compact/0106-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0107'>
+Test t0107 Relative propererty IRIs with @vocab: ''
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0107</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Complex use cases for relative IRI compaction or properties</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0107-in.jsonld'>compact/0107-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0107-context.jsonld'>compact/0107-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0107-out.jsonld'>compact/0107-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0108'>
+Test t0108 context with JavaScript Object property names
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0108</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact with context including JavaScript Object property names</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0108-in.jsonld'>compact/0108-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0108-context.jsonld'>compact/0108-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0108-out.jsonld'>compact/0108-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0109'>
+Test t0109 Compact @graph container (multiple objects)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0109</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Multiple objects in a simple graph with a graph container need to use @included</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0109-in.jsonld'>compact/0109-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0109-context.jsonld'>compact/0109-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0109-out.jsonld'>compact/0109-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0110'>
+Test t0110 Compact [@graph, @set] container (multiple objects)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0110</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Multiple objects in a simple graph with a graph container need to use @included</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/0110-in.jsonld'>compact/0110-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/0110-context.jsonld'>compact/0110-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/0110-out.jsonld'>compact/0110-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc001'>
+Test tc001 adding new term
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using a scoped context uses term scope for selecting proper term</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c001-in.jsonld'>compact/c001-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c001-context.jsonld'>compact/c001-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c001-out.jsonld'>compact/c001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc002'>
+Test tc002 overriding a term
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using a scoped context uses term scope for selecting proper term</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c002-in.jsonld'>compact/c002-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c002-context.jsonld'>compact/c002-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c002-out.jsonld'>compact/c002-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc003'>
+Test tc003 property and value with different terms mapping to the same expanded property
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using a scoped context uses term scope for selecting proper term</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c003-in.jsonld'>compact/c003-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c003-context.jsonld'>compact/c003-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c003-out.jsonld'>compact/c003-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc004'>
+Test tc004 deep @context affects nested nodes
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc004</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using a scoped context uses term scope for selecting proper term</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c004-in.jsonld'>compact/c004-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c004-context.jsonld'>compact/c004-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c004-out.jsonld'>compact/c004-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc005'>
+Test tc005 scoped context layers on intemediate contexts
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc005</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using a scoped context uses term scope for selecting proper term</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c005-in.jsonld'>compact/c005-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c005-context.jsonld'>compact/c005-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c005-out.jsonld'>compact/c005-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc006'>
+Test tc006 adding new term
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc006</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>scoped context on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c006-in.jsonld'>compact/c006-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c006-context.jsonld'>compact/c006-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c006-out.jsonld'>compact/c006-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc007'>
+Test tc007 overriding a term
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc007</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>scoped context on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c007-in.jsonld'>compact/c007-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c007-context.jsonld'>compact/c007-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c007-out.jsonld'>compact/c007-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc008'>
+Test tc008 alias of @type
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc008</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>scoped context on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c008-in.jsonld'>compact/c008-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c008-context.jsonld'>compact/c008-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c008-out.jsonld'>compact/c008-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc009'>
+Test tc009 deep @type-scoped @context does NOT affect nested nodes
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc009</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>scoped context on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c009-in.jsonld'>compact/c009-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c009-context.jsonld'>compact/c009-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c009-out.jsonld'>compact/c009-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc010'>
+Test tc010 scoped context layers on intemediate contexts
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc010</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>scoped context on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c010-in.jsonld'>compact/c010-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c010-context.jsonld'>compact/c010-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c010-out.jsonld'>compact/c010-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc011'>
+Test tc011 applies context for all values
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc011</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>scoped context on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c011-in.jsonld'>compact/c011-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c011-context.jsonld'>compact/c011-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c011-out.jsonld'>compact/c011-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc012'>
+Test tc012 orders @type terms when applying scoped contexts
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc012</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>scoped context on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c012-in.jsonld'>compact/c012-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c012-context.jsonld'>compact/c012-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c012-out.jsonld'>compact/c012-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc013'>
+Test tc013 deep property-term scoped @context in @type-scoped @context affects nested nodes
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc013</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>scoped context on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c013-in.jsonld'>compact/c013-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c013-context.jsonld'>compact/c013-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c013-out.jsonld'>compact/c013-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc014'>
+Test tc014 type-scoped context nullification
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc014</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Nullifying a type-scoped context continues to use the previous context when compacting @type.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c014-in.jsonld'>compact/c014-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c014-context.jsonld'>compact/c014-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c014-out.jsonld'>compact/c014-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc015'>
+Test tc015 type-scoped base
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc015</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>type-scoped base</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c015-in.jsonld'>compact/c015-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c015-context.jsonld'>compact/c015-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c015-out.jsonld'>compact/c015-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc016'>
+Test tc016 type-scoped vocab
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc016</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>type-scoped vocab</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c016-in.jsonld'>compact/c016-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c016-context.jsonld'>compact/c016-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c016-out.jsonld'>compact/c016-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc017'>
+Test tc017 multiple type-scoped contexts are properly reverted
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc017</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>multiple type-scoped contexts are property reverted</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c017-in.jsonld'>compact/c017-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c017-context.jsonld'>compact/c017-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c017-out.jsonld'>compact/c017-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc018'>
+Test tc018 multiple type-scoped types resolved against previous context
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc018</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>multiple type-scoped types resolved against previous context</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c018-in.jsonld'>compact/c018-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c018-context.jsonld'>compact/c018-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c018-out.jsonld'>compact/c018-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc019'>
+Test tc019 type-scoped context with multiple property scoped terms
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc019</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>type-scoped context with multiple property scoped terms</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c019-in.jsonld'>compact/c019-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c019-context.jsonld'>compact/c019-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c019-out.jsonld'>compact/c019-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc020'>
+Test tc020 type-scoped value
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc020</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>type-scoped value</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c020-in.jsonld'>compact/c020-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c020-context.jsonld'>compact/c020-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c020-out.jsonld'>compact/c020-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc021'>
+Test tc021 type-scoped value mix
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc021</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>type-scoped value mix</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c021-in.jsonld'>compact/c021-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c021-context.jsonld'>compact/c021-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c021-out.jsonld'>compact/c021-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc022'>
+Test tc022 type-scoped property-scoped contexts including @type:@vocab
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc022</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>type-scoped property-scoped contexts including @type:@vocab</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c022-in.jsonld'>compact/c022-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c022-context.jsonld'>compact/c022-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c022-out.jsonld'>compact/c022-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc023'>
+Test tc023 composed type-scoped property-scoped contexts including @type:@vocab
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc023</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>composed type-scoped property-scoped contexts including @type:@vocab</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c023-in.jsonld'>compact/c023-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c023-context.jsonld'>compact/c023-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c023-out.jsonld'>compact/c023-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc024'>
+Test tc024 type-scoped + property-scoped + values evaluates against previous context
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc024</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>type-scoped + property-scoped + values evaluates against previous context</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c024-in.jsonld'>compact/c024-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c024-context.jsonld'>compact/c024-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c024-out.jsonld'>compact/c024-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc025'>
+Test tc025 type-scoped + graph container
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc025</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>type-scoped + graph container</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c025-in.jsonld'>compact/c025-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c025-context.jsonld'>compact/c025-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c025-out.jsonld'>compact/c025-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc026'>
+Test tc026 @propagate: true on type-scoped context
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc026</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>type-scoped context with @propagate: true survive node-objects</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c026-in.jsonld'>compact/c026-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c026-context.jsonld'>compact/c026-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c026-out.jsonld'>compact/c026-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tc027'>
+Test tc027 @propagate: false on property-scoped context
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tc027</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>property-scoped context with @propagate: false do not survive node-objects</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/c027-in.jsonld'>compact/c027-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/c027-context.jsonld'>compact/c027-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/c027-out.jsonld'>compact/c027-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tdi01'>
+Test tdi01 term direction null
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tdi01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Uses term with null direction when two terms conflict on direction.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/di01-in.jsonld'>compact/di01-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/di01-context.jsonld'>compact/di01-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/di01-out.jsonld'>compact/di01-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tdi02'>
+Test tdi02 use alias of @direction
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tdi02</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Use alias of @direction.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/di02-in.jsonld'>compact/di02-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/di02-context.jsonld'>compact/di02-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/di02-out.jsonld'>compact/di02-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tdi03'>
+Test tdi03 term selection with lists and direction
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tdi03</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Term selection includes values of @list.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/di03-in.jsonld'>compact/di03-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/di03-context.jsonld'>compact/di03-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/di03-out.jsonld'>compact/di03-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tdi04'>
+Test tdi04 simple language map with term direction
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tdi04</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Term selection with language maps and @direction.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/di04-in.jsonld'>compact/di04-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/di04-context.jsonld'>compact/di04-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/di04-out.jsonld'>compact/di04-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tdi05'>
+Test tdi05 simple language map with overriding term direction
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tdi05</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Term selection with language maps and @direction.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/di05-in.jsonld'>compact/di05-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/di05-context.jsonld'>compact/di05-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/di05-out.jsonld'>compact/di05-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tdi06'>
+Test tdi06 simple language map with overriding null direction
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tdi06</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Term selection with language maps and @direction.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/di06-in.jsonld'>compact/di06-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/di06-context.jsonld'>compact/di06-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/di06-out.jsonld'>compact/di06-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tdi07'>
+Test tdi07 simple language map with mismatching term direction
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tdi07</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Term selection with language maps and @direction.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/di07-in.jsonld'>compact/di07-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/di07-context.jsonld'>compact/di07-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/di07-out.jsonld'>compact/di07-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te001'>
+Test te001 Compaction to list of lists
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te001</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Verifies that an exception is raised in Compaction when attempting to compact a list of lists</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/e001-in.jsonld'>compact/e001-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/e001-context.jsonld'>compact/e001-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+compaction to list of lists
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='te002'>
+Test te002 Absolute IRI confused with Compact IRI
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te002</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Verifies that IRI compaction detects when the result is an absolute IRI with a scheme matching a term.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/e002-in.jsonld'>compact/e002-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/e002-context.jsonld'>compact/e002-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+IRI confused with prefix
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='ten01'>
+Test ten01 Nest term not defined
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#ten01</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Transparent Nesting</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/en01-in.jsonld'>compact/en01-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/en01-context.jsonld'>compact/en01-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid @nest value
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tep05'>
+Test tep05 processingMode json-ld-1.0 conflicts with @version: 1.1
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tep05</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>If processingMode is explicitly json-ld-1.0, it will conflict with 1.1 features.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/ep05-in.jsonld'>compact/ep05-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/ep05-context.jsonld'>compact/ep05-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+processing mode conflict
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tep06'>
+Test tep06 @version must be 1.1
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tep06</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>If @version is specified, it must be 1.1</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/ep06-in.jsonld'>compact/ep06-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/ep06-context.jsonld'>compact/ep06-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid @version value
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tep07'>
+Test tep07 @prefix is not allowed in 1.0
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tep07</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>@prefix is not allowed in a term definition 1.0</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/ep07-in.jsonld'>compact/ep07-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/ep07-context.jsonld'>compact/ep07-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid term definition
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tep08'>
+Test tep08 @prefix must be a boolean
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tep08</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>@prefix must be a boolean in a term definition in 1.1</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/ep08-in.jsonld'>compact/ep08-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/ep08-context.jsonld'>compact/ep08-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid @prefix value
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tep09'>
+Test tep09 @prefix not allowed on compact IRI term
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tep09</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>If processingMode is json-ld-1.0, or if term contains a colon (:), an invalid term definition has been detected and processing is aborted.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/ep09-in.jsonld'>compact/ep09-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/ep09-context.jsonld'>compact/ep09-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid term definition
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tep10'>
+Test tep10 @nest is not allowed in 1.0
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tep10</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>@nest is not allowed in a term definitionin 1.0</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/ep10-in.jsonld'>compact/ep10-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/ep10-context.jsonld'>compact/ep10-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid term definition
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tep11'>
+Test tep11 @context is not allowed in 1.0
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tep11</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>@context is not allowed in a term definitionin 1.0</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/ep11-in.jsonld'>compact/ep11-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/ep11-context.jsonld'>compact/ep11-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid term definition
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tep12'>
+Test tep12 @container may not be an array in 1.0
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tep12</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>validate appropriate values of @container</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/ep12-in.jsonld'>compact/ep12-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/ep12-context.jsonld'>compact/ep12-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid container mapping
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tep13'>
+Test tep13 @container may not be @id in 1.0
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tep13</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>validate appropriate values of @container</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/ep13-in.jsonld'>compact/ep13-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/ep13-context.jsonld'>compact/ep13-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid container mapping
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tep14'>
+Test tep14 @container may not be @type in 1.0
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tep14</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>validate appropriate values of @container</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/ep14-in.jsonld'>compact/ep14-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/ep14-context.jsonld'>compact/ep14-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid container mapping
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tep15'>
+Test tep15 @container may not be @graph in 1.0
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tep15</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>validate appropriate values of @container</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/ep15-in.jsonld'>compact/ep15-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/ep15-context.jsonld'>compact/ep15-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid container mapping
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin01'>
+Test tin01 Basic Included array
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/in01-in.jsonld'>compact/in01-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/in01-context.jsonld'>compact/in01-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/in01-out.jsonld'>compact/in01-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin02'>
+Test tin02 Basic Included object
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin02</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/in02-in.jsonld'>compact/in02-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/in02-context.jsonld'>compact/in02-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/in02-out.jsonld'>compact/in02-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin03'>
+Test tin03 Multiple properties mapping to @included are folded together
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin03</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/in03-in.jsonld'>compact/in03-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/in03-context.jsonld'>compact/in03-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/in03-out.jsonld'>compact/in03-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin04'>
+Test tin04 Included containing @included
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin04</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/in04-in.jsonld'>compact/in04-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/in04-context.jsonld'>compact/in04-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/in04-out.jsonld'>compact/in04-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin05'>
+Test tin05 Property value with @included
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin05</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/in05-in.jsonld'>compact/in05-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/in05-context.jsonld'>compact/in05-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/in05-out.jsonld'>compact/in05-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tjs01'>
+Test tjs01 Compact JSON literal (boolean true)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tjs01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests compacting property with @type @json to a JSON literal (boolean true).</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/js01-in.jsonld'>compact/js01-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/js01-context.jsonld'>compact/js01-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/js01-out.jsonld'>compact/js01-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tjs02'>
+Test tjs02 Compact JSON literal (boolean false)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tjs02</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests compacting property with @type @json to a JSON literal (boolean false).</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/js02-in.jsonld'>compact/js02-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/js02-context.jsonld'>compact/js02-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/js02-out.jsonld'>compact/js02-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tjs03'>
+Test tjs03 Compact JSON literal (double)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tjs03</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests compacting property with @type @json to a JSON literal (double).</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/js03-in.jsonld'>compact/js03-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/js03-context.jsonld'>compact/js03-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/js03-out.jsonld'>compact/js03-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tjs04'>
+Test tjs04 Compact JSON literal (double-zero)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tjs04</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests compacting property with @type @json to a JSON literal (double-zero).</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/js04-in.jsonld'>compact/js04-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/js04-context.jsonld'>compact/js04-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/js04-out.jsonld'>compact/js04-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tjs05'>
+Test tjs05 Compact JSON literal (integer)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tjs05</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests compacting property with @type @json to a JSON literal (integer).</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/js05-in.jsonld'>compact/js05-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/js05-context.jsonld'>compact/js05-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/js05-out.jsonld'>compact/js05-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tjs06'>
+Test tjs06 Compact JSON literal (object)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tjs06</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests compacting property with @type @json to a JSON literal (object).</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/js06-in.jsonld'>compact/js06-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/js06-context.jsonld'>compact/js06-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/js06-out.jsonld'>compact/js06-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tjs07'>
+Test tjs07 Compact JSON literal (array)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tjs07</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests compacting property with @type @json to a JSON literal (array).</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/js07-in.jsonld'>compact/js07-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/js07-context.jsonld'>compact/js07-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/js07-out.jsonld'>compact/js07-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tjs08'>
+Test tjs08 Compact already expanded JSON literal
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tjs08</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests compacting JSON literal does not expand terms inside json.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/js08-in.jsonld'>compact/js08-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/js08-context.jsonld'>compact/js08-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/js08-out.jsonld'>compact/js08-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tjs09'>
+Test tjs09 Compact already expanded JSON literal with aliased keys
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tjs09</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests compacting JSON literal in expanded form.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/js09-in.jsonld'>compact/js09-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/js09-context.jsonld'>compact/js09-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/js09-out.jsonld'>compact/js09-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tjs10'>
+Test tjs10 Compact JSON literal (string)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tjs10</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests compacting property with @type @json to a JSON literal (string).</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/js10-in.jsonld'>compact/js10-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/js10-context.jsonld'>compact/js10-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/js10-out.jsonld'>compact/js10-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tjs11'>
+Test tjs11 Compact JSON literal (null)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tjs11</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Tests compacting property with @type @json to a JSON literal (null).</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/js11-in.jsonld'>compact/js11-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/js11-context.jsonld'>compact/js11-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/js11-out.jsonld'>compact/js11-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tla01'>
+Test tla01 most specific term matching in @list.
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tla01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>The most specific term that matches all of the elements in the list, taking into account the default language, must be selected, without considering case of language.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/la01-in.jsonld'>compact/la01-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/la01-context.jsonld'>compact/la01-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/la01-out.jsonld'>compact/la01-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='tli01'>
+Test tli01 coerced @list containing an empty list
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tli01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Lists of Lists</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/li01-in.jsonld'>compact/li01-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/li01-context.jsonld'>compact/li01-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/li01-out.jsonld'>compact/li01-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tli02'>
+Test tli02 coerced @list containing a list
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tli02</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Lists of Lists</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/li02-in.jsonld'>compact/li02-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/li02-context.jsonld'>compact/li02-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/li02-out.jsonld'>compact/li02-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tli03'>
+Test tli03 coerced @list containing an deep list
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tli03</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Lists of Lists</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/li03-in.jsonld'>compact/li03-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/li03-context.jsonld'>compact/li03-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/li03-out.jsonld'>compact/li03-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tli04'>
+Test tli04 coerced @list containing multiple lists
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tli04</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Lists of Lists</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/li04-in.jsonld'>compact/li04-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/li04-context.jsonld'>compact/li04-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/li04-out.jsonld'>compact/li04-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tli05'>
+Test tli05 coerced @list containing mixed list values
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tli05</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Lists of Lists</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/li05-in.jsonld'>compact/li05-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/li05-context.jsonld'>compact/li05-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/li05-out.jsonld'>compact/li05-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm001'>
+Test tm001 Indexes to object not having an @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @container: @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m001-in.jsonld'>compact/m001-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m001-context.jsonld'>compact/m001-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m001-out.jsonld'>compact/m001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm002'>
+Test tm002 Indexes to object already having an @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @container: @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m002-in.jsonld'>compact/m002-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m002-context.jsonld'>compact/m002-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m002-out.jsonld'>compact/m002-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm003'>
+Test tm003 Indexes to object not having an @type
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @container: @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m003-in.jsonld'>compact/m003-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m003-context.jsonld'>compact/m003-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m003-out.jsonld'>compact/m003-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm004'>
+Test tm004 Indexes to object already having an @type
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm004</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @container: @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m004-in.jsonld'>compact/m004-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m004-context.jsonld'>compact/m004-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m004-out.jsonld'>compact/m004-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm005'>
+Test tm005 Indexes to object using compact IRI @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm005</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @container: @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m005-in.jsonld'>compact/m005-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m005-context.jsonld'>compact/m005-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m005-out.jsonld'>compact/m005-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm006'>
+Test tm006 Indexes using compacted @type
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm006</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @container: @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m006-in.jsonld'>compact/m006-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m006-context.jsonld'>compact/m006-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m006-out.jsonld'>compact/m006-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm007'>
+Test tm007 When type is in a type map
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm007</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>scoped context on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m007-in.jsonld'>compact/m007-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m007-context.jsonld'>compact/m007-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m007-out.jsonld'>compact/m007-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm008'>
+Test tm008 @index map with @none node definition
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm008</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @index</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m008-in.jsonld'>compact/m008-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m008-context.jsonld'>compact/m008-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m008-out.jsonld'>compact/m008-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm009'>
+Test tm009 @index map with @none value
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm009</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @index</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m009-in.jsonld'>compact/m009-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m009-context.jsonld'>compact/m009-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m009-out.jsonld'>compact/m009-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm010'>
+Test tm010 @index map with @none value using alias of @none
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm010</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @index</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m010-in.jsonld'>compact/m010-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m010-context.jsonld'>compact/m010-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m010-out.jsonld'>compact/m010-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm011'>
+Test tm011 @language map with no @language
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm011</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @language</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m011-in.jsonld'>compact/m011-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m011-context.jsonld'>compact/m011-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m011-out.jsonld'>compact/m011-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm012'>
+Test tm012 language map with no @language using alias of @none
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm012</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @language</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m012-in.jsonld'>compact/m012-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m012-context.jsonld'>compact/m012-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m012-out.jsonld'>compact/m012-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm013'>
+Test tm013 id map using @none
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm013</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m013-in.jsonld'>compact/m013-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m013-context.jsonld'>compact/m013-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m013-out.jsonld'>compact/m013-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm014'>
+Test tm014 id map using @none with alias
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm014</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m014-in.jsonld'>compact/m014-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m014-context.jsonld'>compact/m014-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m014-out.jsonld'>compact/m014-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm015'>
+Test tm015 type map using @none with alias
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm015</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m015-in.jsonld'>compact/m015-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m015-context.jsonld'>compact/m015-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m015-out.jsonld'>compact/m015-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm016'>
+Test tm016 type map using @none with alias
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm016</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m016-in.jsonld'>compact/m016-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m016-context.jsonld'>compact/m016-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m016-out.jsonld'>compact/m016-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm017'>
+Test tm017 graph index map using @none
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm017</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @graph and @index</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m017-in.jsonld'>compact/m017-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m017-context.jsonld'>compact/m017-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m017-out.jsonld'>compact/m017-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm018'>
+Test tm018 graph id map using @none
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm018</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @graph and @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m018-in.jsonld'>compact/m018-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m018-context.jsonld'>compact/m018-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m018-out.jsonld'>compact/m018-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm019'>
+Test tm019 graph id map using alias of @none
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm019</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @graph and @id</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m019-in.jsonld'>compact/m019-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m019-context.jsonld'>compact/m019-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m019-out.jsonld'>compact/m019-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm020'>
+Test tm020 node reference compacts to string value of type map
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm020</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m020-in.jsonld'>compact/m020-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m020-context.jsonld'>compact/m020-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m020-out.jsonld'>compact/m020-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm021'>
+Test tm021 node reference compacts to string value of type map with @type: @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm021</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m021-in.jsonld'>compact/m021-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m021-context.jsonld'>compact/m021-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m021-out.jsonld'>compact/m021-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tm022'>
+Test tm022 node reference compacts to string value of type map with @type: @vocab
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tm022</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>index on @type</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/m022-in.jsonld'>compact/m022-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/m022-context.jsonld'>compact/m022-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/m022-out.jsonld'>compact/m022-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tn001'>
+Test tn001 Indexes to @nest for property with @nest
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tn001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @nest</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/n001-in.jsonld'>compact/n001-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/n001-context.jsonld'>compact/n001-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/n001-out.jsonld'>compact/n001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tn002'>
+Test tn002 Indexes to @nest for all properties with @nest
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tn002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @nest</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/n002-in.jsonld'>compact/n002-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/n002-context.jsonld'>compact/n002-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/n002-out.jsonld'>compact/n002-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tn003'>
+Test tn003 Nests using alias of @nest
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tn003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @nest</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/n003-in.jsonld'>compact/n003-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/n003-context.jsonld'>compact/n003-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/n003-out.jsonld'>compact/n003-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tn004'>
+Test tn004 Arrays of nested values
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tn004</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @nest</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/n004-in.jsonld'>compact/n004-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/n004-context.jsonld'>compact/n004-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/n004-out.jsonld'>compact/n004-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tn005'>
+Test tn005 Nested @container: @list
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tn005</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @nest</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/n005-in.jsonld'>compact/n005-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/n005-context.jsonld'>compact/n005-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/n005-out.jsonld'>compact/n005-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tn006'>
+Test tn006 Nested @container: @index
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tn006</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @nest</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/n006-in.jsonld'>compact/n006-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/n006-context.jsonld'>compact/n006-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/n006-out.jsonld'>compact/n006-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tn007'>
+Test tn007 Nested @container: @language
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tn007</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @nest</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/n007-in.jsonld'>compact/n007-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/n007-context.jsonld'>compact/n007-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/n007-out.jsonld'>compact/n007-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tn008'>
+Test tn008 Nested @container: @type
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tn008</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @nest</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/n008-in.jsonld'>compact/n008-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/n008-context.jsonld'>compact/n008-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/n008-out.jsonld'>compact/n008-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tn009'>
+Test tn009 Nested @container: @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tn009</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @nest</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/n009-in.jsonld'>compact/n009-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/n009-context.jsonld'>compact/n009-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/n009-out.jsonld'>compact/n009-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tn010'>
+Test tn010 Multiple nest aliases
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tn010</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @nest</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/n010-in.jsonld'>compact/n010-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/n010-context.jsonld'>compact/n010-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/n010-out.jsonld'>compact/n010-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tn011'>
+Test tn011 Nests using alias of @nest (defined with @id)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tn011</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compaction using @nest</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/n011-in.jsonld'>compact/n011-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/n011-context.jsonld'>compact/n011-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/n011-out.jsonld'>compact/n011-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp001'>
+Test tp001 Compact IRI will not use an expanded term definition in 1.0
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Terms with an expanded term definition are not used for creating compact IRIs</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/p001-in.jsonld'>compact/p001-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/p001-context.jsonld'>compact/p001-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/p001-out.jsonld'>compact/p001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>processingMode</dt>
+<dd>json-ld-1.0</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp002'>
+Test tp002 Compact IRI does not use expanded term definition in 1.1
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Terms with an expanded term definition are not used for creating compact IRIs</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/p002-in.jsonld'>compact/p002-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/p002-context.jsonld'>compact/p002-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/p002-out.jsonld'>compact/p002-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp003'>
+Test tp003 Compact IRI does not use simple term that does not end with a gen-delim
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Terms not ending with a gen-delim are not used for creating compact IRIs</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/p003-in.jsonld'>compact/p003-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/p003-context.jsonld'>compact/p003-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/p003-out.jsonld'>compact/p003-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp004'>
+Test tp004 Compact IRIs using simple terms ending with gen-delim
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp004</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>All simple terms ending with gen-delim are suitable for compaction</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/p004-in.jsonld'>compact/p004-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/p004-context.jsonld'>compact/p004-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/p004-out.jsonld'>compact/p004-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp005'>
+Test tp005 Compact IRI uses term with definition including @prefix: true
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp005</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Expanded term definition may set prefix explicitly in 1.1</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/p005-in.jsonld'>compact/p005-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/p005-context.jsonld'>compact/p005-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/p005-out.jsonld'>compact/p005-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp006'>
+Test tp006 Compact IRI uses term with definition including @prefix: true
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp006</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Expanded term definition may set prefix explicitly in 1.1</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/p006-in.jsonld'>compact/p006-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/p006-context.jsonld'>compact/p006-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/p006-out.jsonld'>compact/p006-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp007'>
+Test tp007 Compact IRI not used as prefix
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp007</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Terms including a colon are excluded from being used as a prefix</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/p007-in.jsonld'>compact/p007-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/p007-context.jsonld'>compact/p007-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/p007-out.jsonld'>compact/p007-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tp008'>
+Test tp008 Compact IRI does not use term with definition including @prefix: false
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tp008</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Expanded term definition may set prefix explicitly in 1.1</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/p008-in.jsonld'>compact/p008-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/p008-context.jsonld'>compact/p008-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/p008-out.jsonld'>compact/p008-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tpi01'>
+Test tpi01 property-valued index indexes property value, instead of property (value)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tpi01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting property-valued indexes.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/pi01-in.jsonld'>compact/pi01-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/pi01-context.jsonld'>compact/pi01-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/pi01-out.jsonld'>compact/pi01-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tpi02'>
+Test tpi02 property-valued index indexes property value, instead of property (multiple values)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tpi02</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting property-valued indexes.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/pi02-in.jsonld'>compact/pi02-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/pi02-context.jsonld'>compact/pi02-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/pi02-out.jsonld'>compact/pi02-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tpi03'>
+Test tpi03 property-valued index indexes property value, instead of property (node)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tpi03</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting property-valued indexes.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/pi03-in.jsonld'>compact/pi03-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/pi03-context.jsonld'>compact/pi03-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/pi03-out.jsonld'>compact/pi03-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tpi04'>
+Test tpi04 property-valued index indexes property value, instead of property (multiple nodes)
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tpi04</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting property-valued indexes.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/pi04-in.jsonld'>compact/pi04-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/pi04-context.jsonld'>compact/pi04-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/pi04-out.jsonld'>compact/pi04-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tpi05'>
+Test tpi05 property-valued index indexes using @none if no property value exists
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tpi05</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting property-valued indexes.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/pi05-in.jsonld'>compact/pi05-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/pi05-context.jsonld'>compact/pi05-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/pi05-out.jsonld'>compact/pi05-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tpi06'>
+Test tpi06 property-valued index indexes using @none if no property value does not compact to string
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tpi06</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting property-valued indexes.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/pi06-in.jsonld'>compact/pi06-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/pi06-context.jsonld'>compact/pi06-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/pi06-out.jsonld'>compact/pi06-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tpr01'>
+Test tpr01 Check illegal clearing of context with protected terms
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tpr01</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Check error when clearing a context with protected terms.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/pr01-in.jsonld'>compact/pr01-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/pr01-context.jsonld'>compact/pr01-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+invalid context nullification
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tpr02'>
+Test tpr02 Check illegal overriding of protected term
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tpr02</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Check error when overriding a protected term.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/pr02-in.jsonld'>compact/pr02-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/pr02-context.jsonld'>compact/pr02-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+protected term redefinition
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tpr03'>
+Test tpr03 Check illegal overriding of protected term from type-scoped context
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tpr03</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Check error when overriding a protected term from type-scoped context.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/pr03-in.jsonld'>compact/pr03-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/pr03-context.jsonld'>compact/pr03-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+protected term redefinition
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tpr04'>
+Test tpr04 Check legal overriding of protected term from property-scoped context
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tpr04</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Check overriding a protected term from property-scoped context.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/pr04-in.jsonld'>compact/pr04-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/pr04-context.jsonld'>compact/pr04-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/pr04-out.jsonld'>compact/pr04-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tpr05'>
+Test tpr05 Check legal overriding of type-scoped protected term from nested node
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tpr05</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Check legal overriding of type-scoped protected term from nested node.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/pr05-in.jsonld'>compact/pr05-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/pr05-context.jsonld'>compact/pr05-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/pr05-out.jsonld'>compact/pr05-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr001'>
+Test tr001 Expands and compacts to document base by default
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>Compact IRI attempts to compact document-relative IRIs</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/r001-in.jsonld'>compact/r001-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/r001-context.jsonld'>compact/r001-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/r001-out.jsonld'>compact/r001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>base</dt>
+<dd>http://example.org/</dd>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tr002'>
+Test tr002 Expands and does not compact to document base with compactToRelative false
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tr002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>With compactToRelative option set to false, IRIs which could be made relative to the document base are not made relative.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/r002-in.jsonld'>compact/r002-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/r002-context.jsonld'>compact/r002-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/r002-out.jsonld'>compact/r002-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+<dt>compactToRelative</dt>
+<dd>false</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='ts001'>
+Test ts001 @context with single array values
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#ts001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>@context values may be in an array</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/s001-in.jsonld'>compact/s001-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/s001-context.jsonld'>compact/s001-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/s001-out.jsonld'>compact/s001-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='ts002'>
+Test ts002 @context with array including @set uses array values
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#ts002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>@context values may include @set along with another compatible value</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/s002-in.jsonld'>compact/s002-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/s002-context.jsonld'>compact/s002-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/s002-out.jsonld'>compact/s002-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='ttn01'>
+Test ttn01 @type: @none does not compact values
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#ttn01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>@type: @none does not compact values.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/tn01-in.jsonld'>compact/tn01-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/tn01-context.jsonld'>compact/tn01-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/tn01-out.jsonld'>compact/tn01-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='ttn02'>
+Test ttn02 @type: @none does not use arrays by default
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#ttn02</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>@type: @none honors @container.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/tn02-in.jsonld'>compact/tn02-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/tn02-context.jsonld'>compact/tn02-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/tn02-out.jsonld'>compact/tn02-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='ttn03'>
+Test ttn03 @type: @none uses arrays with @container: @set
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#ttn03</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:CompactTest</dd>
+<dt>Purpose</dt>
+<dd>@type: @none honors @container.</dd>
+<dt>input</dt>
+<dd>
+<a href='compact/tn03-in.jsonld'>compact/tn03-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='compact/tn03-context.jsonld'>compact/tn03-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='compact/tn03-out.jsonld'>compact/tn03-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</body>
+</html>

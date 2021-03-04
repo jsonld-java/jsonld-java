@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='text/html;charset=utf-8' http-equiv='Content-Type'>
+<title>
+Flattening
+</title>
+<link href='flatten-manifest.jsonld' rel='alternate'>
+<link href='https://www.w3.org/StyleSheets/TR/base' rel='stylesheet'>
+</head>
+<body>
+<p>
+<a href='http://www.w3.org/'>
+<img alt='W3C' height='48' src='http://www.w3.org/Icons/w3c_home' width='72'>
+</a>
+</p>
+<h1>Flattening</h1>
+<p>This is an HTML version of a test manifest. The JSON-LD version of this manifest may be found at
+<a href="flatten-manifest.jsonld">flatten-manifest.jsonld</a>. The manifest vocabulary is described in the <a href="vocab.html">JSON-LD Test Vocabulary</a> (<a href="vocab.jsonld">JSON-LD</a>, <a href="vocab.ttl">Turtle</a>) and is based on the <a href="http://www.w3.org/TR/2014/NOTE-rdf11-testcases-20140225/">RDF Test Vocabulary</a>.</p>
+
+<p>The JSON-LD Test Suite is a set of tests that can
+be used to verify JSON-LD Processor conformance to the set of specifications
+that constitute JSON-LD. The goal of the suite is to provide an easy and
+comprehensive JSON-LD testing solution for developers creating JSON-LD Processors.</p>
+
+<p>The <a href="https://w3.org/TR/json-ld11-framing">JSON-LD Framing Specification</a> maintains its own
+<a href="https://w3c.github.io/json-ld-framing/tests/">test suite</a>.</p>
+
+<h2>General instructions for running the JSON-LD Test suites</h2>
+
+<h3><a href="flatten-manifest.html">flatten</a> tests have <em>input</em> and <em>expected</em> documents and an optional <em>context</em> document.</h3>
+
+<p>The <em>expected</em> results can be compared using <a href="#json-ld-object-comparison">JSON-LD object comparison</a> with the processor output after potentially remapping blank node identifiers (see below). Additionally, if the result is compacted and the <code>ordered</code> option is not set, result should be expanded and compared with the expanded <em>expected</em> document also using <a href="#json-ld-object-comparison">JSON-LD object comparison</a>.</p>
+
+<p>For <em>NegativeEvaluationTests</em>, the result is a string associated with the expected error code.</p>
+<p>Unless <code>processingMode</code> is set explicitly in a test entry, <code>processingMode</code> is compatible with both <code>json-ld-1.0</code> and <code>json-ld-1.1</code>.</p>
+
+<p>Test results that include a context input presume that the context is provided locally, and not from the referenced location, thus the results will include the content of the context file, rather than a reference.</p>
+
+<p>Developers are encouraged to make a local copy of the test suite (available on <a href="http://github.com/w3c/json-ld-api/tests/">GitHub</a>) and simulate the behavior of fetching test files remotely and setting HTTP headers as described in a particular test entry.</p>
+
+<h2 id="json-ld-object-comparison">JSON-LD Object comparison</h2>
+
+<p>If algorithms are invoked with the <code>ordered</code> flag set to <code>true</code>, simple JSON Object comparison may be used, as the order of all arrays will be preserved (except for <em>fromRdf</em>, unless the input quads are also ordered). If <code>ordered</code> is <code>false</code>, then the following algorithm will ensure arrays other than values of <code>@list</code> are compared without regard to order.</p>
+
+<p>JSON-LD Object comparison compares JSON objects, arrays, and values recursively for equality.</p>
+
+<ul>
+<li>JSON objects are compared entry by entry without regard to the ordering of entries within the object. Each entry must have a corresponding entry in the object being compared to. Values are compared recursively.</li>
+<li>JSON arrays are generally compared without regard to order (the lone exception being if the referencing key is <code>@list</code>). Each item within the array must be equivalent to an item in the array being compared to by using the comparison algorithm recursively. For values of <code>@list</code>, the order of these items is significant.</li>
+<li>JSON values are compared using strict equality.</li>
+<li>Values of <code>@language</code>, and other places where language tags may be used are specified in lowercase in the test results. Implementations should either normalize language tags for testing purposes, or compare language tags in a case-independent way.</li>
+</ul>
+
+<p>Note that some tests require re-expansion and comparison, as list values may exist as values of properties that have <code>@container: @list</code> and the comparison algorithm will not consider ordering significant.</p>
+
+<h1>Running tests</h1>
+
+<p>The top-level <a href="manifest.jsonld">manifest</a> references the specific test manifests, which in turn reference each test associated with a particular type of behavior.</p>
+
+<p>Implementations create their own infrastructure for running the test suite. In particular, the following should be considered:</p>
+
+<ul>
+<li><em>remote-doc</em> tests will likely not return expected HTTP headers, so the <em>options</em> should be used to determine what headers are associated with the input document.</li>
+<li>Test case properties identifying a file (<em>input</em>, <em>output</em>, <em>context</em>, <em>expectContext</em>, and <em>frame</em>) are presumed to have a media type appropriate for the file extension.
+
+<ul>
+<li><code>application/ld+json</code> for <code>.jsonld</code></li>
+<li><code>text/html</code> for <code>.html</code></li>
+<li><code>application/n-quads</code> for <code>.nq</code></li>
+</ul></li>
+<li>The media type for the file associated with the <em>input</em> property can be overridden using the <code>contentType</code> option.</li>
+<li>Some algorithms, particularly <em>fromRdf</em>, may not preserve the order of statements listed in the input document, and provision should be taken for performing unordered array comparison, for arrays other than values of <code>@list</code>. (This may be difficult for compacted results, where array value ordering is dependent on the associated term definition).</li>
+<li>Some <em>toRdf</em> tests require the use of <a href="https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-05">JSON Canonicalization Scheme</a> to properly generate RDF Literals from JSON literal values. This algorithm is non-normative, but is assumed to be used to properly compare results using <a href="https://www.w3.org/TR/rdf11-concepts/#dfn-dataset-isomorphism">RDF Dataset Isomorphism</a>. These tests are marked using the <code>useJCS</code> option.</li>
+<li>When comparing documents after flattening, framing or generating RDF, blank node identifiers may not be predictable. Implementations using the JSON-LD 1.0 algorithm, where output is always sorted and blank node identifiers are generated sequentially from <code>_:b0</code> may continue to use a simple object comparison. Otherwise, implementations should take this into consideration. (One way to do this may be to reduce both results and <em>expected</em> to datsets to extract a bijective mapping of blank node labels between the two datasets as described in <a href="https://www.w3.org/TR/rdf11-concepts/#dfn-dataset-isomorphism">RDF Dataset Isomorphism</a>).</li>
+<li>Some tests may have a <code>requires</code> property, indicating some optional behavior described by a test vocabulary term.</li>
+</ul>
+
+<h1>Contributing Tests</h1>
+
+<p>If you would like to contribute a new test or a fix to an existing test,
+please follow these steps:</p>
+
+<ol>
+<li>Notify the JSON-LD mailing list, public-json-ld-wg@w3.org,
+that you will be creating a new test or fix and the purpose of the
+change.</li>
+<li>Clone the git repository: git://github.com/w3c/json-ld-api.git</li>
+<li>Make your changes and submit them via github, or via a &#39;git format-patch&#39;
+to the <a href="mailto:json-ld-wg@w3.org">JSON-LD Working Group mailing list</a>.</li>
+</ol>
+
+<h2>Distribution</h2>
+
+<p>Distributed under the <a href="http://www.w3.org/Consortium/Legal/2008/04-testsuite-license">W3C Test Suite License</a>. To contribute to a W3C Test Suite, see the <a href="http://www.w3.org/2004/10/27-testcases">policies and contribution forms</a>.</p>
+
+<h2>Disclaimer</h2>
+
+<p>UNDER THE EXCLUSIVE LICENSE, THIS DOCUMENT AND ALL DOCUMENTS, TESTS AND SOFTWARE THAT LINK THIS STATEMENT ARE PROVIDED &quot;AS IS,&quot; AND COPYRIGHT HOLDERS MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF THE DOCUMENT ARE SUITABLE FOR ANY PURPOSE; NOR THAT THE IMPLEMENTATION OF SUCH CONTENTS WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
+  COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE DOCUMENT OR THE PERFORMANCE OR IMPLEMENTATION OF THE CONTENTS THEREOF.</p>
+<dl>
+<dt>baseIri</dt>
+<dd>https://w3c.github.io/json-ld-api/tests/</dd>
+</dl>
+<p>JSON-LD Flattening tests.</p>
+<section>
+<h2>
+Test sequence:
+</h2>
+<dl class='entries'>
+<dt id='t0001'>
+Test t0001 drop free-floating nodes
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0001</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening drops unreferenced nodes having only @id</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0001-in.jsonld'>flatten/0001-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0001-out.jsonld'>flatten/0001-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0002'>
+Test t0002 basic
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0002</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening terms with different types of values</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0002-in.jsonld'>flatten/0002-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0002-out.jsonld'>flatten/0002-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0003'>
+Test t0003 drop null and unmapped properties
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0003</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Verifies that null values and unmapped properties are removed from expanded output</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0003-in.jsonld'>flatten/0003-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0003-out.jsonld'>flatten/0003-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0004'>
+Test t0004 optimize @set, keep empty arrays
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0004</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Uses of @set are removed in expansion; values of @set, or just plain values which are empty arrays are retained</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0004-in.jsonld'>flatten/0004-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0004-out.jsonld'>flatten/0004-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0005'>
+Test t0005 do not expand aliased @id/@type
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0005</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>If a keyword is aliased, it is not used when flattening</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0005-in.jsonld'>flatten/0005-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0005-out.jsonld'>flatten/0005-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0006'>
+Test t0006 alias keywords
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0006</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Aliased keywords expand in resulting document</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0006-in.jsonld'>flatten/0006-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0006-out.jsonld'>flatten/0006-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0007'>
+Test t0007 date type-coercion
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0007</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Expand strings to expanded value with @type: xsd:dateTime</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0007-in.jsonld'>flatten/0007-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0007-out.jsonld'>flatten/0007-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0008'>
+Test t0008 @value with @language
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0008</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Keep expanded values with @language, drop non-conforming value objects containing just @language</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0008-in.jsonld'>flatten/0008-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0008-out.jsonld'>flatten/0008-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0009'>
+Test t0009 @graph with terms
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0009</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Use of @graph to contain multiple nodes within array</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0009-in.jsonld'>flatten/0009-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0009-out.jsonld'>flatten/0009-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0010'>
+Test t0010 native types
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0010</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening native scalar retains native scalar within expanded value</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0010-in.jsonld'>flatten/0010-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0010-out.jsonld'>flatten/0010-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0011'>
+Test t0011 coerced @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0011</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>A value of a property with @type: @id coercion expands to a node reference</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0011-in.jsonld'>flatten/0011-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0011-out.jsonld'>flatten/0011-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0012'>
+Test t0012 @graph with embed
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0012</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening objects containing chained objects flattens all objects</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0012-in.jsonld'>flatten/0012-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0012-out.jsonld'>flatten/0012-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0013'>
+Test t0013 flatten already expanded
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0013</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening an expanded/flattened document maintains input document</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0013-in.jsonld'>flatten/0013-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0013-out.jsonld'>flatten/0013-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0014'>
+Test t0014 @set of @value objects with keyword aliases
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0014</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening aliased @set and @value</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0014-in.jsonld'>flatten/0014-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0014-out.jsonld'>flatten/0014-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0015'>
+Test t0015 collapse set of sets, keep empty lists
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0015</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>An array of multiple @set nodes are collapsed into a single array</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0015-in.jsonld'>flatten/0015-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0015-out.jsonld'>flatten/0015-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0016'>
+Test t0016 context reset
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0016</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Setting @context to null within an embedded object resets back to initial context state</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0016-in.jsonld'>flatten/0016-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0016-out.jsonld'>flatten/0016-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0017'>
+Test t0017 @graph and @id aliased
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0017</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening with @graph and @id aliases</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0017-in.jsonld'>flatten/0017-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0017-out.jsonld'>flatten/0017-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0018'>
+Test t0018 override default @language
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0018</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>override default @language in terms; only language-tag strings</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0018-in.jsonld'>flatten/0018-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0018-out.jsonld'>flatten/0018-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0019'>
+Test t0019 remove @value = null
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0019</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening a value of null removes the value</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0019-in.jsonld'>flatten/0019-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0019-out.jsonld'>flatten/0019-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0020'>
+Test t0020 do not remove @graph if not at top-level
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0020</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>@graph used under a node is retained</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0020-in.jsonld'>flatten/0020-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0020-out.jsonld'>flatten/0020-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0021'>
+Test t0021 do not remove @graph at top-level if not only property
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0021</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>@graph used at the top level is retained if there are other properties</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0021-in.jsonld'>flatten/0021-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0021-out.jsonld'>flatten/0021-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0022'>
+Test t0022 flatten value with default language
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0022</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening with a default language applies that language to string values</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0022-in.jsonld'>flatten/0022-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0022-out.jsonld'>flatten/0022-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0023'>
+Test t0023 Flattening list/set with coercion
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0023</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening lists and sets with properties having coercion coerces list/set values</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0023-in.jsonld'>flatten/0023-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0023-out.jsonld'>flatten/0023-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0024'>
+Test t0024 Multiple contexts
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0024</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Tests that contexts in an array are merged</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0024-in.jsonld'>flatten/0024-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0024-out.jsonld'>flatten/0024-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0025'>
+Test t0025 Problematic IRI flattening tests
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0025</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening different kinds of terms and Compact IRIs</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0025-in.jsonld'>flatten/0025-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0025-out.jsonld'>flatten/0025-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0026'>
+Test t0026 Term definition with @id: @type
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0026</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening term mapping to @type uses @type syntax</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0026-in.jsonld'>flatten/0026-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0026-out.jsonld'>flatten/0026-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0027'>
+Test t0027 Duplicate values in @list and @set
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0027</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Duplicate values in @list and @set are not merged</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0027-in.jsonld'>flatten/0027-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0027-out.jsonld'>flatten/0027-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0028'>
+Test t0028 Use @vocab in properties and @type but not in @id
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0028</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>@vocab is used to compact properties and @type, but is not used for @id</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0028-in.jsonld'>flatten/0028-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0028-out.jsonld'>flatten/0028-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0030'>
+Test t0030 Language maps
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0030</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Language Maps expand values to include @language</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0030-in.jsonld'>flatten/0030-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0030-out.jsonld'>flatten/0030-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0031'>
+Test t0031 type-coercion of native types
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0031</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening native types with type coercion adds the coerced type to an expanded value representation and retains the native value representation</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0031-in.jsonld'>flatten/0031-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0031-out.jsonld'>flatten/0031-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0032'>
+Test t0032 Null term and @vocab
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0032</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Mapping a term to null decouples it from @vocab</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0032-in.jsonld'>flatten/0032-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0032-out.jsonld'>flatten/0032-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0033'>
+Test t0033 Using @vocab with with type-coercion
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0033</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Verifies that terms can be defined using @vocab</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0033-in.jsonld'>flatten/0033-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0033-out.jsonld'>flatten/0033-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0034'>
+Test t0034 Multiple properties expanding to the same IRI
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0034</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Verifies multiple values from separate terms are deterministically made multiple values of the IRI associated with the terms</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0034-in.jsonld'>flatten/0034-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0034-out.jsonld'>flatten/0034-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0035'>
+Test t0035 Language maps with @vocab, default language, and colliding property
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0035</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Pathological tests of language maps</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0035-in.jsonld'>flatten/0035-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0035-out.jsonld'>flatten/0035-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0036'>
+Test t0036 Flattening @index
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0036</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening index maps for terms defined with @container: @index</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0036-in.jsonld'>flatten/0036-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0036-out.jsonld'>flatten/0036-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0037'>
+Test t0037 Flattening reverse properties
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0037</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flattening @reverse keeps @reverse</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0037-in.jsonld'>flatten/0037-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0037-out.jsonld'>flatten/0037-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0038'>
+Test t0038 Flattening blank node labels
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0038</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Blank nodes are not relabeled during expansion</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0038-in.jsonld'>flatten/0038-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0038-out.jsonld'>flatten/0038-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.0</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0039'>
+Test t0039 Using terms in a reverse-maps
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0039</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Terms within @reverse are expanded</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0039-in.jsonld'>flatten/0039-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0039-out.jsonld'>flatten/0039-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0040'>
+Test t0040 language and index expansion on non-objects
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0040</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Only invoke language and index map expansion if the value is a JSON object</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0040-in.jsonld'>flatten/0040-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0040-out.jsonld'>flatten/0040-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0041'>
+Test t0041 Free-floating sets and lists
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0041</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Free-floating values in sets are removed, free-floating lists are removed completely</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0041-in.jsonld'>flatten/0041-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0041-out.jsonld'>flatten/0041-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0042'>
+Test t0042 List objects not equivalent
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0042</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Lists objects are implicit unlabeled blank nodes and thus never equivalent</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0042-in.jsonld'>flatten/0042-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0042-out.jsonld'>flatten/0042-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0043'>
+Test t0043 Sample test manifest extract
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0043</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flatten a test manifest</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0043-in.jsonld'>flatten/0043-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0043-out.jsonld'>flatten/0043-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0044'>
+Test t0044 compactArrays option
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0044</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Setting compactArrays to false causes single element arrays to be retained</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0044-in.jsonld'>flatten/0044-in.jsonld</a>
+</dd>
+<dt>context</dt>
+<dd>
+<a href='flatten/0044-context.jsonld'>flatten/0044-context.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0044-out.jsonld'>flatten/0044-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>compactArrays</dt>
+<dd>false</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0045'>
+Test t0045 Blank nodes with reverse properties
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0045</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Proper (re-)labeling of blank nodes if used with reverse properties.</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0045-in.jsonld'>flatten/0045-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0045-out.jsonld'>flatten/0045-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0046'>
+Test t0046 Empty string as identifier
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0046</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Usage of empty strings in identifiers needs special care when constructing the node map.</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0046-in.jsonld'>flatten/0046-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0046-out.jsonld'>flatten/0046-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0047'>
+Test t0047 Flatten using relative fragment identifier properly joins to base
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0047</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Compacting a relative round-trips</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0047-in.jsonld'>flatten/0047-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0047-out.jsonld'>flatten/0047-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>base</dt>
+<dd>http://example.org/</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='t0048'>
+Test t0048 @list with embedded object
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0048</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Node definitions contained within lists are flattend to top level.</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0048-in.jsonld'>flatten/0048-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0048-out.jsonld'>flatten/0048-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='t0049'>
+Test t0049 context with JavaScript Object property names
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#t0049</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Flatten with context including JavaScript Object property names</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/0049-in.jsonld'>flatten/0049-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/0049-out.jsonld'>flatten/0049-out.jsonld</a>
+</dd>
+</dl>
+</dd>
+<dt id='te001'>
+Test te001 Conflicting indexes
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#te001</dd>
+<dt>Type</dt>
+<dd>jld:NegativeEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Verifies that an exception is raised in Flattening when conflicting indexes are found</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/e001-in.jsonld'>flatten/e001-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+conflicting indexes
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin01'>
+Test tin01 Basic Included array
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/in01-in.jsonld'>flatten/in01-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/in01-out.jsonld'>flatten/in01-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin02'>
+Test tin02 Basic Included object
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin02</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/in02-in.jsonld'>flatten/in02-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/in02-out.jsonld'>flatten/in02-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin03'>
+Test tin03 Multiple properties mapping to @included are folded together
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin03</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/in03-in.jsonld'>flatten/in03-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/in03-out.jsonld'>flatten/in03-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin04'>
+Test tin04 Included containing @included
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin04</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/in04-in.jsonld'>flatten/in04-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/in04-out.jsonld'>flatten/in04-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin05'>
+Test tin05 Property value with @included
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin05</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/in05-in.jsonld'>flatten/in05-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/in05-out.jsonld'>flatten/in05-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tin06'>
+Test tin06 json.api example
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tin06</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Tests included blocks.</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/in06-in.jsonld'>flatten/in06-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/in06-out.jsonld'>flatten/in06-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tli01'>
+Test tli01 @list containing an deep list
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tli01</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Lists of lists</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/li01-in.jsonld'>flatten/li01-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/li01-out.jsonld'>flatten/li01-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tli02'>
+Test tli02 @list containing empty @list
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tli02</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Lists of lists</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/li02-in.jsonld'>flatten/li02-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/li02-out.jsonld'>flatten/li02-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt id='tli03'>
+Test tli03 @list containing mixed list values
+</dt>
+<dd>
+<dl class='entry'>
+<dt>id</dt>
+<dd>#tli03</dd>
+<dt>Type</dt>
+<dd>jld:PositiveEvaluationTest, jld:FlattenTest</dd>
+<dt>Purpose</dt>
+<dd>Lists of lists</dd>
+<dt>input</dt>
+<dd>
+<a href='flatten/li03-in.jsonld'>flatten/li03-in.jsonld</a>
+</dd>
+<dt>expect</dt>
+<dd>
+<a href='flatten/li03-out.jsonld'>flatten/li03-out.jsonld</a>
+</dd>
+<dt>Options</dt>
+<dd>
+<dl class='options'>
+<dt>specVersion</dt>
+<dd>json-ld-1.1</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</body>
+</html>

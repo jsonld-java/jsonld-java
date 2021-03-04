@@ -1,0 +1,15 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "ex": "http://example.org/"
+  },
+  "@graph": [{
+    "ex:list-v": {"@list": [{"@value": "L", "@language": "l"}, {"@value": "T", "@type": "ex:t"}, {"@id": "I", "@type": "ex:T"}]}
+  }, {
+    "ex:list-l": {"@list": ["V", {"@value": "T", "@type": "ex:t"}, {"@id": "I", "@type": "ex:T"}]}
+  }, {
+    "ex:list-t": {"@list": [{"@value": "L", "@language": "l"}, {"@id": "I", "@type": "ex:T"}]}
+  }, {
+    "ex:list-i": {"@list": ["V", {"@value": "L", "@language": "l"}, {"@value": "T", "@type": "ex:t"}]}
+  }]
+}

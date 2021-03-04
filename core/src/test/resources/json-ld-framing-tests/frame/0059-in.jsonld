@@ -1,0 +1,9 @@
+{
+  "@context": {
+    "ex": "http://www.example.com/#"
+  },
+  "@id": "http://example/outer",
+  "@type": "ex:Thing",
+  "ex:embed1": {"@id": "http://example/embedded", "ex:name": "Embedded"},
+  "ex:embed2": {"@id": "http://example/embedded", "ex:name": "Embedded"}
+}
