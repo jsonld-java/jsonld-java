@@ -39,10 +39,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<httpclient.version>4.5.12</httpclient.version>
-		<httpcore.version>4.4.13</httpcore.version>
-		<jackson.version>2.11.2</jackson.version>
-		<junit.version>4.13</junit.version>
+		<httpclient.version>4.5.13</httpclient.version>
+		<httpcore.version>4.4.14</httpcore.version>
+		<jackson.version>2.11.4</jackson.version>
+		<junit.version>4.13.2</junit.version>
 		<slf4j.version>1.7.30</slf4j.version>
 
 		<last-compare-version>0.11.0</last-compare-version>
@@ -351,7 +351,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>3.2.1</version>
 					<executions>
 						<execution>
 							<id>attach-source</id>
@@ -401,7 +401,7 @@
 				<plugin>
 					<groupId>com.github.siom79.japicmp</groupId>
 					<artifactId>japicmp-maven-plugin</artifactId>
-					<version>0.14.2</version>
+					<version>0.14.4</version>
 					<configuration>
 						<oldVersion>
 							<dependency>
@@ -448,7 +448,7 @@
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.5</version>
+					<version>0.8.6</version>
 					<executions>
 						<execution>
 							<id>prepare-agent</id>
