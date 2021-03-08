@@ -396,6 +396,9 @@ public class SuiteUtils {
             }
         } else if (testType.contains("jld:NegativeEvaluationTest")) {
             failure_expected = true;
+            if(test.containsKey("expectErrorCode")) {
+                expect = test.get("expectErrorCode");
+            }
         }
 
         Object result = null;

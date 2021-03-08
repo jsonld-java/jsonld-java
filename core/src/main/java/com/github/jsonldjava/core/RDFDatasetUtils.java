@@ -91,7 +91,11 @@ public class RDFDatasetUtils {
             }
         } else {
             output.append("\"");
-            escape(o.getValue(), output);
+            if(JsonLdConsts.RDF_JSON.equals(o.getDatatype())) {
+                escapeJcs(o.getValue(), output);
+            }else {
+                escape(o.getValue(), output);
+            }
             output.append("\"");
             if (RDF_LANGSTRING.equals(o.getDatatype())) {
                 output.append("@").append(o.getLanguage());
@@ -192,6 +196,51 @@ public class RDFDatasetUtils {
         return rval;
     }
 
+    private static void specialCharactersEscaped(char c, StringBuilder rval) {
+        switch (c) {
+            case '\b':
+                rval.append("\\b");
+                break;
+            case '\n':
+                rval.append("\\n");
+                break;
+            case '\t':
+                rval.append("\\t");
+                break;
+            case '\f':
+                rval.append("\\f");
+                break;
+            case '\r':
+                rval.append("\\r");
+                break;
+            case '\"':
+                rval.append("\\\"");
+                break;
+            case '\\':
+                rval.append("\\\\");
+                break;
+            default:
+                rval.append(c);
+                break;
+        }
+    }
+
+
+    /**
+     * Escapes the given JSON Canonicalization Scheme string
+     *
+     * @param str
+     *            The string to escape
+     * @param rval
+     *            The {@link StringBuilder} to append to.
+     */
+    public static void escapeJcs(String str, StringBuilder rval) {
+        for (int i = 0; i < str.length(); i++) {
+            final char hi = str.charAt(i);
+            specialCharactersEscaped(hi, rval);
+        }
+    }
+
     /**
      * Escapes the given string according to the N-Quads escape rules
      *
@@ -221,37 +270,7 @@ public class RDFDatasetUtils {
                 final int c = (hi << 10) + lo + (0x10000 - (0xD800 << 10) - 0xDC00);
                 rval.append(String.format("\\U%08x", c));
             } else {
-                switch (hi) {
-                case '\b':
-                    rval.append("\\b");
-                    break;
-                case '\n':
-                    rval.append("\\n");
-                    break;
-                case '\t':
-                    rval.append("\\t");
-                    break;
-                case '\f':
-                    rval.append("\\f");
-                    break;
-                case '\r':
-                    rval.append("\\r");
-                    break;
-                // case '\'':
-                // rval += "\\'";
-                // break;
-                case '\"':
-                    rval.append("\\\"");
-                    // rval += "\\u0022";
-                    break;
-                case '\\':
-                    rval.append("\\\\");
-                    break;
-                default:
-                    // just put the char as is
-                    rval.append(hi);
-                    break;
-                }
+                specialCharactersEscaped(hi, rval);
             }
         }
         // return rval;

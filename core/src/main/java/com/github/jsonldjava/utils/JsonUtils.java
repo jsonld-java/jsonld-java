@@ -13,16 +13,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.jsonldjava.core.DocumentLoader;
 import com.github.jsonldjava.core.JsonLdApi;
 import com.github.jsonldjava.core.JsonLdProcessor;
@@ -42,8 +42,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Functions used to make loading, parsing, and serializing JSON easy using
@@ -69,6 +67,34 @@ public class JsonUtils {
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final JsonFactory JSON_FACTORY = new JsonFactory(JSON_MAPPER);
+    private static final ObjectMapper JCS_MAPPER = JsonMapper.builder().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true).build();
+    private static final SimpleModule module = new SimpleModule();
+    private static final JsonFactory JCS_FACTORY = new JsonFactory(JCS_MAPPER);
+
+    private static final JsonSerializer<Double> doubleSerializer = new JsonSerializer<Double>() {
+
+        private DecimalFormat bigDecimalFor(String exponentSeparator) {
+            DecimalFormatSymbols symbol = DecimalFormatSymbols.getInstance(Locale.US);
+            symbol.setExponentSeparator(exponentSeparator);
+            return new DecimalFormat("0E00", symbol);
+        }
+
+        private final DecimalFormat DOUBLE_JCS = new DecimalFormat("0.#######",
+                DecimalFormatSymbols.getInstance(Locale.US));
+        private final DecimalFormat BIG_POSITIVE_DOUBLE_JCS = bigDecimalFor("e+");
+        private final DecimalFormat BIG_NEGATIVE_DOUBLE_JCS = bigDecimalFor("e");
+
+        @Override
+        public void serialize(Double value, JsonGenerator jgen, SerializerProvider serializerProvider) throws IOException {
+            if(value >= 1.0E21)
+                jgen.writeNumber(BIG_POSITIVE_DOUBLE_JCS.format(value).toLowerCase());
+            else if (value != 0 && value <= 1.0E-21)
+                jgen.writeNumber(BIG_NEGATIVE_DOUBLE_JCS.format(value).toLowerCase());
+            else
+                jgen.writeNumber(DOUBLE_JCS.format(value));
+
+        }
+    };
 
     private static volatile CloseableHttpClient DEFAULT_HTTP_CLIENT;
     // Avoid possible endless loop when following alternate locations
@@ -83,6 +109,10 @@ public class JsonUtils {
         // where a wide range of URIs are used for subjects and predicates
         JSON_FACTORY.disable(JsonFactory.Feature.INTERN_FIELD_NAMES);
         JSON_FACTORY.disable(JsonFactory.Feature.CANONICALIZE_FIELD_NAMES);
+        //adding our custom serializer
+        module.addSerializer(Double.class ,doubleSerializer);
+        //registering the module with ObjectMapper
+        JCS_MAPPER.registerModule(module);
     }
 
     /**
@@ -259,13 +289,10 @@ public class JsonUtils {
      * @param jsonObject
      *            The JSON-LD Object to serialize.
      * @return A JSON document serialised to a String.
-     * @throws JsonGenerationException
-     *             If there is a JSON error during serialization.
      * @throws IOException
      *             If there is an IO error during serialization.
      */
-    public static String toPrettyString(Object jsonObject)
-            throws JsonGenerationException, IOException {
+    public static String toPrettyString(Object jsonObject) throws IOException {
         final StringWriter sw = new StringWriter();
         writePrettyPrint(sw, jsonObject);
         return sw.toString();
@@ -277,14 +304,33 @@ public class JsonUtils {
      * @param jsonObject
      *            The JSON-LD Object to serialize.
      * @return A JSON document serialised to a String.
-     * @throws JsonGenerationException
-     *             If there is a JSON error during serialization.
      * @throws IOException
      *             If there is an IO error during serialization.
      */
-    public static String toString(Object jsonObject) throws JsonGenerationException, IOException {
+    public static String toString(Object jsonObject) throws IOException {
         final StringWriter sw = new StringWriter();
         write(sw, jsonObject);
+        return sw.toString();
+    }
+
+    /**
+     * Writes the given JSON-LD Object out to a String as JSON Canonicalization Scheme (JCS).
+     *
+     * @param jsonObject
+     *            The JSON-LD Object to serialize.
+     * @return A JSON document serialised to a String.
+     * @throws IOException
+     *             If there is an IO error during serialization.
+     */
+    public static String toJcsString(Object jsonObject)  throws IOException {
+        if(jsonObject == null) {
+            return "null";
+        }
+
+        final StringWriter sw = new StringWriter();
+
+        final JsonGenerator jw = JCS_FACTORY.createGenerator(sw);
+        jw.writeObject(jsonObject);
         return sw.toString();
     }
 
@@ -295,13 +341,10 @@ public class JsonUtils {
      *            The writer that is to receive the serialized JSON-LD object.
      * @param jsonObject
      *            The JSON-LD Object to serialize.
-     * @throws JsonGenerationException
-     *             If there is a JSON error during serialization.
      * @throws IOException
      *             If there is an IO error during serialization.
      */
-    public static void write(Writer writer, Object jsonObject)
-            throws JsonGenerationException, IOException {
+    public static void write(Writer writer, Object jsonObject) throws IOException {
         final JsonGenerator jw = JSON_FACTORY.createGenerator(writer);
         jw.writeObject(jsonObject);
     }
@@ -314,13 +357,11 @@ public class JsonUtils {
      *            The writer that is to receive the serialized JSON-LD object.
      * @param jsonObject
      *            The JSON-LD Object to serialize.
-     * @throws JsonGenerationException
-     *             If there is a JSON error during serialization.
      * @throws IOException
      *             If there is an IO error during serialization.
      */
     public static void writePrettyPrint(Writer writer, Object jsonObject)
-            throws JsonGenerationException, IOException {
+            throws IOException {
         final JsonGenerator jw = JSON_FACTORY.createGenerator(writer);
         jw.useDefaultPrettyPrinter();
         jw.writeObject(jsonObject);
