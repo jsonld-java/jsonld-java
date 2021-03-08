@@ -8,6 +8,7 @@ import static com.github.jsonldjava.core.JsonLdConsts.RDF_TYPE;
 import static com.github.jsonldjava.core.JsonLdUtils.isKeyword;
 import static com.github.jsonldjava.utils.Obj.newMap;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.github.jsonldjava.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -565,6 +567,7 @@ public class JsonLdApi {
             // 7)
             final List<String> keys = new ArrayList<String>(elem.keySet());
             Collections.sort(keys);
+            Map<String, Object> valueKeys = newMap();
             // GK: This is the place to check for a type-scoped context by checking any key that expands to `@type` to see the current context has a term that equals that key where the term definition includes `@context`, updating the activeCtx as you go (but using termScopedContext when checking the keys).
             // GK: 1.1 made the following loop somewhat recursive, due to nesting, so might want to extract into a method.
             for (final String key : keys) {
@@ -594,7 +597,6 @@ public class JsonLdApi {
                                 expandedProperty + " already exists in result");
                     }
                     // jsonld 1.1: 12 in https://w3c.github.io/json-ld-api/#algorithm-3
-                    Object inputType = elem.get(JsonLdConsts.TYPE);
                     // 7.4.3)
                     if (JsonLdConsts.ID.equals(expandedProperty)) {
                         if (value instanceof String) {
@@ -660,15 +662,9 @@ public class JsonLdApi {
                     }
                     // 7.4.6)
                     else if (JsonLdConsts.VALUE.equals(expandedProperty)) {
-                        // jsonld 1.1: 13.4.7.1 in https://w3c.github.io/json-ld-api/#algorithm-3
-                        if(JsonLdConsts.JSON.equals(inputType)) {
-                            expandedValue = value;
-                            if(opts.getProcessingMode().equals(JsonLdOptions.JSON_LD_1_0)) {
-                                throw new JsonLdError(Error.INVALID_VALUE_OBJECT_VALUE, value);
-                            }
-                        }
                         // jsonld 1.1: 13.4.7.2 in https://w3c.github.io/json-ld-api/#algorithm-3
-                        else if (value != null && (value instanceof Map || value instanceof List)) {
+                        if (value != null && (value instanceof Map || value instanceof List) &&
+                                !opts.isProcessingMode11()) {
                             throw new JsonLdError(Error.INVALID_VALUE_OBJECT_VALUE,
                                     "value of " + expandedProperty + " must be a scalar or null, but was: " + value);
                         }
@@ -981,13 +977,19 @@ public class JsonLdApi {
                 }
                 // 8.2)
                 final Object rval = result.get(JsonLdConsts.VALUE);
-                if (rval == null) {
+                if (result.getOrDefault(JsonLdConsts.TYPE,"").equals(JsonLdConsts.JSON)) {
+                    // jsonld 1.1: 14.3 in https://w3c.github.io/json-ld-api/#algorithm-3
+                }
+                else if(opts.isProcessingMode11() && (rval instanceof Map || rval instanceof List)) {
+                    // jsonld 1.1: 13.4.7.1 https://w3c.github.io/json-ld-api/#algorithm-3
+                    throw new JsonLdError(Error.INVALID_VALUE_OBJECT_VALUE,
+                            "value of " + activeProperty + " must be a scalar or null");
+                }
+
+                else if (rval == null) {
                     // nothing else is possible with result if we set it to
                     // null, so simply return it
                     return null;
-                }
-                else if (result.getOrDefault(JsonLdConsts.TYPE,"").equals(JsonLdConsts.JSON)) {
-                    // jsonld 1.1: 14.3 in https://w3c.github.io/json-ld-api/#algorithm-3
                 }
                 // 8.3)
                 else if (!(rval instanceof String) && result.containsKey(JsonLdConsts.LANGUAGE)) {
@@ -2049,6 +2051,18 @@ public class JsonLdApi {
                     // 3.5.3)
                     if ((object.isIRI() || object.isBlankNode())) {
                         nodeMap.computeIfAbsent(object.getValue(), k -> new NodeMapNode(k));
+                    }
+
+                    if (opts.isProcessingMode11() && JsonLdConsts.RDF_JSON.equals(object.getDatatype())) {
+                        try {
+                            final Object json = JsonUtils.fromString(object.getValue());
+                            Map<String, Object> entries = newMap(JsonLdConsts.TYPE, JsonLdConsts.JSON);
+                            entries.put(JsonLdConsts.VALUE, json);
+                            JsonLdUtils.mergeValue(node, predicate, entries);
+                        } catch (IOException e) {
+                            throw new JsonLdError(JsonLdError.Error.INVALID_JSON_LITERAL);
+                        }
+                        continue;
                     }
 
                     // 3.5.4)

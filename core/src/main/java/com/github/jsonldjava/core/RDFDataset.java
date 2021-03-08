@@ -172,8 +172,6 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
         /**
          * Converts an RDF triple object to a JSON-LD object.
          *
-         * @param o
-         *            the RDF triple object to convert.
          * @param useNativeTypes
          *            true to output native types, false not to.
          *
@@ -251,7 +249,6 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                     try {
                         rval.put("@value", JsonUtils.fromString(value));
                     } catch (IOException e) {
-                        e.printStackTrace();
                         throw new JsonLdError(JsonLdError.Error.INVALID_JSON_LITERAL, value, e);
                     }
                 }
@@ -667,7 +664,16 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
             final Object datatype = ((Map<String, Object>) item).get("@type");
 
             // convert to XSD datatypes as appropriate
-            if (value instanceof Boolean || value instanceof Number) {
+            if(JsonLdConsts.JSON.equals(datatype)) {
+                try {
+                    // jsonld 1.1: 8 in https://w3c.github.io/json-ld-api/#algorithm-13
+                    return new Literal(JsonUtils.toJcsString(value), RDF_JSON, null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw new JsonLdError(JsonLdError.Error.INVALID_JSON_LITERAL);
+                }
+            }
+            else if (value instanceof Boolean || value instanceof Number) {
                 // convert to XSD datatype
                 if (value instanceof Boolean) {
                     return new Literal(value.toString(),
@@ -685,29 +691,17 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
                         if (XSD_DECIMAL.equals(datatype)) {
                             return new Literal(value.toString(), XSD_DECIMAL, null);
                         }
-                        final DecimalFormat df = new DecimalFormat("0.0###############E0");
-                        df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
-                        return new Literal(df.format(value),
+                        return new Literal(JsonLdConsts.DOUBLE_DECIMAL_FORMAT.format(value),
                                 datatype == null ? XSD_DOUBLE : (String) datatype, null);
                     }
                 } else {
-                    final DecimalFormat df = new DecimalFormat("0");
-                    return new Literal(df.format(value),
+                    return new Literal(JsonLdConsts.INT_DECIMAL_FORMAT.format(value),
                             datatype == null ? XSD_INTEGER : (String) datatype, null);
                 }
             } else if (((Map<String, Object>) item).containsKey("@language")) {
                 return new Literal((String) value,
                         datatype == null ? RDF_LANGSTRING : (String) datatype,
                         (String) ((Map<String, Object>) item).get("@language"));
-            }
-            // jsonld 1.1: 8 in https://w3c.github.io/json-ld-api/#algorithm-13
-            else if(JsonLdConsts.JSON.equals(datatype)) {
-                try {
-                    return new Literal(JsonUtils.toString(value), RDF_JSON, null);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
             }
             else {
                 return new Literal((String) value,
