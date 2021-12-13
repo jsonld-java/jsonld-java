@@ -16,7 +16,7 @@ From Maven
     <dependency>
         <groupId>com.github.jsonld-java</groupId>
         <artifactId>jsonld-java</artifactId>
-        <version>0.13.3</version>
+        <version>0.13.4</version>
     </dependency>
 
 Code example
@@ -323,11 +323,11 @@ Here is the basic outline for what your module's pom.xml should look like
   <parent>
     <groupId>com.github.jsonld-java</groupId>
     <artifactId>jsonld-java-parent</artifactId>
-    <version>0.13.3</version>
+    <version>0.13.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jsonld-java-{your module}</artifactId>
-  <version>0.13.3-SNAPSHOT</version>
+  <version>0.13.4-SNAPSHOT</version>
   <name>JSONLD Java :: {your module name}</name>
   <description>JSON-LD Java integration module for {RDF Library your module integrates}</description>
   <packaging>jar</packaging>
@@ -449,6 +449,11 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 
 CHANGELOG
 =========
+### 2021-12-13
+* Release 0.13.4
+* Switch test logging from log4j to logback (Patch by @ansell)
+* Improve Travis CI build Performance (Patch by @YunLemon)
+
 ### 2021-03-06
 * Release 0.13.3
 * Fix @type when subject and object are the same (Reported by @barthanssens, Patch by @umbreak)
