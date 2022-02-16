@@ -2002,7 +2002,7 @@ public class JsonLdApi {
                     // 3.5.4)
                     if (RDF_TYPE.equals(predicate) && (object.isIRI() || object.isBlankNode())
                             && !opts.getUseRdfType() &&
-                            (!nodes.containsKey(object.getValue()) || subject.equals(object.getValue()))) {
+                            (!nodes.containsKey(object.getValue()) || subject.equals(object.getValue()) || object.isIRI())) {
                         JsonLdUtils.mergeValue(node, JsonLdConsts.TYPE, object.getValue());
                         continue;
                     }

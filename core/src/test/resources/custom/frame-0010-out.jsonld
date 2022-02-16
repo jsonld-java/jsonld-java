@@ -4,10 +4,7 @@
   },
   "@graph" : [ {
     "@id" : "http://example.com/main/id",
-    "rdf:type" : {
-      "@id" :  "http://example.com/rdf/id",
-      "rdf:label" : "someLabel"
-    }
+    "@type" : "http://example.com/rdf/id"
   }
  ]
 }
