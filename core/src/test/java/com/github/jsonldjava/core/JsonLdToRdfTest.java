@@ -1,6 +1,5 @@
 package com.github.jsonldjava.core;
 
-import com.github.jsonldjava.utils.JsonUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
