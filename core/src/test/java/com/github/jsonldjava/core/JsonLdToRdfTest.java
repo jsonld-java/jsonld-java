@@ -29,7 +29,7 @@ public class JsonLdToRdfTest {
     }
 
     @Test
-    public void testIssue329() throws Exception {
+    public void testIssue329() throws JsonLdError {
         final RDFDataset rdf = new RDFDataset();
         rdf.addTriple(
                 "http://test.com/ontology#Class1",
@@ -58,7 +58,7 @@ public class JsonLdToRdfTest {
     }
 
     @Test
-    public void testIssue329_blankNode() throws Exception {
+    public void testIssue329_blankNode() throws JsonLdError {
         final RDFDataset rdf = new RDFDataset();
         rdf.addTriple(
                 "http://test.com/ontology#Individual1",
