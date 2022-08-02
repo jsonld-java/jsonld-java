@@ -1,0 +1,6 @@
+{
+	"@context" : {
+		"@vocab" : "http://www.example.net/"
+	},
+	"@type" : "Document"
+}

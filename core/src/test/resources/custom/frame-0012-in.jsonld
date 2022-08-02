@@ -1,0 +1,22 @@
+{
+	"@context" : {
+		"@vocab" : "http://www.example.net/"
+	},
+	"@id": "#doc",
+	"@type": "Document",
+	"content": {
+		"@list": [
+			{
+				"@id": "#question",
+				"@type": "Question",
+				"label" : "Why am I here twice?"
+			},
+			{
+				"@id": "#block",
+				"predicate": {
+					"@id": "#question"
+				}
+			}
+		]
+	}
+}
