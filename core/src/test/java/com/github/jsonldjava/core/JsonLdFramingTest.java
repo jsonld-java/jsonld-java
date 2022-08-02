@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.github.jsonldjava.core.JsonLdConsts.Embed;
 import com.github.jsonldjava.utils.JsonUtils;
 
 public class JsonLdFramingTest {
