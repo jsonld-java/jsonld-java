@@ -2027,71 +2027,72 @@ public class JsonLdApi {
             }
         }
 
-        // 4)
-        for (final String name : graphMap.keySet()) {
-            final Map<String, NodeMapNode> graph = graphMap.get(name);
+        if (!opts.getExpandBNodeList()) {
+            // 4)
+            for (final String name : graphMap.keySet()) {
+                final Map<String, NodeMapNode> graph = graphMap.get(name);
 
-            // 4.1)
-            if (!graph.containsKey(RDF_NIL)) {
-                continue;
-            }
+                // 4.1)
+                if (!graph.containsKey(RDF_NIL)) {
+                    continue;
+                }
 
-            // 4.2)
-            final NodeMapNode nil = graph.get(RDF_NIL);
-            // 4.3)
-            for (final UsagesNode usage : nil.usages) {
-                // 4.3.1)
-                NodeMapNode node = usage.node;
-                String property = usage.property;
-                Map<String, Object> head = usage.value;
-                // 4.3.2)
-                final List<Object> list = new ArrayList<Object>(4);
-                final List<String> listNodes = new ArrayList<String>(4);
-                // 4.3.3)
-                while (RDF_REST.equals(property) && node.isWellFormedListNode()) {
-                    // 4.3.3.1)
-                    list.add(((List<Object>) node.get(RDF_FIRST)).get(0));
-                    // 4.3.3.2)
-                    listNodes.add((String) node.get(JsonLdConsts.ID));
-                    // 4.3.3.3)
-                    final UsagesNode nodeUsage = node.usages.get(0);
-                    // 4.3.3.4)
-                    node = nodeUsage.node;
-                    property = nodeUsage.property;
-                    head = nodeUsage.value;
-                    // 4.3.3.5)
-                    if (!JsonLdUtils.isBlankNode(node)) {
-                        break;
+                // 4.2)
+                final NodeMapNode nil = graph.get(RDF_NIL);
+                // 4.3)
+                for (final UsagesNode usage : nil.usages) {
+                    // 4.3.1)
+                    NodeMapNode node = usage.node;
+                    String property = usage.property;
+                    Map<String, Object> head = usage.value;
+                    // 4.3.2)
+                    final List<Object> list = new ArrayList<Object>(4);
+                    final List<String> listNodes = new ArrayList<String>(4);
+                    // 4.3.3)
+                    while (RDF_REST.equals(property) && node.isWellFormedListNode()) {
+                        // 4.3.3.1)
+                        list.add(((List<Object>) node.get(RDF_FIRST)).get(0));
+                        // 4.3.3.2)
+                        listNodes.add((String) node.get(JsonLdConsts.ID));
+                        // 4.3.3.3)
+                        final UsagesNode nodeUsage = node.usages.get(0);
+                        // 4.3.3.4)
+                        node = nodeUsage.node;
+                        property = nodeUsage.property;
+                        head = nodeUsage.value;
+                        // 4.3.3.5)
+                        if (!JsonLdUtils.isBlankNode(node)) {
+                            break;
+                        }
                     }
-                }
-                // 4.3.4)
-                if (RDF_FIRST.equals(property)) {
-                    // 4.3.4.1)
-                    if (RDF_NIL.equals(node.get(JsonLdConsts.ID))) {
-                        continue;
+                    // 4.3.4)
+                    if (RDF_FIRST.equals(property)) {
+                        // 4.3.4.1)
+                        if (RDF_NIL.equals(node.get(JsonLdConsts.ID))) {
+                            continue;
+                        }
+                        // 4.3.4.3)
+                        final String headId = (String) head.get(JsonLdConsts.ID);
+                        // 4.3.4.4-5)
+                        head = (Map<String, Object>) ((List<Object>) graph.get(headId).get(RDF_REST))
+                                .get(0);
+                        // 4.3.4.6)
+                        list.remove(list.size() - 1);
+                        listNodes.remove(listNodes.size() - 1);
                     }
-                    // 4.3.4.3)
-                    final String headId = (String) head.get(JsonLdConsts.ID);
-                    // 4.3.4.4-5)
-                    head = (Map<String, Object>) ((List<Object>) graph.get(headId).get(RDF_REST))
-                            .get(0);
-                    // 4.3.4.6)
-                    list.remove(list.size() - 1);
-                    listNodes.remove(listNodes.size() - 1);
-                }
-                // 4.3.5)
-                head.remove(JsonLdConsts.ID);
-                // 4.3.6)
-                Collections.reverse(list);
-                // 4.3.7)
-                head.put(JsonLdConsts.LIST, list);
-                // 4.3.8)
-                for (final String nodeId : listNodes) {
-                    graph.remove(nodeId);
+                    // 4.3.5)
+                    head.remove(JsonLdConsts.ID);
+                    // 4.3.6)
+                    Collections.reverse(list);
+                    // 4.3.7)
+                    head.put(JsonLdConsts.LIST, list);
+                    // 4.3.8)
+                    for (final String nodeId : listNodes) {
+                        graph.remove(nodeId);
+                    }
                 }
             }
         }
-
         // 5)
         final List<Object> result = new ArrayList<Object>(4);
         // 6)

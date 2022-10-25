@@ -58,6 +58,7 @@ public class JsonLdOptions {
         copy.setPruneBlankNodeIdentifiers(pruneBlankNodeIdentifiers);
         copy.setRequireAll(requireAll);
         copy.setAllowContainerSetOnType(allowContainerSetOnType);
+        copy.setExpandBNodeList(expandBNodeList);
         copy.setUseRdfType(useRdfType);
         copy.setUseNativeTypes(useNativeTypes);
         copy.setProduceGeneralizedRdf(produceGeneralizedRdf);
@@ -102,6 +103,7 @@ public class JsonLdOptions {
     private Boolean pruneBlankNodeIdentifiers = false;
     private Boolean requireAll = false;
     private Boolean allowContainerSetOnType = false;
+    private Boolean expandBNodeList = false;
 
     // RDF conversion options :
     // http://www.w3.org/TR/json-ld-api/#serialize-rdf-as-json-ld-algorithm
@@ -223,6 +225,14 @@ public class JsonLdOptions {
 
     public void setAllowContainerSetOnType(Boolean allowContainerSetOnType) {
         this.allowContainerSetOnType = allowContainerSetOnType;
+    }
+
+    public Boolean getExpandBNodeList() {
+        return expandBNodeList;
+    }
+
+    public void setExpandBNodeList(Boolean expandBNodeList) {
+        this.expandBNodeList = expandBNodeList;
     }
 
     public Boolean getCompactArrays() {
