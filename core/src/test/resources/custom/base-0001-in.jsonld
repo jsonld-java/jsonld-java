@@ -1,6 +1,6 @@
 {
     "@context": [ 
-"https://raw.githubusercontent.com/monarch-initiative/monarch-app/master/conf/monarch-context.jsonld",
+"https://raw.githubusercontent.com/monarch-initiative/monarch-legacy/e337d87a563ec630aca45492f28a6564f980068b/conf/monarch-context.jsonld",
         {
             "@base": "http://example.org/base/",
             "ex": "http://example.org/",
