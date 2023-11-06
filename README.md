@@ -449,6 +449,10 @@ Alternatively, we can also host your repository in the jsonld-java organisation 
 
 CHANGELOG
 =========
+### 2023-11-06
+* Release 0.13.6
+* Bump Jackson-databind version to latest for security update
+
 ### 2023-11-03
 * Release 0.13.5
 * Bump Jackson and Guava versions to latest for security updates
