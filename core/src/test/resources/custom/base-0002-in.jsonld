@@ -1,5 +1,5 @@
 {
-    "@context": [ 
+    "@context": [
         {
             "@base": "http://example.org/base/",
             "ex": "http://example.org/",
@@ -7,10 +7,11 @@
                 "@type": "@id"
             }
         },
-		"https://raw.githubusercontent.com/monarch-initiative/monarch-app/master/conf/monarch-context.jsonld"
+    "https://raw.githubusercontent.com/jsonld-java/jsonld-java/master/core/src/test/resources/custom/monarch-context.jsonld"
     ],
     "@id": "3456",
     "ex:name": "Jim",
     "ex:friendOf": "1234",
     "@type": "Person"
 }
+
