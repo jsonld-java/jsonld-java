@@ -10,13 +10,11 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.jsonldjava.utils.JsonUtils;
 
 public class LocalBaseTest {
-    @Ignore("TODO: context does no more resolve - see https://github.com/jsonld-java/jsonld-java/issues/175")
     @Test
     public void testMixedLocalRemoteBaseRemoteContextFirst() throws Exception {
 
@@ -38,7 +36,6 @@ public class LocalBaseTest {
         assertEquals(expanded, output);
     }
 
-    @Ignore("TODO: context does no more resolve - see https://github.com/jsonld-java/jsonld-java/issues/175")
     @Test
     public void testMixedLocalRemoteBaseLocalContextFirst() throws Exception {
 
