@@ -1,15 +1,15 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.github.jsonldjava.utils.JsonUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class ContextCompactionTest {
@@ -39,9 +39,9 @@ public class ContextCompactionTest {
         newContexts.add("http://schema.org/");
         final Map<String, Object> compacted = JsonLdProcessor.compact(json, newContexts, options);
 
-        assertTrue("Compaction removed the context", compacted.containsKey("@context"));
-        assertFalse("Compaction of context should be a string, not a list",
-                compacted.get("@context") instanceof List);
+        assertTrue(compacted.containsKey("@context"), "Compaction removed the context");
+        assertFalse(compacted.get("@context") instanceof List,
+                "Compaction of context should be a string, not a list");
     }
 
     @Test
@@ -56,9 +56,9 @@ public class ContextCompactionTest {
 
         final Map<String, Object> compacted = JsonLdProcessor.compact(json, ctx, options);
 
-        assertEquals("Wrong returned context", "http://schema.org/", compacted.get("@context"));
-        assertEquals("Wrong type", "Person", compacted.get("type"));
-        assertEquals("Wrong number of Json entries",2, compacted.size());
+        assertEquals("http://schema.org/", compacted.get("@context"),"Wrong returned context");
+        assertEquals( "Person", compacted.get("type"),"Wrong type");
+        assertEquals(2, compacted.size(),"Wrong number of Json entries");
     }
 
 }

@@ -1,13 +1,6 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,25 +32,25 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.github.jsonldjava.utils.JsonUtils;
 
 @SuppressWarnings("unchecked")
-public class DocumentLoaderTest {
+class DocumentLoaderTest {
 
     private final DocumentLoader documentLoader = new DocumentLoader();
 
-    @After
-    public void setContextClassLoader() {
+    @AfterEach
+    void setContextClassLoader() {
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
     }
 
     @Test
-    public void fromURLTest0001() throws Exception {
+    void fromURLTest0001() throws Exception {
         final URL contexttest = getClass().getResource("/custom/contexttest-0001.jsonld");
         assertNotNull(contexttest);
         final Object context = JsonUtils.fromURL(contexttest, documentLoader.getHttpClient());
@@ -72,7 +65,7 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void fromURLTest0002() throws Exception {
+    void fromURLTest0002() throws Exception {
         final URL contexttest = getClass().getResource("/custom/contexttest-0002.jsonld");
         assertNotNull(contexttest);
         final Object context = JsonUtils.fromURL(contexttest, documentLoader.getHttpClient());
@@ -96,7 +89,7 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void fromURLBomTest0004() throws Exception {
+    void fromURLBomTest0004() throws Exception {
         final URL contexttest = getClass().getResource("/custom/contexttest-0004.jsonld");
         assertNotNull(contexttest);
         final Object context = JsonUtils.fromURL(contexttest, documentLoader.getHttpClient());
@@ -106,7 +99,7 @@ public class DocumentLoaderTest {
 
     // @Ignore("Integration test")
     @Test
-    public void fromURLredirectHTTPSToHTTP() throws Exception {
+    void fromURLredirectHTTPSToHTTP() throws Exception {
         final URL url = new URL("https://w3id.org/bundle/context");
         final Object context = JsonUtils.fromURL(url, documentLoader.getHttpClient());
         // Should not fail because of
@@ -118,7 +111,7 @@ public class DocumentLoaderTest {
 
     // @Ignore("Integration test")
     @Test
-    public void fromURLredirect() throws Exception {
+    void fromURLredirect() throws Exception {
         final URL url = new URL("http://purl.org/wf4ever/ro-bundle/context.json");
         final Object context = JsonUtils.fromURL(url, documentLoader.getHttpClient());
         assertTrue(context instanceof Map);
@@ -127,7 +120,7 @@ public class DocumentLoaderTest {
 
     // @Ignore("Integration test")
     @Test
-    public void loadDocumentWf4ever() throws Exception {
+    void loadDocumentWf4ever() throws Exception {
         final RemoteDocument document = documentLoader
                 .loadDocument("http://purl.org/wf4ever/ro-bundle/context.json");
         final Object context = document.getDocument();
@@ -135,9 +128,9 @@ public class DocumentLoaderTest {
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
-    @Ignore("Schema.org started to redirect from HTTP to HTTPS which breaks the Java HttpURLConnection API")
+    @Disabled("Schema.org started to redirect from HTTP to HTTPS which breaks the Java HttpURLConnection API")
     @Test
-    public void fromURLSchemaOrgNoApacheHttpClient() throws Exception {
+    void fromURLSchemaOrgNoApacheHttpClient() throws Exception {
         final URL url = new URL("http://schema.org/");
 
         final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
@@ -153,7 +146,7 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void loadDocumentSchemaOrg() throws Exception {
+    void loadDocumentSchemaOrg() throws Exception {
         final RemoteDocument document = documentLoader.loadDocument("http://schema.org/");
         final Object context = document.getDocument();
         assertTrue(context instanceof Map);
@@ -161,7 +154,7 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void loadDocumentSchemaOrgDirect() throws Exception {
+    void loadDocumentSchemaOrgDirect() throws Exception {
         final RemoteDocument document = documentLoader
                 .loadDocument("http://schema.org/docs/jsonldcontext.json");
         final Object context = document.getDocument();
@@ -169,9 +162,9 @@ public class DocumentLoaderTest {
         assertFalse(((Map<?, ?>) context).isEmpty());
     }
 
-    @Ignore("Caching failed without any apparent cause on the client side")
+    @Disabled("Caching failed without any apparent cause on the client side")
     @Test
-    public void fromURLCache() throws Exception {
+    void fromURLCache() throws Exception {
         final URL url = new URL("https://json-ld.org/contexts/person.jsonld");
         JsonUtils.fromURL(url, documentLoader.getHttpClient());
 
@@ -192,7 +185,7 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void fromURLCustomHandler() throws Exception {
+    void fromURLCustomHandler() throws Exception {
         final AtomicInteger requests = new AtomicInteger();
         final URLStreamHandler handler = new URLStreamHandler() {
             @Override
@@ -235,7 +228,7 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void fromURLAcceptHeaders() throws Exception {
+    void fromURLAcceptHeaders() throws Exception {
 
         final URL url = new URL("http://example.com/fake-jsonld-test");
         final ArgumentCaptor<HttpUriRequest> httpRequest = ArgumentCaptor
@@ -284,7 +277,7 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void jarCacheHit() throws Exception {
+    void jarCacheHit() throws Exception {
         // If no cache, should fail-fast as nonexisting.example.com is not in
         // DNS
         final Object context = JsonUtils.fromURL(new URL("http://nonexisting.example.com/context"),
@@ -293,23 +286,27 @@ public class DocumentLoaderTest {
         assertTrue(((Map) context).containsKey("@context"));
     }
 
-    @Test(expected = IOException.class)
-    public void jarCacheMiss404() throws Exception {
-        // Should fail-fast as nonexisting.example.com is not in DNS
-        JsonUtils.fromURL(new URL("http://nonexisting.example.com/miss"),
-                documentLoader.getHttpClient());
-    }
-
-    @Test(expected = IOException.class)
-    public void jarCacheMissThreadCtx() throws Exception {
-        final URLClassLoader findNothingCL = new URLClassLoader(new URL[] {}, null);
-        Thread.currentThread().setContextClassLoader(findNothingCL);
-        JsonUtils.fromURL(new URL("http://nonexisting.example.com/context"),
-                documentLoader.getHttpClient());
+    @Test
+    void jarCacheMiss404() throws Exception {
+        assertThrows(IOException.class, () -> {
+            // Should fail-fast as nonexisting.example.com is not in DNS
+            JsonUtils.fromURL(new URL("http://nonexisting.example.com/miss"),
+                    documentLoader.getHttpClient());
+        });
     }
 
     @Test
-    public void jarCacheHitThreadCtx() throws Exception {
+    void jarCacheMissThreadCtx() throws Exception {
+        assertThrows(IOException.class, () -> {
+            final URLClassLoader findNothingCL = new URLClassLoader(new URL[]{}, null);
+            Thread.currentThread().setContextClassLoader(findNothingCL);
+            JsonUtils.fromURL(new URL("http://nonexisting.example.com/context"),
+                    documentLoader.getHttpClient());
+        });
+    }
+
+    @Test
+    void jarCacheHitThreadCtx() throws Exception {
         final URL url = new URL("http://nonexisting.example.com/nested/hello");
         final URL nestedJar = getClass().getResource("/nested.jar");
         try {
@@ -335,13 +332,13 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void sharedHttpClient() throws Exception {
+    void sharedHttpClient() throws Exception {
         // Should be the same instance unless explicitly set
         assertSame(documentLoader.getHttpClient(), new DocumentLoader().getHttpClient());
     }
 
     @Test
-    public void differentHttpClient() throws Exception {
+    void differentHttpClient() throws Exception {
         // Custom http client
         try {
             documentLoader.setHttpClient(JsonUtils.createDefaultHttpClient());
@@ -354,13 +351,13 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void testDisallowRemoteContexts() throws Exception {
+    void disallowRemoteContexts() throws Exception {
         final String testUrl = "http://json-ld.org/contexts/person.jsonld";
         final Object test = documentLoader.loadDocument(testUrl);
 
         assertNotNull(
-                "Was not able to fetch from URL before testing disallow remote contexts loading",
-                test);
+                test,
+                "Was not able to fetch from URL before testing disallow remote contexts loading");
 
         final String disallowProperty = System
                 .getProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING);
@@ -381,12 +378,12 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void testInjectContext() throws Exception {
+    void injectContext() throws Exception {
         injectContext(new JsonLdOptions());
     }
 
     @Test
-    public void testIssue304_remoteContextAndBaseIri() throws Exception {
+    void issue304_remoteContextAndBaseIri() throws Exception {
         injectContext(new JsonLdOptions("testing:baseIri"));
     }
 
@@ -419,7 +416,7 @@ public class DocumentLoaderTest {
     }
 
     @Test
-    public void testRemoteContextCaching() throws Exception {
+    void remoteContextCaching() throws Exception {
         final String[] urls = { "http://schema.org/", "http://schema.org/docs/jsonldcontext.json" };
         for (final String url : urls) {
             final long start = System.currentTimeMillis();

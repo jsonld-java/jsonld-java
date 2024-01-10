@@ -1,8 +1,8 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,13 +10,13 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.jsonldjava.utils.JsonUtils;
 
-public class LocalBaseTest {
+class LocalBaseTest {
     @Test
-    public void testMixedLocalRemoteBaseRemoteContextFirst() throws Exception {
+    void mixedLocalRemoteBaseRemoteContextFirst() throws Exception {
 
         final Reader reader = new BufferedReader(new InputStreamReader(
                 this.getClass().getResourceAsStream("/custom/base-0001-in.jsonld"),
@@ -37,7 +37,7 @@ public class LocalBaseTest {
     }
 
     @Test
-    public void testMixedLocalRemoteBaseLocalContextFirst() throws Exception {
+    void mixedLocalRemoteBaseLocalContextFirst() throws Exception {
 
         final Reader reader = new BufferedReader(new InputStreamReader(
                 this.getClass().getResourceAsStream("/custom/base-0002-in.jsonld"),
@@ -58,7 +58,7 @@ public class LocalBaseTest {
     }
 
     @Test
-    public void testUriResolveWhenExpandingBase() throws Exception {
+    void uriResolveWhenExpandingBase() throws Exception {
 
         final Reader reader = new BufferedReader(new InputStreamReader(
                 this.getClass().getResourceAsStream("/custom/base-0003-in.jsonld"),
@@ -68,7 +68,7 @@ public class LocalBaseTest {
 
         final JsonLdOptions options = new JsonLdOptions();
         final List<Object> expanded = JsonLdProcessor.expand(input, options);
-        assertFalse("expanded form must not be empty", expanded.isEmpty());
+        assertFalse(expanded.isEmpty(), "expanded form must not be empty");
 
         final Reader outReader = new BufferedReader(new InputStreamReader(
                 this.getClass().getResourceAsStream("/custom/base-0003-out.jsonld"),

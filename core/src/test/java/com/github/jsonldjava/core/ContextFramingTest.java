@@ -1,15 +1,15 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.github.jsonldjava.utils.JsonUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ContextFramingTest {
 
@@ -40,9 +40,9 @@ public class ContextFramingTest {
 
         final Map<String, Object> framed = JsonLdProcessor.frame(json, frame, options);
 
-        assertTrue("Framing removed the context", framed.containsKey("@context"));
-        assertFalse("Framing of context should be a string, not a list",
-                framed.get("@context") instanceof List);
+        assertTrue(framed.containsKey("@context"), "Framing removed the context");
+        assertFalse(framed.get("@context") instanceof List,
+                "Framing of context should be a string, not a list");
     }
 
     @Test
@@ -58,10 +58,10 @@ public class ContextFramingTest {
 
         final Map<String, Object> framed = JsonLdProcessor.frame(json, frame, options);
 
-        assertEquals("Wrong returned context", "http://schema.org/", framed.get("@context"));
-        assertEquals("Wrong id", "schema:myid", framed.get("id"));
-        assertEquals("Wrong type", "Person", framed.get("type"));
-        assertEquals("Wrong number of Json entries",3, framed.size());
+        assertEquals("http://schema.org/", framed.get("@context"),"Wrong returned context");
+        assertEquals("schema:myid", framed.get("id"),"Wrong id");
+        assertEquals( "Person", framed.get("type"),"Wrong type");
+        assertEquals(3, framed.size(),"Wrong number of Json entries");
     }
 
 }

@@ -1,30 +1,30 @@
 package com.github.jsonldjava.core;
 
 import com.github.jsonldjava.utils.JsonUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class ContextRecursionTest {
+class ContextRecursionTest {
 
-    @BeforeClass
-    public static void setup() {
+    @BeforeAll
+    static void setup() {
         System.setProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING, "true");
     }
 
-    @AfterClass
-    public static void tearDown() {
+    @AfterAll
+    static void tearDown() {
         System.setProperty(DocumentLoader.DISALLOW_REMOTE_CONTEXT_LOADING, "false");
     }
 
     @Test
-    public void testIssue302_allowedRecursion() throws IOException {
+    void issue302_allowedRecursion() throws IOException {
 
         final String contextB = "{\"@context\": [\"http://localhost/d\", {\"b\": \"http://localhost/b\"} ] }";
         final String contextC = "{\"@context\": [\"http://localhost/d\", {\"c\": \"http://localhost/c\"} ] }";
@@ -48,7 +48,7 @@ public class ContextRecursionTest {
     }
 
     @Test
-    public void testCyclicRecursion() throws IOException {
+    void cyclicRecursion() throws IOException {
 
         final String contextC = "{\"@context\": [\"http://localhost/d\", {\"c\": \"http://localhost/c\"} ] }";
         final String contextD = "{\"@context\": [\"http://localhost/e\", {\"d\": \"http://localhost/d\"} ] }";

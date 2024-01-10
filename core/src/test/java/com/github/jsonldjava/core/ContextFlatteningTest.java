@@ -1,15 +1,15 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.github.jsonldjava.utils.JsonUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ContextFlatteningTest {
 
@@ -40,9 +40,9 @@ public class ContextFlatteningTest {
 
         final Map<String, Object> flattened = ((Map<String, Object>)JsonLdProcessor.flatten(json, flatten, options));
 
-        assertTrue("Flattening removed the context", flattened.containsKey("@context"));
-        assertFalse("Flattening of context should be a string, not a list",
-                flattened.get("@context") instanceof List);
+        assertTrue(flattened.containsKey("@context"),"Flattening removed the context");
+        assertFalse(flattened.get("@context") instanceof List,
+                "Flattening of context should be a string, not a list");
     }
 
     @Test
@@ -59,8 +59,8 @@ public class ContextFlatteningTest {
 
         final Map<String, Object> flattened = ((Map<String, Object>)JsonLdProcessor.flatten(json, flatten, options));
 
-        assertEquals("Wrong returned context", "http://schema.org/", flattened.get("@context"));
-        assertEquals("Wrong number of Json entries",2, flattened.size());
+        assertEquals("http://schema.org/", flattened.get("@context"),"Wrong returned context");
+        assertEquals(2, flattened.size(),"Wrong number of Json entries");
     }
 
 }

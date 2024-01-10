@@ -16,31 +16,27 @@ import java.util.LongSummaryStatistics;
 import java.util.Random;
 import java.util.function.Function;
 import java.util.zip.GZIPInputStream;
-
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import com.github.jsonldjava.core.RDFDataset.Quad;
 import com.github.jsonldjava.utils.JsonUtils;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  *
  * @author Peter Ansell p_ansell@yahoo.com
- */
-public class JsonLdPerformanceTest {
+ */public class JsonLdPerformanceTest {
 
-    @Rule
-    public TemporaryFolder tempDir = new TemporaryFolder();
+    @TempDir
+    public File tempDir;
 
     private File testDir;
 
-    @Before
-    public void setUp() throws Exception {
-        testDir = tempDir.newFolder("jsonld-perf-tests-");
+    @BeforeEach
+    void setUp() throws Exception {
+        testDir = newFolder(tempDir, "jsonld-perf-tests-");
     }
 
     /**
@@ -50,9 +46,9 @@ public class JsonLdPerformanceTest {
      *
      * @throws Exception
      */
-    @Ignore("Enable as necessary for manual testing, particularly to test that it fails due to irregular URIs")
+    @Disabled("Enable as necessary for manual testing, particularly to test that it fails due to irregular URIs")
     @Test
-    public final void testPerformance1() throws Exception {
+    final void performance1() throws Exception {
         testCompaction("Long", new GZIPInputStream(
                 new FileInputStream(new File("/home/peter/Downloads/2000007922.jsonld.gz"))));
     }
@@ -64,9 +60,9 @@ public class JsonLdPerformanceTest {
      *
      * @throws Exception
      */
-    @Ignore("Enable as necessary to test performance")
+    @Disabled("Enable as necessary to test performance")
     @Test
-    public final void testLaxMergeValuesPerfFast() throws Exception {
+    final void laxMergeValuesPerfFast() throws Exception {
         testCompaction("Fast",
                 new FileInputStream(new File("/home/peter/Downloads/jsonldperfs/fast.jsonld")));
     }
@@ -78,9 +74,9 @@ public class JsonLdPerformanceTest {
      *
      * @throws Exception
      */
-    @Ignore("Enable as necessary to test performance")
+    @Disabled("Enable as necessary to test performance")
     @Test
-    public final void testLaxMergeValuesPerfSlow() throws Exception {
+    final void laxMergeValuesPerfSlow() throws Exception {
         testCompaction("Slow",
                 new FileInputStream(new File("/home/peter/Downloads/jsonldperfs/slow.jsonld")));
     }
@@ -113,9 +109,9 @@ public class JsonLdPerformanceTest {
         System.out.println("(" + label + ") Compact average : " + compactStats.getAverage());
     }
 
-    @Ignore("Disable performance tests by default")
+    @Disabled("Disable performance tests by default")
     @Test
-    public final void testPerformanceRandom() throws Exception {
+    final void performanceRandom() throws Exception {
         final Random prng = new Random();
         final int rounds = 10000;
 
@@ -348,9 +344,9 @@ public class JsonLdPerformanceTest {
      *
      * @author fpservant
      */
-    @Ignore("Disable performance tests by default")
+    @Disabled("Disable performance tests by default")
     @Test
-    public final void slowVsFast5Predicates() throws Exception {
+    final void slowVsFast5Predicates() throws Exception {
 
         final String ns = "http://www.example.com/foo/";
 
@@ -386,9 +382,9 @@ public class JsonLdPerformanceTest {
      *
      * @author fpservant
      */
-    @Ignore("Disable performance tests by default")
+    @Disabled("Disable performance tests by default")
     @Test
-    public final void slowVsFast2Predicates() throws Exception {
+    final void slowVsFast2Predicates() throws Exception {
 
         final String ns = "http://www.example.com/foo/";
 
@@ -424,9 +420,9 @@ public class JsonLdPerformanceTest {
      *
      * @author fpservant
      */
-    @Ignore("Disable performance tests by default")
+    @Disabled("Disable performance tests by default")
     @Test
-    public final void slowVsFast1Predicate() throws Exception {
+    final void slowVsFast1Predicate() throws Exception {
 
         final String ns = "http://www.example.com/foo/";
 
@@ -462,9 +458,9 @@ public class JsonLdPerformanceTest {
      *
      * @author fpservant
      */
-    @Ignore("Disable performance tests by default")
+    @Disabled("Disable performance tests by default")
     @Test
-    public final void slowVsFastMultipleSubjects1Predicate() throws Exception {
+    final void slowVsFastMultipleSubjects1Predicate() throws Exception {
 
         final String ns = "http://www.example.com/foo/";
 
@@ -500,9 +496,9 @@ public class JsonLdPerformanceTest {
      *
      * @author fpservant
      */
-    @Ignore("Disable performance tests by default")
+    @Disabled("Disable performance tests by default")
     @Test
-    public final void slowVsFastMultipleSubjects5Predicates() throws Exception {
+    final void slowVsFastMultipleSubjects5Predicates() throws Exception {
 
         final String ns = "http://www.example.com/foo/";
 
@@ -554,9 +550,9 @@ public class JsonLdPerformanceTest {
      *             If there is an error with the JSONLD processing.
      */
     private void runLaxVersusSlowToRDFTest(final String label, final String ns,
-            Function<Integer, String> subjectGenerator,
-            Function<Integer, String> predicateGenerator, Function<Integer, String> objectGenerator,
-            int tripleCount, int warmingRounds, int rounds) throws JsonLdError {
+                                           Function<Integer, String> subjectGenerator,
+                                           Function<Integer, String> predicateGenerator, Function<Integer, String> objectGenerator,
+                                           int tripleCount, int warmingRounds, int rounds) throws JsonLdError {
 
         System.out.println("Running test for lax versus slow for " + label);
 
@@ -607,7 +603,7 @@ public class JsonLdPerformanceTest {
      * @author fpservant
      */
     @Test
-    public final void duplicatedTriplesInAnRDFDataset() throws Exception {
+    final void duplicatedTriplesInAnRDFDataset() throws Exception {
         final RDFDataset inputRdf = new RDFDataset();
         final String ns = "http://www.example.com/foo/";
         inputRdf.setNamespace("ex", ns);
@@ -637,5 +633,14 @@ public class JsonLdPerformanceTest {
         final String jsonld2 = JsonUtils.toPrettyString(fromRDF2);
         // System.out.println(jsonld2);
 
+    }
+
+    private static File newFolder(File root, String... subDirs) throws IOException {
+        String subFolder = String.join("/", subDirs);
+        File result = new File(root, subFolder);
+        if (!result.mkdirs()) {
+            throw new IOException("Couldn't create folders " + root);
+        }
+        return result;
     }
 }

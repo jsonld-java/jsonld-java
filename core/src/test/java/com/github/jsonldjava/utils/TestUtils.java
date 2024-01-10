@@ -3,7 +3,7 @@
  */
 package com.github.jsonldjava.utils;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,7 +38,7 @@ public class TestUtils {
         nextFile.createNewFile();
 
         final InputStream inputStream = TestUtils.class.getResourceAsStream(resource);
-        assertNotNull("Missing test resource: " + resource, inputStream);
+        assertNotNull(inputStream, "Missing test resource: " + resource);
 
         IOUtils.copy(inputStream, new FileOutputStream(nextFile));
         return nextFile.getAbsolutePath();

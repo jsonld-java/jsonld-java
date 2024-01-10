@@ -1,24 +1,23 @@
 package com.github.jsonldjava.utils;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JsonUtilsTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class JsonUtilsTest {
     @Test
-    public void resolveTest() {
+    void resolveTest() {
         final String baseUri = "http://mysite.net";
         final String pathToResolve = "picture.jpg";
         String resolve = "";
@@ -33,7 +32,7 @@ public class JsonUtilsTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void fromStringTest() {
+    void fromStringTest() {
         final String testString = "{\"seq\":3,\"id\":\"e48dfa735d9fad88db6b7cd696002df7\",\"changes\":[{\"rev\":\"2-6aebf275bc3f29b67695c727d448df8e\"}]}";
         final String testFailure = "{{{{{{{{{{{";
         Object obj = null;
@@ -55,7 +54,7 @@ public class JsonUtilsTest {
     }
 
     @Test
-    public void testFromJsonParser() throws Exception {
+    void fromJsonParser() throws Exception {
         final ObjectMapper jsonMapper = new ObjectMapper();
         final JsonFactory jsonFactory = new JsonFactory(jsonMapper);
         final Reader testInputString = new StringReader("{}");
@@ -64,43 +63,55 @@ public class JsonUtilsTest {
     }
 
     @Test
-    public void trailingContent_1() throws JsonParseException, IOException {
+    void trailingContent_1() throws JsonParseException, IOException {
         trailingContent("{}");
     }
 
     @Test
-    public void trailingContent_2() throws JsonParseException, IOException {
+    void trailingContent_2() throws JsonParseException, IOException {
         trailingContent("{}  \t  \r \n  \r\n   ");
     }
 
-    @Test(expected = JsonParseException.class)
-    public void trailingContent_3() throws JsonParseException, IOException {
-        trailingContent("{}x");
+    @Test
+    void trailingContent_3() throws JsonParseException, IOException {
+        assertThrows(JsonParseException.class, () -> {
+            trailingContent("{}x");
+        });
     }
 
-    @Test(expected = JsonParseException.class)
-    public void trailingContent_4() throws JsonParseException, IOException {
-        trailingContent("{}   x");
+    @Test
+    void trailingContent_4() throws JsonParseException, IOException {
+        assertThrows(JsonParseException.class, () -> {
+            trailingContent("{}   x");
+        });
     }
 
-    @Test(expected = JsonParseException.class)
-    public void trailingContent_5() throws JsonParseException, IOException {
-        trailingContent("{} \"x\"");
+    @Test
+    void trailingContent_5() throws JsonParseException, IOException {
+        assertThrows(JsonParseException.class, () -> {
+            trailingContent("{} \"x\"");
+        });
     }
 
-    @Test(expected = JsonParseException.class)
-    public void trailingContent_6() throws JsonParseException, IOException {
-        trailingContent("{} {}");
+    @Test
+    void trailingContent_6() throws JsonParseException, IOException {
+        assertThrows(JsonParseException.class, () -> {
+            trailingContent("{} {}");
+        });
     }
 
-    @Test(expected = JsonParseException.class)
-    public void trailingContent_7() throws JsonParseException, IOException {
-        trailingContent("{},{}");
+    @Test
+    void trailingContent_7() throws JsonParseException, IOException {
+        assertThrows(JsonParseException.class, () -> {
+            trailingContent("{},{}");
+        });
     }
 
-    @Test(expected = JsonParseException.class)
-    public void trailingContent_8() throws JsonParseException, IOException {
-        trailingContent("{},[]");
+    @Test
+    void trailingContent_8() throws JsonParseException, IOException {
+        assertThrows(JsonParseException.class, () -> {
+            trailingContent("{},[]");
+        });
     }
 
     private void trailingContent(String string) throws JsonParseException, IOException {

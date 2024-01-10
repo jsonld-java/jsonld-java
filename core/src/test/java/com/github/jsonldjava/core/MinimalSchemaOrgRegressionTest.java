@@ -1,7 +1,7 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URL;
 
@@ -15,7 +15,7 @@ import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.cache.BasicHttpCacheStorage;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MinimalSchemaOrgRegressionTest {
 
@@ -30,7 +30,7 @@ public class MinimalSchemaOrgRegressionTest {
         // BasicHttpCacheStorage
         final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
         .setMaxObjectSize(1024 * 128).build();
-        
+
         final CloseableHttpClient httpClient = CachingHttpClientBuilder.create()
         // allow caching
         .setCacheConfig(cacheConfig)
@@ -44,7 +44,7 @@ public class MinimalSchemaOrgRegressionTest {
         .setRedirectStrategy(DefaultRedirectStrategy.INSTANCE)
         // use system defaults for proxy etc.
         .useSystemProperties().build();
-        
+
         Object content = JsonUtils.fromURL(url, httpClient);
         checkBasicConditions(content.toString());
     }
@@ -52,10 +52,10 @@ public class MinimalSchemaOrgRegressionTest {
     private void checkBasicConditions(final String outputString) {
         // Test for some basic conditions without including the JSON/JSON-LD
         // parsing code here
-        assertTrue(outputString, outputString.endsWith("}"));
-        assertFalse("Output string should not be empty: " + outputString.length(),
-                outputString.isEmpty());
-        assertTrue("Unexpected length: " + outputString.length(), outputString.length() > 100000);
+        assertTrue(outputString.endsWith("}"), outputString);
+        assertFalse(outputString.isEmpty(),
+                "Output string should not be empty: " + outputString.length());
+        assertTrue(outputString.length() > 100000, "Unexpected length: " + outputString.length());
     }
-    
+
 }
