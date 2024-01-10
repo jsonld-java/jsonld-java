@@ -1,12 +1,12 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.jsonldjava.utils.JsonUtils;
 
@@ -51,7 +51,7 @@ public class JsonLdFramingTest {
         opts.setCompactArrays(false);
         opts.setProcessingMode("json-ld-1.1");
         final Map<String, Object> frame2 = JsonLdProcessor.frame(in, frame, opts);
-        assertFalse("Result should contain no blank nodes", frame2.toString().contains("_:"));
+        assertFalse(frame2.toString().contains("_:"), "Result should contain no blank nodes");
 
         final Object out = JsonUtils
                 .fromInputStream(getClass().getResourceAsStream("/custom/frame-0003-out.jsonld"));

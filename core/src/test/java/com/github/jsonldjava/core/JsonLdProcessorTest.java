@@ -1,10 +1,5 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,23 +21,20 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.jsonldjava.utils.JsonUtils;
 import com.github.jsonldjava.utils.Obj;
 import com.github.jsonldjava.utils.TestUtils;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
+import static org.junit.jupiter.api.Assertions.*;
+
 public class JsonLdProcessorTest {
 
     private static final String TEST_DIR = "json-ld.org";
@@ -51,8 +43,8 @@ public class JsonLdProcessorTest {
     private static List<Object> REPORT_GRAPH;
     private static String ASSERTOR = "http://tristan.github.com/foaf#me";
 
-    @BeforeClass
-    public static void prepareReportFrame() {
+    @BeforeAll
+    static void prepareReportFrame() {
         REPORT = new LinkedHashMap<String, Object>() {
             {
                 // context
@@ -154,8 +146,8 @@ public class JsonLdProcessorTest {
 
     private static final String reportOutputFile = "reports/report";
 
-    @AfterClass
-    public static void writeReport()
+    @AfterAll
+    static void writeReport()
             throws JsonGenerationException, JsonMappingException, IOException, JsonLdError {
 
         // Only write reports if "-Dreport.format=..." is set
@@ -173,7 +165,6 @@ public class JsonLdProcessorTest {
         }
     }
 
-    @Parameters(name = "{0}{1}")
     public static Collection<Object[]> data() throws URISyntaxException, IOException {
 
         // TODO: look into getting the test data from github, which will help
@@ -232,9 +223,13 @@ public class JsonLdProcessorTest {
 
     private class TestDocumentLoader extends DocumentLoader {
 
-        private final String base;
+        private String base;
 
-        public TestDocumentLoader(String base) {
+        private TestDocumentLoader() {
+            this.base = base;
+        }
+
+        public void initJsonLdProcessorTest(String base) {
             this.base = base;
         }
 
@@ -282,32 +277,43 @@ public class JsonLdProcessorTest {
             // TODO Auto-generated method stub
 
         }
+
+        private File newFolder(File root, String... subDirs) throws IOException {
+            String subFolder = String.join("/", subDirs);
+            File result = new File(root, subFolder);
+            if (!result.mkdirs()) {
+                throw new IOException("Couldn't create folders " + root);
+            }
+            return result;
+        }
     }
 
     // @Rule
     // public Timeout timeout = new Timeout(10000);
 
-    @Rule
-    public TemporaryFolder tempDir = new TemporaryFolder();
+    @TempDir
+    public File tempDir;
 
     private File testDir;
 
-    private final String group;
-    private final Map<String, Object> test;
+    private String group;
+    private Map<String, Object> test;
 
-    public JsonLdProcessorTest(final String group, final String id,
-            final Map<String, Object> test) {
+    public void initJsonLdProcessorTest(final String group, final String id,
+                                        final Map<String, Object> test) {
         this.group = group;
         this.test = test;
     }
 
-    @Before
-    public void setUp() throws Exception {
-        testDir = tempDir.newFolder("jsonld");
+    @BeforeEach
+    void setUp() throws Exception {
+        testDir = newFolder(tempDir, "jsonld");
     }
 
-    @Test
-    public void runTest() throws URISyntaxException, IOException, JsonLdError {
+    @MethodSource("data")
+    @ParameterizedTest(name = "{0}{1}")
+    public void runTest(final String group, String id, final Map<String, Object> test) throws URISyntaxException, IOException, JsonLdError {
+        initJsonLdProcessorTest(group, id, test);
         // System.out.println("running test: " + group + test.get("@id") +
         // " :: " + test.get("name"));
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -316,7 +322,7 @@ public class JsonLdProcessorTest {
 
         final String inputFile = (String) test.get("input");
         final InputStream inputStream = cl.getResourceAsStream(TEST_DIR + "/" + inputFile);
-        assertNotNull("unable to find input file: " + test.get("input"), inputStream);
+        assertNotNull(inputStream, "unable to find input file: " + test.get("input"));
         final String inputType = inputFile.substring(inputFile.lastIndexOf(".") + 1);
 
         Object input = null;
@@ -350,7 +356,7 @@ public class JsonLdProcessorTest {
                 expect = expectFile;
                 failure_expected = true;
             } else if (expectStream == null) {
-                assertFalse("Unable to find expect file: " + expectFile, true);
+                assertFalse(true, "Unable to find expect file: " + expectFile);
             } else {
                 final String expectType = expectFile.substring(expectFile.lastIndexOf(".") + 1);
                 if (expectType.equals("jsonld")) {
@@ -371,12 +377,12 @@ public class JsonLdProcessorTest {
                     expect = TestUtils.join(expectLines, "\n");
                 } else {
                     expect = "";
-                    assertFalse("Unknown expect type: " + expectType, true);
+                    assertFalse(true, "Unknown expect type: " + expectType);
                 }
             }
         } else if (sparqlFile != null) {
             final InputStream sparqlStream = cl.getResourceAsStream(TEST_DIR + "/" + sparqlFile);
-            assertNotNull("unable to find expect file: " + sparqlFile, sparqlStream);
+            assertNotNull(sparqlStream, "unable to find expect file: " + sparqlFile);
             final BufferedReader buf = new BufferedReader(
                     new InputStreamReader(sparqlStream, "UTF-8"));
             String buffer = null;
@@ -386,7 +392,7 @@ public class JsonLdProcessorTest {
         } else if (testType.contains("jld:NegativeEvaluationTest")) {
             failure_expected = true;
         } else {
-            assertFalse("Nothing to expect from this test, thus nothing to test if it works", true);
+            assertFalse(true, "Nothing to expect from this test, thus nothing to test if it works");
         }
 
         Object result = null;
@@ -394,8 +400,8 @@ public class JsonLdProcessorTest {
         // OPTIONS SETUP
         final JsonLdOptions options = new JsonLdOptions(
                 "http://json-ld.org/test-suite/tests/" + test.get("input"));
-        final TestDocumentLoader testLoader = new TestDocumentLoader(
-                "http://json-ld.org/test-suite/tests/");
+        final TestDocumentLoader testLoader = new TestDocumentLoader();
+        testLoader.initJsonLdProcessorTest("http://json-ld.org/test-suite/tests/");
         options.setDocumentLoader(testLoader);
         if (test.containsKey("option")) {
             final Map<String, Object> test_opts = (Map<String, Object>) test.get("option");
@@ -508,13 +514,14 @@ public class JsonLdProcessorTest {
 
         // write details to report
         final String manifest = this.group;
-        final String id = (String) this.test.get("@id");
+        id = (String) this.test.get("@id");
         final Date d = new Date();
         final String dateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(d);
         String zone = new SimpleDateFormat("Z").format(d);
         zone = zone.substring(0, 3) + ":" + zone.substring(3);
         final String dateTimeZone = dateTime + zone;
         final Boolean passed = testpassed;
+        String finalId = id;
         REPORT_GRAPH.add(new LinkedHashMap<String, Object>() {
             {
                 put("@type", "earl:Assertion");
@@ -530,7 +537,7 @@ public class JsonLdProcessorTest {
                 });
                 put("earl:test", new LinkedHashMap<String, Object>() {
                     {
-                        put("@id", manifest + id);
+                        put("@id", manifest + finalId);
                     }
                 });
                 put("earl:result", new LinkedHashMap<String, Object>() {
@@ -561,12 +568,21 @@ public class JsonLdProcessorTest {
             }
         });
 
-        assertTrue("\nFailed test: " + group + test.get("@id") + " " + test.get("name") + " ("
-                + test.get("input") + "," + test.get("expect") + ")\n" + "expected: "
-                + JsonUtils.toPrettyString(expect) + "\nresult: "
-                + (result instanceof JsonLdError ? ((JsonLdError) result).toString()
-                        : JsonUtils.toPrettyString(result)),
-                testpassed);
+        assertTrue(testpassed,
+                "\nFailed test: " + group + test.get("@id") + " " + test.get("name") + " ("
+                        + test.get("input") + "," + test.get("expect") + ")\n" + "expected: "
+                        + JsonUtils.toPrettyString(expect) + "\nresult: "
+                        + (result instanceof JsonLdError ? ((JsonLdError) result).toString()
+                        : JsonUtils.toPrettyString(result)));
+    }
+
+    private static File newFolder(File root, String... subDirs) throws IOException {
+        String subFolder = String.join("/", subDirs);
+        File result = new File(root, subFolder);
+        if (!result.mkdirs()) {
+            throw new IOException("Couldn't create folders " + root);
+        }
+        return result;
     }
 
 }

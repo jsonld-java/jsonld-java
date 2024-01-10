@@ -1,13 +1,13 @@
 package com.github.jsonldjava.core;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JsonLdToRdfTest {
+class JsonLdToRdfTest {
 
     @Test
-    public void testIssue301() throws JsonLdError {
+    void issue301() throws JsonLdError {
         final RDFDataset rdf = new RDFDataset();
         rdf.addTriple(
                 "http://www.w3.org/2002/07/owl#Class",

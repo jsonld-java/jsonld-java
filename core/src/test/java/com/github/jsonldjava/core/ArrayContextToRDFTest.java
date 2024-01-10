@@ -1,18 +1,18 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URL;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.jsonldjava.utils.JsonUtils;
 
-public class ArrayContextToRDFTest {
+class ArrayContextToRDFTest {
     @Test
-    public void toRdfWithNamespace() throws Exception {
+    void toRdfWithNamespace() throws Exception {
 
         final URL contextUrl = getClass().getResource("/custom/contexttest-0001.jsonld");
         assertNotNull(contextUrl);

@@ -1,9 +1,5 @@
 package com.github.jsonldjava.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -18,13 +14,15 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-public class JarCacheTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class JarCacheTest {
 
     @Test
-    public void cacheHit() throws Exception {
+    void cacheHit() throws Exception {
         final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
                 .setMaxObjectSize(1024 * 128).build();
         final JarCacheStorage storage = new JarCacheStorage(null, cacheConfig);
@@ -37,20 +35,22 @@ public class JarCacheTest {
         assertTrue(str.contains("ex:datatype"));
     }
 
-    @Test(expected = IOException.class)
-    public void cacheMiss() throws Exception {
-        final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
-                .setMaxObjectSize(1024 * 128).build();
-        final JarCacheStorage storage = new JarCacheStorage(null, cacheConfig);
-        final HttpClient httpClient = createTestHttpClient(cacheConfig, storage);
-        final HttpGet get = new HttpGet("http://nonexisting.example.com/notfound");
-        // Should throw an IOException as the DNS name
-        // nonexisting.example.com does not exist
-        httpClient.execute(get);
+    @Test
+    void cacheMiss() throws Exception {
+        assertThrows(IOException.class, () -> {
+            final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
+                    .setMaxObjectSize(1024 * 128).build();
+            final JarCacheStorage storage = new JarCacheStorage(null, cacheConfig);
+            final HttpClient httpClient = createTestHttpClient(cacheConfig, storage);
+            final HttpGet get = new HttpGet("http://nonexisting.example.com/notfound");
+            // Should throw an IOException as the DNS name
+            // nonexisting.example.com does not exist
+            httpClient.execute(get);
+        });
     }
 
     @Test
-    public void doubleLoad() throws Exception {
+    void doubleLoad() throws Exception {
         final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
                 .setMaxObjectSize(1024 * 128).build();
         final JarCacheStorage storage = new JarCacheStorage(null, cacheConfig);
@@ -63,7 +63,7 @@ public class JarCacheTest {
     }
 
     @Test
-    public void customClassPath() throws Exception {
+    void customClassPath() throws Exception {
         final URL nestedJar = getClass().getResource("/nested.jar");
         final ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
         final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
@@ -79,7 +79,7 @@ public class JarCacheTest {
     }
 
     @Test
-    public void contextClassLoader() throws Exception {
+    void contextClassLoader() throws Exception {
         final URL nestedJar = getClass().getResource("/nested.jar");
         assertNotNull(nestedJar);
         final ClassLoader cl = new URLClassLoader(new URL[] { nestedJar });
@@ -98,13 +98,13 @@ public class JarCacheTest {
         assertEquals("{ \"Hello\": \"World!\" }", str.trim());
     }
 
-    @After
-    public void setContextClassLoader() {
+    @AfterEach
+    void setContextClassLoader() {
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
     }
 
     @Test
-    public void systemClassLoader() throws Exception {
+    void systemClassLoader() throws Exception {
         final URL nestedJar = getClass().getResource("/nested.jar");
         assertNotNull(nestedJar);
         final CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(1000)
@@ -118,7 +118,7 @@ public class JarCacheTest {
     }
 
     private static CloseableHttpClient createTestHttpClient(CacheConfig cacheConfig,
-            JarCacheStorage jarCacheConfig) {
+                                                            JarCacheStorage jarCacheConfig) {
         final CloseableHttpClient result = CachingHttpClientBuilder.create()
                 // allow caching
                 .setCacheConfig(cacheConfig)

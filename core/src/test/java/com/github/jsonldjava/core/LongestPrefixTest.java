@@ -1,13 +1,13 @@
 package com.github.jsonldjava.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URL;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.jsonldjava.utils.JsonUtils;
 
@@ -52,8 +52,8 @@ public class LongestPrefixTest {
         final String toJSONLD = JsonUtils.toPrettyString(fromRDF);
         // System.out.println(toJSONLD);
 
-        assertTrue("The lexicographically shortest URI was not chosen",
-                toJSONLD.contains("aat:rev/"));
+        assertTrue(toJSONLD.contains("aat:rev/"),
+                "The lexicographically shortest URI was not chosen");
     }
 
     @Test
@@ -80,8 +80,8 @@ public class LongestPrefixTest {
         final String toJSONLD = JsonUtils.toPrettyString(fromRDF);
         // System.out.println(toJSONLD);
 
-        assertFalse("The lexicographically shortest URI was not chosen",
-                toJSONLD.contains("aat:rev/"));
+        assertFalse(toJSONLD.contains("aat:rev/"),
+                "The lexicographically shortest URI was not chosen");
     }
 
     @Test
@@ -100,8 +100,8 @@ public class LongestPrefixTest {
         final String toJSONLD = JsonUtils.toPrettyString(fromRDF);
         // System.out.println(toJSONLD);
 
-        assertFalse("The lexicographically shortest URI was not chosen",
-                toJSONLD.contains("http://www.a.com/foo/p"));
+        assertFalse(toJSONLD.contains("http://www.a.com/foo/p"),
+                "The lexicographically shortest URI was not chosen");
     }
 
 }
